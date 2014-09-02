@@ -1,0 +1,276 @@
+<li><label>Weekly Analysis</label></li>
+<li><a href="#">NBA</a></li>
+<li><a href="#">NFL</a></li>
+<li><a href="#">MLB</a></li>
+<li><label>Competitor Watch</label></li>
+<li><a href="#">Nike</a></li>
+<li><a href="#">Reebok</a></li>
+<li><a href="#">Aggregate</a></li>
+<li><label>Custom Data Dashboard</label></li>
+<li><a href="#">Social Media</a></li>
+<li><a href="#">Financial Metrics</a></li>
+<li><label>Season Analysis</label></li>
+<li><a href="#">World Cup</a></li>
+
+
+
+    <div class="off-canvas-wrap" data-offcanvas>
+      <div class="inner-wrap">
+        <nav class="tab-bar">
+          <section class="left-small">
+            <a class="left-off-canvas-toggle menu-icon" href="#"><span></span></a>
+          </section>
+          <section class="middle tab-bar-section">
+            <h1 class="title">Zigvu</h1>
+          </section>
+          <section class="right-small">
+            <h1 class="title"><a class="fi-widget" href="#"><span></span></a></h1>
+          </section>
+        </nav>
+        <aside class="left-off-canvas-menu">
+          <ul class="off-canvas-list">
+            <li><label>Analytics</label></li>
+            <li><a href="#">Weekly Analysis</a></li>
+            <li><a href="#">Competitor Watch</a></li>
+            <li><a href="#">Custom Data Dashboard</a></li>
+            <li><a href="#">Season Analysis</a></li>
+          </ul>
+        </aside> 
+        <section class="main-section">
+          <%= yield %>
+        </section>
+        <a class="exit-off-canvas"></a>
+      </div>
+    </div>
+
+
+
+
+
+
+<div class="contain-to-grid">
+  <nav class="top-bar" data-topbar role="navigation">
+    <ul class="title-area">
+      <li class="name">
+        <h1><a href="#">My Site</a></h1>
+      </li>
+      <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+      <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+    </ul>
+    <section class="top-bar-section">
+      <!-- Right Nav Section -->
+      <ul class="right">
+        <li class="active"><a href="#">Right Button Active</a></li>
+        <li class="has-dropdown">
+          <a href="#">Right Button Dropdown</a>
+          <ul class="dropdown">
+            <li><a href="#">First link in dropdown</a></li>
+            <li class="active"><a href="#">Active link in dropdown</a></li>
+          </ul>
+        </li>
+      </ul>
+      <!-- Left Nav Section -->
+      <ul class="left">
+        <li><a href="#">Left Nav Button</a></li>
+      </ul>
+    </section>
+  </nav>
+</div>
+
+
+
+    <div class="row mobile-zero-pad-rows">
+      <div class="small-12 columns mobile-zero-pad-columns">
+        <div class="contain-to-grid">
+          <nav class="top-bar" data-topbar role="navigation">
+            <ul class="title-area">
+              <li class="name">
+                <h1><a href="#">Zigvu</a></h1>
+              </li>
+              <li class="toggle-topbar menu-icon"><a href="#"><span></span></a></li>
+            </ul>
+            <section class="top-bar-section">
+              <!-- Right Nav Section -->
+              <ul class="right">
+                <li class="has-dropdown">
+                  <a href="#"><i class="fi-widget"></i></a>
+                  <ul class="dropdown">
+                    <li><a href="#">Sign Out</a></li>
+                    <li class="divider"></li>
+                    <li class="active"><a href="#">Account Settings</a></li>
+                  </ul>
+                </li>
+              </ul>
+              <!-- Left Nav Section -->
+              <ul class="left">
+                <li><a href="#">Weekly Analysis</a></li>
+                <li><a href="#">Competitor Watch</a></li>
+                <li><a href="#">Custom Data Dashboard</a></li>
+                <li><a href="#">Season Analysis</a></li>
+              </ul>
+            </section>
+          </nav>
+        </div>
+        <%= yield %>
+      </div>
+    </div>
+
+
+
+
+.mobile-zero-pad-rows {
+  @media #{$medium-only} {
+    .mobile-zero-pad-columns {
+      padding: 0;
+      margin: 0 auto;   
+    }
+  }
+  @media #{$small-only} {
+    .mobile-zero-pad-columns {
+      padding: 0;
+      margin: 0 auto;   
+    }
+  }
+}
+
+
+
+<footer>
+  <div class="row">
+    <div class="medium-4 push-8 columns">
+      <ul class="footer-social">
+        <li><a class="fi-social-twitter" href="http://www.twitter.com/ZIGVU"><span></span></a></li>
+        <li><a class="fi-social-facebook" href="http://www.facebook.com/ZIGVU"><span></span></a></li>
+        <li><a class="fi-mail" href="#"><span></span></a></li>
+      </ul>
+    </div>
+    <div class="medium-8 pull-4 columns">
+      <a class="zigvu-logo regular" href="http://www.zigvu.com">Zigvu</a>
+      <ul class="footer-links">
+        <li><a href="#">About</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">News<span class="show-for-medium-up"> &amp; Events</span></a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">Sitemap</a></li>
+      </ul>
+      <p class="footer-copyright">&copy; 2014 ZIGVU, Inc. All rights reserved.</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="small-12 columns">
+    </div>
+  </div>
+</footer>
+
+
+
+
+<ul>
+  <li class="active"><a href="#">Link 1</a></li>
+  <li><a href="#">Link 2</a></li>
+  <li class="divider"></li>
+  <li><a href="#">Link 3</a></li>
+  <li><a href="#">Link 4</a></li>
+</ul>
+
+
+<ul class="breadcrumbs">
+  <li><a href="#">Season Analysis</a></li>
+  <li><a href="#">World Cup 2014</a></li>
+  <li class="current"><a href="#">Summary</a></li>
+</ul>
+
+
+
+
+// ------------------------------------
+// Breadcrumb
+.breadcrumbs {
+  // @media #{$large-up} {
+  //  //margin-left: -$column-gutter;
+  // }
+  // @media #{$small-and-medium-only} {
+  //  margin-left: -$column-gutter/2;
+  //  margin-right: -$column-gutter/2;
+  // }
+}
+
+
+
+// ------------------------------------
+// Sidebar navigation
+.zigvu-sidenav {
+  background: none repeat scroll 0 0 $side-nav-background-color;
+  padding: 2rem 0 0 0;
+  color: $side-nav-link-color;
+
+  section {
+    
+    margin-bottom: 1rem;
+    @include radius( 0.1rem );
+
+    ul {
+      @include side-nav(
+        //$font-size:1.2em
+      );
+      background: none repeat scroll 0 0 $side-nav-ul-background-color;
+      .links {
+        padding-left: 0.2rem;
+      }
+      li {
+        line-height: 120%;
+        &.active > a:first-child:not(.button) {
+          border-right: 0.4rem solid $side-nav-ul-li-active-border-color;
+          background: none repeat scroll 0 0 $side-nav-ul-li-active-background-color;
+        }
+
+        &.heading {
+          text-align: center !important;
+          background: none repeat scroll 0 0 $side-nav-section-background-color;
+          padding: 0.4rem 0 0.4rem 0;
+        }
+      }
+    }
+  }
+}
+
+
+
+// ------------------------------------
+// Header navigation
+a.fi-widget {
+  font-size: rem-calc(24);
+  text-indent: rem-calc(16);
+  width: $tabbar-menu-icon-width;
+  height: $tabbar-menu-icon-height;
+  color: $tabbar-menu-icon-color;
+  transform: translate3d(0,0,0);
+
+  &:link, &:visited {
+    color: $tabbar-menu-icon-color;
+  }
+  
+  &:hover, &:active {
+    color: $tabbar-menu-icon-hover;
+  }
+}
+
+$side-nav-padding: rem-calc(0 0);
+$side-nav-background-color: scale-color($zigvu-footer-background-color, $lightness: 10%);
+$side-nav-ul-background-color: scale-color($zigvu-footer-background-color, $lightness: 12%);
+$side-nav-link-color: $zigvu-footer-link-hover-color;
+$side-nav-link-color-active: scale-color($side-nav-link-color, $lightness: 30%);
+$side-nav-link-hover-color: $side-nav-link-color-active;
+$side-nav-link-bg-hover: hsla(0, 0, 0, 0.25);
+$side-nav-link-padding: rem-calc(7 2);
+$side-nav-heading-color: $zigvu-footer-link-color;
+
+$side-nav-background-color: scale-color($zigvu-footer-background-color, $lightness: 10%);
+$side-nav-section-background-color: scale-color($zigvu-footer-background-color, $lightness: 8%);
+$side-nav-ul-background-color: scale-color($zigvu-footer-background-color, $lightness: 12%);
+$side-nav-label-color: $zigvu-footer-link-color;
+$side-nav-ul-li-active-background-color: scale-color($zigvu-footer-background-color, $lightness: 15%);
+$side-nav-ul-li-active-border-color: $primary-color;
+
+
+

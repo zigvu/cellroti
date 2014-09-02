@@ -16,7 +16,20 @@ gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails', '~> 4.0.0'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-# gem 'therubyracer', platforms: :ruby
+gem 'therubyracer', platforms: :ruby
+gem 'bootstrap-glyphicons'
+gem 'foundation-rails'
+gem 'foundation-icons-sass-rails'
+gem 'devise'
+gem 'cancan'
+gem 'rolify'
+gem 'draper', '~> 1.3'
+gem 'high_voltage', '~> 2.2.1'
+gem 'jquery-ui-rails'
+gem 'jquery-turbolinks'
+gem 'fancybox2-rails', '~> 0.2.6'
+
+
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
