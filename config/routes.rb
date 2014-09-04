@@ -1,4 +1,12 @@
 Cellroti::Application.routes.draw do
+  resources :clients do
+    member do
+      post 'update_detectables'
+    end
+  end
+
+  resources :organizations
+
   devise_for :users
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

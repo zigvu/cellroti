@@ -11,7 +11,43 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140902164417) do
+ActiveRecord::Schema.define(version: 20140903232749) do
+
+  create_table "client_settings", force: true do |t|
+    t.text     "brands"
+    t.integer  "client_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "clients", force: true do |t|
+    t.string   "name"
+    t.string   "pretty_name"
+    t.text     "description"
+    t.integer  "organization_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "detectables", force: true do |t|
+    t.string   "name"
+    t.string   "pretty_name"
+    t.text     "description"
+    t.integer  "creator_id"
+    t.integer  "organization_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "detectables", ["organization_id"], name: "index_detectables_on_organization_id", using: :btree
+
+  create_table "organizations", force: true do |t|
+    t.string   "name"
+    t.string   "industry"
+    t.integer  "creator_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "roles", force: true do |t|
     t.string   "name"

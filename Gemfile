@@ -21,6 +21,7 @@ gem 'bootstrap-glyphicons'
 gem 'foundation-rails'
 gem 'foundation-icons-sass-rails'
 gem 'foundation_rails_helper'
+gem 'simple_form'
 gem 'devise'
 gem 'authority'
 gem 'rolify'
@@ -29,7 +30,7 @@ gem 'high_voltage', '~> 2.2.1'
 gem 'jquery-ui-rails'
 gem 'jquery-turbolinks'
 gem 'fancybox2-rails', '~> 0.2.6'
-
+gem 'gretel'
 
 
 # Use jquery as the JavaScript library

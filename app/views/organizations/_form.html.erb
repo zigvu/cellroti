@@ -1,0 +1,36 @@
+<%= form_for(@organization) do |f| %>
+  <% if @organization.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@organization.errors.count, "error") %> prohibited this organization from being saved:</h2>
+
+      <ul>
+      <% @organization.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <%= f.text_field :industry %>
+  </div>
+  <div class="field">
+    List all detectables for this organization:
+    <ul class="small-block-grid-2">
+      <%= f.fields_for :detectables do |detectables_form| %>
+        <li>
+          <%= detectables_form.text_field :name %>
+          <%= detectables_form.text_field :pretty_name %>
+          <%= detectables_form.text_field :description %>
+          <%= detectables_form.check_box :_destroy%>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

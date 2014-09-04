@@ -1,0 +1,12 @@
+<!-- BEGIN: Internal navigation tool for zigvu users -->
+<% if current_user.can_read?(Organization) %>
+  <li class="has-dropdown">
+    <a href="#">Client Setup</a>
+    <ul class="dropdown">
+      <li><%= link_to "Manage Clients", clients_path %></li>
+      <li><%= link_to "Manage Detectables", organizations_path %></li>
+    </ul>
+  </li>
+<% end %>
+
+<!-- END: Internal navigation tool for zigvu users -->

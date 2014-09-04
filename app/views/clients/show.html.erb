@@ -1,0 +1,54 @@
+<% breadcrumb :client, @client %>
+
+<p>
+	<strong>Name:</strong>
+	<%= @client.name %>
+</p>
+
+<p>
+	<strong>Pretty name:</strong>
+	<%= @client.pretty_name %>
+</p>
+
+<p>
+	<strong>Description:</strong>
+	<%= @client.description %>
+</p>
+
+<p>
+	<strong>Organization:</strong>
+	<%= @client.organization.name %>
+</p>
+
+<p>
+	<strong>Detectables:</strong>
+	<%= simple_form_for @dclient, :url => update_detectables_client_path, method: :post do |f| %>
+		<table>
+		  <thead>
+		    <tr>
+		      <th>Org. Name</th>
+		      <th>Org. Industry</th>
+		      <th>Detectables</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+				<% Organization.all.each do |org| %>
+					<tr>
+						<td><%= org.name %></td>
+						<td><%= org.industry %></td>
+						<td>
+							<div class="field">
+								<%= f.collection_check_boxes(:detectable_ids, org.detectables, :id, :pretty_name, {:collection_wrapper_tag => 'ul', :item_wrapper_tag => 'li', :item_wrapper_class => 'checkbox_container'}) %>
+							</div>
+						</td>
+					</tr>
+				<% end %>
+		  </tbody>
+	  </table>
+		<div class="actions">
+			<%= f.button :submit %>
+		</div>
+	<% end %>
+</p>
+
+<%= link_to 'Cancel', clients_path, class: "button alert" %>

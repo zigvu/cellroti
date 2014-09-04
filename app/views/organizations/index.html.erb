@@ -1,0 +1,39 @@
+<% breadcrumb :organizations %>
+
+<h3>Listing organizations</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Industry</th>
+      <th>Creator</th>
+      <th>Detectables</th>
+      <th width="50px">Edit</th>
+      <th width="70px">Destroy</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @organizations.each do |organization| %>
+      <tr>
+        <td><%= organization.name %></td>
+        <td><%= organization.industry %></td>
+        <td><%= organization.user.email %></td>
+        <td>
+          <ul>
+            <% organization.detectables.each do |d| %>
+              <li><%= d.pretty_name %></li>
+            <% end %>
+          </ul>
+        </td>
+        <td><%= link_to 'Edit', edit_organization_path(organization) %></td>
+        <td><%= link_to 'Destroy', organization, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'Create New Organization', new_organization_path, class: "button" %>
