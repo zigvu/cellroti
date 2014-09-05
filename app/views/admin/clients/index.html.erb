@@ -28,9 +28,9 @@
             <% end %>
           </ul>
         </td>
-        <td><%= link_to 'Edit Detect.', client %></td>
-        <td><%= link_to 'Edit Client', edit_client_path(client) %></td>
-        <td><%= link_to 'Destroy', client, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <td><%= link_to 'Edit Detect.', [:admin, client] %></td>
+        <td><%= link_to 'Edit Client', edit_admin_client_path(client) %></td>
+        <td><%= link_to 'Destroy', [:admin, client], method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -38,4 +38,4 @@
 
 <br>
 
-<%= link_to 'Create New Client', new_client_path, class: "button" %>
+<%= link_to 'Create New Client', new_admin_client_path, class: "button" %>

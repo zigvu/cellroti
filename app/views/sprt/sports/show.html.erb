@@ -1,0 +1,13 @@
+<% breadcrumb :sport, @sport %>
+
+<p>
+  <strong>Name:</strong>
+  <%= @sport.name %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @sport.description %>
+</p>
+
+<%= link_to 'Cancel', sprt_sports_path, class: "button alert" %>

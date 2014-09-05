@@ -4,11 +4,11 @@ end
 
 # Organization management
 crumb :organizations do
-  link "Organizations", organizations_path
+  link "Organizations", admin_organizations_path
 end
 
 crumb :organization_edit do |organization|
-  link organization.name, organizations_path(organization)
+  link organization.name, admin_organization_path(organization)
   parent :organizations
 end
 
@@ -19,16 +19,16 @@ end
 
 # Client management
 crumb :clients do
-  link "Clients", clients_path
+  link "Clients", admin_clients_path
 end
 
 crumb :client do |client|
-  link client.pretty_name, clients_path(client)
+  link client.pretty_name, admin_client_path(client)
   parent :clients
 end
 
 crumb :client_edit do |client|
-  link client.pretty_name, clients_path(client)
+  link client.pretty_name, admin_client_path(client)
   parent :clients
 end
 

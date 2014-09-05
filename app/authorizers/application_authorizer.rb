@@ -8,9 +8,8 @@ class ApplicationAuthorizer < Authority::Authorizer
   # @param [Object] user - whatever represents the current user in your app
   # @return [Boolean]
   def self.default(adjective, user)
-    # 'Whitelist' strategy for security: anything not explicitly allowed is
-    # considered forbidden.
-    false
+    # Zigvu admin has all authority - for lesser ones, override in individual authorizer
+    user.has_role? States::Roles.zigvu_admin
   end
 
 end

@@ -1,11 +1,18 @@
 Cellroti::Application.routes.draw do
-  resources :clients do
-    member do
-      post 'update_detectables'
+  namespace :admin do
+    resources :clients do
+      member do
+        post 'update_detectables'
+      end
     end
+
+    resources :organizations
   end
 
-  resources :organizations
+  namespace :sprt do
+    resources :sports
+  end
+
 
   devise_for :users
   # The priority is based upon order of creation: first created -> highest priority.

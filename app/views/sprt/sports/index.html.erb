@@ -1,0 +1,31 @@
+<% breadcrumb :sports %>
+
+<h3>Listing sports</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @sports.each do |sport| %>
+      <tr>
+        <td><%= sport.name %></td>
+        <td><%= sport.description %></td>
+        <td><%= link_to 'Show', [:sprt, sport] %></td>
+        <td><%= link_to 'Edit', edit_sprt_sport_path(sport) %></td>
+        <td><%= link_to 'Destroy', [:sprt, sport], method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'Create New Sport', new_sprt_sport_path, class: "button" %>
