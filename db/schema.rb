@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140903232749) do
+ActiveRecord::Schema.define(version: 20140905042320) do
 
   create_table "client_settings", force: true do |t|
     t.text     "brands"
@@ -41,6 +41,63 @@ ActiveRecord::Schema.define(version: 20140903232749) do
 
   add_index "detectables", ["organization_id"], name: "index_detectables_on_organization_id", using: :btree
 
+  create_table "event_types", force: true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "sport_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "event_types", ["sport_id"], name: "index_event_types_on_sport_id", using: :btree
+
+  create_table "events", force: true do |t|
+    t.datetime "event_time"
+    t.integer  "event_type_id"
+    t.integer  "game_id"
+    t.integer  "team_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "events", ["event_type_id"], name: "index_events_on_event_type_id", using: :btree
+  add_index "events", ["game_id"], name: "index_events_on_game_id", using: :btree
+  add_index "events", ["team_id"], name: "index_events_on_team_id", using: :btree
+
+  create_table "game_teams", force: true do |t|
+    t.integer  "game_id"
+    t.integer  "team_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "game_teams", ["game_id"], name: "index_game_teams_on_game_id", using: :btree
+  add_index "game_teams", ["team_id"], name: "index_game_teams_on_team_id", using: :btree
+
+  create_table "games", force: true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.string   "venue_city"
+    t.string   "venue_stadium"
+    t.integer  "season_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "games", ["season_id"], name: "index_games_on_season_id", using: :btree
+
+  create_table "leagues", force: true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "sport_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "leagues", ["sport_id"], name: "index_leagues_on_sport_id", using: :btree
+
   create_table "organizations", force: true do |t|
     t.string   "name"
     t.string   "industry"
@@ -59,6 +116,34 @@ ActiveRecord::Schema.define(version: 20140903232749) do
 
   add_index "roles", ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id", using: :btree
   add_index "roles", ["name"], name: "index_roles_on_name", using: :btree
+
+  create_table "seasons", force: true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "league_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "seasons", ["league_id"], name: "index_seasons_on_league_id", using: :btree
+
+  create_table "sports", force: true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "teams", force: true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.string   "icon_path"
+    t.integer  "season_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "teams", ["season_id"], name: "index_teams_on_season_id", using: :btree
 
   create_table "users", force: true do |t|
     t.string   "email",                  default: "", null: false
@@ -84,5 +169,35 @@ ActiveRecord::Schema.define(version: 20140903232749) do
   end
 
   add_index "users_roles", ["user_id", "role_id"], name: "index_users_roles_on_user_id_and_role_id", using: :btree
+
+  create_table "video_frames", force: true do |t|
+    t.datetime "frame_time"
+    t.integer  "frame_number"
+    t.integer  "video_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "video_frames", ["video_id"], name: "index_video_frames_on_video_id", using: :btree
+
+  create_table "videos", force: true do |t|
+    t.text     "title"
+    t.text     "description"
+    t.text     "comment"
+    t.string   "source_type"
+    t.string   "source_url"
+    t.string   "quality"
+    t.string   "format"
+    t.integer  "length"
+    t.string   "runstatus"
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.float    "avg_frame_rate"
+    t.integer  "game_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "videos", ["game_id"], name: "index_videos_on_game_id", using: :btree
 
 end

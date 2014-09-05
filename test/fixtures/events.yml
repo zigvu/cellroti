@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  event_time: 2014-09-04 19:24:37
+  event_type_id: 
+  game_id: 
+  team_id: 
+
+two:
+  event_time: 2014-09-04 19:24:37
+  event_type_id: 
+  game_id: 
+  team_id: 

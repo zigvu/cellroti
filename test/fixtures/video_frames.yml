@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  frame_time: 2014-09-04 19:44:50
+  frame_number: 1
+  video_id: 
+
+two:
+  frame_time: 2014-09-04 19:44:50
+  frame_number: 1
+  video_id: 

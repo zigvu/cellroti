@@ -1,0 +1,31 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  title: MyText
+  description: MyText
+  comment: MyText
+  source_type: MyString
+  source_url: MyString
+  quality: MyString
+  format: MyString
+  length: 1
+  runstatus: MyString
+  start_time: 2014-09-04 19:43:23
+  end_time: 2014-09-04 19:43:23
+  avg_frame_rate: 1.5
+  game_id: 
+
+two:
+  title: MyText
+  description: MyText
+  comment: MyText
+  source_type: MyString
+  source_url: MyString
+  quality: MyString
+  format: MyString
+  length: 1
+  runstatus: MyString
+  start_time: 2014-09-04 19:43:23
+  end_time: 2014-09-04 19:43:23
+  avg_frame_rate: 1.5
+  game_id: 
