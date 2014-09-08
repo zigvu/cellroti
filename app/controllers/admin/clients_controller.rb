@@ -21,7 +21,7 @@ module Admin
 
     # GET /clients
     def index
-      @clients = Client.all
+      @clients = ::Client.all
     end
 
     # GET /clients/1
@@ -31,7 +31,7 @@ module Admin
 
     # GET /clients/new
     def new
-      @client = Client.new
+      @client = ::Client.new
     end
 
     # GET /clients/1/edit
@@ -40,7 +40,7 @@ module Admin
 
     # POST /clients
     def create
-      @client = Client.new(client_params)
+      @client = ::Client.new(client_params)
 
       if @client.save
         redirect_to [:admin, @client], notice: 'Client was successfully created.'
@@ -67,7 +67,7 @@ module Admin
     private
       # Use callbacks to share common setup or constraints between actions.
       def set_client
-        @client = Client.find(params[:id])
+        @client = ::Client.find(params[:id])
       end
 
       # Never trust parameters from the scary internet, only allow the white list through.

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140905042320) do
+ActiveRecord::Schema.define(version: 20140908190730) do
 
   create_table "client_settings", force: true do |t|
     t.text     "brands"
@@ -52,12 +52,12 @@ ActiveRecord::Schema.define(version: 20140905042320) do
   add_index "event_types", ["sport_id"], name: "index_event_types_on_sport_id", using: :btree
 
   create_table "events", force: true do |t|
-    t.datetime "event_time"
     t.integer  "event_type_id"
     t.integer  "game_id"
     t.integer  "team_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "event_time"
   end
 
   add_index "events", ["event_type_id"], name: "index_events_on_event_type_id", using: :btree
@@ -138,12 +138,12 @@ ActiveRecord::Schema.define(version: 20140905042320) do
     t.string   "name"
     t.text     "description"
     t.string   "icon_path"
-    t.integer  "season_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "league_id"
   end
 
-  add_index "teams", ["season_id"], name: "index_teams_on_season_id", using: :btree
+  add_index "teams", ["league_id"], name: "index_teams_on_league_id", using: :btree
 
   create_table "users", force: true do |t|
     t.string   "email",                  default: "", null: false

@@ -1,0 +1,47 @@
+<% breadcrumb :game, @game %>
+
+<p>
+  <strong>Game Name:</strong>
+  <%= @game.name %>
+</p>
+
+<p>
+  <strong>Description:</strong>
+  <%= @game.description %>
+</p>
+
+<p>
+  <strong>Start date:</strong>
+  <%= @game.start_date %>
+</p>
+
+<p>
+  <strong>End date:</strong>
+  <%= @game.end_date %>
+</p>
+
+<p>
+  <strong>Venue city:</strong>
+  <%= @game.venue_city %>
+</p>
+
+<p>
+  <strong>Venue stadium:</strong>
+  <%= @game.venue_stadium %>
+</p>
+
+<p>
+  <strong>Teams:</strong>
+    <ul>
+      <% @game.teams.each do |team| %>
+        <li><%= team.name %></li>
+      <% end %>
+    </ul>
+</p>
+
+<p>
+  <strong>Game Events:</strong>
+  <%= render '/sprt/events/index_table' %>
+</p>
+
+<%= link_to 'Cancel', sprt_season_path(@game.season), class: "button alert" %>

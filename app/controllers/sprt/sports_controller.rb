@@ -7,16 +7,18 @@ module Sprt
 
     # GET /sports
     def index
-      @sports = Sport.all
+      @sports = ::Sport.all
     end
 
     # GET /sports/1
     def show
+      @leagues = @sport.leagues
+      @event_types = @sport.event_types
     end
 
     # GET /sports/new
     def new
-      @sport = Sport.new
+      @sport = ::Sport.new
     end
 
     # GET /sports/1/edit
@@ -25,7 +27,7 @@ module Sprt
 
     # POST /sports
     def create
-      @sport = Sport.new(sport_params)
+      @sport = ::Sport.new(sport_params)
       if @sport.save
         redirect_to sprt_sports_url, notice: 'Sport was successfully created.'
       else
@@ -51,7 +53,7 @@ module Sprt
     private
       # Use callbacks to share common setup or constraints between actions.
       def set_sport
-        @sport = Sport.find(params[:id])
+        @sport = ::Sport.find(params[:id])
       end
 
       # Never trust parameters from the scary internet, only allow the white list through.

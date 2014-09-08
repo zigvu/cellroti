@@ -7,12 +7,12 @@ module Admin
 
     # GET /organizations
     def index
-      @organizations = Organization.all
+      @organizations = ::Organization.all
     end
 
     # GET /organizations/new
     def new
-      @organization = Organization.new
+      @organization = ::Organization.new
       10.times { @organization.detectables.build}
     end
 
@@ -23,7 +23,7 @@ module Admin
 
     # POST /organizations
     def create
-      @organization = Organization.new(organization_params)
+      @organization = ::Organization.new(organization_params)
       set_creator_ids
       if @organization.save
         redirect_to admin_organizations_url, notice: 'Organization was successfully created.'
@@ -51,7 +51,7 @@ module Admin
     private
       # Use callbacks to share common setup or constraints between actions.
       def set_organization
-        @organization = Organization.find(params[:id])
+        @organization = ::Organization.find(params[:id])
       end
 
       def set_creator_ids

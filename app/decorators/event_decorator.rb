@@ -1,4 +1,5 @@
-class SportDecorator < Draper::Decorator
+class EventDecorator < Draper::Decorator
+  include EventsHelper
   delegate_all
 
   # Define presentation-specific methods here. Helpers are accessed through
@@ -10,4 +11,7 @@ class SportDecorator < Draper::Decorator
   #     end
   #   end
 
+  def formatted_time
+    milliseconds_to_prettyprint(object.event_time)
+  end
 end

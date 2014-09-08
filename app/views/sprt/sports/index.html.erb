@@ -7,6 +7,11 @@
     <tr>
       <th>Name</th>
       <th>Description</th>
+      <th>Leagues</th>
+      <th>Seasons</th>
+      <th>Games</th>
+      <th>Teams</th>
+      <th>Event Types</th>
       <th></th>
       <th></th>
       <th></th>
@@ -18,6 +23,11 @@
       <tr>
         <td><%= sport.name %></td>
         <td><%= sport.description %></td>
+        <td><%= sport.leagues.count %></td>
+        <td><%= sport.seasons.count %></td>
+        <td><%= sport.games.count %></td>
+        <td><%= sport.teams.count %></td>
+        <td><%= sport.event_types.count %></td>
         <td><%= link_to 'Show', [:sprt, sport] %></td>
         <td><%= link_to 'Edit', edit_sprt_sport_path(sport) %></td>
         <td><%= link_to 'Destroy', [:sprt, sport], method: :delete, data: { confirm: 'Are you sure?' } %></td>

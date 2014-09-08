@@ -10,7 +10,8 @@ Cellroti::Application.routes.draw do
   end
 
   namespace :sprt do
-    resources :sports
+    resources :sports, :teams, :event_types, :events
+    resources :games, :leagues, :seasons
   end
 
 

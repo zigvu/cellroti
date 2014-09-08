@@ -1,0 +1,29 @@
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th width="80px">Seasons</th>
+      <th width="50px"></th>
+      <th width="50px"></th>
+      <th width="80px"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @leagues.each do |league| %>
+      <tr>
+        <td><%= league.name %></td>
+        <td><%= league.description %></td>
+        <td><%= league.seasons.count %></td>
+        <td><%= link_to 'Show', [:sprt, league] %></td>
+        <td><%= link_to 'Edit', edit_sprt_league_path(league, sport_id: @sport.id) %></td>
+        <td><%= link_to 'Destroy', [:sprt, league], method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+    <tr>
+      <td><%= link_to 'New League', new_sprt_league_path(sport_id: @sport.id), class: "button" %></td>
+      <td> </td><td> </td><td> </td><td> </td><td> </td>
+    </tr>
+  </tbody>
+</table>
