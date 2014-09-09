@@ -11,7 +11,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140908190730) do
+ActiveRecord::Schema.define(version: 20140909204619) do
+
+  create_table "client_detectables", force: true do |t|
+    t.integer  "client_id"
+    t.integer  "detectable_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "client_detectables", ["client_id"], name: "index_client_detectables_on_client_id", using: :btree
+  add_index "client_detectables", ["detectable_id"], name: "index_client_detectables_on_detectable_id", using: :btree
 
   create_table "client_settings", force: true do |t|
     t.text     "brands"
@@ -29,11 +39,29 @@ ActiveRecord::Schema.define(version: 20140908190730) do
     t.datetime "updated_at"
   end
 
+  create_table "det_group_detectables", force: true do |t|
+    t.integer  "det_group_id"
+    t.integer  "detectable_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "det_group_detectables", ["det_group_id"], name: "index_det_group_detectables_on_det_group_id", using: :btree
+  add_index "det_group_detectables", ["detectable_id"], name: "index_det_group_detectables_on_detectable_id", using: :btree
+
+  create_table "det_groups", force: true do |t|
+    t.string   "name"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "det_groups", ["user_id"], name: "index_det_groups_on_user_id", using: :btree
+
   create_table "detectables", force: true do |t|
     t.string   "name"
     t.string   "pretty_name"
     t.text     "description"
-    t.integer  "creator_id"
     t.integer  "organization_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -101,7 +129,6 @@ ActiveRecord::Schema.define(version: 20140908190730) do
   create_table "organizations", force: true do |t|
     t.string   "name"
     t.string   "industry"
-    t.integer  "creator_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

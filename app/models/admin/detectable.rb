@@ -1,4 +1,5 @@
 class Detectable < ActiveRecord::Base
   belongs_to :organization
-  belongs_to :user, foreign_key: :creator_id
+	has_many :client_detectables, dependent: :destroy
+  has_many :det_group_detectables, dependent: :destroy
 end

@@ -1,0 +1,21 @@
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @det_groups.each do |det_group| %>
+      <tr>
+        <td><%= det_group.name %></td>
+        <td><%= link_to 'Show', det_group %></td>
+        <td><%= link_to 'Edit', edit_det_group_path(det_group) %></td>
+        <td><%= link_to 'Destroy', det_group, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

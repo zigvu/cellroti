@@ -10,9 +10,9 @@ class User < ActiveRecord::Base
   after_create :assign_default_role
 
   def assign_default_role
-    add_role(States::Roles.client_user)
+    add_role(States::Roles.guest_user)
   end
 
-  has_many :organizations, foreign_key: :creator_id
-  has_many :detectables, foreign_key: :creator_id
+  has_many :det_groups, dependent: :destroy
+  has_many :detectables, through: :det_groups
 end

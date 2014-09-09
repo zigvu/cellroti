@@ -24,7 +24,6 @@ module Admin
     # POST /organizations
     def create
       @organization = ::Organization.new(organization_params)
-      set_creator_ids
       if @organization.save
         redirect_to admin_organizations_url, notice: 'Organization was successfully created.'
       else
@@ -34,7 +33,6 @@ module Admin
 
     # PATCH/PUT /organizations/1
     def update
-      set_creator_ids
       if @organization.update(organization_params)
         redirect_to admin_organizations_url, notice: 'Organization was successfully updated.'
       else
@@ -52,13 +50,6 @@ module Admin
       # Use callbacks to share common setup or constraints between actions.
       def set_organization
         @organization = ::Organization.find(params[:id])
-      end
-
-      def set_creator_ids
-        @organization.creator_id = current_user.id
-        @organization.detectables.each do |detectable|
-          detectable.creator_id = current_user.id
-        end
       end
 
       # Never trust parameters from the scary internet, only allow the white list through.

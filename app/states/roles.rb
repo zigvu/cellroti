@@ -20,5 +20,9 @@ module States
 			return :client_user
 		end
 
+		def self.guest_user
+			return :guest_user
+		end
+
 	end
 end

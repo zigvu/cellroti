@@ -11,4 +11,7 @@ class Client < ActiveRecord::Base
 
 	has_one :client_setting, dependent: :destroy
 	belongs_to :organization
+	has_many :client_detectables, dependent: :destroy
+	has_many :detectables, through: :client_detectables
+	accepts_nested_attributes_for :client_detectables, allow_destroy: true
 end

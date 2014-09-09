@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  det_group_id: 
+  detectable_id: 
+
+two:
+  det_group_id: 
+  detectable_id: 

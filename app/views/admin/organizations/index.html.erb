@@ -7,7 +7,6 @@
     <tr>
       <th>Name</th>
       <th>Industry</th>
-      <th>Creator</th>
       <th>Detectables</th>
       <th width="50px">Edit</th>
       <th width="70px">Destroy</th>
@@ -19,7 +18,6 @@
       <tr>
         <td><%= organization.name %></td>
         <td><%= organization.industry %></td>
-        <td><%= organization.user.email %></td>
         <td>
           <ul>
             <% organization.detectables.each do |d| %>

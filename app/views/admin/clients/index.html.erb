@@ -8,7 +8,7 @@
       <th>Name</th>
       <th>Pretty name</th>
       <th>Description</th>
-      <th>Detect.</th>
+      <th width="80px">Manage Users</th>
       <th width="100px">Edit Detect.</th>
       <th width="100px">Edit</th>
       <th width="70px">Destroy</th>
@@ -21,13 +21,7 @@
         <td><%= client.name %></td>
         <td><%= client.pretty_name %></td>
         <td><%= client.description %></td>
-        <td>
-          <ul>
-            <% client.decorate.detectable_ids.each do |di| %>
-              <li><%= Detectable.find(di).pretty_name %></li>
-            <% end %>
-          </ul>
-        </td>
+        <td><%= link_to 'Manage Users', manage_users_admin_client_path(client) %></td>
         <td><%= link_to 'Edit Detect.', [:admin, client] %></td>
         <td><%= link_to 'Edit Client', edit_admin_client_path(client) %></td>
         <td><%= link_to 'Destroy', [:admin, client], method: :delete, data: { confirm: 'Are you sure?' } %></td>

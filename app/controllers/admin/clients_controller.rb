@@ -1,23 +1,10 @@
 module Admin
   class ClientsController < ApplicationController
     authorize_actions_for ::Client
-    authority_actions :update_detectables => :update
+    authority_actions :manage_users => :update
 
     before_filter :ensure_html_format
-    before_action :set_client, only: [:update_detectables, :show, :edit, :update, :destroy]
-
-    # POST /clients/1/update_detectables
-    def update_detectables
-      mClient = Managers::MClient.new(@client)
-      # get rid of empty selections from array
-      detectable_ids = params[:client][:detectable_ids].map(&:to_i) - [0]
- 
-      if mClient.setDetectableIds(detectable_ids)
-        redirect_to [:admin, @client], notice: 'Client was successfully updated.'
-      else
-        render action: 'edit'
-      end
-    end
+    before_action :set_client, only: [:manage_users, :show, :edit, :update, :destroy]
 
     # GET /clients
     def index
@@ -25,8 +12,14 @@ module Admin
     end
 
     # GET /clients/1
+    def manage_users
+    end
+
+    # GET /clients/1
     def show
-      @dclient = @client.decorate
+      (::Detectable.all - @client.detectables).each do |d|
+        @client.client_detectables.build(detectable: d)
+      end
     end
 
     # GET /clients/new
@@ -73,7 +66,8 @@ module Admin
       # Never trust parameters from the scary internet, only allow the white list through.
       def client_params
         params.require(:client).permit(:name, :pretty_name, 
-          :description, :client_setting_id, :organization_id, :detectable_ids => [])
+          :description, :client_setting_id, :organization_id, 
+          client_detectables_attributes: [:id, :detectable_id, :_destroy])
       end
   end
 end

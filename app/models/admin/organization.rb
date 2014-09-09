@@ -6,5 +6,4 @@ class Organization < ActiveRecord::Base
 	has_many :detectables
 	accepts_nested_attributes_for :detectables, allow_destroy: true, reject_if: :all_blank
 	has_one :client
-	belongs_to :user, foreign_key: :creator_id
 end

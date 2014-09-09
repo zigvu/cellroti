@@ -1,0 +1,34 @@
+<%= simple_form_for([:admin, @client]) do |f| %>
+	<%= f.error_notification %>
+
+	<table>
+		<thead>
+			<tr>
+				<th>Org. Name</th>
+				<th>Org. Industry</th>
+				<th>Detectables</th>
+			</tr>
+		</thead>
+		<tbody>
+			<% @client.client_detectables.sort_by{|cd| cd.detectable.organization.name}.group_by {|cd| cd.detectable.organization }.each do |org, detectables_group| %>
+				<tr>
+					<td><%= org.name %></td>
+					<td><%= org.industry %></td>
+					<th>
+						<%= f.fields_for :client_detectables, detectables_group.sort_by{|dg| dg.detectable.name} do |ff| %>
+							<div>
+								<%= ff.check_box :_destroy, {:checked => ff.object.persisted?}, '0', '1' %>
+								<%= ff.label :_destroy, ff.object.detectable.pretty_name %>
+								<%= ff.hidden_field :detectable_id %>
+							</div>
+						<% end %>
+					</th>
+				</tr>
+			<% end %>
+		</tbody>
+	</table>
+
+	<div class="form-actions">
+		<%= f.button :submit %>
+	</div>
+<% end %>
