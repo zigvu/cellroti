@@ -8,12 +8,13 @@ class ApplicationAuthorizer < Authority::Authorizer
   # @param [Object] user - whatever represents the current user in your app
   # @return [Boolean]
   def self.default(adjective, user)
-    # Zigvu admin has all authority - for lesser ones, override in individual authorizer
-    user.has_role? States::Roles.zigvu_admin
+    # Zigvu admin has all authority
+    States::Roles.zigvu_admin_and_above(user)
   end
 
   def self.readable_by?(user)
-    (user.has_role? States::Roles.zigvu_admin) || (user.has_role? States::Roles.zigvu_user)
+    # Zigvu user has read authority
+    States::Roles.zigvu_user_and_above(user)
   end
 
 end

@@ -20,13 +20,12 @@ Cellroti::Application.routes.draw do
     resources :games, :leagues, :seasons
   end
 
-  # #namespace :api, :path => "", :constraints => {:subdomain => "api"} do
-  # namespace :api do, :defaults => {:format => :json} do
-  #   namespace :v1 do
-  #     resources :det_groups, :path => "brands/groups", only: [:index, :show]
-  #   end
-  # end
-
+  #namespace :api, :path => "", :constraints => {:subdomain => "api"} do
+  namespace :api, :defaults => {:format => :json} do
+    namespace :v1 do
+      resources :det_groups, :path => "brands/groups", only: [:index, :show]
+    end
+  end
 
   devise_for :users
   # The priority is based upon order of creation: first created -> highest priority.

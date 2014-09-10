@@ -2,6 +2,7 @@ module Sprt
   class GamesController < ApplicationController
     authorize_actions_for ::Game
 
+    before_filter :ensure_html_format
     before_action :set_game, only: [:show, :edit, :update, :destroy]
     before_action :set_season, only: [:new, :edit, :create, :update]
 

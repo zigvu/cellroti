@@ -2,6 +2,7 @@ module Sprt
   class LeaguesController < ApplicationController
     authorize_actions_for ::League
 
+    before_filter :ensure_html_format
     before_action :set_league, only: [:show, :edit, :update, :destroy]
     before_action :set_sport, only: [:new, :edit, :create, :update]
 

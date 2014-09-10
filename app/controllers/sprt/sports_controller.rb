@@ -3,6 +3,7 @@ module Sprt
     authorize_actions_for ::Sport
 
     before_filter :ensure_html_format
+    before_filter :ensure_html_format
     before_action :set_sport, only: [:show, :edit, :update, :destroy]
 
     # GET /sports

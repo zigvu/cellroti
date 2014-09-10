@@ -2,6 +2,7 @@ module Analytics
   class DetGroupsController < ApplicationController
     authorize_actions_for ::DetGroup
 
+    before_filter :ensure_html_format
     before_action :set_det_group, only: [:show, :edit, :update, :destroy]
     before_action :set_client
 
@@ -55,6 +56,7 @@ module Analytics
       # Use callbacks to share common setup or constraints between actions.
       def set_det_group
         @det_group = ::DetGroup.find(params[:id])
+        authorize_action_for @det_group
       end
 
       def set_client

@@ -4,6 +4,7 @@ module Sprt
 
     authorize_actions_for ::Event
 
+    before_filter :ensure_html_format
     before_action :set_event, only: [:show, :edit, :update, :destroy]
     before_action :set_game, only: [:new, :edit, :create, :update]
     before_action :create_times, only: [:new, :edit]

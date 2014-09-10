@@ -2,6 +2,7 @@ module Sprt
   class SeasonsController < ApplicationController
     authorize_actions_for ::Season
 
+    before_filter :ensure_html_format
     before_action :set_season, only: [:show, :edit, :update, :destroy]
     before_action :set_league, only: [:new, :edit, :create, :update]
 

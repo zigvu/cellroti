@@ -2,6 +2,7 @@ module Sprt
   class EventTypesController < ApplicationController
     authorize_actions_for ::EventType
 
+    before_filter :ensure_html_format
     before_action :set_event_type, only: [:show, :edit, :update, :destroy]
     before_action :set_sport, only: [:new, :edit, :create, :update]
 
