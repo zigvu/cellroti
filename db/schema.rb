@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140909204619) do
+ActiveRecord::Schema.define(version: 20140910172738) do
 
   create_table "client_detectables", force: true do |t|
     t.integer  "client_id"
@@ -51,12 +51,12 @@ ActiveRecord::Schema.define(version: 20140909204619) do
 
   create_table "det_groups", force: true do |t|
     t.string   "name"
-    t.integer  "user_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "client_id"
   end
 
-  add_index "det_groups", ["user_id"], name: "index_det_groups_on_user_id", using: :btree
+  add_index "det_groups", ["client_id"], name: "index_det_groups_on_client_id", using: :btree
 
   create_table "detectables", force: true do |t|
     t.string   "name"
@@ -185,8 +185,10 @@ ActiveRecord::Schema.define(version: 20140909204619) do
     t.string   "last_sign_in_ip"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "client_id"
   end
 
+  add_index "users", ["client_id"], name: "index_users_on_client_id", using: :btree
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 

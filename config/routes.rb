@@ -11,10 +11,21 @@ Cellroti::Application.routes.draw do
     resources :organizations, :det_groups
   end
 
+  namespace :analytics do
+    resources :det_groups, :path => "brands/groups", except: [:show]
+  end
+
   namespace :sprt do
     resources :sports, :teams, :event_types, :events
     resources :games, :leagues, :seasons
   end
+
+  # #namespace :api, :path => "", :constraints => {:subdomain => "api"} do
+  # namespace :api do, :defaults => {:format => :json} do
+  #   namespace :v1 do
+  #     resources :det_groups, :path => "brands/groups", only: [:index, :show]
+  #   end
+  # end
 
 
   devise_for :users

@@ -1,23 +1,28 @@
-module Admin
+module Analytics
   class DetGroupsController < ApplicationController
+    authorize_actions_for ::DetGroup
+
     before_action :set_det_group, only: [:show, :edit, :update, :destroy]
+    before_action :set_client
 
     # GET /det_groups
     def index
-      @det_groups = ::DetGroup.all
-    end
-
-    # GET /det_groups/1
-    def show
+      @det_groups = @client.det_groups
     end
 
     # GET /det_groups/new
     def new
       @det_group = ::DetGroup.new
+      @client.detectables.each do |d|
+        @det_group.det_group_detectables.build(detectable: d)
+      end
     end
 
     # GET /det_groups/1/edit
     def edit
+      (@client.detectables - @det_group.detectables).each do |d|
+        @det_group.det_group_detectables.build(detectable: d)
+      end
     end
 
     # POST /det_groups
@@ -25,7 +30,7 @@ module Admin
       @det_group = ::DetGroup.new(det_group_params)
 
       if @det_group.save
-        redirect_to @det_group, notice: 'Det group was successfully created.'
+        redirect_to analytics_det_groups_url, notice: 'Group was successfully created.'
       else
         render action: 'new'
       end
@@ -34,7 +39,7 @@ module Admin
     # PATCH/PUT /det_groups/1
     def update
       if @det_group.update(det_group_params)
-        redirect_to @det_group, notice: 'Det group was successfully updated.'
+        redirect_to analytics_det_groups_url, notice: 'Group was successfully updated.'
       else
         render action: 'edit'
       end
@@ -43,7 +48,7 @@ module Admin
     # DELETE /det_groups/1
     def destroy
       @det_group.destroy
-      redirect_to det_groups_url, notice: 'Det group was successfully destroyed.'
+      redirect_to analytics_det_groups_url, notice: 'Group was successfully destroyed.'
     end
 
     private
@@ -52,9 +57,14 @@ module Admin
         @det_group = ::DetGroup.find(params[:id])
       end
 
+      def set_client
+        @client = current_user.client
+      end
+
       # Only allow a trusted parameter "white list" through.
       def det_group_params
-        params.require(:det_group).permit(:name, :user_id)
+        params.require(:det_group).permit(:name, :client_id, 
+          det_group_detectables_attributes: [:id, :detectable_id, :_destroy])
       end
   end
 end

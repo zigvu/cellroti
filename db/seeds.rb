@@ -1,40 +1,30 @@
 include EventsHelper
 
 
-# Create users
-zigvuAdmin = User.create(email: "zigvu_admin@zigvu.com", password: "abcdefgh", password_confirmation: 'abcdefgh')
-zigvuAdmin.add_role(States::Roles.zigvu_admin)
-
-zigvuUser = User.create(email: "zigvu_user@zigvu.com", password: "abcdefgh", password_confirmation: 'abcdefgh')
-zigvuUser.add_role(States::Roles.zigvu_user)
-
-clientAdmin = User.create(email: "client_admin@zigvu.com", password: "abcdefgh", password_confirmation: 'abcdefgh')
-clientAdmin.add_role(States::Roles.client_admin)
-
-clientUser = User.create(email: "client_user@zigvu.com", password: "abcdefgh", password_confirmation: 'abcdefgh')
-clientUser.add_role(States::Roles.client_user)
-
-
 # Create Detectables/Organizations
-cocacolaOrg = zigvuAdmin.organizations.create(name: "CocaCola", industry: "Beverages")
+zigvuOrg = Organization.create(name: "Zigvu", industry: "CV")
+
+cocacolaOrg = Organization.create(name: "CocaCola", industry: "Beverages")
 cocacolaOrg.detectables.create(name: "coke", pretty_name: "CocaCola", description: "Main brand")
 cocacolaOrg.detectables.create(name: "gatorade", pretty_name: "Gatorade", description: "Sub-brand")
 cocacolaOrg.detectables.create(name: "sprite", pretty_name: "Sprite", description: "Sub-brand")
 
-pepsicolaOrg = zigvuAdmin.organizations.create(name: "Pepsi", industry: "Beverages, Fast Food")
+pepsicolaOrg = Organization.create(name: "Pepsi", industry: "Beverages, Fast Food")
 pepsicolaOrg.detectables.create(name: "pepsi", pretty_name: "Pepsi", description: "Main brand")
 pepsicolaOrg.detectables.create(name: "powerade", pretty_name: "Powerade", description: "Sub-brand")
 pepsicolaOrg.detectables.create(name: "fanta", pretty_name: "Fanta", description: "Sub-brand")
 pepsicolaOrg.detectables.create(name: "tacobell", pretty_name: "Taco Bell", description: "Sub-brand")
 
-
-mcDonaldsOrg = zigvuAdmin.organizations.create(name: "McDonalds", industry: "Fast Food")
+mcDonaldsOrg = Organization.create(name: "McDonalds", industry: "Fast Food")
 mcDonaldsOrg.detectables.create(name: "mcdonaldsM", pretty_name: "McDonalds", description: "Main brand")
 mcDonaldsOrg.detectables.create(name: "iamlovinit", pretty_name: "I Am Lovin' It", description: "Sub-brand")
 
+
 # Create clients
+zigvuClient = zigvuOrg.create_client(name: "Zigvu", pretty_name: "Zigvu", description: "Base Client to associate internal users with")
 cocacolaClient = cocacolaOrg.create_client(name: "CocaCola", pretty_name: "CocaCola", description: "Signed up on 9/8/2014")
 pepsiColaClient = pepsicolaOrg.create_client(name: "Pepsi", pretty_name: "Pepsi", description: "Signed up on 9/8/2014")
+
 
 # Assign detectables
 [1,2,3,4,8].each do |detectable_id|
@@ -43,6 +33,33 @@ end
 [4,5,6,7,1,8].each do |detectable_id|
 	pepsiColaClient.client_detectables.create(detectable_id: detectable_id)
 end
+
+
+# Create users
+zigvuAdmin = User.create(email: "zigvu_admin@zigvu.com", password: "abcdefgh", password_confirmation: 'abcdefgh')
+zigvuAdmin.add_role(States::Roles.zigvu_admin)
+zigvuAdmin.update(client: zigvuClient)
+
+zigvuUser = User.create(email: "zigvu_user@zigvu.com", password: "abcdefgh", password_confirmation: 'abcdefgh')
+zigvuUser.add_role(States::Roles.zigvu_user)
+zigvuUser.update(client: zigvuClient)
+
+cokeAdmin = User.create(email: "coke_admin@zigvu.com", password: "abcdefgh", password_confirmation: 'abcdefgh')
+cokeAdmin.add_role(States::Roles.client_admin)
+cokeAdmin.update(client: cocacolaClient)
+
+cokeUser = User.create(email: "coke_user@zigvu.com", password: "abcdefgh", password_confirmation: 'abcdefgh')
+cokeUser.add_role(States::Roles.client_user)
+cokeUser.update(client: cocacolaClient)
+
+pepsiAdmin = User.create(email: "pepsi_admin@zigvu.com", password: "abcdefgh", password_confirmation: 'abcdefgh')
+pepsiAdmin.add_role(States::Roles.client_admin)
+pepsiAdmin.update(client: pepsiColaClient)
+
+pepsiUser = User.create(email: "pepsi_user@zigvu.com", password: "abcdefgh", password_confirmation: 'abcdefgh')
+pepsiUser.add_role(States::Roles.client_user)
+pepsiUser.update(client: pepsiColaClient)
+
 
 #Create sports related
 soccer = Sport.create(name: "Soccer", description: "Football for the rest of the world")

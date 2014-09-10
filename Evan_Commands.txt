@@ -13,6 +13,8 @@ rails g model Game name description:text start_date:datetime end_date:datetime v
 rails g model GameTeam game:references team:references
 rails g model EventType name description:text sport:references
 rails g model Event event_time:integer event_type:references game:references team:references
+rails g scaffold DetGroup name client:references
+rails g model DetGroupDetectable det_group:references detectable:references
 
 rails g model Video title:text description:text comment:text source_type:string source_url:string quality:string format:string length:integer runstatus:string start_time:datetime end_time:datetime avg_frame_rate:float game:references
 rails g model VideoFrame frame_time:datetime frame_number:integer video:references

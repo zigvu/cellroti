@@ -1,0 +1,27 @@
+<table>
+  <thead>
+    <tr>
+      <th>Group Name</th>
+      <th>Brands</th>
+      <th width="80px">Change</th>
+      <th width="80px">Delete</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @det_groups.each do |det_group| %>
+      <tr>
+        <td><%= det_group.name %></td>
+        <td>
+          <ul>
+            <% det_group.detectables.each do |detectable| %>
+              <li><%= detectable.pretty_name %></li>
+            <% end %>
+          </ul>
+        </td>
+        <td><%= link_to 'Change', edit_analytics_det_group_path(det_group) %></td>
+        <td><%= link_to 'Delete', [:analytics, det_group], method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

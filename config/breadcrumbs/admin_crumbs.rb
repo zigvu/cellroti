@@ -36,23 +36,3 @@ crumb :client_new do
   link "New client"
   parent :clients
 end
-
-# Client management
-# crumb :det_group do |client|
-#   link client.pretty_name, admin_client_path(client)
-# end
-
-# crumb :det_group_new do |det_group, client|
-#   link "New Group", admin_client_path(client)
-#   parent :clients
-# end
-
-# crumb :client_edit do |client|
-#   link client.pretty_name, admin_client_path(client)
-#   parent :clients
-# end
-
-# crumb :client_new do
-#   link "New client"
-#   parent :clients
-# end

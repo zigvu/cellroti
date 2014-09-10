@@ -13,6 +13,5 @@ class User < ActiveRecord::Base
     add_role(States::Roles.guest_user)
   end
 
-  has_many :det_groups, dependent: :destroy
-  has_many :detectables, through: :det_groups
+  belongs_to :client
 end
