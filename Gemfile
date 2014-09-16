@@ -17,22 +17,33 @@ gem 'coffee-rails', '~> 4.0.0'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 gem 'therubyracer', platforms: :ruby
+
+# scaffold and view helpers
 gem 'bootstrap-glyphicons'
 gem 'foundation-rails'
 gem 'foundation-icons-sass-rails'
 gem 'foundation_rails_helper'
+gem 'gretel'
+gem 'fancybox2-rails', '~> 0.2.6'
 gem 'simple_form'
+gem 'draper', '~> 1.3'
+# authentication and roles
 gem 'devise', '~> 3.2.0'
 gem 'simple_token_authentication' # for API authentication using devise
 gem 'authority'
 gem 'rolify'
-gem 'draper', '~> 1.3'
+# analytics
+gem 'dcjs-rails', '~> 1.6.0'
+gem 'd3-rails'
+gem 'crossfilter-rails'
+# misc.
 gem 'high_voltage', '~> 2.2.1'
 gem 'jquery-ui-rails'
 gem 'jquery-turbolinks'
-gem 'fancybox2-rails', '~> 0.2.6'
-gem 'gretel'
-
+# memcached
+gem 'dalli'
+gem 'cache_digests'    # to expire view partials
+gem 'kgio', '~> 2.9.2' # makes dalli 20-30% faster as per dalli github page
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'

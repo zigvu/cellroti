@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  score: 1.5
+  bbox_x: 1
+  bbox_y: 1
+  bbox_width: 1
+  bbox_height: 1
+  video_frame_id: 
+  detectable_id: 
+
+two:
+  score: 1.5
+  bbox_x: 1
+  bbox_y: 1
+  bbox_width: 1
+  bbox_height: 1
+  video_frame_id: 
+  detectable_id: 

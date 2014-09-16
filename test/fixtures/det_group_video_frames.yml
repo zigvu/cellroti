@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  det_group_crowding: 1.5
+  visual_saliency: 1.5
+  timing_effectiveness: 1.5
+  spatial_effectiveness: 1.5
+  det_group_id: 
+  video_frame_id: 
+
+two:
+  det_group_crowding: 1.5
+  visual_saliency: 1.5
+  timing_effectiveness: 1.5
+  spatial_effectiveness: 1.5
+  det_group_id: 
+  video_frame_id: 

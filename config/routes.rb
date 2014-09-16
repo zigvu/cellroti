@@ -24,6 +24,8 @@ Cellroti::Application.routes.draw do
   namespace :api, :defaults => {:format => :json} do
     namespace :v1 do
       resources :det_groups, :path => "brands/groups", only: [:index, :show]
+      get 'data/detectables' => 'data#detectables'
+      #resources :videos, :path => "data/videos"
     end
   end
 

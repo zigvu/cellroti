@@ -8,11 +8,11 @@ class Api::V1::DetGroupsController < ApplicationController
   # GET /det_groups
   def index
     @det_groups = @client.det_groups
-    render json: @det_groups.to_json
+    render json: @det_groups.to_json(:only => [:id, :name])
   end
 
   def show
-    render json: @det_group.to_json
+    render json: @det_group.to_json(:only => [:id, :name])
   end
 
   private

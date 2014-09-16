@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140910200537) do
+ActiveRecord::Schema.define(version: 20140916183647) do
 
   create_table "client_detectables", force: true do |t|
     t.integer  "client_id"
@@ -49,6 +49,20 @@ ActiveRecord::Schema.define(version: 20140910200537) do
   add_index "det_group_detectables", ["det_group_id"], name: "index_det_group_detectables_on_det_group_id", using: :btree
   add_index "det_group_detectables", ["detectable_id"], name: "index_det_group_detectables_on_detectable_id", using: :btree
 
+  create_table "det_group_video_frames", force: true do |t|
+    t.float    "det_group_crowding"
+    t.float    "visual_saliency"
+    t.float    "timing_effectiveness"
+    t.float    "spatial_effectiveness"
+    t.integer  "det_group_id"
+    t.integer  "video_frame_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "det_group_video_frames", ["det_group_id"], name: "index_det_group_video_frames_on_det_group_id", using: :btree
+  add_index "det_group_video_frames", ["video_frame_id"], name: "index_det_group_video_frames_on_video_frame_id", using: :btree
+
   create_table "det_groups", force: true do |t|
     t.string   "name"
     t.datetime "created_at"
@@ -69,12 +83,28 @@ ActiveRecord::Schema.define(version: 20140910200537) do
 
   add_index "detectables", ["organization_id"], name: "index_detectables_on_organization_id", using: :btree
 
+  create_table "detections", force: true do |t|
+    t.float    "score"
+    t.integer  "bbox_x"
+    t.integer  "bbox_y"
+    t.integer  "bbox_width"
+    t.integer  "bbox_height"
+    t.integer  "video_frame_id"
+    t.integer  "detectable_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "detections", ["detectable_id"], name: "index_detections_on_detectable_id", using: :btree
+  add_index "detections", ["video_frame_id"], name: "index_detections_on_video_frame_id", using: :btree
+
   create_table "event_types", force: true do |t|
     t.string   "name"
     t.text     "description"
     t.integer  "sport_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.float    "weight"
   end
 
   add_index "event_types", ["sport_id"], name: "index_event_types_on_sport_id", using: :btree
@@ -132,6 +162,22 @@ ActiveRecord::Schema.define(version: 20140910200537) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "raw_detectables", force: true do |t|
+    t.float    "spatial_effectiveness"
+    t.float    "visual_saliency"
+    t.integer  "detections_count"
+    t.string   "quadrants"
+    t.integer  "video_frame_id"
+    t.integer  "detectable_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.float    "cumulative_area"
+    t.float    "event_score"
+  end
+
+  add_index "raw_detectables", ["detectable_id"], name: "index_raw_detectables_on_detectable_id", using: :btree
+  add_index "raw_detectables", ["video_frame_id"], name: "index_raw_detectables_on_video_frame_id", using: :btree
 
   create_table "roles", force: true do |t|
     t.string   "name"
@@ -202,11 +248,11 @@ ActiveRecord::Schema.define(version: 20140910200537) do
   add_index "users_roles", ["user_id", "role_id"], name: "index_users_roles_on_user_id_and_role_id", using: :btree
 
   create_table "video_frames", force: true do |t|
-    t.datetime "frame_time"
     t.integer  "frame_number"
     t.integer  "video_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "frame_time"
   end
 
   add_index "video_frames", ["video_id"], name: "index_video_frames_on_video_id", using: :btree

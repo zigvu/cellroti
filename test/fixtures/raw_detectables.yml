@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  spatial_effectiveness: 1.5
+  detections_score: 1.5
+  detections_count: 1
+  quadrants: MyString
+  video_frame_id: 
+  detectable_id: 
+
+two:
+  spatial_effectiveness: 1.5
+  detections_score: 1.5
+  detections_count: 1
+  quadrants: MyString
+  video_frame_id: 
+  detectable_id: 

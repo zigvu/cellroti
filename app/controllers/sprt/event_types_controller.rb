@@ -63,7 +63,7 @@ module Sprt
 
       # Only allow a trusted parameter "white list" through.
       def event_type_params
-        params.require(:event_type).permit(:name, :description, :sport_id)
+        params.require(:event_type).permit(:name, :description, :weight, :sport_id)
       end
   end
 end

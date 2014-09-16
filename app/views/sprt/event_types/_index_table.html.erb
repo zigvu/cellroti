@@ -3,6 +3,7 @@
     <tr>
       <th>Name</th>
       <th>Description</th>
+      <th>Weight</th>
       <th width="50px"></th>
       <th width="50px"></th>
       <th width="80px"></th>
@@ -14,6 +15,7 @@
       <tr>
         <td><%= event_type.name %></td>
         <td><%= event_type.description %></td>
+        <td><%= event_type.weight %></td>
         <td><%= link_to 'Show', [:sprt, event_type] %></td>
         <td><%= link_to 'Edit', edit_sprt_event_type_path(event_type, sport_id: @sport.id) %></td>
         <td><%= link_to 'Destroy', [:sprt, event_type], method: :delete, data: { confirm: 'Are you sure?' } %></td>
