@@ -1,10 +1,11 @@
+require 'json'
+
 module Metrics
 	class DetGroupEffectivenessMetrics
-		def initialize(video, client)
+		def initialize(video, detGroups)
 			@video = video
-			@client = client
 			@det_group_detectables = {}
-			@client.det_groups.each do |dg|
+			detGroups.each do |dg|
 				@det_group_detectables[dg.id] = dg.detectables.pluck(:id)
 			end
 			@allDetectables = @det_group_detectables.map { |k,v| v }.flatten.uniq
@@ -52,6 +53,14 @@ module Metrics
 						video_frame.raw_detectables
 							.where(raw_detectables: {detectable_id: @allDetectables})
 							.pluck(:detectable_id, :spatial_effectiveness)])
+					detectionsCount = detections_count(Hash[
+						video_frame.raw_detectables
+							.where(raw_detectables: {detectable_id: @allDetectables})
+							.pluck(:detectable_id, :detections_count)])
+					quadrantsCount = quadrants_count(Hash[
+						video_frame.raw_detectables
+							.where(raw_detectables: {detectable_id: @allDetectables})
+							.pluck(:detectable_id, :quadrants)])
 
 					# populate sliding window
 					@det_group_detectables.each do |dgId, detectablesId|
@@ -73,8 +82,21 @@ module Metrics
 								visual_saliency: visualSaliency[dgId],
 								timing_effectiveness: timingEffectiveness[dgId],
 								spatial_effectiveness: spatialEffectiveness[dgId],
+								detections_count: detectionsCount[dgId],
+								quadrants: quadrantsCount[dgId],
 								det_group_id: dgId)
 					end
+					# @det_group_detectables.each do |dgId, detectablesId|
+					# 	eff = {
+					# 			det_group_crowding: detGroupCrowding[dgId],
+					# 			visual_saliency: visualSaliency[dgId],
+					# 			timing_effectiveness: timingEffectiveness[dgId],
+					# 			spatial_effectiveness: spatialEffectiveness[dgId],
+					# 			detections_count: detectionsCount[dgId],
+					# 			quadrants: quadrantsCount[dgId],
+					# 			det_group_id: dgId}
+					# 	puts eff
+					# end
 
 				# 	break
 				# end
@@ -85,15 +107,9 @@ module Metrics
 
 		# for det_group_crowding
 		def spatial_det_group_crowding(cumulativeAreaHash)
-			detGroupArea = {}
 			spatialDetGroupCrowding = {}
-			@det_group_detectables.each do |dgId, detectablesId|
-				detGroupArea[dgId] = 0
-				detectablesId.each do |dId|
-					detGroupArea[dgId] += cumulativeAreaHash[dId]
-				end
-				#puts "#{dgId}: #{detectablesId} : #{detGroupArea[dgId]}"
-			end
+			detGroupArea = operate_det_hash(cumulativeAreaHash, :add)
+
 			allGroupArea = detGroupArea.map{ |k,v| v}.sum
 			if allGroupArea <= 0
 				@det_group_detectables.each do |dgId, detectablesId|
@@ -108,41 +124,60 @@ module Metrics
 		end
 
 		def visual_saliency(visualSaliencyHash)
-			visualSaliency = {}
-			@det_group_detectables.each do |dgId, detectablesId|
-				visualSaliency[dgId] = 0
-				detectablesId.each do |dId|
-					visualSaliency[dgId] += visualSaliencyHash[dId]
-				end
-				visualSaliency[dgId] /= detectablesId.count if detectablesId.count > 0
-				#puts "#{dgId}: #{detectablesId} : #{visualSaliency[dgId]}"
-			end
-			return visualSaliency
+			return operate_det_hash(visualSaliencyHash, :average)
 		end
 
 		# for timing_effectiveness
 		def max_event_score(eventScoresHash)
-			eventScores = {}
-			@det_group_detectables.each do |dgId, detectablesId|
-				eventScores[dgId] = 0
-				detectablesId.each do |dId|
-					eventScores[dgId] = [eventScores[dgId], eventScoresHash[dId]].max
-				end
-				#puts "#{dgId}: #{detectablesId} : #{eventScores[dgId]}"
-			end
-			return eventScores
+			return operate_det_hash(eventScoresHash, :max)
 		end
 
 		def spatial_effectiveness(spatialEffectivenessHash)
-			spatialEffectiveness = {}
+			return operate_det_hash(spatialEffectivenessHash, :max)
+		end
+
+		def detections_count(detectionsCountHash)
+			return operate_det_hash(detectionsCountHash, :add)
+		end
+
+		def quadrants_count(quadrantsCountHash)
+			quadrantsCount = {}
 			@det_group_detectables.each do |dgId, detectablesId|
-				spatialEffectiveness[dgId] = 0
-				detectablesId.each do |dId|
-					spatialEffectiveness[dgId] = [spatialEffectiveness[dgId], spatialEffectivenessHash[dId]].max
+				qdTotal = {}
+				detectablesId.each_with_index do |dId, idx|
+					if idx == 0
+						qdTotal = JSON.parse(quadrantsCountHash[dId])
+					else
+						JSON.parse(quadrantsCountHash[dId]).each do |k, v|
+							qdTotal[k] += v
+						end
+					end
 				end
-				#puts "#{dgId}: #{detectablesId} : #{spatialEffectiveness[dgId]}"
+				quadrantsCount[dgId] = qdTotal.to_json
+				# puts quadrantsCount[dgId]
 			end
-			return spatialEffectiveness
+			return quadrantsCount
+		end
+
+		def operate_det_hash(inputHash, opMethod)
+			outputHash = {}
+			@det_group_detectables.each do |dgId, detectablesId|
+				outputHash[dgId] = 0
+				detectablesId.each do |dId|
+					if opMethod == :max
+						outputHash[dgId] = [outputHash[dgId], inputHash[dId]].max
+					elsif (opMethod == :add) || (opMethod == :average)
+						outputHash[dgId] += inputHash[dId]
+					else
+						raise RuntimeError("Unknown method to operate on hash")
+					end
+				end
+				if opMethod == :average
+					outputHash[dgId] /= detectablesId.count if detectablesId.count > 0
+				end
+				#puts "#{dgId}: #{detectablesId} : #{outputHash[dgId]}"
+			end
+			return outputHash
 		end
 
 	end

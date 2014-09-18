@@ -11,14 +11,17 @@ class Api::V1::DetGroupsController < ApplicationController
     render json: @det_groups.to_json(:only => [:id, :name])
   end
 
+  # GET /det_groups/1
   def show
-    render json: @det_group.to_json(:only => [:id, :name])
+    jadg = Jsonifiers::JAnalyticsDetGroup.new(@det_group)
+    render json: jadg.to_json
   end
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_det_group
-      @det_group = ::DetGroup.find(params[:id])
+      id = det_group_params[:id]
+      @det_group = ::DetGroup.find(id)
       authorize_action_for @det_group
     end
 
@@ -28,7 +31,6 @@ class Api::V1::DetGroupsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def det_group_params
-      # params.require(:det_group).permit(:name, :user_id, 
-      #   det_group_detectables_attributes: [:id, :detectable_id, :_destroy])
+      params.permit(:id)
     end
 end

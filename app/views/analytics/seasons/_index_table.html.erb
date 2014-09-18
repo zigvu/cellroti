@@ -1,0 +1,21 @@
+<table>
+  <thead>
+    <tr>
+      <th>Sport</th>
+      <th>Season</th>
+      <th>Num Games</th>
+      <th>Show</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @seasons.each do |season| %>
+      <tr>
+        <td><%= season.league.sport.name %></td>
+        <td><%= season.name %></td>
+        <td><%= season.games.count %></td>
+        <td><%= link_to 'Show', [:analytics, season] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

@@ -110,6 +110,10 @@ wc2014 = worldCup.seasons.create(name: "World Cup 2014", description: "2014 Worl
 wcGermanyVsBrazil = wc2014.games.create(name: "Semi Final", description: "Germany Vs. Brazil", start_date: Time.now - 2.hours, end_date: Time.now - 2.hours + 13.minutes + 53.seconds, venue_city: "Rio", venue_stadium: "Rio Grande")
 wcGermanyVsFrance = wc2014.games.create(name: "Semi Final", description: "Germany Vs. France", start_date: Time.now - 1.day - 2.hours, end_date: Time.now - 1.day, venue_city: "Rio", venue_stadium: "Rio Grande")
 
+mc = Managers::MClient.new(cocacolaClient)
+mc.addAllowedSeasonIds(wc2014.id)
+
+
 GameTeam.create(game_id: wcGermanyVsBrazil.id, team_id: wcGermany.id)
 GameTeam.create(game_id: wcGermanyVsBrazil.id, team_id: wcBrazil.id)
 GameTeam.create(game_id: wcGermanyVsFrance.id, team_id: wcGermany.id)
@@ -128,7 +132,8 @@ wcGermanyVsBrazilVideo = wcGermanyVsBrazil.videos.create(
 	runstatus: "run-complete",
 	start_time: wcGermanyVsBrazil.start_date,
 	end_time: wcGermanyVsBrazil.end_date,
-	avg_frame_rate: 25)
+	avg_frame_rate: 25,
+	detection_frame_rate: 5)
 
 wcGermanyVsBrazil.events.create(event_type_id: soccerHalfTimeStart.id, team_id: wcGermany.id, event_time: times_to_milliseconds(0,2,0,0))
 wcGermanyVsBrazil.events.create(event_type_id: soccerHalfTimeEnd.id, team_id: wcGermany.id, event_time: times_to_milliseconds(0,5,0,0))
@@ -145,7 +150,12 @@ caffeWriteService.populate
 puts "Creating raw detectables"
 pbm = Metrics::RawDetectableMetrics.new(wcGermanyVsBrazilVideo)
 pbm.populate
-
+puts "Creating det group effectiveness"
+dgm = Metrics::DetGroupEffectivenessMetrics.new(wcGermanyVsBrazilVideo, cocacolaClient.det_groups)
+dgm.populate
+puts "Creating summary of det group effectiveness"
+sdgm = Metrics::SummaryDetGroupMetrics.new(wcGermanyVsBrazilVideo, cocacolaClient.det_groups)
+sdgm.populate
 
 wcGermanyVsFrance.events.create(event_type_id: soccerHalfTimeStart.id, team_id: wcGermany.id, event_time: times_to_milliseconds(0,45,0,0))
 wcGermanyVsFrance.events.create(event_type_id: soccerHalfTimeEnd.id, team_id: wcGermany.id, event_time: times_to_milliseconds(0,55,0,0))

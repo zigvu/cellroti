@@ -4,7 +4,7 @@ module Serializers
 		# First value in a field array row is the name of the field
 		# Second value in a field array row is an array of things it holds
 		@@clientSettingsFieldValues = [
-			[:brands, [:detectables]]
+			[:seasons, [:allowed]]
 		]
 
 		def initialize(client_settings)
@@ -12,11 +12,11 @@ module Serializers
 		end
 
 		def resetAllSettings
-			resetBrands
+			resetSeasons
 		end
 
-		def resetBrands
-			setDefaultField(:brands)
+		def resetSeasons
+			setDefaultField(:seasons)
 		end
 
 		# No way to share class variables in Ruby - so duplicate

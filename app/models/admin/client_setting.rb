@@ -1,5 +1,5 @@
 class ClientSetting < ActiveRecord::Base
-	serialize :brands, Hash
+	serialize :seasons, Hash
 	
 	belongs_to :client
 end

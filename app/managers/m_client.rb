@@ -4,14 +4,21 @@ module Managers
 			@client = client
 		end
 
-		def getDetectableIds
-			Serializers::ClientSettingsSerializer.new(@client.client_setting).getBrandsDetectables
+		def getAllowedSeasonIds
+			set_client_settings
+			return [@scs.getSeasonsAllowed].flatten
 		end
 
-		def setDetectableIds(detectable_ids)
-			Serializers::ClientSettingsSerializer.new(@client.client_setting)
-				.replaceBrandsDetectables(detectable_ids)
+		def addAllowedSeasonIds(seasonIds)
+			set_client_settings
+			@scs.addSeasonsAllowed(seasonIds)
 		end
+
+		private
+		
+			def set_client_settings
+				@scs = Serializers::ClientSettingsSerializer.new(@client.client_setting)
+			end
 
 	end
 end

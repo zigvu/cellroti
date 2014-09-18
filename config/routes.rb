@@ -13,6 +13,7 @@ Cellroti::Application.routes.draw do
 
   namespace :analytics do
     resources :det_groups, :path => "brands/groups", except: [:show]
+    resources :seasons, only: [:index, :show]
   end
 
   namespace :sprt do
@@ -25,6 +26,11 @@ Cellroti::Application.routes.draw do
     namespace :v1 do
       resources :det_groups, :path => "brands/groups", only: [:index, :show]
       get 'data/detectables' => 'data#detectables'
+      resources :seasons, :path => "analytics/seasons", only: [:index, :show] do
+        member do
+          get 'data'
+        end
+      end
       #resources :videos, :path => "data/videos"
     end
   end
