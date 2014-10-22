@@ -16,6 +16,7 @@
 //= require d3
 //= require crossfilter
 //= require dc
+//= require jquery-readyselector
 //= require_tree .
 
 $(function(){ 

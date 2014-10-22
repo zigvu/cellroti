@@ -27,49 +27,61 @@ module Jsonifiers
 			retArr = []
 			game.events.each do |event|
 				retArr << {
-					event_type_id: event.event_type_id, 
-					event_time: milliseconds_to_prettyprint(event.event_time)}
+					id: event.event_type_id, 
+					#time: milliseconds_to_prettyprint(event.event_time)}
+					time: event.event_time
+				}
 			end
+			retArr.sort_by! {|h| h[:time]}
 			return retArr
 		end
 		
 		def self.brand_group_data_keys
 			return [
-				:brand_group_crowding,  # 0
-				:visual_saliency,       # 1
-				:timing_effectiveness,  # 2
-				:spatial_effectiveness, # 3
-				:detections_count,      # 4
-				:quadrants              # 5
+				:brand_effectiveness,   # 0
+				:brand_group_crowding,  # 1
+				:visual_saliency,       # 2
+				:timing_effectiveness,  # 3
+				:spatial_effectiveness, # 4
+				:detections_count,      # 5
+				:quadrants              # 6
 			]
 		end
 
 		def self.getGameSummaryData(game, summaryTableName, det_group_ids)
 			retArr = []
 			game.send(summaryTableName).where(det_group_id: det_group_ids).each do |sdata|
-				quadrants = {}
-				JSON.parse(sdata.quadrants).each do |k,v|
-					quadrants[k] = sprintf("%.4f", v)
+				quadrants = []
+				qdata = JSON.parse(sdata.quadrants)
+				qdata.keys.sort.each do |k|
+					quadrants << sprintf("%.4f", qdata[k])
 				end
 
 				data = [
-					sprintf("%.4f", sdata[:det_group_crowding]),    # 0
-					sprintf("%.4f", sdata[:visual_saliency]),       # 1
-					sprintf("%.4f", sdata[:timing_effectiveness]),  # 2
-					sprintf("%.4f", sdata[:spatial_effectiveness]), # 3
-					sdata[:detections_count],                       # 4
-					quadrants                                       # 5
+					sprintf("%.4f", sdata[:brand_effectiveness]),   # 0
+					sprintf("%.4f", sdata[:det_group_crowding]),    # 1
+					sprintf("%.4f", sdata[:visual_saliency]),       # 2
+					sprintf("%.4f", sdata[:timing_effectiveness]),  # 3
+					sprintf("%.4f", sdata[:spatial_effectiveness]), # 4
+					sdata[:detections_count],                       # 5
+					quadrants                                       # 6
 				]
-				
-				sdataHash = {
-					id: sdata.id, 
-					time: milliseconds_to_prettyprint(sdata[:frame_time]),
-					data: data
+
+				dataIdx = retArr.find_index {|d| d[:time] == sdata[:frame_time]}
+				if dataIdx == nil
+					retArr << {
+						time: sdata[:frame_time], 
+						bgData: []
+					}
+					dataIdx = retArr.find_index {|d| d[:time] == sdata[:frame_time]}
+				end
+				retArr[dataIdx][:bgData] << {
+					sdata.det_group_id => data
 				}
-				retArr << sdataHash
 			end
+			retArr.sort_by! {|h| h[:time]}
 			return retArr
 		end
-		
+
 	end
 end

@@ -9,6 +9,7 @@ module Metrics
 		end
 
 		def populate
+			brand_effectiveness = {}
 			det_group_crowding = {}
 			visual_saliency = {}
 			timing_effectiveness = {}
@@ -16,6 +17,7 @@ module Metrics
 			detections_count = {}
 			quadrants = {}
 			@resolutions.each do |t, res|
+				brand_effectiveness[t] = {}
 				det_group_crowding[t] = {}
 				visual_saliency[t] = {}
 				timing_effectiveness[t] = {}
@@ -33,6 +35,7 @@ module Metrics
 				@resolutions.each do |t, res|
 					if res[:frame_counter] == 0
 						@detGroups.each do |dg|
+							brand_effectiveness[t][dg.id] = 0
 							det_group_crowding[t][dg.id] = 0
 							visual_saliency[t][dg.id] = 0
 							timing_effectiveness[t][dg.id] = 0
@@ -48,6 +51,7 @@ module Metrics
 				# loop through the det groups of video frame
 				video_frame.det_group_video_frames.each do |dgvf|
 					@resolutions.each do |t, res|
+						brand_effectiveness[t][dgvf.det_group_id] += dgvf.brand_effectiveness
 						det_group_crowding[t][dgvf.det_group_id] += dgvf.det_group_crowding
 						visual_saliency[t][dgvf.det_group_id] += dgvf.visual_saliency
 						timing_effectiveness[t][dgvf.det_group_id] += dgvf.timing_effectiveness
@@ -68,6 +72,7 @@ module Metrics
 				@resolutions.each do |t, res|
 					if res[:frame_counter] == res[:num_of_frames]
 						@detGroups.each do |dg|
+							brand_effectiveness[t][dg.id] /= res[:frame_counter]
 							det_group_crowding[t][dg.id] /= res[:frame_counter]
 							visual_saliency[t][dg.id] /= res[:frame_counter]
 							timing_effectiveness[t][dg.id] /= res[:frame_counter]
@@ -79,6 +84,7 @@ module Metrics
 
 							# save to right table
 							@video.send(res[:tname]).create(
+								brand_effectiveness: brand_effectiveness[t][dg.id],
 								det_group_crowding: det_group_crowding[t][dg.id],
 								visual_saliency: visual_saliency[t][dg.id],
 								timing_effectiveness: timing_effectiveness[t][dg.id],
@@ -103,6 +109,7 @@ module Metrics
 			@resolutions.each do |t, res|
 				if res[:frame_counter] != 0
 					@detGroups.each do |dg|
+						brand_effectiveness[t][dg.id] /= res[:frame_counter]
 						det_group_crowding[t][dg.id] /= res[:frame_counter]
 						visual_saliency[t][dg.id] /= res[:frame_counter]
 						timing_effectiveness[t][dg.id] /= res[:frame_counter]
@@ -114,6 +121,7 @@ module Metrics
 
 						# save to right table
 						@video.send(res[:tname]).create(
+							brand_effectiveness: brand_effectiveness[t][dg.id],
 							det_group_crowding: det_group_crowding[t][dg.id],
 							visual_saliency: visual_saliency[t][dg.id],
 							timing_effectiveness: timing_effectiveness[t][dg.id],

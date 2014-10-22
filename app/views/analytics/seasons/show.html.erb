@@ -1,5 +1,10 @@
 <% breadcrumb :analytics_season_show, @season %>
 
+<script type="text/javascript">
+  window.seasonLabelPath = "/api/v1/analytics/seasons/" + <%= @season.id %>;
+  window.seasonShowPath = "/api/v1/analytics/seasons/" + <%= @season.id %> + "/data";
+</script>
+
 <div class="row">
   <div class="small-6 medium-3 columns">
 	  <div class="panel">Brand Effectiveness</div>
@@ -16,20 +21,25 @@
 </div>
 
 <div class="row">
-  <div class="small-12 large-9 columns">
-  	<div class="panel">Brand Effectiveness Line Chart</div>
-  </div>
-  <div class="small-12 large-3 columns">
-  	<div class="panel">Brand Group Selection</div>
+  <div class="small-12 columns">
+    <div class="panel">
+      <div class="chart-title">Brand Effectiveness Series Chart</div>
+      <div id="dc-brand-effectiveness-series-chart"></div>
+      <div id="dc-brand-effectiveness-range-chart"></div>
+      <div class="hushed-out">Select lower chart to zoom in/out</div>
+    </div>
   </div>
 </div>
 
 <div class="row">
   <div class="small-6 columns">
-  	<div class="panel">Brand Crowding Bar Chart</div>
+  	<div class="panel" id="dc-brand-crowding-bar-chart">Brand Crowding Bar Chart</div>
   </div>
   <div class="small-6 columns">
-  	<div class="panel">Visual Saliency Bar Chart</div>
+  	<div class="panel">
+      <div class="chart-title">Visual Saliency Bar Chart</div>
+      <div class="button" id="debug_dump">Debug dump</div>
+    </div>
   </div>
 </div>
 

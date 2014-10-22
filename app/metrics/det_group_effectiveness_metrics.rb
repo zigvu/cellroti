@@ -19,6 +19,11 @@ module Metrics
 
 			@spatialDetGroupCrowdingWeight = 0.75
 			@temporalDetGroupCrowdingWeight = 0.25
+
+			@be_brandGroupCrowdingWeight = 0.25
+			@be_visualSaliencyWeight = 0.25
+			@be_timingEffectivenessWeight = 0.25
+			@be_spatialEffectivenessWeight = 0.25
 		end
 
 		def populate
@@ -77,7 +82,14 @@ module Metrics
 
 					# populate database
 					@det_group_detectables.each do |dgId, detectablesId|
+						brand_effectiveness = 
+							@be_brandGroupCrowdingWeight   * detGroupCrowding[dgId] +
+							@be_visualSaliencyWeight       * visualSaliency[dgId] +
+							@be_timingEffectivenessWeight  * timingEffectiveness[dgId] +
+							@be_spatialEffectivenessWeight * spatialEffectiveness[dgId]
+
 						video_frame.det_group_video_frames.create(
+								brand_effectiveness: brand_effectiveness,
 								det_group_crowding: detGroupCrowding[dgId],
 								visual_saliency: visualSaliency[dgId],
 								timing_effectiveness: timingEffectiveness[dgId],
@@ -88,6 +100,7 @@ module Metrics
 					end
 					# @det_group_detectables.each do |dgId, detectablesId|
 					# 	eff = {
+					# 			brand_effectiveness: brand_effectiveness,
 					# 			det_group_crowding: detGroupCrowding[dgId],
 					# 			visual_saliency: visualSaliency[dgId],
 					# 			timing_effectiveness: timingEffectiveness[dgId],

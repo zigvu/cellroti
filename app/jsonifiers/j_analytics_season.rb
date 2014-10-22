@@ -23,13 +23,8 @@ module Jsonifiers
 			
 			retHash[:games] = []
 			@season.games.each do |game|
-				teamHash = {}
-				game.teams.each do |team|
-					teamHash[:id] = team.id
-					teamHash[:name] = team.name
-				end
 				retHash[:games] << {
-					id: game.id, name: game.name, teams: teamHash, 
+					id: game.id, name: game.name, teams: game.teams.pluck(:id), 
 					start_date: game.start_date, end_date: game.end_date, 
 					venue_city: game.venue_city, venue_stadium: game.venue_stadium}
 			end

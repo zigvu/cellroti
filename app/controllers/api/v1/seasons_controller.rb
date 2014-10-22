@@ -38,6 +38,6 @@ class Api::V1::SeasonsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def season_params
-      params.permit(:id)
+      params.permit(:id, :format)
     end
 end

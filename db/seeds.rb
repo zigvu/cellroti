@@ -107,8 +107,8 @@ wcFrance = worldCup.teams.create(name: "France", description: "French team")
 wcBrazil = worldCup.teams.create(name: "Brazil", description: "Brazil team")
 
 wc2014 = worldCup.seasons.create(name: "World Cup 2014", description: "2014 World Cup")
-wcGermanyVsBrazil = wc2014.games.create(name: "Semi Final", description: "Germany Vs. Brazil", start_date: Time.now - 2.hours, end_date: Time.now - 2.hours + 13.minutes + 53.seconds, venue_city: "Rio", venue_stadium: "Rio Grande")
-wcGermanyVsFrance = wc2014.games.create(name: "Semi Final", description: "Germany Vs. France", start_date: Time.now - 1.day - 2.hours, end_date: Time.now - 1.day, venue_city: "Rio", venue_stadium: "Rio Grande")
+wcGermanyVsBrazil = wc2014.games.create(name: "Semi Final", description: "Germany Vs. Brazil", start_date: Time.now - 1.day - 2.hours, end_date: Time.now - 1.day - 2.hours + 6.minutes + 41.seconds, venue_city: "Rio", venue_stadium: "Rio Grande")
+wcGermanyVsFrance = wc2014.games.create(name: "Semi Final", description: "Germany Vs. France", start_date: Time.now - 2.hours, end_date: Time.now - 2.hours + 6.minutes + 43.seconds, venue_city: "CRio", venue_stadium: "CRio Grande")
 
 mc = Managers::MClient.new(cocacolaClient)
 mc.addAllowedSeasonIds(wc2014.id)
@@ -119,33 +119,34 @@ GameTeam.create(game_id: wcGermanyVsBrazil.id, team_id: wcBrazil.id)
 GameTeam.create(game_id: wcGermanyVsFrance.id, team_id: wcGermany.id)
 GameTeam.create(game_id: wcGermanyVsFrance.id, team_id: wcFrance.id)
 
-# Put in some data
+# Put in some data -- short game chopped into two parts for data
+
+# Game 1
 wcGermanyVsBrazilVideo = wcGermanyVsBrazil.videos.create(
-	title: "Germany Vs. Brazil - First 15 minutes", 
+	title: "Germany Vs. Brazil - First 6 minutes", 
 	description: "Game details",
-	comment: "Only 15 minutes data",
+	comment: "Only 6 minutes data",
 	source_type: "youtube",
 	source_url: "http://none-for-now",
 	quality: "720p",
 	format: "mkv",
-	length: times_to_milliseconds(0,13,52,54),
+	length: times_to_milliseconds(0,6,41,00),
 	runstatus: "run-complete",
 	start_time: wcGermanyVsBrazil.start_date,
 	end_time: wcGermanyVsBrazil.end_date,
 	avg_frame_rate: 25,
 	detection_frame_rate: 5)
 
-wcGermanyVsBrazil.events.create(event_type_id: soccerHalfTimeStart.id, team_id: wcGermany.id, event_time: times_to_milliseconds(0,2,0,0))
-wcGermanyVsBrazil.events.create(event_type_id: soccerHalfTimeEnd.id, team_id: wcGermany.id, event_time: times_to_milliseconds(0,5,0,0))
-wcGermanyVsBrazil.events.create(event_type_id: soccerGoal.id, team_id: wcGermany.id, event_time: times_to_milliseconds(0,7,10,0))
-wcGermanyVsBrazil.events.create(event_type_id: soccerGoal.id, team_id: wcGermany.id, event_time: times_to_milliseconds(0,7,50,0))
-wcGermanyVsBrazil.events.create(event_type_id: soccerGoal.id, team_id: wcGermany.id, event_time: times_to_milliseconds(0,11,30,0))
-wcGermanyVsBrazil.events.create(event_type_id: soccerCorner.id, team_id: wcBrazil.id, event_time: times_to_milliseconds(0,12,0,0))
-wcGermanyVsBrazil.events.create(event_type_id: soccerPenalty.id, team_id: wcBrazil.id, event_time: times_to_milliseconds(0,12,50,20))
+wcGermanyVsBrazil.events.create(event_type_id: soccerHalfTimeStart.id, team_id: wcGermany.id, event_time: times_to_milliseconds(0,1,0,0))
+wcGermanyVsBrazil.events.create(event_type_id: soccerHalfTimeEnd.id, team_id: wcGermany.id, event_time: times_to_milliseconds(0,1,20,0))
+wcGermanyVsBrazil.events.create(event_type_id: soccerGoal.id, team_id: wcGermany.id, event_time: times_to_milliseconds(0,2,10,0))
+wcGermanyVsBrazil.events.create(event_type_id: soccerGoal.id, team_id: wcGermany.id, event_time: times_to_milliseconds(0,2,50,0))
+wcGermanyVsBrazil.events.create(event_type_id: soccerCorner.id, team_id: wcBrazil.id, event_time: times_to_milliseconds(0,4,0,0))
+wcGermanyVsBrazil.events.create(event_type_id: soccerPenalty.id, team_id: wcBrazil.id, event_time: times_to_milliseconds(0,4,40,20))
 
-puts "Populating with short 10-class video"
-videoFrameFileName = '/home/evan/Vision/temp/sendto_cellroti/database_seed_localization.json'
-caffeWriteService = Services::CaffeDataWriterService.new(wcGermanyVsBrazilVideo, videoFrameFileName)
+puts "Video 1: Populating with short 10-class video"
+videoFrameFileName1 = '/home/evan/Vision/temp/sendto_cellroti/database_seed_localization_part1.json'
+caffeWriteService = Services::CaffeDataWriterService.new(wcGermanyVsBrazilVideo, videoFrameFileName1)
 caffeWriteService.populate
 puts "Creating raw detectables"
 pbm = Metrics::RawDetectableMetrics.new(wcGermanyVsBrazilVideo)
@@ -157,9 +158,43 @@ puts "Creating summary of det group effectiveness"
 sdgm = Metrics::SummaryDetGroupMetrics.new(wcGermanyVsBrazilVideo, cocacolaClient.det_groups)
 sdgm.populate
 
-wcGermanyVsFrance.events.create(event_type_id: soccerHalfTimeStart.id, team_id: wcGermany.id, event_time: times_to_milliseconds(0,45,0,0))
-wcGermanyVsFrance.events.create(event_type_id: soccerHalfTimeEnd.id, team_id: wcGermany.id, event_time: times_to_milliseconds(0,55,0,0))
-wcGermanyVsFrance.events.create(event_type_id: soccerGoal.id, team_id: wcFrance.id, event_time: times_to_milliseconds(0,75,0,0))
+
+# Game 2
+wcGermanyVsFranceVideo = wcGermanyVsFrance.videos.create(
+	title: "Germany Vs. France - First 6 minutes", 
+	description: "Game details",
+	comment: "Only 6 minutes data",
+	source_type: "youtube",
+	source_url: "http://none-for-now",
+	quality: "720p",
+	format: "mkv",
+	length: times_to_milliseconds(0,6,43,00),
+	runstatus: "run-complete",
+	start_time: wcGermanyVsFrance.start_date,
+	end_time: wcGermanyVsFrance.end_date,
+	avg_frame_rate: 25,
+	detection_frame_rate: 5)
+
+wcGermanyVsFrance.events.create(event_type_id: soccerHalfTimeStart.id, team_id: wcGermany.id, event_time: times_to_milliseconds(0,1,30,0))
+wcGermanyVsFrance.events.create(event_type_id: soccerHalfTimeEnd.id, team_id: wcGermany.id, event_time: times_to_milliseconds(0,1,50,0))
+wcGermanyVsFrance.events.create(event_type_id: soccerGoal.id, team_id: wcFrance.id, event_time: times_to_milliseconds(0,2,40,0))
+wcGermanyVsFrance.events.create(event_type_id: soccerPenalty.id, team_id: wcFrance.id, event_time: times_to_milliseconds(0,3,30,20))
+wcGermanyVsFrance.events.create(event_type_id: soccerCorner.id, team_id: wcGermany.id, event_time: times_to_milliseconds(0,5,1,0))
+
+puts "Video 2: Populating with short 10-class video"
+videoFrameFileName2 = '/home/evan/Vision/temp/sendto_cellroti/database_seed_localization_part2.json'
+caffeWriteService = Services::CaffeDataWriterService.new(wcGermanyVsFranceVideo, videoFrameFileName2)
+caffeWriteService.populate
+puts "Creating raw detectables"
+pbm = Metrics::RawDetectableMetrics.new(wcGermanyVsFranceVideo)
+pbm.populate
+puts "Creating det group effectiveness"
+dgm = Metrics::DetGroupEffectivenessMetrics.new(wcGermanyVsFranceVideo, cocacolaClient.det_groups)
+dgm.populate
+puts "Creating summary of det group effectiveness"
+sdgm = Metrics::SummaryDetGroupMetrics.new(wcGermanyVsFranceVideo, cocacolaClient.det_groups)
+sdgm.populate
+
 
 baseball = Sport.create(name: "Baseball", description: "Primarily American/ Japanese Sports")
 mlb = baseball.leagues.create(name: "MLB", description: "American major league baseball")

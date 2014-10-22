@@ -49,8 +49,6 @@ GEM
     d3-rails (3.3.6)
       railties (>= 3.1)
     dalli (2.7.2)
-    dcjs-rails (1.6.0)
-      railties (>= 3.0, < 5.0)
     devise (3.2.4)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -180,7 +178,6 @@ DEPENDENCIES
   crossfilter-rails
   d3-rails
   dalli
-  dcjs-rails (~> 1.6.0)
   devise (~> 3.2.0)
   draper (~> 1.3)
   fancybox2-rails (~> 0.2.6)

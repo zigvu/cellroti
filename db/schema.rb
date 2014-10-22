@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140917174346) do
+ActiveRecord::Schema.define(version: 20141020173357) do
 
   create_table "client_detectables", force: true do |t|
     t.integer  "client_id"
@@ -60,6 +60,7 @@ ActiveRecord::Schema.define(version: 20140917174346) do
     t.datetime "updated_at"
     t.integer  "detections_count"
     t.string   "quadrants"
+    t.float    "brand_effectiveness"
   end
 
   add_index "det_group_video_frames", ["det_group_id"], name: "index_det_group_video_frames_on_det_group_id", using: :btree
@@ -221,6 +222,7 @@ ActiveRecord::Schema.define(version: 20140917174346) do
     t.integer  "video_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.float    "brand_effectiveness"
   end
 
   add_index "summary_det_group10_seconds", ["det_group_id"], name: "index_summary_det_group10_seconds_on_det_group_id", using: :btree
@@ -238,6 +240,7 @@ ActiveRecord::Schema.define(version: 20140917174346) do
     t.integer  "video_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.float    "brand_effectiveness"
   end
 
   add_index "summary_det_group1_seconds", ["det_group_id"], name: "index_summary_det_group1_seconds_on_det_group_id", using: :btree
@@ -255,6 +258,7 @@ ActiveRecord::Schema.define(version: 20140917174346) do
     t.integer  "video_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.float    "brand_effectiveness"
   end
 
   add_index "summary_det_group60_seconds", ["det_group_id"], name: "index_summary_det_group60_seconds_on_det_group_id", using: :btree

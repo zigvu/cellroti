@@ -13,15 +13,25 @@ module Jsonifiers
 		def get_data_hash
 			retHash = {}
 			retHash[:id] = @season.id
+
+			# det group information
+			retHash[:brand_groups] = []
+			@det_group_ids.each do |det_group_id|
+				retHash[:brand_groups] << {
+					id: det_group_id,
+					name: DetGroup.find(det_group_id).name
+				}
+			end
+
+			# game data
 			retHash[:brand_group_data_keys] = Jsonifiers::JAnalyticsGameData.brand_group_data_keys
-			
 			retHash[:games] = []
 			@season.games.includes(@summaryTableName.to_sym, :events).each do |game|
 				gameHash = {}
 				gameHash[:id] = game.id
 
 				gameHash[:events] = Jsonifiers::JAnalyticsGameData.getGameEvents(game)
-				gameHash[:summary_data] = Jsonifiers::JAnalyticsGameData.getGameSummaryData(
+				gameHash[:gameData] = Jsonifiers::JAnalyticsGameData.getGameSummaryData(
 					game, @summaryTableName, @det_group_ids)
 				
 				retHash[:games] << gameHash
