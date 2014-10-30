@@ -12,11 +12,13 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require jquery-ui
 //= require foundation
 //= require d3
 //= require crossfilter
 //= require dc
 //= require jquery-readyselector
+//= require jquery.sticky
 //= require_tree .
 
 $(function(){ 

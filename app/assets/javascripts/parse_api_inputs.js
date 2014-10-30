@@ -13,29 +13,39 @@ function parseSeasonData(seasonInfo, seasonData){
 	// var eventTypesInfo = seasonInfo["event_types"];
 	// var teamsInfo = seasonInfo["teams"];
 	// var gamesInfo = seasonInfo["games"];
-	var gameIds = {}
+	var gameIds = {};
 	seasonInfo["games"].forEach(function (game) {
 		gameIds[+game["id"]] = game["name"];
 	});
 
 	// disaggregate seasonData
-	var brandGroupIds = {}
+	var brandGroupIds = {};
 	seasonData["brand_groups"].forEach(function (brandGroup) {
 		brandGroupIds[+brandGroup["id"]] = brandGroup["name"];
 	});
 	var brandGroupDataKeys = seasonData["brand_group_data_keys"];
 
+	// counter demarkation for games
+	var counterDems = [];
+
 	// iterate through games data and populate ndx
 	seasonData["games"].sort(sortById).forEach(function (games) {
 		// get summary data - assume sorted by time
+		counterDems.push({
+			series_label: "Game "+ games["id"] + " Desc.",
+			range_label: +games["id"],
+			counter: counter
+		});
+		
 		games["gameData"].forEach(function (gameData){
 			//var time = gameData["time"];
+
 			gameData["bgData"].forEach(function (bgData){
 				for (var brandGroup in bgData){
 					if (!bgData.hasOwnProperty(brandGroup)){
 						continue;
 					}
-					//bgName = brandGroupIds[brandGroup];
+					//var bgName = brandGroupIds[brandGroup];
 					dataLine = {
 						counter: counter,
 						game_id: +games["id"],
@@ -56,9 +66,38 @@ function parseSeasonData(seasonInfo, seasonData){
 			counter++;
 		});
 	});
-	//console.log(ndxData);
+	var finalCounterValue = --counter;
+	// sort and save with range information
+	counterGameDemarcation = {};
+	counterDems.reverse().forEach(function (cd){
+		counterGameDemarcation[cd["counter"]] = {
+			series_label: cd["series_label"],
+			range_label: cd["range_label"],
+			series_counters: [cd["counter"], counter]
+		}
+		counter = cd["counter"];
+	});
+	// create mapping to counterGameDemarcation to avoid expensive loops
+	counterGameDemarcationMap = {};
+	for (var i = 0; i < finalCounterValue; i++){
+		// loop through
+		var beginC, endC, key;
+		for (key in counterGameDemarcation){
+			beginC = counterGameDemarcation[key]["series_counters"][0];
+			endC = counterGameDemarcation[key]["series_counters"][1];
+			if (i >= beginC && i < endC){ 
+				counterGameDemarcationMap[i] = key;
+				break;
+			}
+		}
+		// the last entry is not in counterGameDemarcation map yet
+		counterGameDemarcationMap[finalCounterValue] = key;
+	}
+	//console.log(ndxData[0]);
 
 	return {
+		counterGameDemarcationMap: counterGameDemarcationMap,
+		counterGameDemarcation: counterGameDemarcation,
 		gameIds: gameIds,
 		brandGroupIds: brandGroupIds,
 		ndxData: ndxData

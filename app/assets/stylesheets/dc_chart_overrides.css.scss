@@ -1,0 +1,163 @@
+@import 'foundation_and_overrides';
+
+$chart-panel-rounded-corner-radius: $global-radius;
+
+$chart-panel-help-icon-color: $steel;
+$chart-panel-help-icon-color-hover: $primary-color;
+$chart-panel-label-title-color: $oil;
+$chart-panel-footer-color: $oil;
+$chart-panel-border-color: $panel-border-color;
+
+$chart-panel-legend-box-color: scale-color($chart-panel-border-color, $lightness: 85%);
+
+$chart-series-bg-bar-opacity: 0.1;
+$chart-range-bg-bar-opacity: 0.5;
+$chart-axis-hide-opacity: 0.0;
+
+.dc-chart {
+	.y-axis-label, .x-axis-label {
+		text-transform: uppercase;
+		line-height: 80%;
+		font-size: rem-calc(12);
+	}
+}
+
+#dc-brand-effectiveness-series-chart {
+	#bg-rects {
+		rect {
+			opacity: $chart-series-bg-bar-opacity;
+		}
+		text {
+			text-transform: uppercase;
+			font-size: rem-calc(10);
+			fill: black;
+			opacity: 0.9;
+		}
+	}
+	text {
+		fill: black;
+	}
+}
+
+#dc-brand-effectiveness-range-chart {
+	.bar {
+		opacity: $chart-range-bg-bar-opacity;
+	}
+	#inline-labels {
+		text {
+			text-transform: uppercase;
+			font-size: rem-calc(10);
+			fill: black;
+			opacity: 0.9;
+		}		
+	}
+	.x {
+		opacity: $chart-axis-hide-opacity;
+	}
+}
+
+#static-brand-legend{
+	background: none repeat scroll 0 0 $chart-panel-legend-box-color;
+
+	//margin: 1rem;
+	margin-top: 1rem;
+	border: 1px solid $chart-panel-border-color;
+	// -webkit-border-radius: $chart-panel-rounded-corner-radius;
+	// -moz-border-radius: $chart-panel-rounded-corner-radius;
+	// border-radius: $chart-panel-rounded-corner-radius;
+
+	z-index: 9999;
+
+	#static-brand-label-title {
+		font-size: rem-calc(16);
+		font-weight: bold;
+		line-height: 80%;
+		color: $chart-panel-label-title-color;
+		padding: 0.5rem 0.5rem 0 0.5rem;
+		margin-bottom: 0.5rem;
+		border-bottom: 2px solid $chart-panel-label-title-color;
+	}
+
+	#static-brand-legend-content {
+		font-size: rem-calc(14);
+		li {
+			// display: inline-block;
+			// position:relative;
+
+			list-style-type: none;
+			.square {
+				display: inline-block;
+				width: rem-calc(14);
+				height: rem-calc(14);
+				margin: 0 5px 0 -5px;
+				vertical-align: middle;
+			}
+			.text {
+				display: inline-block;
+				vertical-align: middle;
+			}
+		}
+	}
+}
+
+.chart-panel {
+	border: 1px solid $chart-panel-border-color;
+	margin-bottom: 1.25rem;
+	//padding: 0 1.25rem 1.25rem 0;
+	-webkit-border-radius: $chart-panel-rounded-corner-radius;
+	-moz-border-radius: $chart-panel-rounded-corner-radius;
+	border-radius: $chart-panel-rounded-corner-radius;
+
+	.chart-title {
+		padding: 0.25rem 1rem 0.25rem 1rem;
+		border-bottom: 4px solid $chart-panel-border-color;
+		-webkit-border-top-left-radius: $chart-panel-rounded-corner-radius;
+		-webkit-border-top-right-radius: $chart-panel-rounded-corner-radius;
+		-moz-border-radius-topleft: $chart-panel-rounded-corner-radius;
+		-moz-border-radius-topright: $chart-panel-rounded-corner-radius;
+		border-top-left-radius: $chart-panel-rounded-corner-radius;
+		border-top-right-radius: $chart-panel-rounded-corner-radius;
+
+		.text {
+			font-weight: 600;
+			font-variant: small-caps;
+		}
+
+		.help {
+			font-size: 1.25rem;
+			// color: $chart-panel-help-icon-color;
+			// a:link, a:visited {
+			// 	color: $chart-panel-help-icon-color;
+			// }
+			// a:hover, a:active {
+			// 	color: $chart-panel-help-icon-color-hover;
+			// }
+			i {
+				cursor: pointer;
+				margin-left: 0.5rem;
+			}
+		}
+	}
+
+	.chart-content {
+		padding: 1.25rem 1.25rem 0 1.25rem;
+	}
+
+	.chart-footer {
+		padding-right: 1.25rem;
+
+		border-top: 1px solid $chart-panel-border-color;
+		-webkit-border-top-left-radius: $chart-panel-rounded-corner-radius;
+		-webkit-border-top-right-radius: $chart-panel-rounded-corner-radius;
+		-moz-border-radius-topleft: $chart-panel-rounded-corner-radius;
+		-moz-border-radius-topright: $chart-panel-rounded-corner-radius;
+		border-top-left-radius: $chart-panel-rounded-corner-radius;
+		border-top-right-radius: $chart-panel-rounded-corner-radius;
+
+		font-style: oblique;
+		font-size: rem-calc(12);
+		color: $chart-panel-footer-color;
+	}
+
+}
+

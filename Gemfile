@@ -38,7 +38,7 @@ gem 'd3-rails'
 gem 'crossfilter-rails'
 # misc.
 gem 'high_voltage', '~> 2.2.1'
-gem 'jquery-ui-rails'
+gem 'jquery-ui-rails', '~> 5.0.2'
 gem 'jquery-turbolinks'
 # memcached
 gem 'dalli'

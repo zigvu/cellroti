@@ -5,78 +5,240 @@
   window.seasonShowPath = "/api/v1/analytics/seasons/" + <%= @season.id %> + "/data";
 </script>
 
+<%= render 'summary_panel' %>
+
 <div class="row">
-  <div class="small-6 medium-3 columns">
-	  <div class="panel">Brand Effectiveness</div>
-	</div>
-  <div class="small-6 medium-3 columns">
-	  <div class="panel">Brand Exposure</div>
-	</div>
-  <div class="small-6 medium-3 columns">
-	  <div class="panel">View Duration</div>
-	</div>
-  <div class="small-6 medium-3 columns">
-	  <div class="panel">Brand Count</div>
-	</div>
+  <div class="small-12 columns">
+    <div class="chart-panel">
+      
+      <div class="row">
+        <div class="small-12 columns">
+          <div class="chart-title clearfix">
+            <div class="text left">Brand Effectiveness</div>
+            <div class="help right">
+              <span title="Reset Chart">
+                <i class="fi-refresh" id="dc-brand-effectiveness-series-chart-reset"></i>
+              </span>
+              <span title="Help!">
+                <i data-reveal-id="dc-brand-effectiveness-series-chart-info-reveal" class="fi-info" id="dc-brand-effectiveness-series-chart-info"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="small-9 columns">
+          <div class="chart-content">
+            <div id="dc-brand-effectiveness-series-chart"></div>
+            <div id="dc-brand-effectiveness-range-chart"></div>
+          </div>
+        </div>
+        <div class="small-3 columns">
+          <div id="static-brand-legend">
+            <div id="static-brand-label-title">Brand Groups</div>
+            <ul id="static-brand-legend-content"></ul>
+            <div class="text-center">
+              <div class="button small" id="static-brand-legend-update">Update</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="small-12 columns">
+          <div class="chart-footer small-text-right">Select on lower chart to zoom in/out</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
 </div>
 
 <div class="row">
   <div class="small-12 columns">
-    <div class="panel">
-      <div class="chart-title">Brand Effectiveness Series Chart</div>
-      <div id="dc-brand-effectiveness-series-chart"></div>
-      <div id="dc-brand-effectiveness-range-chart"></div>
-      <div class="hushed-out">Select lower chart to zoom in/out</div>
+    <div class="chart-panel">
+      <div class="chart-title clearfix">
+        <div class="text left">Brand Effectiveness</div>
+        <div class="help right">
+          <span title="Reset Chart">
+            <i class="fi-refresh" id="dc-brand-effectiveness-series-chart-reset"></i>
+          </span>
+          <span title="Help!">
+            <i data-reveal-id="dc-brand-effectiveness-series-chart-info-reveal" class="fi-info" id="dc-brand-effectiveness-series-chart-info"></i>
+          </span>
+        </div>
+      </div>
+      <div class="chart-content">
+        <div id="dc-brand-effectiveness-series-chart-x">
+          <!-- <%= image_tag("tempImg.png") %> -->
+        </div>
+        <div id="dc-brand-effectiveness-range-chart-x"></div>
+      </div>
+      <div class="chart-footer small-text-right">Select on lower chart to zoom in/out</div>
     </div>
   </div>
 </div>
 
 <div class="row">
   <div class="small-6 columns">
-  	<div class="panel" id="dc-brand-crowding-bar-chart">Brand Crowding Bar Chart</div>
+    <div class="chart-panel">
+      <div class="chart-title clearfix">
+        <div class="text left">Brand Crowding (Bar Chart)</div>
+        <div class="help right">
+          <span title="Reset Chart">
+            <i class="fi-refresh" id="dc-brand-crowding-bar-chart-reset"></i>
+          </span>
+          <span title="Help!">
+            <i data-reveal-id="dc-brand-crowding-bar-chart-info-reveal" class="fi-info" id="dc-brand-crowding-bar-chart-info"></i>
+          </span>
+        </div>
+      </div>
+      <div class="chart-content">
+        <div id="dc-brand-crowding-bar-chart"></div>
+      </div>
+    </div>
   </div>
   <div class="small-6 columns">
-  	<div class="panel">
-      <div class="chart-title">Visual Saliency Bar Chart</div>
-      <div class="button" id="debug_dump">Debug dump</div>
+    <div class="chart-panel">
+      <div class="chart-title clearfix">
+        <div class="text left">Visual Saliency (Bar Chart)</div>
+        <div class="help right">
+          <span title="Reset Chart">
+            <i class="fi-refresh" id="dc-visual-saliency-bar-chart-reset"></i>
+          </span>
+          <span title="Help!">
+            <i data-reveal-id="dc-visual-saliency-bar-chart-info-reveal" class="fi-info" id="dc-visual-saliency-bar-chart-info"></i>
+          </span>
+        </div>
+      </div>
+      <div class="chart-content">
+        <div id="dc-visual-saliency-bar-chart"></div>
+      </div>
     </div>
   </div>
 </div>
 
 <div class="row">
   <div class="small-6 columns">
-  	<div class="panel">Timing Effectiveness Bar Chart</div>
+    <div class="chart-panel">
+      <div class="chart-title clearfix">
+        <div class="text left">Timing Effectiveness</div>
+        <div class="help right">
+          <span title="Reset Chart">
+            <i class="fi-refresh" id="dc-timing-effectiveness-bar-chart-reset"></i>
+          </span>
+          <span title="Help!">
+            <i data-reveal-id="dc-timing-effectiveness-bar-chart-info-reveal" class="fi-info" id="dc-timing-effectiveness-bar-chart-info"></i>
+          </span>
+        </div>
+      </div>
+      <div class="chart-content">
+        <div id="dc-timing-effectiveness-bar-chart"></div>
+      </div>
+    </div>
   </div>
   <div class="small-6 columns">
-  	<div class="panel">Spatial Effectiveness Bar Chart</div>
+    <div class="chart-panel">
+      <div class="chart-title clearfix">
+        <div class="text left">Spatial Effectiveness (Bar Chart)</div>
+        <div class="help right">
+          <span title="Reset Chart">
+            <i class="fi-refresh" id="dc-spatial-effectiveness-bar-chart-reset"></i>
+          </span>
+          <span title="Help!">
+            <i data-reveal-id="dc-spatial-effectiveness-bar-chart-info-reveal" class="fi-info" id="dc-spatial-effectiveness-bar-chart-info"></i>
+          </span>
+        </div>
+      </div>
+      <div class="chart-content">
+        <div id="dc-spatial-effectiveness-bar-chart"></div>
+      </div>
+    </div>
   </div>
 </div>
 
 <div class="row">
   <div class="small-12 medium-4 columns">
-  	<div class="panel">Brand Exposure Pie Chart</div>
+    <div class="chart-panel">
+      <div class="chart-title clearfix">
+        <div class="text left">Brand Exposure (Pie Chart)</div>
+        <div class="help right">
+          <span title="Reset Chart">
+            <i class="fi-refresh" id="dc-brand-exposure-pie-chart-reset"></i>
+          </span>
+          <span title="Help!">
+            <i data-reveal-id="dc-brand-exposure-pie-chart-info-reveal" class="fi-info" id="dc-brand-exposure-pie-chart-info"></i>
+          </span>
+        </div>
+      </div>
+      <div class="chart-content">
+        <div id="dc-brand-exposure-pie-chart"></div>
+      </div>
+    </div>
   </div>
   <div class="small-12 medium-4 columns">
-  	<div class="panel">View Duration Pie Chart</div>
+    <div class="chart-panel">
+      <div class="chart-title clearfix">
+        <div class="text left">View Duration (Pie Chart)</div>
+        <div class="help right">
+          <span title="Reset Chart">
+            <i class="fi-refresh" id="dc-brand-duration-pie-chart-reset"></i>
+          </span>
+          <span title="Help!">
+            <i data-reveal-id="dc-brand-duration-pie-chart-info-reveal" class="fi-info" id="dc-brand-duration-pie-chart-info"></i>
+          </span>
+        </div>
+      </div>
+      <div class="chart-content">
+        <div id="dc-brand-duration-pie-chart"></div>
+      </div>
+    </div>
   </div>
   <div class="small-12 medium-4 columns">
-  	<div class="panel">Brand Count Pie Chart</div>
+    <div class="chart-panel">
+      <div class="chart-title clearfix">
+        <div class="text left">Brand Count (Pie Chart)</div>
+        <div class="help right">
+          <span title="Reset Chart">
+            <i class="fi-refresh" id="dc-brand-count-pie-chart-reset"></i>
+          </span>
+          <span title="Help!">
+            <i data-reveal-id="dc-brand-count-pie-chart-info-reveal" class="fi-info" id="dc-brand-count-pie-chart-info"></i>
+          </span>
+        </div>
+      </div>
+      <div class="chart-content">
+        <div id="dc-brand-count-pie-chart"></div>
+      </div>
+    </div>
   </div>
 </div>
 
 <div class="row">
   <div class="small-12 columns">
-  	<ul class="small-block-grid-2 medium-block-grid-4">
-			<li><div class="panel">Some Representative thumbnails</div></li>
-			<li><div class="panel">Some Representative thumbnails</div></li>
-			<li><div class="panel">Some Representative thumbnails</div></li>
-			<li><div class="panel">Some Representative thumbnails</div></li>
-		</ul>  	
+    <ul class="small-block-grid-2 medium-block-grid-4">
+      <li><div class="panel">Some Representative thumbnails</div></li>
+      <li><div class="panel">Some Representative thumbnails</div></li>
+      <li><div class="panel">Some Representative thumbnails</div></li>
+      <li><div class="panel">Some Representative thumbnails</div></li>
+    </ul>   
   </div>
 </div>
 
 <div class="row">
   <div class="small-12 columns">
-  	<div class="panel">10-row data table here</div>
+    <div class="panel">10-row data table here</div>
   </div>
+</div>
+
+<div class="button" id="debug_dump">Debug dump</div>
+
+<!-- Help Sections -->
+<div id="dc-brand-effectiveness-series-chart-info-reveal" class="reveal-modal large" data-reveal>
+  <h3>Brand Effectiveness Chart Help</h3>
+  <p class="lead">Your couch.  It is mine.</p>
+  <p>I'm a cool paragraph that lives inside of an even cooler modal. Wins!</p>
+  <a class="close-reveal-modal">&#215;</a>
 </div>
