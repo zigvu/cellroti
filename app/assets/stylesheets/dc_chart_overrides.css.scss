@@ -6,9 +6,11 @@ $chart-panel-help-icon-color: $steel;
 $chart-panel-help-icon-color-hover: $primary-color;
 $chart-panel-label-title-color: $oil;
 $chart-panel-footer-color: $oil;
-$chart-panel-border-color: $panel-border-color;
 
-$chart-panel-legend-box-color: scale-color($chart-panel-border-color, $lightness: 85%);
+$chart-panel-border-color: $zigvu-footer-background-color;
+$chart-panel-border-color-light: $panel-border-color;
+
+$chart-panel-legend-box-color: scale-color($chart-panel-border-color-light, $lightness: 85%);
 
 $chart-series-bg-bar-opacity: 0.1;
 $chart-range-bg-bar-opacity: 0.5;
@@ -56,34 +58,99 @@ $chart-axis-hide-opacity: 0.0;
 	}
 }
 
-#static-brand-legend{
+#dc-visual-saliency-bar-chart,
+#dc-timing-effectiveness-bar-chart,
+#dc-spatial-effectiveness-bar-chart {
+	.y {
+		opacity: $chart-axis-hide-opacity;
+	}
+}
+
+#dc-brand-effectiveness-composite-row {
+	@media #{$small-only} {
+		padding: 0;
+	}
+	@media #{$medium-up} {
+		padding: 0 1rem 0 1rem;
+	}
+	.columns {
+		padding: 0px;
+	}
+}
+
+#d3-spatial-position-heatmap-chart {
+	rect.bordered {
+		stroke: $chart-panel-border-color-light;
+		stroke-width: 1px;
+	}
+
+	text.legend {
+		font-size: rem-calc(9);
+		fill: $chart-panel-label-title-color;
+	}
+}
+
+#brand-legend {
+	border: 1px solid $chart-panel-border-color-light;
+	-webkit-border-radius: $chart-panel-rounded-corner-radius;
+	-moz-border-radius: $chart-panel-rounded-corner-radius;
+	border-radius: $chart-panel-rounded-corner-radius;
+
 	background: none repeat scroll 0 0 $chart-panel-legend-box-color;
-
-	//margin: 1rem;
-	margin-top: 1rem;
-	border: 1px solid $chart-panel-border-color;
-	// -webkit-border-radius: $chart-panel-rounded-corner-radius;
-	// -moz-border-radius: $chart-panel-rounded-corner-radius;
-	// border-radius: $chart-panel-rounded-corner-radius;
-
+	padding: 0.25rem;
 	z-index: 9999;
 
-	#static-brand-label-title {
-		font-size: rem-calc(16);
+	.brand-label-titles {
+		font-size: rem-calc(14);
 		font-weight: bold;
-		line-height: 80%;
 		color: $chart-panel-label-title-color;
-		padding: 0.5rem 0.5rem 0 0.5rem;
-		margin-bottom: 0.5rem;
+		padding: 0 0.5rem 0 0.5rem;
+		margin-bottom: 0.25rem;
 		border-bottom: 2px solid $chart-panel-label-title-color;
 	}
 
-	#static-brand-legend-content {
-		font-size: rem-calc(14);
-		li {
-			// display: inline-block;
-			// position:relative;
+	#brand-legend-hidden {
+		display: none;
+		.brand-legend-hidden-text {
+			font-size: rem-calc(14);
+			font-style: oblique;
+		}
+	}
 
+	.button {
+		margin: 0;
+		padding: 0.4rem;
+	}
+
+	#brand-legend-content {
+		@media #{$medium-up} {
+			-webkit-column-count:3;   
+			-moz-column-count:3;
+			-ms-column-count:3;
+			-o-column-count:3;
+			column-count:3;
+			-webkit-column-gap:15px;   
+			-moz-column-gap:15px;
+			-ms-column-gap:15px;
+			-o-column-gap:15px;
+			column-gap:15px;
+			columns:3;
+		}
+		@media #{$medium-only} and (orientation: portrait) {
+			-webkit-column-count:2;   
+			-moz-column-count:2;
+			-ms-column-count:2;
+			-o-column-count:2;
+			column-count:2;
+			-webkit-column-gap:10px;   
+			-moz-column-gap:10px;
+			-ms-column-gap:10px;
+			-o-column-gap:10px;
+			column-gap:10px;
+			columns:2;
+		}
+
+		li {
 			list-style-type: none;
 			.square {
 				display: inline-block;
@@ -93,6 +160,8 @@ $chart-axis-hide-opacity: 0.0;
 				vertical-align: middle;
 			}
 			.text {
+				font-size: rem-calc(12);
+				color: $chart-panel-footer-color;
 				display: inline-block;
 				vertical-align: middle;
 			}
@@ -103,14 +172,14 @@ $chart-axis-hide-opacity: 0.0;
 .chart-panel {
 	border: 1px solid $chart-panel-border-color;
 	margin-bottom: 1.25rem;
-	//padding: 0 1.25rem 1.25rem 0;
+
 	-webkit-border-radius: $chart-panel-rounded-corner-radius;
 	-moz-border-radius: $chart-panel-rounded-corner-radius;
 	border-radius: $chart-panel-rounded-corner-radius;
 
 	.chart-title {
-		padding: 0.25rem 1rem 0.25rem 1rem;
-		border-bottom: 4px solid $chart-panel-border-color;
+		padding: 1px 3px 1px 1px;
+		border-bottom: 4px solid $chart-panel-border-color-light;
 		-webkit-border-top-left-radius: $chart-panel-rounded-corner-radius;
 		-webkit-border-top-right-radius: $chart-panel-rounded-corner-radius;
 		-moz-border-radius-topleft: $chart-panel-rounded-corner-radius;
@@ -119,22 +188,18 @@ $chart-axis-hide-opacity: 0.0;
 		border-top-right-radius: $chart-panel-rounded-corner-radius;
 
 		.text {
+			padding: 0.25rem;
 			font-weight: 600;
 			font-variant: small-caps;
 		}
 
 		.help {
-			font-size: 1.25rem;
-			// color: $chart-panel-help-icon-color;
-			// a:link, a:visited {
-			// 	color: $chart-panel-help-icon-color;
-			// }
-			// a:hover, a:active {
-			// 	color: $chart-panel-help-icon-color-hover;
-			// }
-			i {
-				cursor: pointer;
-				margin-left: 0.5rem;
+			font-size: rem-calc(16);
+			font-weight: 600;
+
+			.title-button {
+				margin: 0;
+				padding: 0.4rem 1rem 0.4rem 1rem;
 			}
 		}
 	}
@@ -143,21 +208,9 @@ $chart-axis-hide-opacity: 0.0;
 		padding: 1.25rem 1.25rem 0 1.25rem;
 	}
 
-	.chart-footer {
-		padding-right: 1.25rem;
-
-		border-top: 1px solid $chart-panel-border-color;
-		-webkit-border-top-left-radius: $chart-panel-rounded-corner-radius;
-		-webkit-border-top-right-radius: $chart-panel-rounded-corner-radius;
-		-moz-border-radius-topleft: $chart-panel-rounded-corner-radius;
-		-moz-border-radius-topright: $chart-panel-rounded-corner-radius;
-		border-top-left-radius: $chart-panel-rounded-corner-radius;
-		border-top-right-radius: $chart-panel-rounded-corner-radius;
-
-		font-style: oblique;
-		font-size: rem-calc(12);
-		color: $chart-panel-footer-color;
+	.dc-chart {
+		width: 100%;
+		text-align: center;
 	}
-
 }
 

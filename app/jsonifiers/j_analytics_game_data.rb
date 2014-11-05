@@ -44,7 +44,8 @@ module Jsonifiers
 				:timing_effectiveness,  # 3
 				:spatial_effectiveness, # 4
 				:detections_count,      # 5
-				:quadrants              # 6
+				:view_duration,         # 6
+				:quadrants              # 7
 			]
 		end
 
@@ -54,7 +55,10 @@ module Jsonifiers
 				quadrants = []
 				qdata = JSON.parse(sdata.quadrants)
 				qdata.keys.sort.each do |k|
-					quadrants << sprintf("%.4f", qdata[k])
+					#quadrants << sprintf("%.4f", qdata[k])
+					# TODO TODO TODO TODO TODO TODO TODO
+					# TODO TODO TODO TODO TODO TODO TODO
+					quadrants << sprintf("%.4f", qdata[k] * 4000) # <---- TODO: remove
 				end
 
 				data = [
@@ -64,7 +68,10 @@ module Jsonifiers
 					sprintf("%.4f", sdata[:timing_effectiveness]),  # 3
 					sprintf("%.4f", sdata[:spatial_effectiveness]), # 4
 					sdata[:detections_count],                       # 5
-					quadrants                                       # 6
+					# TODO TODO TODO TODO TODO TODO TODO
+					# TODO TODO TODO TODO TODO TODO TODO
+					sdata[:detections_count],                       # 6   <---- TODO: change to proper view duration
+					quadrants                                       # 7
 				]
 
 				dataIdx = retArr.find_index {|d| d[:time] == sdata[:frame_time]}

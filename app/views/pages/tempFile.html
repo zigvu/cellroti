@@ -1,0 +1,185 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>How about now?</title>
+  <link rel="stylesheet" media="screen" href="https://rawgithub.com/dc-js/dc.js/master/dc.css">
+  <link rel="stylesheet" media="screen" href="http://cdn.foundation5.zurb.com/foundation.css">
+
+  <style>
+    rect.bordered {
+      stroke: #E6E6E6;
+      stroke-width:2px;
+    }
+
+    text.legend {
+      font-size: 9pt;
+      font-family: Consolas, courier;
+      fill: #aaa;
+    }
+
+  </style>
+
+</head>
+<body>
+  <script src="https://rawgithub.com/mbostock/d3/master/d3.js"></script>
+  <script src="https://rawgithub.com/mtraynham/crossfilter/master/crossfilter.js"></script>
+  <script src="https://rawgithub.com/dc-js/dc.js/master/dc.js"></script>
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="http://cdn.foundation5.zurb.com/foundation.js"></script>
+
+
+  <h1>Testing!</h1>
+  <div id="clicky" class="button">Clicky Clicky</div>
+  <div id="test" />
+
+  <script language="javascript" type="text/javascript">
+    var heatmap_Qmapping = [
+      {q: 'q0', name: 'Left Up', row: 0, col: 0, value: Math.random()},
+      {q: 'q1', name: 'Center Up', row: 0, col: 1, value: Math.random()},
+      {q: 'q2', name: 'Right Up', row: 0, col: 2, value: Math.random()},
+      {q: 'q3', name: 'Left Center', row: 1, col: 0, value: Math.random()},
+      {q: 'q4', name: 'Center', row: 1, col: 1, value: Math.random()},
+      {q: 'q5', name: 'Right Center', row: 1, col: 2, value: Math.random()},
+      {q: 'q6', name: 'Left Down', row: 2, col: 0, value: Math.random()},
+      {q: 'q7', name: 'Center Down', row: 2, col: 1, value: Math.random()},
+      {q: 'q8', name: 'Right Down', row: 2, col: 2, value: Math.random()}
+    ];
+
+    var heatmap_margin = { top: 0, right: 50, bottom: 0, left: 0 };
+    var heatmap_width = 412 - heatmap_margin.left - heatmap_margin.right;
+    var heatmap_height = 200 - heatmap_margin.top - heatmap_margin.bottom;
+    var heatmapGrid_width = Math.floor(heatmap_width / 3);
+    var heatmapGrid_height = Math.floor(heatmap_height / 3);
+
+
+//"#00FF00",
+    var heatmapColors = [
+      "#0000FF", "#0032CC", "#006599", "#009965", "#00CC32",
+      "#33CB00", "#669800", "#996500", "#CB3300", "#FF0000"
+    ];
+    var heatmapColorsDomain = [];
+    for (var i = 0; i < heatmapColors.length; i++){
+      heatmapColorsDomain.push(Math.round(10 * i / (heatmapColors.length))/10);
+    }
+    heatmapColorScale = d3.scale.linear()
+      .domain(heatmapColorsDomain)
+      .range(heatmapColors);
+
+    var heatmapLegend_startX = heatmap_width + 5;
+    var heatmapLegend_totalHeight = heatmap_height;
+    var heatmapLegend_width = 15;
+    var heatmapLegend_height = Math.round(heatmap_height/(heatmapColors.length));
+
+
+    var d3HeatmapSVG = d3.select("#test").append("svg")
+      .attr("width", heatmap_width + heatmap_margin.left + heatmap_margin.right)
+      .attr("height", heatmap_height + heatmap_margin.top + heatmap_margin.bottom)
+      .append("g")
+      .attr("transform", "translate(" + heatmap_margin.left + "," + heatmap_margin.top + ")");
+
+  var d3Heatmap;
+  showDummyChart = function (heatmapData) {
+    //////////////////////////////////////////////////////////////////
+    // Test
+    var legend = d3HeatmapSVG.selectAll(".legend")
+      .data([].concat(heatmapColorScale.domain()), function(d) { return d; })
+      .enter().append("g")
+      .attr("class", "legend");
+
+    legend.append("rect")
+      .attr("class", "legend")
+      .attr("x", heatmapLegend_startX)
+      .attr("y", function(d, i) { return heatmapLegend_totalHeight - heatmapLegend_height * (i+1); })
+      .attr("width", heatmapLegend_width)
+      .attr("height", heatmapLegend_height)
+      .style("fill", function(d, i) { return heatmapColors[i]; });
+
+    legend.append("text")
+      .attr("class", "legend")
+      .text(function(d) { 
+        if ((d * 10) % 2 == 0){
+          return d3.format(',%')(d); 
+        } else {
+          return "";
+        }
+      })
+      .attr("x", heatmapLegend_startX + heatmapLegend_width + 2)
+      .attr("y", function(d, i) { 
+        return heatmapLegend_totalHeight - heatmapLegend_height * i; 
+      });
+    // manually push 100%
+    legend.append("text")
+      .attr("class", "legend")
+      .text(d3.format(',%')(1))
+      .attr("x", heatmapLegend_startX + heatmapLegend_width + 2)
+      .attr("y", heatmapLegend_totalHeight - heatmapLegend_height * heatmapColors.length + 10);
+
+
+    d3Heatmap = d3HeatmapSVG.selectAll(".quadrant")
+      .data(heatmapData, function(d){ return d.q; })
+      .enter().append("rect")
+      .attr("x", function(d) { return d.col * heatmapGrid_width; })
+      .attr("y", function(d) { return d.row * heatmapGrid_height; })
+      .attr("rx", 5).attr("ry", 5)
+      .attr("class", "quadrant bordered")
+      .attr("width", heatmapGrid_width)
+      .attr("height", heatmapGrid_height)
+      .style("fill", "blue");
+
+    d3Heatmap.append("title").text(function(d) { 
+      return "Quadrant: " + d.name + "\nValue: " + d3.format(',%')(d.value);
+    });
+
+    d3Heatmap.transition().duration(1000)
+      .style("fill", function(d) { return heatmapColorScale(d.value); });
+  };
+
+  updateHeatmap = function (heatmapData) {
+    d3Heatmap.data(heatmapData, function(d){ return d.q; });
+    d3Heatmap.select("title").text(function(d) { 
+      return "Quadrant: " + d.name + "\nValue: " + d3.format(',%')(d.value);
+    });
+    d3Heatmap.transition().duration(1000)
+      .style("fill", function(d) { return heatmapColorScale(d.value); });
+  };
+
+  experiments = []
+  var exptCounter = 1;
+  var runCounter = 1;
+  for (i = 0; i < 50; i++) {
+    experiments[i] = {
+      'Expt': exptCounter,
+      'Run': runCounter++,
+      'q0': Math.random(),
+      'q1': Math.random(),
+      'q2': Math.random(),
+      'q3': Math.random(),
+      'q4': Math.random(),
+      'q5': Math.random(),
+      'q6': Math.random(),
+      'q7': Math.random(),
+      'q8': Math.random()
+    };
+    // if (runCounter == 10) {
+    //   exptCounter++;
+    //   runCounter = 1;
+    // }
+  }
+
+
+  //console.log(experiments);
+
+
+  showDummyChart(heatmap_Qmapping);
+  exptCounter = 0;
+  $('#clicky').click(function(){
+    exptData = experiments[exptCounter++];
+    for(var i = 0; i < heatmap_Qmapping.length; i++){
+      heatmap_Qmapping[i]['value'] = exptData[heatmap_Qmapping[i].q];
+    }
+    updateHeatmap(heatmap_Qmapping);
+  });
+</script>
+</body>
+</html>

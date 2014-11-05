@@ -7,206 +7,184 @@
 
 <%= render 'summary_panel' %>
 
+<!-- BEGIN: Series chart whole -->
 <div class="row">
   <div class="small-12 columns">
     <div class="chart-panel">
       
+      <!-- BEGIN: Series chart title bar row -->
       <div class="row">
         <div class="small-12 columns">
           <div class="chart-title clearfix">
             <div class="text left">Brand Effectiveness</div>
             <div class="help right">
-              <span title="Reset Chart">
-                <i class="fi-refresh" id="dc-brand-effectiveness-series-chart-reset"></i>
-              </span>
-              <span title="Help!">
-                <i data-reveal-id="dc-brand-effectiveness-series-chart-info-reveal" class="fi-info" id="dc-brand-effectiveness-series-chart-info"></i>
-              </span>
+              <ul class="button-group radius">
+                <li>
+                  <span class="button title-button" title="Reset Chart">
+                    <i class="fi-refresh" id="dc-brand-effectiveness-series-chart-reset"></i>
+                  </span>
+                </li>
+                <li>
+                  <span class="button title-button" title="Help!">
+                    <i data-reveal-id="dc-brand-effectiveness-series-chart-info-reveal" class="fi-info" id="dc-brand-effectiveness-series-chart-info"></i>
+                  </span>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
       </div>
+      <!-- END: Series chart title bar row -->
       
+      <!-- BEGIN: Series chart row -->
       <div class="row">
-        <div class="small-9 columns">
+        <div class="small-12 columns">
           <div class="chart-content">
             <div id="dc-brand-effectiveness-series-chart"></div>
             <div id="dc-brand-effectiveness-range-chart"></div>
           </div>
         </div>
-        <div class="small-3 columns">
-          <div id="static-brand-legend">
-            <div id="static-brand-label-title">Brand Groups</div>
-            <ul id="static-brand-legend-content"></ul>
-            <div class="text-center">
-              <div class="button small" id="static-brand-legend-update">Update</div>
+      </div>
+      <!-- END: Series chart row -->
+
+      <!-- BEGIN: Legend row -->
+      <div class="row">
+        <div class="small-12 columns" id="brand-legend-container-column">
+          <div id="brand-legend">
+
+            <!-- BEGIN: Legend normal -->
+            <div id="brand-legend-normal">
+              <div class="row">                
+                <div class="small-7 medium-10 columns">
+                    <div class="brand-label-titles">Brand Groups</div>
+                    <div id="brand-legend-content">
+                      <ul id="brand-legend-content-ul"></ul>
+                    </div>
+                </div>
+                <div class="small-5 medium-2 columns">
+                    <div class="brand-label-titles">Chart Tools</div>
+                    <ul class="button-group radius stack" id="brand-legend-buttons">
+                      <li>
+                        <div class="button small expand alert" id="brand-legend-reset-all-charts">
+                          Reset All Charts
+                        </div>
+                      </li>
+                      <li>
+                        <div class="button small expand" id="brand-legend-update-charts">
+                          Update Charts
+                        </div>
+                      </li>
+                      <li>
+                        <div class="button small expand success" id="brand-legend-normal-hide">
+                          Hide Legend
+                        </div>
+                      </li>
+                    </ul>
+                </div>
+              </div>
+            </div>
+            <!-- END: Legend normal -->
+
+            <!-- BEGIN: Legend hidden -->
+            <div id="brand-legend-hidden">
+              <div class="row">                
+                <div class="small-7 medium-10 columns">
+                  <div class="brand-legend-hidden-text">Click to show legend</div>
+                </div>
+                <div class="small-5 medium-2 columns">
+                  <div class="button small radius expand success" id="brand-legend-hidden-show">
+                    Show Legend
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- END: Legend hidden -->
+
+          </div>
+        </div>
+      </div>
+      <!-- END: Legend row -->
+
+    </div>
+  </div>
+</div>
+<!-- END: Series chart whole -->
+
+<!-- BEGIN: Bar chart component whole -->
+<div class="row">
+  <div class="small-12 columns">
+    <div class="chart-panel">
+
+      <!-- BEGIN: Bar chart component title bar row -->
+      <div class="row">
+        <div class="small-12 columns">
+          <div class="chart-title clearfix">
+            <div class="text left">Brand Effectiveness Components</div>
+            <div class="help right">
+              <ul class="button-group radius">
+                <li>
+                  <span class="button title-button" title="Reset Chart">
+                    <i class="fi-refresh" id="dc-brand-effectiveness-composite-reset"></i>
+                  </span>
+                </li>
+                <li>
+                  <span class="button title-button" title="Help!">
+                    <i data-reveal-id="dc-brand-effectiveness-composite-info-reveal" class="fi-info" id="dc-brand-effectiveness-composite-info"></i>
+                  </span>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
       </div>
+      <!-- END: Bar chart component title bar row -->
 
-      <div class="row">
-        <div class="small-12 columns">
-          <div class="chart-footer small-text-right">Select on lower chart to zoom in/out</div>
+      <!-- BEGIN: Bar chart component charts row -->
+      <div id="dc-brand-effectiveness-composite-row">
+        <div class="chart-content">
+          <div class="row">
+            <div class="small-3 columns">
+                <div id="dc-brand-crowding-bar-chart"></div>
+            </div>
+            <div class="small-3 columns">
+                <div id="dc-visual-saliency-bar-chart"></div>
+            </div>
+            <div class="small-3 columns">
+                <div id="dc-timing-effectiveness-bar-chart"></div>
+            </div>
+            <div class="small-3 columns">
+                <div id="dc-spatial-effectiveness-bar-chart"></div>
+            </div>
+          </div>
         </div>
       </div>
+      <!-- END: Bar chart component charts row -->
 
-    </div>
-
-  </div>
-</div>
-
-<div class="row">
-  <div class="small-12 columns">
-    <div class="chart-panel">
-      <div class="chart-title clearfix">
-        <div class="text left">Brand Effectiveness</div>
-        <div class="help right">
-          <span title="Reset Chart">
-            <i class="fi-refresh" id="dc-brand-effectiveness-series-chart-reset"></i>
-          </span>
-          <span title="Help!">
-            <i data-reveal-id="dc-brand-effectiveness-series-chart-info-reveal" class="fi-info" id="dc-brand-effectiveness-series-chart-info"></i>
-          </span>
-        </div>
-      </div>
-      <div class="chart-content">
-        <div id="dc-brand-effectiveness-series-chart-x">
-          <!-- <%= image_tag("tempImg.png") %> -->
-        </div>
-        <div id="dc-brand-effectiveness-range-chart-x"></div>
-      </div>
-      <div class="chart-footer small-text-right">Select on lower chart to zoom in/out</div>
     </div>
   </div>
 </div>
+<!-- END: Bar chart component whole -->
+
 
 <div class="row">
-  <div class="small-6 columns">
+  <!-- BEGIN: Brand Count pie chart whole -->
+  <div class="small-12 medium-6 large-3 columns">
     <div class="chart-panel">
       <div class="chart-title clearfix">
-        <div class="text left">Brand Crowding (Bar Chart)</div>
+        <div class="text left">Brand Count</div>
         <div class="help right">
-          <span title="Reset Chart">
-            <i class="fi-refresh" id="dc-brand-crowding-bar-chart-reset"></i>
-          </span>
-          <span title="Help!">
-            <i data-reveal-id="dc-brand-crowding-bar-chart-info-reveal" class="fi-info" id="dc-brand-crowding-bar-chart-info"></i>
-          </span>
-        </div>
-      </div>
-      <div class="chart-content">
-        <div id="dc-brand-crowding-bar-chart"></div>
-      </div>
-    </div>
-  </div>
-  <div class="small-6 columns">
-    <div class="chart-panel">
-      <div class="chart-title clearfix">
-        <div class="text left">Visual Saliency (Bar Chart)</div>
-        <div class="help right">
-          <span title="Reset Chart">
-            <i class="fi-refresh" id="dc-visual-saliency-bar-chart-reset"></i>
-          </span>
-          <span title="Help!">
-            <i data-reveal-id="dc-visual-saliency-bar-chart-info-reveal" class="fi-info" id="dc-visual-saliency-bar-chart-info"></i>
-          </span>
-        </div>
-      </div>
-      <div class="chart-content">
-        <div id="dc-visual-saliency-bar-chart"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="row">
-  <div class="small-6 columns">
-    <div class="chart-panel">
-      <div class="chart-title clearfix">
-        <div class="text left">Timing Effectiveness</div>
-        <div class="help right">
-          <span title="Reset Chart">
-            <i class="fi-refresh" id="dc-timing-effectiveness-bar-chart-reset"></i>
-          </span>
-          <span title="Help!">
-            <i data-reveal-id="dc-timing-effectiveness-bar-chart-info-reveal" class="fi-info" id="dc-timing-effectiveness-bar-chart-info"></i>
-          </span>
-        </div>
-      </div>
-      <div class="chart-content">
-        <div id="dc-timing-effectiveness-bar-chart"></div>
-      </div>
-    </div>
-  </div>
-  <div class="small-6 columns">
-    <div class="chart-panel">
-      <div class="chart-title clearfix">
-        <div class="text left">Spatial Effectiveness (Bar Chart)</div>
-        <div class="help right">
-          <span title="Reset Chart">
-            <i class="fi-refresh" id="dc-spatial-effectiveness-bar-chart-reset"></i>
-          </span>
-          <span title="Help!">
-            <i data-reveal-id="dc-spatial-effectiveness-bar-chart-info-reveal" class="fi-info" id="dc-spatial-effectiveness-bar-chart-info"></i>
-          </span>
-        </div>
-      </div>
-      <div class="chart-content">
-        <div id="dc-spatial-effectiveness-bar-chart"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="row">
-  <div class="small-12 medium-4 columns">
-    <div class="chart-panel">
-      <div class="chart-title clearfix">
-        <div class="text left">Brand Exposure (Pie Chart)</div>
-        <div class="help right">
-          <span title="Reset Chart">
-            <i class="fi-refresh" id="dc-brand-exposure-pie-chart-reset"></i>
-          </span>
-          <span title="Help!">
-            <i data-reveal-id="dc-brand-exposure-pie-chart-info-reveal" class="fi-info" id="dc-brand-exposure-pie-chart-info"></i>
-          </span>
-        </div>
-      </div>
-      <div class="chart-content">
-        <div id="dc-brand-exposure-pie-chart"></div>
-      </div>
-    </div>
-  </div>
-  <div class="small-12 medium-4 columns">
-    <div class="chart-panel">
-      <div class="chart-title clearfix">
-        <div class="text left">View Duration (Pie Chart)</div>
-        <div class="help right">
-          <span title="Reset Chart">
-            <i class="fi-refresh" id="dc-brand-duration-pie-chart-reset"></i>
-          </span>
-          <span title="Help!">
-            <i data-reveal-id="dc-brand-duration-pie-chart-info-reveal" class="fi-info" id="dc-brand-duration-pie-chart-info"></i>
-          </span>
-        </div>
-      </div>
-      <div class="chart-content">
-        <div id="dc-brand-duration-pie-chart"></div>
-      </div>
-    </div>
-  </div>
-  <div class="small-12 medium-4 columns">
-    <div class="chart-panel">
-      <div class="chart-title clearfix">
-        <div class="text left">Brand Count (Pie Chart)</div>
-        <div class="help right">
-          <span title="Reset Chart">
-            <i class="fi-refresh" id="dc-brand-count-pie-chart-reset"></i>
-          </span>
-          <span title="Help!">
-            <i data-reveal-id="dc-brand-count-pie-chart-info-reveal" class="fi-info" id="dc-brand-count-pie-chart-info"></i>
-          </span>
+          <ul class="button-group radius">
+            <li>
+              <span class="button title-button" title="Reset Chart">
+                <i class="fi-refresh" id="dc-brand-count-pie-chart-reset"></i>
+              </span>
+            </li>
+            <li>
+              <span class="button title-button" title="Help!">
+                <i data-reveal-id="dc-brand-count-pie-chart-info-reveal" class="fi-info" id="dc-brand-count-pie-chart-info"></i>
+              </span>
+            </li>
+          </ul>
         </div>
       </div>
       <div class="chart-content">
@@ -214,6 +192,56 @@
       </div>
     </div>
   </div>
+  <!-- END: Brand Count pie chart whole -->
+
+  <!-- BEGIN: View Duration pie chart whole -->
+  <div class="small-12 medium-6 large-3 large-push-6 columns">
+    <div class="chart-panel">
+      <div class="chart-title clearfix">
+        <div class="text left">View Duration</div>
+        <div class="help right">
+          <ul class="button-group radius">
+            <li>
+              <span class="button title-button" title="Reset Chart">
+                <i class="fi-refresh" id="dc-view-duration-pie-chart-reset"></i>
+              </span>
+            </li>
+            <li>
+              <span class="button title-button" title="Help!">
+                <i data-reveal-id="dc-view-duration-pie-chart-info-reveal" class="fi-info" id="dc-view-duration-pie-chart-info"></i>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="chart-content">
+        <div id="dc-view-duration-pie-chart"></div>
+      </div>
+    </div>
+  </div>
+  <!-- END: View Duration pie chart whole -->
+
+  <!-- BEGIN: Heatmap chart whole -->
+  <div class="small-12 medium-12 large-6 large-pull-3 columns">
+    <div class="chart-panel">
+      <div class="chart-title clearfix">
+        <div class="text left">Spatial Position</div>
+        <div class="help right">
+          <ul class="button-group radius">
+            <li>
+              <span class="button title-button" title="Help!">
+                <i data-reveal-id="d3-spatial-position-heatmap-chart-info-reveal" class="fi-info" id="d3-spatial-position-heatmap-chart-info"></i>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="chart-content">
+        <div id="d3-spatial-position-heatmap-chart"></div>
+      </div>
+    </div>
+  </div>
+  <!-- END: Heatmap chart whole -->
 </div>
 
 <div class="row">
@@ -242,3 +270,50 @@
   <p>I'm a cool paragraph that lives inside of an even cooler modal. Wins!</p>
   <a class="close-reveal-modal">&#215;</a>
 </div>
+
+<!-- 
+
+<ul id="dummy-data">
+  <li>Some long text here and</li>
+  <li>Some short text</li>
+  <li>Some long text here and</li>
+  <li>Some short text</li>
+  <li>Some short text</li>
+  <li>Some short text</li>
+  <li>Some long text here and</li>
+  <li>Some long text here and</li>
+  <li>Some short text</li>
+  <li>Some short text</li>
+  <li>Some long text here and</li>
+  <li>Some short text</li>
+  <li>Some long text here and</li>
+  <li>Some short text</li>
+  <li>Some short text</li>
+  <li>Some short text</li>
+  <li>Some long text here and</li>
+  <li>Some long text here and</li>
+  <li>Some short text</li>
+  <li>Some short text</li>
+  <li>Some long text here and</li>
+  <li>Some short text</li>
+  <li>Some long text here and</li>
+  <li>Some short text</li>
+  <li>Some short text</li>
+  <li>Some short text</li>
+  <li>Some long text here and</li>
+  <li>Some long text here and</li>
+  <li>Some short text</li>
+  <li>Some short text</li>
+  <li>Some long text here and</li>
+  <li>Some short text</li>
+  <li>Some long text here and</li>
+  <li>Some short text</li>
+  <li>Some short text</li>
+  <li>Some short text</li>
+  <li>Some long text here and</li>
+  <li>Some long text here and</li>
+  <li>Some short text</li>
+  <li>Some short text</li>
+</ul>
+
+ -->
