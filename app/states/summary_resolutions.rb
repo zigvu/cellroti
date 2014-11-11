@@ -11,11 +11,8 @@ module States
 				States::SummaryResolutions.gameResolution, 
 				States::SummaryResolutions.subSeasonResolution, 
 				States::SummaryResolutions.seasonResolution]
-			tableNames = ['summary_det_group1_seconds', 'summary_det_group10_seconds', 'summary_det_group60_seconds']
 			@timeFactors.each_with_index do |t, idx|
-				@resolutions[t] = {
-					tname: tableNames[idx],
-					cname: tableNames[idx].classify.constantize}
+				@resolutions[t] = {}
 			end
 		end
 

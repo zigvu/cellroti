@@ -96,46 +96,5 @@ module Jsonifiers
 			return retArr
 		end
 
-		def self.getGameSummaryData2(game, summaryTableName, det_group_ids)
-			retArr = []
-			game.send(summaryTableName).where(det_group_id: det_group_ids).each do |sdata|
-				quadrants = []
-				qdata = JSON.parse(sdata.quadrants)
-				qdata.keys.sort.each do |k|
-					#quadrants << sprintf("%.4f", qdata[k])
-					# TODO TODO TODO TODO TODO TODO TODO
-					# TODO TODO TODO TODO TODO TODO TODO
-					quadrants << sprintf("%.4f", qdata[k] * 4000) # <---- TODO: remove
-				end
-
-				data = [
-					sprintf("%.4f", sdata[:brand_effectiveness]),   # 0
-					sprintf("%.4f", sdata[:det_group_crowding]),    # 1
-					sprintf("%.4f", sdata[:visual_saliency]),       # 2
-					sprintf("%.4f", sdata[:timing_effectiveness]),  # 3
-					sprintf("%.4f", sdata[:spatial_effectiveness]), # 4
-					sdata[:detections_count],                       # 5
-					# TODO TODO TODO TODO TODO TODO TODO
-					# TODO TODO TODO TODO TODO TODO TODO
-					sdata[:detections_count],                       # 6   <---- TODO: change to proper view duration
-					quadrants                                       # 7
-				]
-
-				dataIdx = retArr.find_index {|d| d[:time] == sdata[:frame_time]}
-				if dataIdx == nil
-					retArr << {
-						time: sdata[:frame_time], 
-						bgData: []
-					}
-					dataIdx = retArr.find_index {|d| d[:time] == sdata[:frame_time]}
-				end
-				retArr[dataIdx][:bgData] << {
-					sdata.det_group_id => data
-				}
-			end
-			retArr.sort_by! {|h| h[:time]}
-			return retArr
-		end
-
 	end
 end

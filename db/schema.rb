@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141106185330) do
+ActiveRecord::Schema.define(version: 20141111225452) do
 
   create_table "client_detectables", force: true do |t|
     t.integer  "client_id"
@@ -209,60 +209,6 @@ ActiveRecord::Schema.define(version: 20141106185330) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  create_table "summary_det_group10_seconds", force: true do |t|
-    t.float    "det_group_crowding"
-    t.float    "visual_saliency"
-    t.float    "timing_effectiveness"
-    t.float    "spatial_effectiveness"
-    t.integer  "detections_count"
-    t.string   "quadrants"
-    t.integer  "frame_time"
-    t.integer  "det_group_id"
-    t.integer  "video_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.float    "brand_effectiveness"
-  end
-
-  add_index "summary_det_group10_seconds", ["det_group_id"], name: "index_summary_det_group10_seconds_on_det_group_id", using: :btree
-  add_index "summary_det_group10_seconds", ["video_id"], name: "index_summary_det_group10_seconds_on_video_id", using: :btree
-
-  create_table "summary_det_group1_seconds", force: true do |t|
-    t.float    "det_group_crowding"
-    t.float    "visual_saliency"
-    t.float    "timing_effectiveness"
-    t.float    "spatial_effectiveness"
-    t.integer  "detections_count"
-    t.string   "quadrants"
-    t.integer  "frame_time"
-    t.integer  "det_group_id"
-    t.integer  "video_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.float    "brand_effectiveness"
-  end
-
-  add_index "summary_det_group1_seconds", ["det_group_id"], name: "index_summary_det_group1_seconds_on_det_group_id", using: :btree
-  add_index "summary_det_group1_seconds", ["video_id"], name: "index_summary_det_group1_seconds_on_video_id", using: :btree
-
-  create_table "summary_det_group60_seconds", force: true do |t|
-    t.float    "det_group_crowding"
-    t.float    "visual_saliency"
-    t.float    "timing_effectiveness"
-    t.float    "spatial_effectiveness"
-    t.integer  "detections_count"
-    t.string   "quadrants"
-    t.integer  "frame_time"
-    t.integer  "det_group_id"
-    t.integer  "video_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.float    "brand_effectiveness"
-  end
-
-  add_index "summary_det_group60_seconds", ["det_group_id"], name: "index_summary_det_group60_seconds_on_det_group_id", using: :btree
-  add_index "summary_det_group60_seconds", ["video_id"], name: "index_summary_det_group60_seconds_on_video_id", using: :btree
 
   create_table "teams", force: true do |t|
     t.string   "name"

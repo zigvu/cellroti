@@ -94,9 +94,6 @@ module Services
 			puts "    Creating det group effectiveness"
 			dgm = Metrics::DetGroupEffectivenessMetrics.new(video, @client.det_groups)
 			dgm.populate
-			puts "    Creating summary of det group effectiveness"
-			sdgm = Metrics::SummaryDetGroupMetrics.new(video, @client.det_groups)
-			sdgm.populate
 		end
 
 		def createTeams(countryList)

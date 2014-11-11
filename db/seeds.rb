@@ -190,9 +190,6 @@ pbm.populate
 puts "Creating det group effectiveness"
 dgm = Metrics::DetGroupEffectivenessMetrics.new(wcGermanyVsBrazilVideo, DetGroup.where(id: detGroupIds))
 dgm.populate
-puts "Creating summary of det group effectiveness"
-sdgm = Metrics::SummaryDetGroupMetrics.new(wcGermanyVsBrazilVideo, DetGroup.where(id: detGroupIds))
-sdgm.populate
 
 
 puts "Testing mongodb data"
