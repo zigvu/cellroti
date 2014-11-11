@@ -20,5 +20,4 @@ class Video < ActiveRecord::Base
 	end
 
 	belongs_to :game
-	has_many :video_frames, dependent: :destroy
 end

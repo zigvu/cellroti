@@ -179,22 +179,6 @@ puts "Creating mongodb data"
 cdps = Services::CaffeDataProcessorService.new(wcGermanyVsBrazilVideo, videoFrameFileName1)
 cdps.populate()
 
-detectableIds = JSON.parse(File.read(videoFrameFileName1))['detections'].map{ |k, v| v.keys}.flatten.uniq.map{|x| x.to_i}
-detGroupIds = cdps.find_det_group_ids(detectableIds)
-
-caffeWriteService = Services::CaffeDataWriterService.new(wcGermanyVsBrazilVideo, videoFrameFileName1)
-caffeWriteService.populate
-puts "Creating raw detectables"
-pbm = Metrics::RawDetectableMetrics.new(wcGermanyVsBrazilVideo)
-pbm.populate
-puts "Creating det group effectiveness"
-dgm = Metrics::DetGroupEffectivenessMetrics.new(wcGermanyVsBrazilVideo, DetGroup.where(id: detGroupIds))
-dgm.populate
-
-
-puts "Testing mongodb data"
-test = Services::MigrationTestingService.new()
-test.test_database_creation(wcGermanyVsBrazilVideo)
 
 # # Game 2
 # wcGermanyVsFranceVideo = wcGermanyVsFrance.videos.create(

@@ -8,7 +8,7 @@ module Metrics
 			@totalQuadWeights = 15
 		end
 
-		def get_quadrant_boundaries_new
+		def get_quadrant_boundaries
 			colSize = (@width / @numCols).to_i
 			rowSize = (@height / @numRows).to_i
 			numQuadrants = 0
@@ -25,32 +25,6 @@ module Metrics
 						width: colEnd - colStart, 
 						height: rowEnd - rowStart
 					}
-
-
-					numQuadrants = numQuadrants + 1
-					#puts "c,r: (#{colStart}, #{rowStart}), (#{colEnd}, #{rowEnd})"
-				end
-			end
-
-			return quadrants
-		end
-
-		def get_quadrant_boundaries
-			colSize = (@width / @numCols).to_i
-			rowSize = (@height / @numRows).to_i
-			numQuadrants = 0
-			quadrants = {}
-			for r in 0..(@numRows - 1) do
-				rowStart = r * rowSize
-				rowEnd = r == (@numRows - 1) ? @height : (r + 1) * rowSize
-				for c in 0..(@numCols - 1) do
-					colStart = c * colSize
-					colEnd = c == (@numCols - 1) ? @width : (c + 1) * colSize
-					quadrants[numQuadrants] = {
-						x0: colStart, y0: rowStart, x3: colEnd, y3: rowEnd
-					}
-
-
 					numQuadrants = numQuadrants + 1
 					#puts "c,r: (#{colStart}, #{rowStart}), (#{colEnd}, #{rowEnd})"
 				end

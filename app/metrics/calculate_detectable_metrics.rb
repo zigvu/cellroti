@@ -23,7 +23,7 @@ module Metrics
 			# number of quadrants in frame
 			@numCols = 3
 			@numRows = 3
-			metricsQuads = Metrics::Quadrants2.new(@width, @height, @numCols, @numRows)
+			metricsQuads = Metrics::Quadrants.new(@width, @height, @numCols, @numRows)
 			@quadrant_weights = metricsQuads.get_quadrant_weights
 			@quadrants = metricsQuads.get_quadrant_boundaries
 		end

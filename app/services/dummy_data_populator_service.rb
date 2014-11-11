@@ -86,14 +86,7 @@ module Services
 			end
 
 			# populate data
-			caffeWriteService = Services::CaffeDataWriterService.new(video, @tempFile)
-			caffeWriteService.populate
-			puts "    Creating raw detectables"
-			pbm = Metrics::RawDetectableMetrics.new(video)
-			pbm.populate
-			puts "    Creating det group effectiveness"
-			dgm = Metrics::DetGroupEffectivenessMetrics.new(video, @client.det_groups)
-			dgm.populate
+
 		end
 
 		def createTeams(countryList)
