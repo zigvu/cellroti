@@ -1,15 +1,18 @@
+#TODO: REPLACE
+
 require 'json'
 
 module Services
 	class CaffeDataWriterService
 		def initialize(video, caffeDataFile)
 			@video = video
-			@caffe_data = JSON.parse(File.read(caffeDataFile))
+			allData = JSON.parse(File.read(caffeDataFile))
+			@caffe_data = allData["detections"]
 		end
 
 		def populate
 			sortedFrameNums = @caffe_data.keys.collect{|i| i.to_i}.sort
-			fps = @video.avg_frame_rate
+			fps = @video.playback_frame_rate
 			sortedFrameNums.each do |frameNum|
 				#puts "Working on frame number: #{frameNum}"
 				frameTime = (frameNum * 1000.0 / fps).to_i

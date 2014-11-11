@@ -8,7 +8,7 @@ module Jsonifiers
 		end
 
 		def to_csv
-			raise RuntimeError("Not implemented yet")
+			raise "Not implemented yet"
 		end
 	end
 end

@@ -57,7 +57,7 @@ module Sprt
         elsif params[:event][:game_id] != nil
           @game = ::Game.find(params[:event][:game_id])
         else
-          raise RuntimeError("Game ID not available")
+          raise "Game ID not available"
         end
       end
 

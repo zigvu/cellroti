@@ -4,7 +4,7 @@ module Metrics
 			@windowSize = windowSize
 			@decayArray = decayArray
 			if @decayArray.size() != @windowSize
-				raise RuntimeError("Decay array must be the same size as window")
+				raise "Decay array must be the same size as window"
 			end
 			@data = Array.new(@windowSize, 0)
 		end

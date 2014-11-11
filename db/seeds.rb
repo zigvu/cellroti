@@ -36,11 +36,11 @@ end
 
 # Create det groups
 cocacolaClientDetGrp1 = cocacolaClient.det_groups.create(name: "Carbonated Drinks")
-[1,2,3].each do |detectable_id|
+[2,3].each do |detectable_id|
 	cocacolaClientDetGrp1.det_group_detectables.create(detectable_id: detectable_id)
 end
 cocacolaClientDetGrp2 = cocacolaClient.det_groups.create(name: "Food Combo")
-[1,5].each do |detectable_id|
+[2,3,5].each do |detectable_id|
 	cocacolaClientDetGrp2.det_group_detectables.create(detectable_id: detectable_id)
 end
 cocacolaClientDetGrp3 = cocacolaClient.det_groups.create(name: "Best In Class")
@@ -109,78 +109,95 @@ wc2014 = worldCup.seasons.create(name: "World Cup 2014", description: "2014 Worl
 mc = Managers::MClient.new(cocacolaClient)
 mc.addAllowedSeasonIds(wc2014.id)
 
-# Auto-populate data
-load 'app/services/dummy_data_populator_service.rb'
-caffeDataFile = '/home/evan/Vision/temp/sendto_cellroti/database_seed_localization.json'
+# ######  BEGIN - AUTO DUMMY DATA POPULATE ######
+
+# # Auto-populate data
+# load 'app/services/dummy_data_populator_service.rb'
+# caffeDataFile = '/home/evan/Vision/temp/sendto_cellroti/database_seed_localization.json'
+# # numOfGames = 64
+# # averageLengthMS = 90 * 60 * 1000 # 90 minutes
 # numOfGames = 64
-# averageLengthMS = 90 * 60 * 1000 # 90 minutes
-numOfGames = 64
-averageLengthMS = 10 * 60 * 1000 # 90 minutes
+# averageLengthMS = 10 * 60 * 1000 # 90 minutes
 
-countryList = [
-	"Algeria", "Argentina", "Australia", "Belgium", "Bosnia-Herzegovina", 
-	"Brazil", "Cameroon", "Chile", "Colombia", "Costa Rica", "Croatia", 
-	"Ecuador", "England", "France", "Germany", "Ghana", "Greece", 
-	"Honduras", "Iran", "Italy", "Ivory Coast", "Japan", "Mexico", 
-	"Netherlands", "Nigeria", "Portugal", "Russia", "South Korea", 
-	"Spain", "Switzerland", "Uruguay", "U.S."]
+# countryList = [
+# 	"Algeria", "Argentina", "Australia", "Belgium", "Bosnia-Herzegovina", 
+# 	"Brazil", "Cameroon", "Chile", "Colombia", "Costa Rica", "Croatia", 
+# 	"Ecuador", "England", "France", "Germany", "Ghana", "Greece", 
+# 	"Honduras", "Iran", "Italy", "Ivory Coast", "Japan", "Mexico", 
+# 	"Netherlands", "Nigeria", "Portugal", "Russia", "South Korea", 
+# 	"Spain", "Switzerland", "Uruguay", "U.S."]
 
-dummyData = Services::DummyDataPopulatorService.new(caffeDataFile, wc2014, cocacolaClient)
-dummyData.createTeams(countryList)
-dummyData.createManyGames(numOfGames, averageLengthMS)
+# dummyData = Services::DummyDataPopulatorService.new(caffeDataFile, wc2014, cocacolaClient)
+# dummyData.createTeams(countryList)
+# dummyData.createManyGames(numOfGames, averageLengthMS)
 
-# wcGermany = worldCup.teams.create(name: "Germany", description: "German team")
-# wcFrance = worldCup.teams.create(name: "France", description: "French team")
-# wcBrazil = worldCup.teams.create(name: "Brazil", description: "Brazil team")
-
-# wcGermanyVsBrazil = wc2014.games.create(name: "Semi Final", description: "Germany Vs. Brazil", start_date: Time.now - 1.day - 2.hours, end_date: Time.now - 1.day - 2.hours + 6.minutes + 41.seconds, venue_city: "Rio", venue_stadium: "Rio Grande")
-# wcGermanyVsFrance = wc2014.games.create(name: "Semi Final", description: "Germany Vs. France", start_date: Time.now - 2.hours, end_date: Time.now - 2.hours + 6.minutes + 43.seconds, venue_city: "CRio", venue_stadium: "CRio Grande")
+# ######  END - AUTO DUMMY DATA POPULATE ######
 
 
-# GameTeam.create(game_id: wcGermanyVsBrazil.id, team_id: wcGermany.id)
-# GameTeam.create(game_id: wcGermanyVsBrazil.id, team_id: wcBrazil.id)
-# GameTeam.create(game_id: wcGermanyVsFrance.id, team_id: wcGermany.id)
-# GameTeam.create(game_id: wcGermanyVsFrance.id, team_id: wcFrance.id)
+wcGermany = worldCup.teams.create(name: "Germany", description: "German team")
+wcFrance = worldCup.teams.create(name: "France", description: "French team")
+wcBrazil = worldCup.teams.create(name: "Brazil", description: "Brazil team")
 
-# # Put in some data -- short game chopped into two parts for data
+wcGermanyVsBrazil = wc2014.games.create(name: "Semi Final", description: "Germany Vs. Brazil", start_date: Time.now - 1.day - 2.hours, end_date: Time.now - 1.day - 2.hours + 6.minutes + 41.seconds, venue_city: "Rio", venue_stadium: "Rio Grande")
+wcGermanyVsFrance = wc2014.games.create(name: "Semi Final", description: "Germany Vs. France", start_date: Time.now - 2.hours, end_date: Time.now - 2.hours + 6.minutes + 43.seconds, venue_city: "CRio", venue_stadium: "CRio Grande")
 
-# # Game 1
-# wcGermanyVsBrazilVideo = wcGermanyVsBrazil.videos.create(
-# 	title: "Germany Vs. Brazil - First 6 minutes", 
-# 	description: "Game details",
-# 	comment: "Only 6 minutes data",
-# 	source_type: "youtube",
-# 	source_url: "http://none-for-now",
-# 	quality: "720p",
-# 	format: "mkv",
-# 	length: times_to_milliseconds(0,6,41,00),
-# 	runstatus: "run-complete",
-# 	start_time: wcGermanyVsBrazil.start_date,
-# 	end_time: wcGermanyVsBrazil.end_date,
-# 	avg_frame_rate: 25,
-# 	detection_frame_rate: 5)
 
-# wcGermanyVsBrazil.events.create(event_type_id: soccerHalfTimeStart.id, team_id: wcGermany.id, event_time: times_to_milliseconds(0,1,0,0))
-# wcGermanyVsBrazil.events.create(event_type_id: soccerHalfTimeEnd.id, team_id: wcGermany.id, event_time: times_to_milliseconds(0,1,20,0))
-# wcGermanyVsBrazil.events.create(event_type_id: soccerGoal.id, team_id: wcGermany.id, event_time: times_to_milliseconds(0,2,10,0))
-# wcGermanyVsBrazil.events.create(event_type_id: soccerGoal.id, team_id: wcGermany.id, event_time: times_to_milliseconds(0,2,50,0))
-# wcGermanyVsBrazil.events.create(event_type_id: soccerCorner.id, team_id: wcBrazil.id, event_time: times_to_milliseconds(0,4,0,0))
-# wcGermanyVsBrazil.events.create(event_type_id: soccerPenalty.id, team_id: wcBrazil.id, event_time: times_to_milliseconds(0,4,40,20))
+GameTeam.create(game_id: wcGermanyVsBrazil.id, team_id: wcGermany.id)
+GameTeam.create(game_id: wcGermanyVsBrazil.id, team_id: wcBrazil.id)
+GameTeam.create(game_id: wcGermanyVsFrance.id, team_id: wcGermany.id)
+GameTeam.create(game_id: wcGermanyVsFrance.id, team_id: wcFrance.id)
 
-# puts "Video 1: Populating with short 10-class video"
-# videoFrameFileName1 = '/home/evan/Vision/temp/sendto_cellroti/database_seed_localization_part1.json'
-# caffeWriteService = Services::CaffeDataWriterService.new(wcGermanyVsBrazilVideo, videoFrameFileName1)
-# caffeWriteService.populate
-# puts "Creating raw detectables"
-# pbm = Metrics::RawDetectableMetrics.new(wcGermanyVsBrazilVideo)
-# pbm.populate
-# puts "Creating det group effectiveness"
-# dgm = Metrics::DetGroupEffectivenessMetrics.new(wcGermanyVsBrazilVideo, cocacolaClient.det_groups)
-# dgm.populate
-# puts "Creating summary of det group effectiveness"
-# sdgm = Metrics::SummaryDetGroupMetrics.new(wcGermanyVsBrazilVideo, cocacolaClient.det_groups)
-# sdgm.populate
+# Put in some data -- short game chopped into two parts for data
 
+# Game 1
+wcGermanyVsBrazilVideo = wcGermanyVsBrazil.videos.create(
+	title: "Germany Vs. Brazil - First 6 minutes", 
+	description: "Game details",
+	comment: "Only 6 minutes data",
+	source_type: "youtube",
+	source_url: "http://none-for-now",
+	quality: "720p",
+	format: "mkv",
+	length: times_to_milliseconds(0,6,41,00),
+	runstatus: "run-complete",
+	start_time: wcGermanyVsBrazil.start_date,
+	end_time: wcGermanyVsBrazil.end_date,
+	playback_frame_rate: 25,
+	detection_frame_rate: 5)
+
+wcGermanyVsBrazil.events.create(event_type_id: soccerHalfTimeStart.id, team_id: wcGermany.id, event_time: times_to_milliseconds(0,1,0,0))
+wcGermanyVsBrazil.events.create(event_type_id: soccerHalfTimeEnd.id, team_id: wcGermany.id, event_time: times_to_milliseconds(0,1,20,0))
+wcGermanyVsBrazil.events.create(event_type_id: soccerGoal.id, team_id: wcGermany.id, event_time: times_to_milliseconds(0,2,10,0))
+wcGermanyVsBrazil.events.create(event_type_id: soccerGoal.id, team_id: wcGermany.id, event_time: times_to_milliseconds(0,2,50,0))
+wcGermanyVsBrazil.events.create(event_type_id: soccerCorner.id, team_id: wcBrazil.id, event_time: times_to_milliseconds(0,4,0,0))
+wcGermanyVsBrazil.events.create(event_type_id: soccerPenalty.id, team_id: wcBrazil.id, event_time: times_to_milliseconds(0,4,40,20))
+
+puts "Video 1: Populating with short 10-class video"
+videoFrameFileName1 = '/home/evan/Vision/temp/sendto_cellroti/database_seed_localization.json'
+
+puts "Creating mongodb data"
+cdps = Services::CaffeDataProcessorService.new(wcGermanyVsBrazilVideo, videoFrameFileName1)
+cdps.populate()
+
+detectableIds = JSON.parse(File.read(videoFrameFileName1))['detections'].map{ |k, v| v.keys}.flatten.uniq.map{|x| x.to_i}
+detGroupIds = cdps.find_det_group_ids(detectableIds)
+
+caffeWriteService = Services::CaffeDataWriterService.new(wcGermanyVsBrazilVideo, videoFrameFileName1)
+caffeWriteService.populate
+puts "Creating raw detectables"
+pbm = Metrics::RawDetectableMetrics.new(wcGermanyVsBrazilVideo)
+pbm.populate
+puts "Creating det group effectiveness"
+dgm = Metrics::DetGroupEffectivenessMetrics.new(wcGermanyVsBrazilVideo, DetGroup.where(id: detGroupIds))
+dgm.populate
+puts "Creating summary of det group effectiveness"
+sdgm = Metrics::SummaryDetGroupMetrics.new(wcGermanyVsBrazilVideo, DetGroup.where(id: detGroupIds))
+sdgm.populate
+
+
+puts "Testing mongodb data"
+test = Services::MigrationTestingService.new(wcGermanyVsBrazilVideo); 
+test.test_all()
 
 # # Game 2
 # wcGermanyVsFranceVideo = wcGermanyVsFrance.videos.create(

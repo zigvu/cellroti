@@ -5,7 +5,7 @@ module Metrics
 			@maxTimeSeconds = maxTimeSeconds
 			#timeDecayWeight = [0.05, 0.1, 0.15, 0.2, 0.3]
 			if timeDecayWeight.size() != @maxTimeSeconds
-				raise RuntimeError("Decay array must be the same size as maxTimeSeconds")
+				raise "Decay array must be the same size as maxTimeSeconds"
 			end
 			@timeWeight = {}
 			(0..(@maxTimeSeconds - 1)).to_a.reverse.each_with_index do |t, idx|

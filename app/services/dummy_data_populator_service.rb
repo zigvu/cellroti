@@ -75,7 +75,7 @@ module Services
 				runstatus: "run-complete",
 				start_time: game.start_date,
 				end_time: game.end_date,
-				avg_frame_rate: @avgFrameRate,
+				playback_frame_rate: @avgFrameRate,
 				detection_frame_rate: @frameStep)
 
 			# generate data

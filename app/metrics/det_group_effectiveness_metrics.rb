@@ -1,4 +1,7 @@
+#TODO: REPLACE
+
 require 'json'
+
 
 module Metrics
 	class DetGroupEffectivenessMetrics
@@ -182,7 +185,7 @@ module Metrics
 					elsif (opMethod == :add) || (opMethod == :average)
 						outputHash[dgId] += inputHash[dId]
 					else
-						raise RuntimeError("Unknown method to operate on hash")
+						raise "Unknown method to operate on hash"
 					end
 				end
 				if opMethod == :average

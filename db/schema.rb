@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141020173357) do
+ActiveRecord::Schema.define(version: 20141106185330) do
 
   create_table "client_detectables", force: true do |t|
     t.integer  "client_id"
@@ -326,11 +326,13 @@ ActiveRecord::Schema.define(version: 20141020173357) do
     t.string   "runstatus"
     t.datetime "start_time"
     t.datetime "end_time"
-    t.float    "avg_frame_rate"
+    t.float    "playback_frame_rate"
     t.integer  "game_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.float    "detection_frame_rate"
+    t.integer  "width"
+    t.integer  "height"
   end
 
   add_index "videos", ["game_id"], name: "index_videos_on_game_id", using: :btree

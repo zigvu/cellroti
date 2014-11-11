@@ -58,7 +58,7 @@ module Sprt
         elsif params[:season][:league_id] != nil
           @league = ::League.find(params[:season][:league_id])
         else
-          raise RuntimeError("League ID not available")
+          raise "League ID not available"
         end
       end
 
