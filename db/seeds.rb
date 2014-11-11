@@ -196,8 +196,8 @@ sdgm.populate
 
 
 puts "Testing mongodb data"
-test = Services::MigrationTestingService.new(wcGermanyVsBrazilVideo); 
-test.test_all()
+test = Services::MigrationTestingService.new()
+test.test_database_creation(wcGermanyVsBrazilVideo)
 
 # # Game 2
 # wcGermanyVsFranceVideo = wcGermanyVsFrance.videos.create(
