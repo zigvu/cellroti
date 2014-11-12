@@ -2,7 +2,7 @@ class Game < ActiveRecord::Base
 	# For authority
 	include Authority::Abilities
 
-  belongs_to :season
+  belongs_to :season, touch: true
   has_many :videos, dependent: :destroy
   has_many :events, dependent: :destroy
   has_many :game_teams, dependent: :destroy

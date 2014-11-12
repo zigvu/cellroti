@@ -2,6 +2,7 @@ module Jsonifiers
 	class JAnalyticsSeason < Jsonifiers::JAnalytics
 		def initialize(season)
 			@season = season
+			@cacheKey = "#{@season.cache_key}/JAnalyticsSeason"
 		end
 
 		def get_data_hash

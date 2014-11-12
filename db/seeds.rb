@@ -1,5 +1,7 @@
 include EventsHelper
 
+# clear memcached
+Rails.cache.clear
 
 # Create Detectables/Organizations
 zigvuOrg = Organization.create(name: "Zigvu", industry: "CV")

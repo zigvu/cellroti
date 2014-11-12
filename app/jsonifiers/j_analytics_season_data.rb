@@ -5,6 +5,8 @@ module Jsonifiers
 	class JAnalyticsSeasonData < Jsonifiers::JAnalytics
 		def initialize(season, client)
 			@season = season
+			@cacheKey = "#{@season.cache_key}/#{client.cache_key}/JAnalyticsSeasonData"
+
 			@det_group_ids = client.det_groups.pluck(:id)
 			@summaryResolution = States::SummaryResolutions.seasonResolution
 		end

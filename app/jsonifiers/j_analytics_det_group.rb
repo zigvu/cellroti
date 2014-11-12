@@ -2,6 +2,7 @@ module Jsonifiers
 	class JAnalyticsDetGroup < Jsonifiers::JAnalytics
 		def initialize(detGroup)
 			@detGroup = detGroup
+			@cacheKey = "#{@detGroup.cache_key}/JAnalyticsDetGroup"
 		end
 
 		def get_data_hash

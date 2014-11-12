@@ -5,6 +5,8 @@ module Jsonifiers
 	class JAnalyticsGameData < Jsonifiers::JAnalytics
 		def initialize(game, client)
 			@game = game
+			@cacheKey = "#{@game.cache_key}/#{client.cache_key}/JAnalyticsGameData"
+
 			@det_group_ids = client.det_groups.pluck(:id)
 			@summaryResolution = States::SummaryResolutions.gameResolution
 		end

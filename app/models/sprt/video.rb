@@ -19,5 +19,5 @@ class Video < ActiveRecord::Base
 		SummaryMetric.where(video_id: self.id)
 	end
 
-	belongs_to :game
+	belongs_to :game, touch: true
 end

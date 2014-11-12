@@ -6,6 +6,6 @@ class Event < ActiveRecord::Base
 	attr_accessor :hours, :minutes, :seconds, :milliseconds
 
   belongs_to :event_type
-  belongs_to :game
+  belongs_to :game, touch: true
   belongs_to :team
 end
