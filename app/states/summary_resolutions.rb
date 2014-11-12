@@ -16,9 +16,9 @@ module States
 			end
 		end
 
-		def getFrameCounters(frameRate)
+		def getFrameCounters(detectionFrameRate)
 			@timeFactors.each_with_index do |t, idx|
-				@resolutions[t][:num_of_frames] = (t * frameRate).to_i
+				@resolutions[t][:num_of_frames] = (t * detectionFrameRate).to_i
 				@resolutions[t][:frame_counter] = 0
 			end
 			return @resolutions

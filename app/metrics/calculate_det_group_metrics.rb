@@ -1,5 +1,3 @@
-require 'json'
-
 module Metrics
 	class CalculateDetGroupMetrics
 		def initialize(video, detGroupIds)

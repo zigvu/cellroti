@@ -1,5 +1,3 @@
-require 'json'
-
 module Metrics
 	class CalculateDetectableMetrics
 		def initialize(video)

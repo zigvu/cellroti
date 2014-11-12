@@ -1,5 +1,3 @@
-require 'json'
-
 module Metrics
 	class CalculateSummaryMetrics
 		def initialize(video, detGroupIds)

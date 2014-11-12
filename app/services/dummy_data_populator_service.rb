@@ -4,19 +4,21 @@ module Services
 	class DummyDataPopulatorService
 		def initialize(caffeDataFile, gameSeason, client)
 			rawData = JSON.parse(File.read(caffeDataFile))
+			@videoAttributes = rawData["video_attributes"]
+
 			@gameSeason = gameSeason
 			@client = client
 
 			@caffeData = {}
-			@caffeDataKeys = rawData.keys().map{|i| i.to_i}.sort
+			@caffeDataKeys = rawData["detections"].keys().map{|i| i.to_i}.sort
 			@caffeDataKeys.each do |k|
-				@caffeData[k] = rawData[k.to_s]
+				@caffeData[k] = rawData["detections"][k.to_s]
 			end
 
 			@event_type_ids = EventType.pluck(:id)
 			@tempFile = '/mnt/tmp/videoTempJSON.json'
-			@frameStep = 5
-			@avgFrameRate = 25
+			@frameStep = @videoAttributes["detection_frame_rate"]
+			@avgFrameRate = @videoAttributes["playback_frame_rate"]
 		end
 
 		def createManyGames(numOfGames, averageLengthMS)
@@ -69,24 +71,28 @@ module Services
 				comment: "Auto-generated - #{team1.name}.#{team2.name}", 
 				source_type: "youtube",
 				source_url: "http://none-for-now",
-				quality: "720p",
-				format: "mkv",
-				length: lengthMS,
 				runstatus: "run-complete",
 				start_time: game.start_date,
-				end_time: game.end_date,
-				playback_frame_rate: @avgFrameRate,
-				detection_frame_rate: @frameStep)
+				end_time: game.end_date)
+
+			@videoAttributes["length"] = lengthMS
 
 			# generate data
 			numOfFrames = (((lengthMS/1000) * @avgFrameRate).to_i / @frameStep).to_i
 			videoData = generateVideoData(numOfFrames, @frameStep)
+
+			saveData = {
+				video_id: video.id,
+				video_attributes: @videoAttributes,
+				detections: videoData
+			}
 			File.open(@tempFile, "w") do |f|
-				f.write(JSON.pretty_generate(videoData))
+				f.write(JSON.pretty_generate(saveData))
 			end
 
 			# populate data
-
+			cdps = Services::CaffeDataProcessorService.new(video, @tempFile)
+			cdps.populate()
 		end
 
 		def createTeams(countryList)
