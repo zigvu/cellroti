@@ -22,7 +22,52 @@
 
 <p>
 	<strong>Detectables:</strong>
-	<%= render 'assign_detectables_form' %>
+	<table>
+		<thead>
+			<tr>
+				<th>Org. Name</th>
+				<th>Org. Industry</th>
+				<th>Detectables</th>
+			</tr>
+		</thead>
+		<tbody>
+			<% @client.detectables.sort_by{|d| d.organization.name}.group_by{|d| d.organization}.each do |org, detectables_group| %>
+				<tr>
+					<td><%= org.name %></td>
+					<td><%= org.industry %></td>
+					<td>
+						<ul>
+							<% detectables_group.each do |dg| %>
+								<li> <%= dg.pretty_name %> </li>
+							<% end %>
+						</ul>
+					</td>
+				</tr>
+			<% end %>
+		</tbody>
+	</table>
+</p>
+
+<p>
+	<strong>Brand Groups:</strong>
+	<table>
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Name</th>
+				<th>Pretty Name</th>
+			</tr>
+		</thead>
+		<tbody>
+			<% @client.det_groups.each do |dg| %>
+				<tr>
+					<td><%= dg.id %></td>
+					<td><%= dg.name %></td>
+					<td><%= dg.pretty_name %></td>
+				</tr>
+			<% end %>
+		</tbody>
+	</table>
 </p>
 
 <%= link_to 'Cancel', admin_clients_path, class: "button alert" %>

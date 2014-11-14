@@ -22,7 +22,7 @@ mcDonaldsOrg.detectables.create(name: "mcdonaldsM", pretty_name: "McDonalds", de
 mcDonaldsOrg.detectables.create(name: "iamlovinit", pretty_name: "I Am Lovin' It", description: "Sub-brand")
 
 
-# Create clients
+# Create clients - zigvu HAS to be the first client
 zigvuClient = zigvuOrg.create_client(name: "Zigvu", pretty_name: "Zigvu", description: "Base Client to associate internal users with")
 cocacolaClient = cocacolaOrg.create_client(name: "CocaCola", pretty_name: "CocaCola", description: "Signed up on 9/8/2014")
 pepsiColaClient = pepsicolaOrg.create_client(name: "Pepsi", pretty_name: "Pepsi", description: "Signed up on 9/8/2014")
@@ -37,31 +37,47 @@ end
 end
 
 # Create det groups
-cocacolaClientDetGrp1 = cocacolaClient.det_groups.create(name: "Carbonated Drinks")
-[2,3].each do |detectable_id|
-	cocacolaClientDetGrp1.det_group_detectables.create(detectable_id: detectable_id)
-end
-cocacolaClientDetGrp2 = cocacolaClient.det_groups.create(name: "Food Combo")
-[2,3,5].each do |detectable_id|
-	cocacolaClientDetGrp2.det_group_detectables.create(detectable_id: detectable_id)
-end
-cocacolaClientDetGrp3 = cocacolaClient.det_groups.create(name: "Best In Class")
-[5,6].each do |detectable_id|
-	cocacolaClientDetGrp3.det_group_detectables.create(detectable_id: detectable_id)
+carbondatedDrinksDetGrp = Client.zigvu_client.det_groups.create(name: "CarbonatedDrinksForAllClient", pretty_name: "Carbonated Drinks")
+foodComboDetGrp = Client.zigvu_client.det_groups.create(name: "FoodComboForAllClient", pretty_name: "Food Combo")
+bestInClassDetGrp = Client.zigvu_client.det_groups.create(name: "BestInClassForAllClient", pretty_name: "Best In Class")
+
+[1,2,3,4].each do |detectable_id|
+	carbondatedDrinksDetGrp.det_group_detectables.create(detectable_id: detectable_id)
 end
 
-pepsiColaClientDetGrp1 = pepsiColaClient.det_groups.create(name: "Carbonated Drinks")
-[1,3,4].each do |detectable_id|
-	pepsiColaClientDetGrp1.det_group_detectables.create(detectable_id: detectable_id)
-end
-pepsiColaClientDetGrp2 = pepsiColaClient.det_groups.create(name: "Food Combo")
-[3,5].each do |detectable_id|
-	pepsiColaClientDetGrp2.det_group_detectables.create(detectable_id: detectable_id)
-end
-pepsiColaClientDetGrp3 = pepsiColaClient.det_groups.create(name: "Best In Class")
 [5,6].each do |detectable_id|
-	pepsiColaClientDetGrp3.det_group_detectables.create(detectable_id: detectable_id)
+	foodComboDetGrp.det_group_detectables.create(detectable_id: detectable_id)
 end
+
+[1,3,5].each do |detectable_id|
+	bestInClassDetGrp.det_group_detectables.create(detectable_id: detectable_id)
+end
+
+# cocacolaClientDetGrp1 = cocacolaClient.det_groups.create(name: "Carbonated Drinks")
+# [2,3].each do |detectable_id|
+# 	cocacolaClientDetGrp1.det_group_detectables.create(detectable_id: detectable_id)
+# end
+# cocacolaClientDetGrp2 = cocacolaClient.det_groups.create(name: "Food Combo")
+# [2,3,5].each do |detectable_id|
+# 	cocacolaClientDetGrp2.det_group_detectables.create(detectable_id: detectable_id)
+# end
+# cocacolaClientDetGrp3 = cocacolaClient.det_groups.create(name: "Best In Class")
+# [5,6].each do |detectable_id|
+# 	cocacolaClientDetGrp3.det_group_detectables.create(detectable_id: detectable_id)
+# end
+
+# pepsiColaClientDetGrp1 = pepsiColaClient.det_groups.create(name: "Carbonated Drinks")
+# [1,3,4].each do |detectable_id|
+# 	pepsiColaClientDetGrp1.det_group_detectables.create(detectable_id: detectable_id)
+# end
+# pepsiColaClientDetGrp2 = pepsiColaClient.det_groups.create(name: "Food Combo")
+# [3,5].each do |detectable_id|
+# 	pepsiColaClientDetGrp2.det_group_detectables.create(detectable_id: detectable_id)
+# end
+# pepsiColaClientDetGrp3 = pepsiColaClient.det_groups.create(name: "Best In Class")
+# [5,6].each do |detectable_id|
+# 	pepsiColaClientDetGrp3.det_group_detectables.create(detectable_id: detectable_id)
+# end
 
 
 # Create users
@@ -118,8 +134,8 @@ load 'app/services/dummy_data_populator_service.rb'
 caffeDataFile = '/home/evan/Vision/temp/sendto_cellroti/database_seed_localization.json'
 # numOfGames = 64
 # averageLengthMS = 90 * 60 * 1000 # 90 minutes
-numOfGames = 5
-averageLengthMS = 10 * 60 * 1000 # 90 minutes
+numOfGames = 3
+averageLengthMS = 2 * 60 * 1000 # 10 minutes
 
 countryList = [
 	"Algeria", "Argentina", "Australia", "Belgium", "Bosnia-Herzegovina", 
@@ -131,7 +147,7 @@ countryList = [
 
 dummyData = Services::DummyDataPopulatorService.new(caffeDataFile, wc2014, cocacolaClient)
 dummyData.createTeams(countryList)
-dummyData.createManyGames(numOfGames, averageLengthMS)
+#dummyData.createManyGames(numOfGames, averageLengthMS)
 
 ######  END - AUTO DUMMY DATA POPULATE ######
 

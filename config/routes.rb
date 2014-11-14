@@ -3,8 +3,9 @@ Cellroti::Application.routes.draw do
   namespace :admin do
     resources :clients do
       member do
-        #post 'update_detectables'
-        get 'manage_users'
+        get 'groups'
+        get 'detectables'
+        get 'users'
       end
     end
 

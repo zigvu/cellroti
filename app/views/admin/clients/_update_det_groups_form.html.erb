@@ -1,0 +1,33 @@
+<%= simple_form_for([:admin, @client]) do |f| %>
+	<%= f.error_notification %>
+	<table>
+		<thead>
+			<tr>
+				<th>Brand Group ID</th>
+				<th>Name</th>
+				<th>Pretty Name</th>
+			</tr>
+		</thead>
+		<tbody>
+			<% @client.det_group_clients.sort_by{|d| d.det_group.id}.each do |dgc| %>
+				<tr>
+					<td><%= dgc.det_group.id %></td>
+					<td><%= dgc.det_group.name %></td>
+					<td>
+						<%= f.fields_for :det_group_clients, dgc do |ff| %>
+							<div>
+								<%= ff.check_box :_destroy, {:checked => ff.object.persisted?}, '0', '1' %>
+								<%= ff.label :_destroy, ff.object.det_group.pretty_name %>
+								<%= ff.hidden_field :det_group_id %>
+							</div>
+						<% end %>
+					</td>
+				</tr>
+			<% end %>
+		</tbody>
+	</table>
+
+	<div class="form-actions">
+		<%= f.button :submit %>
+	</div>
+<% end %>

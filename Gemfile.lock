@@ -114,6 +114,8 @@ GEM
     origin (2.1.1)
     orm_adapter (0.5.0)
     polyglot (0.3.5)
+    quiet_assets (1.0.3)
+      railties (>= 3.1, < 5.0)
     rack (1.5.2)
     rack-test (0.6.2)
       rack (>= 1.0)
@@ -205,6 +207,7 @@ DEPENDENCIES
   kgio (~> 2.9.2)
   mongoid (~> 4.0.0)
   mysql2
+  quiet_assets
   rails (= 4.0.0)
   rolify
   sass-rails (~> 4.0.0)

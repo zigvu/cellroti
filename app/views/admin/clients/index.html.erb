@@ -6,11 +6,11 @@
   <thead>
     <tr>
       <th>Name</th>
-      <th>Pretty name</th>
-      <th>Description</th>
-      <th width="80px">Manage Users</th>
-      <th width="100px">Edit Detect.</th>
-      <th width="100px">Edit</th>
+      <th width="70px">Show</th>
+      <th>Manage Users</th>
+      <th>Update Brand Groups</th>
+      <th>Update Detectables</th>
+      <th>Edit Client</th>
       <th width="70px">Destroy</th>
     </tr>
   </thead>
@@ -19,11 +19,11 @@
     <% @clients.each do |client| %>
       <tr>
         <td><%= client.name %></td>
-        <td><%= client.pretty_name %></td>
-        <td><%= client.description %></td>
-        <td><%= link_to 'Manage Users', manage_users_admin_client_path(client) %></td>
-        <td><%= link_to 'Edit Detect.', [:admin, client] %></td>
-        <td><%= link_to 'Edit Client', edit_admin_client_path(client) %></td>
+        <td><%= link_to 'Show', [:admin, client] %></td>
+        <td><%= link_to 'Users', users_admin_client_path(client) %></td>
+        <td><%= link_to 'Brand Groups', groups_admin_client_path(client) %></td>
+        <td><%= link_to 'Detectables', detectables_admin_client_path(client) %></td>
+        <td><%= link_to 'Client', edit_admin_client_path(client) %></td>
         <td><%= link_to 'Destroy', [:admin, client], method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>

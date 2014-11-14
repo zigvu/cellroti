@@ -40,6 +40,7 @@ gem 'crossfilter-rails'
 gem 'high_voltage', '~> 2.2.1'
 gem 'jquery-ui-rails', '~> 5.0.2'
 gem 'jquery-turbolinks'
+gem 'quiet_assets', group: :development # quits the asset prints in console
 # memcached
 gem 'dalli'
 gem 'cache_digests'    # to expire view partials

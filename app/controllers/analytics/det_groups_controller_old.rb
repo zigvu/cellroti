@@ -1,5 +1,5 @@
 module Analytics
-  class DetGroupsController < ApplicationController
+  class DetGroupsControllerOld < ApplicationController
     authorize_actions_for ::DetGroup
 
     before_filter :ensure_html_format

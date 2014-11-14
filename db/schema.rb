@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141111231343) do
+ActiveRecord::Schema.define(version: 20141114175427) do
 
   create_table "client_detectables", force: true do |t|
     t.integer  "client_id"
@@ -28,6 +28,7 @@ ActiveRecord::Schema.define(version: 20141111231343) do
     t.integer  "client_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "jobs"
   end
 
   create_table "clients", force: true do |t|
@@ -38,6 +39,16 @@ ActiveRecord::Schema.define(version: 20141111231343) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "det_group_clients", force: true do |t|
+    t.integer  "det_group_id"
+    t.integer  "client_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "det_group_clients", ["client_id"], name: "index_det_group_clients_on_client_id", using: :btree
+  add_index "det_group_clients", ["det_group_id"], name: "index_det_group_clients_on_det_group_id", using: :btree
 
   create_table "det_group_detectables", force: true do |t|
     t.integer  "det_group_id"
@@ -53,10 +64,8 @@ ActiveRecord::Schema.define(version: 20141111231343) do
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "client_id"
+    t.string   "pretty_name"
   end
-
-  add_index "det_groups", ["client_id"], name: "index_det_groups_on_client_id", using: :btree
 
   create_table "detectables", force: true do |t|
     t.string   "name"

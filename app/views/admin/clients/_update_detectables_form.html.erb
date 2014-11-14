@@ -14,15 +14,15 @@
 				<tr>
 					<td><%= org.name %></td>
 					<td><%= org.industry %></td>
-					<th>
-						<%= f.fields_for :client_detectables, detectables_group.sort_by{|dg| dg.detectable.name} do |ff| %>
+					<td>
+						<%= f.fields_for :client_detectables, detectables_group.sort_by{|dg| dg.detectable.pretty_name} do |ff| %>
 							<div>
 								<%= ff.check_box :_destroy, {:checked => ff.object.persisted?}, '0', '1' %>
 								<%= ff.label :_destroy, ff.object.detectable.pretty_name %>
 								<%= ff.hidden_field :detectable_id %>
 							</div>
 						<% end %>
-					</th>
+					</td>
 				</tr>
 			<% end %>
 		</tbody>

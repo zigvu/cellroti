@@ -20,7 +20,7 @@ module Jsonifiers
 			@det_group_ids.each do |det_group_id|
 				retHash[:brand_groups] << {
 					id: det_group_id,
-					name: DetGroup.find(det_group_id).name
+					name: DetGroup.find(det_group_id).pretty_name
 				}
 			end
 

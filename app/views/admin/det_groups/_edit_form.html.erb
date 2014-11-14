@@ -1,10 +1,13 @@
-<%= simple_form_for([:analytics, @det_group]) do |f| %>
+<%= simple_form_for([:admin, @det_group]) do |f| %>
   <%= f.error_notification %>
 
   <div class="form-inputs">
     <%= f.input :name %>
-    <%= f.hidden_field :client_id, value: @client.id %>
+    <%= f.input :pretty_name %>
   </div>
+  <i class="notice">
+		To change the brands, please create a new brand group, create metrics, transfer the clients to the new brand group and delete this brand group instead.
+	</i>
 
 	<table>
 		<thead>
@@ -19,15 +22,13 @@
 				<tr>
 					<td><%= org.name %></td>
 					<td><%= org.industry %></td>
-					<th>
-						<%= f.fields_for :det_group_detectables, detectables_group.sort_by{|dg| dg.detectable.name} do |ff| %>
-							<div>
-								<%= ff.check_box :_destroy, {:checked => ff.object.persisted?}, '0', '1' %>
-								<%= ff.label :_destroy, ff.object.detectable.pretty_name %>
-								<%= ff.hidden_field :detectable_id %>
-							</div>
-						<% end %>
-					</th>
+					<td>
+						<ul>
+	            <% detectables_group.sort_by{|dg| dg.detectable.name}.each do |dgd| %>
+	              <li><%= dgd.detectable.pretty_name %></li>
+	            <% end %>
+	          </ul>
+					</td>
 				</tr>
 			<% end %>
 		</tbody>

@@ -1,25 +1,38 @@
 module Admin
   class ClientsController < ApplicationController
     authorize_actions_for ::Client
-    authority_actions :manage_users => :update
+    authority_actions :users => :update
+    authority_actions :detectables => :update
+    authority_actions :groups => :update
 
     before_filter :ensure_html_format
-    before_action :set_client, only: [:manage_users, :show, :edit, :update, :destroy]
+    before_action :set_client, only: [:users, :groups, :detectables, :show, :edit, :update, :destroy]
 
     # GET /clients
     def index
       @clients = ::Client.all
     end
 
-    # GET /clients/1
-    def manage_users
+    # GET /clients/1/users
+    def users
+    end
+
+    # GET /clients/1/groups
+    def groups
+      (::DetGroup.all - @client.det_groups).each do |d|
+        @client.det_group_clients.build(det_group: d)
+      end
+    end
+
+    # GET /clients/1/update_detectables
+    def detectables
+      (::Detectable.all - @client.detectables).each do |d|
+        @client.client_detectables.build(detectable: d)
+      end
     end
 
     # GET /clients/1
     def show
-      (::Detectable.all - @client.detectables).each do |d|
-        @client.client_detectables.build(detectable: d)
-      end
     end
 
     # GET /clients/new
@@ -45,7 +58,7 @@ module Admin
     # PATCH/PUT /clients/1
     def update
       if @client.update(client_params)
-        redirect_to [:admin, @client], notice: 'Client was successfully updated.'
+        redirect_to admin_clients_url, notice: 'Client was successfully updated.'
       else
         render action: 'edit'
       end
@@ -66,8 +79,9 @@ module Admin
       # Never trust parameters from the scary internet, only allow the white list through.
       def client_params
         params.require(:client).permit(:name, :pretty_name, 
-          :description, :client_setting_id, :organization_id, 
-          client_detectables_attributes: [:id, :detectable_id, :_destroy])
+          :description, :organization_id, 
+          client_detectables_attributes: [:id, :detectable_id, :_destroy],
+          det_group_clients_attributes: [:id, :det_group_id, :_destroy])
       end
   end
 end
