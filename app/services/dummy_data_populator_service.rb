@@ -23,6 +23,7 @@ module Services
 
 		def createManyGames(numOfGames, averageLengthMS)
 			counter = 0
+			allGamesArr = []
 			teamPerumtations = @gameSeason.league.teams.pluck(:id).permutation(2).to_a.shuffle!
 			teamPerumtations.each do |teamPerumtation|
 				break if counter >= numOfGames
@@ -36,9 +37,23 @@ module Services
 				puts ""
 				puts "Game: #{counter}; #{team1.name} vs. #{team2.name}; Start: #{startDate} Length: #{lengthMS}"
 
-				createGame(team1, team2, startDate, lengthMS)
+				allGamesArr << {
+					team1: team1,
+					team2: team2,
+					startDate: startDate,
+					lengthMS: lengthMS
+				}
 
 				counter += 1
+			end
+			# run in prallel
+			numOfProcessors = `cat /proc/cpuinfo | grep processor | wc -l`.to_i
+			allGamesArr.each_slice(numOfProcessors) do |group|
+				group.map do |gd|
+					Thread.new do
+						createGame(gd[:team1], gd[:team2], gd[:startDate], gd[:lengthMS])
+					end
+				end.each(&:join)
 			end
 		end
 
@@ -91,8 +106,8 @@ module Services
 			end
 
 			# populate data
-			cdps = Services::CaffeDataProcessorService.new(video, @tempFile)
-			cdps.populate()
+			cdps = Services::CaffeDataProcessorService.new()
+			cdps.populate(video, @tempFile)
 		end
 
 		def createTeams(countryList)

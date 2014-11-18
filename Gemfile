@@ -41,6 +41,10 @@ gem 'high_voltage', '~> 2.2.1'
 gem 'jquery-ui-rails', '~> 5.0.2'
 gem 'jquery-turbolinks'
 gem 'quiet_assets', group: :development # quits the asset prints in console
+# delayed_job
+gem 'delayed_job_active_record'
+gem 'delayed_job_web'
+gem 'daemons'
 # memcached
 gem 'dalli'
 gem 'cache_digests'    # to expire view partials

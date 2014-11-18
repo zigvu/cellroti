@@ -2,21 +2,21 @@ require 'json'
 
 module Services
 	class CaffeDataProcessorService
-		def initialize(video, caffeDataFile)
-			@video = video
-			@caffe_data = JSON.parse(File.read(caffeDataFile))
-			raise "Input data not proper JSON" if @caffe_data.class != Hash
-			raise "Wrong video data file" if @caffe_data['video_id'].to_i != @video.id
+		def initialize
 		end
 
-		def populate
-			update_video(@caffe_data['video_attributes'])
-			write_detections(@caffe_data['detections'])
+		def populate(video, caffeDataFile)
+			caffe_data = JSON.parse(File.read(caffeDataFile))
+			raise "Input data not proper JSON" if caffe_data.class != Hash
+			raise "Wrong video data file" if caffe_data['video_id'].to_i != video.id
+
+			update_video(video, caffe_data['video_attributes'])
+			write_detections(video, caffe_data['detections'])
 		end
 
-		def update_video(videoAttributes)
+		def update_video(video, videoAttributes)
 			raise "Attributes data not proper JSON" if videoAttributes.class != Hash
-			@video.update(
+			video.update(
 				quality: videoAttributes['quality'],
 				format: videoAttributes['format'],
 				length: videoAttributes['length'].to_i,
@@ -27,7 +27,7 @@ module Services
 		end
 
 		# write data to database
-		def write_detections(detectionsData)
+		def write_detections(video, detectionsData)
 			raise "Detections data not proper JSON" if detectionsData.class != Hash
 			sanitizedDetectionsData, allDetectableIds = sanitize_detections_data(detectionsData)
 
@@ -38,53 +38,64 @@ module Services
 
 			# if data for this video already exists, purge
 			# all old data
-			if @video.video_detections.first != nil
-				@video.video_detections.each do |vd|
+			if video.video_detections.first != nil
+				video.video_detections.each do |vd|
 					vd.destroy
 				end
-				@video.detectable_metrics.each do |dm|
+				video.detectable_metrics.each do |dm|
 					dm.destroy
 				end
-				@video.det_group_metrics.each do |dgm|
+				video.det_group_metrics.each do |dgm|
 					dgm.destroy
 				end
-				@video.summary_metrics.each do |sm|
+				video.summary_metrics.each do |sm|
 					sm.destroy
 				end
 			end
 
 			# store raw detections from chia
 			VideoDetection.create(
-				video_id: @video.id,
+				video_id: video.id,
 				detections: sanitizedDetectionsData,
 				detectable_ids: allDetectableIds)
 
-			# calculate frame level detection metrics for each detectable
-			calculatedDetectableMetrics = Metrics::CalculateDetectableMetrics.new(@video).calculate
-			detectableMetrics = DetectableMetric.create(video_id: @video.id)
-			detectableMetrics.single_detectable_metrics.push(calculatedDetectableMetrics)
+			calculate_detectable_metrics(video)
+			calculate_det_group_metrics(video, detGroupIds)
+			calculate_summary_metrics(video, detGroupIds)
 
-			# aggregate detection metrics into det_group_metrics
-			calculatedDetGroupMetrics = Metrics::CalculateDetGroupMetrics.new(@video, detGroupIds).calculate
+			return true
+		end
+
+		# calculate frame level detection metrics for each detectable
+		def calculate_detectable_metrics(video)
+			calculatedDetectableMetrics = Metrics::CalculateDetectableMetrics.new(video).calculate
+			detectableMetrics = DetectableMetric.create(video_id: video.id)
+			detectableMetrics.single_detectable_metrics.push(calculatedDetectableMetrics)
+		end
+
+		# aggregate detection metrics into det_group_metrics
+		def calculate_det_group_metrics(video, detGroupIds)
+			calculatedDetGroupMetrics = Metrics::CalculateDetGroupMetrics.new(video, detGroupIds).calculate
 			calculatedDetGroupMetrics.each do |dgId, dgData|
-				detGroupMetrics = DetGroupMetric.create(video_id: @video.id, det_group_id: dgId)
+				detGroupMetrics = DetGroupMetric.create(video_id: video.id, det_group_id: dgId)
 				detGroupMetrics.single_det_group_metrics.push(dgData)
 			end
+		end
 
-			# aggregate det_group_metrics into summary_metrics
-			calculatedSummaryMetrics = Metrics::CalculateSummaryMetrics.new(@video, detGroupIds).calculate
+		# aggregate det_group_metrics into summary_metrics
+		def calculate_summary_metrics(video, detGroupIds)
+			calculatedSummaryMetrics = Metrics::CalculateSummaryMetrics.new(video, detGroupIds).calculate
 			calculatedSummaryMetrics.each do |resolution, resolutionData|
 				resolutionData.each do |dgId, dgData|
 					summaryMetrics = SummaryMetric.create(
-						video_id: @video.id,
+						video_id: video.id,
 						det_group_id: dgId,
 						resolution_seconds: resolution)
 					summaryMetrics.single_summary_metrics.push(dgData)
 				end
 			end
-
-			return true
 		end
+
 
 		# sanitize data - convert string to numbers
 		def sanitize_detections_data(detectionsData)

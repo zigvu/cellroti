@@ -3,6 +3,18 @@ class DetGroup < ActiveRecord::Base
 	include Authority::Abilities
 
   validates :name, presence: true, uniqueness: true
+  before_destroy :destroy_mongo_documents, prepend: true
+
+  # simulate released det groups
+  def self.released_det_groups
+    cs = Serializers::ClientSettingsSerializer.new(Client.zigvu_client.client_setting)
+    nonReleasedDGId = [
+      [cs.getJobsDgQueue] + 
+      [cs.getJobsDgWorking] + 
+      [cs.getJobsDgFail] + 
+      [cs.getJobsDgReview]].flatten.uniq
+    return DetGroup.all - DetGroup.where(id: nonReleasedDGId)
+  end
 
   # Mock a has_many relationship with Mongoid models
   def det_group_metrics
@@ -19,4 +31,10 @@ class DetGroup < ActiveRecord::Base
   has_many :det_group_detectables, dependent: :destroy
   has_many :detectables, through: :det_group_detectables
 	accepts_nested_attributes_for :det_group_detectables, allow_destroy: true
+
+  private
+    def destroy_mongo_documents
+      DetGroupMetric.destroy_all(det_group_id: self.id)
+      SummaryMetric.destroy_all(det_group_id: self.id)
+    end
 end

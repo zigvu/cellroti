@@ -1,0 +1,161 @@
+<% breadcrumb :metrics %>
+
+<h4>Progress of Metrics Calculation</h4>
+
+<!-- ***************  Working Jobs  ****************** -->
+
+<h5>Working Jobs</h5>
+
+<table>
+	<thead>
+		<tr>
+			<th>Job Type</th>
+			<th>Id</th>
+			<th>Pretty Name</th>
+			<th>Cancel</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<% @viWorking.each do |item| %>
+			<tr>
+				<td>Video Ingest</td>
+				<td><%= item.id %></td>
+				<td><%= item.title %></td>
+				<td>Can't Change</td>
+			</tr>
+		<% end %>
+		<% @dgWorking.each do |item| %>
+			<tr>
+				<td>Brand Group Compute</td>
+				<td><%= item.id %></td>
+				<td><%= item.pretty_name %></td>
+				<td>Can't Change</td>
+			</tr>
+		<% end %>
+		<tr>
+			<td>Delayed Job:</td>
+			<td><%= link_to 'Open delayed jobs', delayed_job_path, :target => "_blank" %></td>
+			<td></td>
+			<td></td>
+		</tr>
+	</tbody>
+</table>
+
+
+<!-- ***************  Release Jobs  ****************** -->
+
+<h5>Release To Client</h5>
+
+<table>
+	<thead>
+		<tr>
+			<th>Job Type</th>
+			<th>Id</th>
+			<th>Pretty Name</th>
+			<th>Release</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<% @viReview.each do |item| %>
+			<tr>
+				<td>Video Ingest</td>
+				<td><%= item.id %></td>
+				<td><%= item.title %></td>
+				<td>
+					<%= link_to 'Release', admin_metrics_change_url(type: @mps.videoIngestion, process: @mps.passReview, changeId: item.id), class: "button success" %>
+				</td>
+			</tr>
+		<% end %>
+		<% @dgReview.each do |item| %>
+			<tr>
+				<td>Brand Group Compute</td>
+				<td><%= item.id %></td>
+				<td><%= item.pretty_name %></td>
+				<td>
+					<%= link_to 'Release', admin_metrics_change_url(type: @mps.brandGroup, process: @mps.passReview, changeId: item.id), class: "button success" %>
+				</td>
+			</tr>
+		<% end %>
+	</tbody>
+</table>
+
+
+<!-- ***************  Queued Jobs  ****************** -->
+
+<h5>Queued Jobs</h5>
+
+<table>
+	<thead>
+		<tr>
+			<th>Job Type</th>
+			<th>Id</th>
+			<th>Pretty Name</th>
+			<th>Cancel</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<% @viQueue.each do |item| %>
+			<tr>
+				<td>Video Ingest</td>
+				<td><%= item.id %></td>
+				<td><%= item.title %></td>
+				<td>
+					<%= link_to 'Cancel', admin_metrics_change_url(type: @mps.videoIngestion, process: @mps.cancelQueue, changeId: item.id), class: "button alert" %>
+				</td>
+			</tr>
+		<% end %>
+		<% @dgQueue.each do |item| %>
+			<tr>
+				<td>Brand Group Compute</td>
+				<td><%= item.id %></td>
+				<td><%= item.pretty_name %></td>
+				<td>
+					<%= link_to 'Cancel', admin_metrics_change_url(type: @mps.brandGroup, process: @mps.cancelQueue, changeId: item.id), class: "button alert", data: {confirm: "Are you sure? This will also delete the associated brand group"} %>
+				</td>
+			</tr>
+		<% end %>
+	</tbody>
+</table>
+
+
+<!-- ***************  Failed Jobs  ****************** -->
+
+<h5>Failed Jobs</h5>
+
+<table>
+	<thead>
+		<tr>
+			<th>Job Type</th>
+			<th>Id</th>
+			<th>Pretty Name</th>
+			<th>Re-queue</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<% @viFail.each do |item| %>
+			<tr>
+				<td>Video Ingest</td>
+				<td><%= item.id %></td>
+				<td><%= item.title %></td>
+				<td>
+					<%= link_to 'Re-queue', admin_metrics_change_url(type: @mps.videoIngestion, process: @mps.requeueFail, changeId: item.id), class: "button success" %>
+				</td>
+			</tr>
+		<% end %>
+		<% @dgFail.each do |item| %>
+			<tr>
+				<td>Brand Group Compute</td>
+				<td><%= item.id %></td>
+				<td><%= item.pretty_name %></td>
+				<td>
+					<%= link_to 'Re-queue', admin_metrics_change_url(type: @mps.brandGroup, process: @mps.requeueFail, changeId: item.id), class: "button success" %>
+				</td>
+			</tr>
+		<% end %>
+	</tbody>
+</table>
+

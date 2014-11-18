@@ -7,7 +7,10 @@ Cellroti::Application.configure do
   config.cache_classes = false
 
   # Do not eager load code on boot.
-  config.eager_load = false
+  #config.eager_load = false
+  # EVAN: auto-loading is NOT thread safe, so eager load to make
+  # delayed job circular dependencies go away
+  config.eager_load = true
 
   # Show full error reports and disable caching.
   config.consider_all_requests_local       = true

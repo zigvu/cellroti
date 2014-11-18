@@ -56,3 +56,9 @@ crumb :client_new do
   link "New client"
   parent :clients
 end
+
+# Metrics
+crumb :metrics do
+  link "Metrics", admin_metrics_path
+  parent :admin_root
+end

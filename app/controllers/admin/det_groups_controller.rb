@@ -20,6 +20,7 @@ module Admin
 
     # GET /det_groups/1/edit
     def edit
+      # NOTE: currently assumes that detectables in det_group cannot be changed
     end
 
     # POST /det_groups
@@ -29,9 +30,14 @@ module Admin
       if statusSuccess
         @det_group = ::DetGroup.new(det_group_params)
         if @det_group.save
-          # save new det_groups as belonging to zigvu client
-          ::Client.zigvu_client.det_group_clients.create(det_group: @det_group)
-          notice = 'Group was successfully created.'
+          # kick off metrics creation
+          status = Services::DetGroupAnalyticsService.new(::Client.zigvu_client, @det_group).create()
+          if status
+            notice = 'Group was successfully created. Check progress of metrics computation'
+          else
+            statusSuccess = false
+            notice = 'Group was successfully created but metrics computation could not begin'
+          end
         else
           statusSuccess = false
           notice = 'Fail: Database save - are any fields duplicate/blank?'
@@ -47,6 +53,7 @@ module Admin
 
     # PATCH/PUT /det_groups/1
     def update
+      # NOTE: currently assumes that detectables in det_group cannot be changed
       if @det_group.update(det_group_params)
         redirect_to admin_det_groups_url, notice: 'Group was successfully updated.'
       else
@@ -56,8 +63,8 @@ module Admin
 
     # DELETE /det_groups/1
     def destroy
-      @det_group.destroy
-      redirect_to admin_det_groups_url, notice: 'Group was successfully destroyed.'
+      Services::DetGroupAnalyticsService.new(::Client.zigvu_client, @det_group).destroy()
+      redirect_to admin_det_groups_url, notice: 'Group was successfully deleted.'
     end
 
     private

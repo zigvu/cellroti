@@ -19,7 +19,7 @@ module Admin
 
     # GET /clients/1/groups
     def groups
-      (::DetGroup.all - @client.det_groups).each do |d|
+      (::DetGroup.released_det_groups - @client.det_groups).each do |d|
         @client.det_group_clients.build(det_group: d)
       end
     end

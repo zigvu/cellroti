@@ -10,6 +10,9 @@ Cellroti::Application.routes.draw do
     end
 
     resources :organizations, :det_groups
+
+    get 'metrics' => 'metrics#index'
+    get 'metrics/change'
   end
 
   namespace :analytics do
@@ -37,6 +40,11 @@ Cellroti::Application.routes.draw do
   end
 
   devise_for :users
+
+  authenticated :user, -> user { States::Roles.zigvu_user_and_above(user) } do
+    match "/delayed_job" => DelayedJobWeb, :anchor => false, via: [:get, :post]
+  end
+  
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

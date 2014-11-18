@@ -135,7 +135,7 @@ caffeDataFile = '/home/evan/Vision/temp/sendto_cellroti/database_seed_localizati
 # numOfGames = 64
 # averageLengthMS = 90 * 60 * 1000 # 90 minutes
 numOfGames = 3
-averageLengthMS = 2 * 60 * 1000 # 10 minutes
+averageLengthMS = 3 * 60 * 1000 # 2 minutes
 
 countryList = [
 	"Algeria", "Argentina", "Australia", "Belgium", "Bosnia-Herzegovina", 
@@ -147,7 +147,7 @@ countryList = [
 
 dummyData = Services::DummyDataPopulatorService.new(caffeDataFile, wc2014, cocacolaClient)
 dummyData.createTeams(countryList)
-#dummyData.createManyGames(numOfGames, averageLengthMS)
+dummyData.createManyGames(numOfGames, averageLengthMS)
 
 ######  END - AUTO DUMMY DATA POPULATE ######
 
