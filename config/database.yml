@@ -14,7 +14,7 @@ development:
   database: cellroti_development
   pool: 5
   username: root
-  password:
+  password: <%= YAML.load_file("#{Rails.root}/config/passwords.yml")[Rails.env]["sql_password"] %>
   socket: /var/run/mysqld/mysqld.sock
 
 # Warning: The database defined as "test" will be erased and
@@ -35,5 +35,5 @@ production:
   database: cellroti_production
   pool: 5
   username: root
-  password:
+  password: <%= YAML.load_file("#{Rails.root}/config/passwords.yml")[Rails.env]["sql_password"] %>
   socket: /var/run/mysqld/mysqld.sock
