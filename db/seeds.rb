@@ -134,8 +134,8 @@ load 'app/services/dummy_data_populator_service.rb'
 caffeDataFile = '/home/evan/Vision/temp/sendto_cellroti/database_seed_localization.json'
 # numOfGames = 64
 # averageLengthMS = 90 * 60 * 1000 # 90 minutes
-numOfGames = 3
-averageLengthMS = 3 * 60 * 1000 # 2 minutes
+numOfGames = 10
+averageLengthMS = 5 * 60 * 1000 # 5 minutes
 
 countryList = [
 	"Algeria", "Argentina", "Australia", "Belgium", "Bosnia-Herzegovina", 

@@ -34,8 +34,6 @@ module Services
 					averageLengthMS + rand((0.3 * averageLengthMS).to_i),
 					averageLengthMS - rand((0.3 * averageLengthMS).to_i)
 				].sample
-				puts ""
-				puts "Game: #{counter}; #{team1.name} vs. #{team2.name}; Start: #{startDate} Length: #{lengthMS}"
 
 				allGamesArr << {
 					team1: team1,
@@ -58,6 +56,8 @@ module Services
 		end
 
 		def createGame(team1, team2, startDate, lengthMS)
+			puts ""
+			puts "Game: #{team1.name} vs. #{team2.name}; Start: #{startDate} Length: #{lengthMS}"
 			# create game and associate team
 			game = @gameSeason.games.create(
 				name: "#{team1.name} vs. #{team2.name}", 
