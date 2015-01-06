@@ -16,7 +16,7 @@ module Services
 			end
 
 			@event_type_ids = EventType.pluck(:id)
-			@tempFile = '/mnt/tmp/videoTempJSON.json'
+			@tempFolder = '/mnt/tmp'
 			@frameStep = @videoAttributes["detection_frame_rate"]
 			@avgFrameRate = @videoAttributes["playback_frame_rate"]
 		end
@@ -41,18 +41,20 @@ module Services
 					startDate: startDate,
 					lengthMS: lengthMS
 				}
-
 				counter += 1
 			end
 			# run in prallel
 			numOfProcessors = `cat /proc/cpuinfo | grep processor | wc -l`.to_i
-			allGamesArr.each_slice(numOfProcessors) do |group|
-				group.map do |gd|
-					Thread.new do
-						createGame(gd[:team1], gd[:team2], gd[:startDate], gd[:lengthMS])
-					end
-				end.each(&:join)
+			allGamesArr.each do |gd|
+				createGame(gd[:team1], gd[:team2], gd[:startDate], gd[:lengthMS])
 			end
+			# allGamesArr.each_slice(numOfProcessors) do |group|
+			# 	group.map do |gd|
+			# 		Thread.new do
+			# 			createGame(gd[:team1], gd[:team2], gd[:startDate], gd[:lengthMS])
+			# 		end
+			# 	end.each(&:join)
+			# end
 		end
 
 		def createGame(team1, team2, startDate, lengthMS)
@@ -101,13 +103,14 @@ module Services
 				video_attributes: @videoAttributes,
 				detections: videoData
 			}
-			File.open(@tempFile, "w") do |f|
+			tempFile = "#{@tempFolder}/videoTempJSON_#{video.id}.json"
+			File.open(tempFile, "w") do |f|
 				f.write(JSON.pretty_generate(saveData))
 			end
 
 			# populate data
 			cdps = Services::CaffeDataProcessorService.new()
-			cdps.populate(video, @tempFile)
+			cdps.populate(video, tempFile)
 		end
 
 		def createTeams(countryList)

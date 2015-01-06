@@ -5,8 +5,8 @@ module States
 		def self.videoIngestion
 			return "videoIngestion"
 		end
-		def self.brandGroup
-			return "brandGroup"
+		def self.detGroup
+			return "detGroup"
 		end
 
 		# type of process

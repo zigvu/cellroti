@@ -1,6 +1,6 @@
 module Admin
 	class MetricsController < ApplicationController
-		authorize_actions_for ::DetGroup  # same access control as DetGroup
+    authorize_actions_for ::Organization # same access control as Organization
 		authority_actions :change => :update
 
 		before_filter :ensure_html_format
@@ -31,7 +31,7 @@ module Admin
 			process = params[:process]
 			changeId = params[:changeId].to_i
 
-			if type == @mps.brandGroup
+			if type == @mps.detGroup
 				if process == @mps.cancelQueue
 					Services::DetGroupAnalyticsService.new(::Client.zigvu_client, DetGroup.find(changeId)).destroy()
 				elsif process == @mps.cancelWorking

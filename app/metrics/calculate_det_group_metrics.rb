@@ -18,7 +18,7 @@ module Metrics
 			@spatialDetGroupCrowdingWeight = 0.75
 			@temporalDetGroupCrowdingWeight = 0.25
 
-			@be_brandGroupCrowdingWeight = 0.25
+			@be_detGroupCrowdingWeight = 0.25
 			@be_visualSaliencyWeight = 0.25
 			@be_timingEffectivenessWeight = 0.25
 			@be_spatialEffectivenessWeight = 0.25
@@ -96,7 +96,7 @@ module Metrics
 				# populate database
 				@det_group_detectables.each do |dgId, detectablesId|
 					brand_effectiveness = 
-						@be_brandGroupCrowdingWeight   * detGroupCrowding[dgId] +
+						@be_detGroupCrowdingWeight   * detGroupCrowding[dgId] +
 						@be_visualSaliencyWeight       * visualSaliency[dgId] +
 						@be_timingEffectivenessWeight  * timingEffectiveness[dgId] +
 						@be_spatialEffectivenessWeight * spatialEffectiveness[dgId]
