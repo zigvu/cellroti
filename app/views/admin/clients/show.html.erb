@@ -20,8 +20,33 @@
 	<%= @client.organization.name %>
 </p>
 
+
+<p>
+	<strong>Users:</strong>
+	<%= link_to 'Edit', users_admin_client_path(@client) %>
+	<table>
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Email</th>
+				<th>Last Accessed</th>
+			</tr>
+		</thead>
+		<tbody>
+			<% @client.users.each do |user| %>
+				<tr>
+					<td><%= user.id %></td>
+					<td><%= user.email %></td>
+					<td><%= user.last_sign_in_at %></td>
+				</tr>
+			<% end %>
+		</tbody>
+	</table>
+</p>
+
 <p>
 	<strong>Detectables:</strong>
+	<%= link_to 'Edit', detectables_admin_client_path(@client) %>
 	<table>
 		<thead>
 			<tr>
@@ -50,6 +75,7 @@
 
 <p>
 	<strong>Brand Groups:</strong>
+	<%= link_to 'Edit', groups_admin_client_path(@client) %>
 	<table>
 		<thead>
 			<tr>
@@ -64,6 +90,31 @@
 					<td><%= dg.id %></td>
 					<td><%= dg.name %></td>
 					<td><%= dg.pretty_name %></td>
+				</tr>
+			<% end %>
+		</tbody>
+	</table>
+</p>
+
+<p>
+	<strong>Seasons:</strong>
+	<%= link_to 'Edit', seasons_admin_client_path(@client) %>
+	<table>
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Name</th>
+				<th>Description</th>
+				<th>League</th>
+			</tr>
+		</thead>
+		<tbody>
+			<% @seasons.each do |season| %>
+				<tr>
+					<td><%= season.id %></td>
+					<td><%= season.name %></td>
+					<td><%= season.description %></td>
+					<td><%= season.league.name %></td>
 				</tr>
 			<% end %>
 		</tbody>

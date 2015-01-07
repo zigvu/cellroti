@@ -3,6 +3,8 @@ Cellroti::Application.routes.draw do
   namespace :admin do
     resources :clients do
       member do
+        get 'seasons'
+        post 'updateSeasons'
         get 'groups'
         get 'detectables'
         get 'users'

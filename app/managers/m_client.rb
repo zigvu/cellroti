@@ -14,6 +14,12 @@ module Managers
 			@scs.addSeasonsAllowed(seasonIds)
 		end
 
+		def resetAllowedSeasonIds(seasonIds)
+			set_client_settings
+			@scs.resetSeasons
+			@scs.addSeasonsAllowed(seasonIds)
+		end
+
 		private
 		
 			def set_client_settings

@@ -2,11 +2,14 @@ module Admin
   class ClientsController < ApplicationController
     authorize_actions_for ::Client
     authority_actions :users => :update
-    authority_actions :detectables => :update
+    authority_actions :seasons => :update
+    authority_actions :updateSeasons => :update
     authority_actions :groups => :update
+    authority_actions :detectables => :update
 
     before_filter :ensure_html_format
-    before_action :set_client, only: [:users, :groups, :detectables, :show, :edit, :update, :destroy]
+    before_action :set_client, only: [:users, :seasons, :updateSeasons, :groups, :detectables, 
+      :show, :edit, :update, :destroy]
 
     # GET /clients
     def index
@@ -16,6 +19,20 @@ module Admin
     # GET /clients/1/users
     def users
     end
+
+    # GET /clients/1/seasons
+    def seasons
+      @seasons = ::Season.all
+      @allowedSeasonIds = Managers::MClient.new(@client).getAllowedSeasonIds
+    end
+
+    # POST /clients/1/updateSeasons
+    def updateSeasons
+      seasonIds = (params["client"].map{|k, v| k if v == "1"}.flatten.uniq - [nil]).map{|k| k.to_i}
+      Managers::MClient.new(@client).resetAllowedSeasonIds(seasonIds)
+      redirect_to [:admin, @client], notice: 'Client was successfully updated.'
+    end
+
 
     # GET /clients/1/groups
     def groups
@@ -33,6 +50,7 @@ module Admin
 
     # GET /clients/1
     def show
+      @seasons = ::Season.where(id: Managers::MClient.new(@client).getAllowedSeasonIds)
     end
 
     # GET /clients/new
@@ -58,7 +76,7 @@ module Admin
     # PATCH/PUT /clients/1
     def update
       if @client.update(client_params)
-        redirect_to admin_clients_url, notice: 'Client was successfully updated.'
+        redirect_to [:admin, @client], notice: 'Client was successfully updated.'
       else
         render action: 'edit'
       end
@@ -66,8 +84,14 @@ module Admin
 
     # DELETE /clients/1
     def destroy
-      @client.destroy
-      redirect_to admin_clients_url
+      message = nil
+      if @client.id == ::Client.zigvu_client.id
+        message = 'Unable to delete zigvu client'
+      else
+        message = "Deleted client #{@client.name}" 
+        @client.destroy
+      end
+      redirect_to admin_clients_url, notice: message
     end
 
     private

@@ -6,11 +6,12 @@
   <thead>
     <tr>
       <th>Name</th>
-      <th width="70px">Show</th>
-      <th>Manage Users</th>
-      <th>Update Brand Groups</th>
-      <th>Update Detectables</th>
-      <th>Edit Client</th>
+      <th># Users</th>
+      <th># Brand Groups</th>
+      <th># Detectables</th>
+      <th># Seasons</th>
+      <th>Client Settings</th>
+      <th>Client Details</th>
       <th width="70px">Destroy</th>
     </tr>
   </thead>
@@ -19,11 +20,12 @@
     <% @clients.each do |client| %>
       <tr>
         <td><%= client.name %></td>
-        <td><%= link_to 'Show', [:admin, client] %></td>
-        <td><%= link_to 'Users', users_admin_client_path(client) %></td>
-        <td><%= link_to 'Brand Groups', groups_admin_client_path(client) %></td>
-        <td><%= link_to 'Detectables', detectables_admin_client_path(client) %></td>
-        <td><%= link_to 'Client', edit_admin_client_path(client) %></td>
+        <td><%= client.users.count %></td>
+        <td><%= client.det_groups.count %></td>
+        <td><%= client.detectables.count %></td>
+        <td><%= Managers::MClient.new(client).getAllowedSeasonIds.count %></td>
+        <td><%= link_to 'Edit Settings', [:admin, client] %></td>
+        <td><%= link_to 'Edit Details', edit_admin_client_path(client) %></td>
         <td><%= link_to 'Destroy', [:admin, client], method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
