@@ -6,10 +6,10 @@
     <li class="has-dropdown">
       <a href="#">Analytics</a>
       <ul class="dropdown">
-        <li><a href="#">Weekly Analysis</a></li>
-        <li><a href="#">Competitor Watch</a></li>
-        <li><a href="#">Custom Data Dashboard</a></li>
-        <li class="active"><a href="#">Season Analysis</a></li>
+        <li id="none-yet"><a href="#">Weekly Analysis</a></li>
+        <li id="none-yet"><a href="#">Competitor Watch</a></li>
+        <li id="none-yet"><a href="#">Custom Data Dashboard</a></li>
+        <li id="analytics_seasons"><%= link_to "Season Analysis", analytics_seasons_path %></li>
       </ul>
     </li>
 
@@ -18,23 +18,15 @@
     <li class="has-dropdown">
       <a href="#">Settings</a>
       <ul class="dropdown">
-        <li>
-          <%= link_to "Sign out", destroy_user_session_path, :method => :delete %>
-        </li>
-        <li>
-          <%= link_to "Analytics Settings", analytics_det_groups_path %>
-        </li>
-        <li>
-          <%= link_to "Account Settings", edit_user_registration_path %>
-        </li>
+        <li><%= link_to "Sign out", destroy_user_session_path, :method => :delete %></li>
+        <li id="analytics_det_groups"><%= link_to "Analytics Settings", analytics_det_groups_path %></li>
+        <li id="devise_registrations"><%= link_to "Account Settings", edit_user_registration_path %></li>
       </ul>
     </li>
 
   <% else %>
 
-    <li>
-      <%= link_to "Sign In", new_user_session_path %>
-    </li>
+    <li><%= link_to "Sign In", new_user_session_path %></li>
 
   <% end %>
 

@@ -23,4 +23,5 @@
 
 $(function(){ 
 	$(document).foundation(); 
+	$(document).ready(decorateNavigationList);
 });

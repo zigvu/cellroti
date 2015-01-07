@@ -12,7 +12,7 @@
   </head>
 
   <body class="<%= controller_path.gsub('/','_') -%> <%= action_name -%>">
-    <%= render :layout => 'layouts/navigation' do %>
+    <%= render :layout => 'layouts/full_layout' do %>
       <%= yield %>
     <% end %>
 
