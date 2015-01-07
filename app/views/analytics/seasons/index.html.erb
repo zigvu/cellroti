@@ -2,6 +2,28 @@
 
 <h3>Listing Seasons</h3>
 
-<%= render 'index_table' %>
+<table>
+  <thead>
+    <tr>
+      <th>Sport</th>
+      <th>Season</th>
+      <th>Num Games</th>
+      <th>Summary Analytics</th>
+      <th>Game Analytics</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @seasons.each do |season| %>
+      <tr>
+        <td><%= season.league.sport.name %></td>
+        <td><%= season.name %></td>
+        <td><%= season.games.count %></td>
+        <td><%= link_to 'Show Summary', summary_analytics_season_path(season) %></td>
+        <td><%= link_to 'Show Games', [:analytics, season] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
 
 <br>

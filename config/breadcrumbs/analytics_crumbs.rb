@@ -12,3 +12,8 @@ crumb :analytics_season_show do |season|
 	link season.name, analytics_season_path(season)
 	parent :analytics_seasons
 end
+
+crumb :analytics_season_summary do |season|
+	link "Summary", summary_analytics_season_path(season)
+	parent :analytics_season_show, season
+end

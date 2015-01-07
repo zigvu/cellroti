@@ -1,9 +1,9 @@
 class Api::V1::SeasonsController < ApplicationController
   authorize_actions_for ::Season
-  authority_actions :data => :read
+  authority_actions :summary => :read
 
   before_filter :ensure_json_format
-  before_action :set_season, only: [:show, :data]
+  before_action :set_season, only: [:show, :summary]
   before_action :set_client
 
   # GET /seasons
@@ -18,8 +18,8 @@ class Api::V1::SeasonsController < ApplicationController
     render json: jas.to_json
   end
 
-  # GET /seasons/1/data
-  def data
+  # GET /seasons/1/summary
+  def summary
     jasd = Jsonifiers::JAnalyticsSeasonData.new(@season, @client)
     render json: jasd.to_json
   end
