@@ -1,6 +1,6 @@
 require 'json'
 
-module Services
+module SeedHelpers
 	class DummyDataPopulatorService
 		def initialize(caffeDataFile, gameSeason, client)
 			rawData = JSON.parse(File.read(caffeDataFile))
