@@ -17,5 +17,5 @@ class SummaryMetric
 		DetGroup.find(self.det_group_id)
 	end
 
-	embeds_many :single_summary_metrics, cascade_callbacks: true
+	has_many :single_summary_metrics, dependent: :destroy, autosave: true
 end

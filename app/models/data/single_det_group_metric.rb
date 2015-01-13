@@ -11,5 +11,5 @@ class SingleDetGroupMetric
 	field :dc, as: :detections_count, type: Integer
 	field :qd, as: :quadrants, type: Hash
 
-	embedded_in :det_group_metric
+	belongs_to :det_group_metric, index: true
 end

@@ -11,5 +11,5 @@ class SingleDetectableMetric
 	field :es, as: :event_score, type: Float
 	field :qd, as: :quadrants, type: Hash
 
-	embedded_in :detectable_metric
+	belongs_to :detectable_metric, index: true
 end

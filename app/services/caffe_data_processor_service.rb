@@ -70,7 +70,9 @@ module Services
 		def calculate_detectable_metrics(video)
 			calculatedDetectableMetrics = Metrics::CalculateDetectableMetrics.new(video).calculate
 			detectableMetrics = DetectableMetric.create(video_id: video.id)
-			detectableMetrics.single_detectable_metrics.push(calculatedDetectableMetrics)
+			calculatedDetectableMetrics.each do |cdm|
+				detectableMetrics.single_detectable_metrics.push(cdm)
+			end
 		end
 
 		# aggregate detection metrics into det_group_metrics
@@ -78,7 +80,9 @@ module Services
 			calculatedDetGroupMetrics = Metrics::CalculateDetGroupMetrics.new(video, detGroupIds).calculate
 			calculatedDetGroupMetrics.each do |dgId, dgData|
 				detGroupMetrics = DetGroupMetric.create(video_id: video.id, det_group_id: dgId)
-				detGroupMetrics.single_det_group_metrics.push(dgData)
+				dgData.each do |dgd|
+					detGroupMetrics.single_det_group_metrics.push(dgd)
+				end
 			end
 		end
 
@@ -91,7 +95,9 @@ module Services
 						video_id: video.id,
 						det_group_id: dgId,
 						resolution_seconds: resolution)
-					summaryMetrics.single_summary_metrics.push(dgData)
+					dgData.each do |dgd|
+						summaryMetrics.single_summary_metrics.push(dgd)
+					end
 				end
 			end
 		end

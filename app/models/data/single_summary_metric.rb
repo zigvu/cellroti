@@ -10,5 +10,5 @@ class SingleSummaryMetric
 	field :dc, as: :detections_count, type: Integer
 	field :qd, as: :quadrants, type: Hash
 
-	embedded_in :summary_metric
+	belongs_to :summary_metric, index: true
 end

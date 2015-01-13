@@ -11,5 +11,5 @@ class DetectableMetric
 		Video.find(self.video_id)
 	end
 
-	embeds_many :single_detectable_metrics, cascade_callbacks: true
+	has_many :single_detectable_metrics, dependent: :destroy, autosave: true
 end

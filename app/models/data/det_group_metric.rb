@@ -16,5 +16,5 @@ class DetGroupMetric
 		DetGroup.find(self.det_group_id)
 	end
 
-	embeds_many :single_det_group_metrics, cascade_callbacks: true
+	has_many :single_det_group_metrics, dependent: :destroy, autosave: true
 end
