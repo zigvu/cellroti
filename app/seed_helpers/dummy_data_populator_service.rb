@@ -44,10 +44,15 @@ module SeedHelpers
 				counter += 1
 			end
 			# run in prallel
-			numOfProcessors = `cat /proc/cpuinfo | grep processor | wc -l`.to_i
-			allGamesArr.each do |gd|
+			# numOfProcessors = `cat /proc/cpuinfo | grep processor | wc -l`.to_i
+			Parallel.each(allGamesArr) do |gd|
+				ActiveRecord::Base.connection.reconnect!
 				createGame(gd[:team1], gd[:team2], gd[:startDate], gd[:lengthMS])
 			end
+			
+			# allGamesArr.each do |gd|
+			# 	createGame(gd[:team1], gd[:team2], gd[:startDate], gd[:lengthMS])
+			# end
 			# allGamesArr.each_slice(numOfProcessors) do |group|
 			# 	group.map do |gd|
 			# 		Thread.new do

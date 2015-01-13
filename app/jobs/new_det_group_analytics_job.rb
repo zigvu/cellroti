@@ -3,15 +3,24 @@ class NewDetGroupAnalyticsJob < Struct.new(:newDetGroupAnalyticsHash)
 		detGroupId = newDetGroupAnalyticsHash[:det_group_id]
 		videoIds = newDetGroupAnalyticsHash[:video_ids]
 
-		# run each processing in own thread
-		numOfProcessors = `cat /proc/cpuinfo | grep processor | wc -l`.to_i
-		videoIds.each_slice(numOfProcessors) do |group|
-			group.map do |videoId|
-				Thread.new do
-					process_single_video(videoId, [detGroupId])
-				end
-			end.each(&:join)
+		# run each processing in own process
+		# TODO : if numOfProcessors > max_thread_pool, limit
+		# numOfProcessors = `cat /proc/cpuinfo | grep processor | wc -l`.to_i
+		Parallel.each(videoIds) do |videoId|
+			ActiveRecord::Base.connection.reconnect!
+			process_single_video(videoId, [detGroupId])
 		end
+
+
+		# run each processing in own thread
+		# numOfProcessors = `cat /proc/cpuinfo | grep processor | wc -l`.to_i
+		# videoIds.each_slice(numOfProcessors) do |group|
+		# 	group.map do |videoId|
+		# 		Thread.new do
+		# 			process_single_video(videoId, [detGroupId])
+		# 		end
+		# 	end.each(&:join)
+		# end
 
 		return true
 	end
