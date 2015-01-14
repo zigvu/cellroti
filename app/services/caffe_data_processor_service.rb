@@ -61,54 +61,15 @@ module Services
 
 			# calculate frame level detection metrics for each detectable
 			Metrics::CalculateDetectableMetrics.new(video).calculate
+
 			# aggregate detection metrics into det_group_metrics
 			Metrics::CalculateDetGroupMetrics.new(video, detGroupIds).calculate
+			
 			# aggregate det_group_metrics into summary_metrics
 			Metrics::CalculateSummaryMetrics.new(video, detGroupIds).calculate
-			
-			#calculate_detectable_metrics(video)
-			#calculate_det_group_metrics(video, detGroupIds)
-			#calculate_summary_metrics(video, detGroupIds)
 
 			return true
 		end
-
-		# calculate frame level detection metrics for each detectable
-		def calculate_detectable_metrics(video)
-			calculatedDetectableMetrics = Metrics::CalculateDetectableMetrics.new(video).calculate
-			detectableMetrics = DetectableMetric.create(video_id: video.id)
-			calculatedDetectableMetrics.each do |cdm|
-				detectableMetrics.single_detectable_metrics.push(cdm)
-			end
-		end
-
-		# aggregate detection metrics into det_group_metrics
-		def calculate_det_group_metrics(video, detGroupIds)
-			calculatedDetGroupMetrics = Metrics::CalculateDetGroupMetrics.new(video, detGroupIds).calculate
-			calculatedDetGroupMetrics.each do |dgId, dgData|
-				detGroupMetrics = DetGroupMetric.create(video_id: video.id, det_group_id: dgId)
-				dgData.each do |dgd|
-					detGroupMetrics.single_det_group_metrics.push(dgd)
-				end
-			end
-		end
-
-		# aggregate det_group_metrics into summary_metrics
-		def calculate_summary_metrics(video, detGroupIds)
-			calculatedSummaryMetrics = Metrics::CalculateSummaryMetrics.new(video, detGroupIds).calculate
-			calculatedSummaryMetrics.each do |resolution, resolutionData|
-				resolutionData.each do |dgId, dgData|
-					summaryMetrics = SummaryMetric.create(
-						video_id: video.id,
-						det_group_id: dgId,
-						resolution_seconds: resolution)
-					dgData.each do |dgd|
-						summaryMetrics.single_summary_metrics.push(dgd)
-					end
-				end
-			end
-		end
-
 
 		# sanitize data - convert string to numbers
 		def sanitize_detections_data(detectionsData)

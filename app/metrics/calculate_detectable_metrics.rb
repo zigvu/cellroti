@@ -95,59 +95,6 @@ module Metrics
 			return true
 		end
 
-		def calculate_orig
-			# sanity check
-			videoDetections = @video.video_detections.first
-			raise "Video has no detections saved" if videoDetections == nil
-
-			# save scores in array
-			detectableMetrics = []
-
-			# retrieve detections
-			allDetections = videoDetections.detections
-			allDetectableIds = videoDetections.detectable_ids
-			# sort detections by frame number
-			sortedFrameNums = allDetections.keys.collect{|i| i.to_i}.sort
-			sortedFrameNums.each do |frameNum|
-				# puts "Working on frame number: #{frameNum}"
-				frameTime = (frameNum * @frameRateToMSFactor).to_i
-
-				allDetectableIds.each do |detectableId|
-					# get detections or empty array if no detections
-					detections = allDetections[frameNum.to_s][detectableId.to_s] || []
-
-					# quadrant information of detections
-					intersectionQuadrants = find_intersection_quadrants(detections)
-					# spatial effectiveness
-					spatialEffectiveness = spatial_effectiveness(intersectionQuadrants)
-					# visual saliency
-					@slidingWindowScores[detectableId.to_i].add(get_score_averages(detections))
-					visualSaliency = @slidingWindowScores[detectableId.to_i].get_decayed_average
-					# num of detections per detectable
-					detectionsCount = detections.count
-					# area of detections per detectable as fraction of frame area
-					cumulativeArea = get_cumulative_area(detections)
-					# event score if detectable present in frame
-					eventScore = get_event_score(detections, frameTime)
-
-					# populate variables for this frame and detectableId
-					# Note: this is tied to schema in SingleDetectableMetric class
-					detectableMetrics << SingleDetectableMetric.new({
-						frame_number: frameNum,
-						frame_time: frameTime,
-						detectable_id: detectableId.to_i,
-						spatial_effectiveness: spatialEffectiveness,
-						visual_saliency: visualSaliency,
-						detections_count: detectionsCount,
-						cumulative_area: cumulativeArea,
-						event_score: eventScore,
-						quadrants: intersectionQuadrants
-					})
-				end
-			end
-			return detectableMetrics
-		end
-
 		def get_event_score(detections, frameTime)
 			score = 0.0
 			if detections.count > 0
