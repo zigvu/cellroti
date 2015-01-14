@@ -59,9 +59,16 @@ module Services
 				detections: sanitizedDetectionsData,
 				detectable_ids: allDetectableIds)
 
-			calculate_detectable_metrics(video)
-			calculate_det_group_metrics(video, detGroupIds)
-			calculate_summary_metrics(video, detGroupIds)
+			# calculate frame level detection metrics for each detectable
+			Metrics::CalculateDetectableMetrics.new(video).calculate
+			# aggregate detection metrics into det_group_metrics
+			Metrics::CalculateDetGroupMetrics.new(video, detGroupIds).calculate
+			# aggregate det_group_metrics into summary_metrics
+			Metrics::CalculateSummaryMetrics.new(video, detGroupIds).calculate
+			
+			#calculate_detectable_metrics(video)
+			#calculate_det_group_metrics(video, detGroupIds)
+			#calculate_summary_metrics(video, detGroupIds)
 
 			return true
 		end

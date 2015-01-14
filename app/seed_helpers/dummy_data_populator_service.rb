@@ -19,21 +19,23 @@ module SeedHelpers
 			@tempFolder = '/mnt/tmp'
 			@frameStep = @videoAttributes["detection_frame_rate"]
 			@avgFrameRate = @videoAttributes["playback_frame_rate"]
+
+			@rnd = Random.new(1234567890)
 		end
 
 		def createManyGames(numOfGames, averageLengthMS)
 			counter = 0
 			allGamesArr = []
-			teamPerumtations = @gameSeason.league.teams.pluck(:id).permutation(2).to_a.shuffle!
+			teamPerumtations = @gameSeason.league.teams.pluck(:id).permutation(2).to_a.shuffle!(random: @rnd)
 			teamPerumtations.each do |teamPerumtation|
 				break if counter >= numOfGames
 				team1 = Team.find(teamPerumtation[0])
 				team2 = Team.find(teamPerumtation[1])
 				startDate = Time.now - numOfGames.days + counter.days - 1.days
 				lengthMS = [
-					averageLengthMS + rand((0.3 * averageLengthMS).to_i),
-					averageLengthMS - rand((0.3 * averageLengthMS).to_i)
-				].sample
+					averageLengthMS + @rnd.rand((0.3 * averageLengthMS).to_i),
+					averageLengthMS - @rnd.rand((0.3 * averageLengthMS).to_i)
+				].sample(random: @rnd)
 
 				allGamesArr << {
 					team1: team1,
@@ -45,21 +47,14 @@ module SeedHelpers
 			end
 			# run in prallel
 			# numOfProcessors = `cat /proc/cpuinfo | grep processor | wc -l`.to_i
-			Parallel.each(allGamesArr) do |gd|
-				ActiveRecord::Base.connection.reconnect!
-				createGame(gd[:team1], gd[:team2], gd[:startDate], gd[:lengthMS])
-			end
-			
-			# allGamesArr.each do |gd|
+			# Parallel.each(allGamesArr) do |gd|
+			# 	ActiveRecord::Base.connection.reconnect!
 			# 	createGame(gd[:team1], gd[:team2], gd[:startDate], gd[:lengthMS])
 			# end
-			# allGamesArr.each_slice(numOfProcessors) do |group|
-			# 	group.map do |gd|
-			# 		Thread.new do
-			# 			createGame(gd[:team1], gd[:team2], gd[:startDate], gd[:lengthMS])
-			# 		end
-			# 	end.each(&:join)
-			# end
+			
+			allGamesArr.each do |gd|
+				createGame(gd[:team1], gd[:team2], gd[:startDate], gd[:lengthMS])
+			end
 		end
 
 		def createGame(team1, team2, startDate, lengthMS)
@@ -77,13 +72,13 @@ module SeedHelpers
 			GameTeam.create(game_id: game.id, team_id: team2.id)
 
 			# attach some events
-			for i in 0..(rand(10))
-				team = [team1, team2].sample
-				eventTypeId = @event_type_ids.sample
+			for i in 0..(@rnd.rand(10))
+				team = [team1, team2].sample(random: @rnd)
+				eventTypeId = @event_type_ids.sample(random: @rnd)
 				game.events.create(
 					event_type_id: eventTypeId, 
 					team_id: team.id, 
-					event_time: rand(lengthMS - 500) + 500)
+					event_time: @rnd.rand(lengthMS - 500) + 500)
 			end
 
 			# create video
@@ -136,7 +131,7 @@ module SeedHelpers
 		end
 
 		def nextRandomData
-			return @caffeData[@caffeDataKeys.sample]
+			return @caffeData[@caffeDataKeys.sample(random: @rnd)]
 		end
 
 	end

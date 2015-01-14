@@ -24,9 +24,78 @@ module Metrics
 			metricsQuads = Metrics::Quadrants.new(@width, @height, @numCols, @numRows)
 			@quadrant_weights = metricsQuads.get_quadrant_weights
 			@quadrants = metricsQuads.get_quadrant_boundaries
+
+			@mongoBatchInsertSize = 1000
 		end
 
 		def calculate
+			# sanity check
+			videoDetections = @video.video_detections.first
+			raise "Video has no detections saved" if videoDetections == nil
+
+			# create metric entry
+			detectableMetric = DetectableMetric.create(video_id: @video.id)
+
+			# save scores in array
+			detectableMetricHashArr = []
+
+			# retrieve detections
+			allDetections = videoDetections.detections
+			allDetectableIds = videoDetections.detectable_ids
+			# sort detections by frame number
+			sortedFrameNums = allDetections.keys.collect{|i| i.to_i}.sort
+			sortedFrameNums.each do |frameNum|
+				# puts "Working on frame number: #{frameNum}"
+				frameTime = (frameNum * @frameRateToMSFactor).to_i
+
+				allDetectableIds.each do |detectableId|
+					# get detections or empty array if no detections
+					detections = allDetections[frameNum.to_s][detectableId.to_s] || []
+
+					# quadrant information of detections
+					intersectionQuadrants = find_intersection_quadrants(detections)
+					# spatial effectiveness
+					spatialEffectiveness = spatial_effectiveness(intersectionQuadrants)
+					# visual saliency
+					@slidingWindowScores[detectableId.to_i].add(get_score_averages(detections))
+					visualSaliency = @slidingWindowScores[detectableId.to_i].get_decayed_average
+					# num of detections per detectable
+					detectionsCount = detections.count
+					# area of detections per detectable as fraction of frame area
+					cumulativeArea = get_cumulative_area(detections)
+					# event score if detectable present in frame
+					eventScore = get_event_score(detections, frameTime)
+
+					# populate variables for this frame and detectableId
+					# Note: this is tied to schema in SingleDetectableMetric class
+					detectableMetricHashArr << {
+						fn: frameNum,
+						ft: frameTime,
+						di: detectableId.to_i,
+						se: spatialEffectiveness,
+						vs: visualSaliency,
+						dc: detectionsCount,
+						ca: cumulativeArea,
+						es: eventScore,
+						qd: intersectionQuadrants,
+						detectable_metric_id: detectableMetric.id
+					}
+					# if batch size reached, then write to db
+					if detectableMetricHashArr.count >= @mongoBatchInsertSize
+						SingleDetectableMetric.collection.insert(detectableMetricHashArr)
+						detectableMetricHashArr = []
+					end
+				end
+			end
+			# write the last batch to db
+			if detectableMetricHashArr.count > 0
+				SingleDetectableMetric.collection.insert(detectableMetricHashArr)
+			end
+
+			return true
+		end
+
+		def calculate_orig
 			# sanity check
 			videoDetections = @video.video_detections.first
 			raise "Video has no detections saved" if videoDetections == nil
