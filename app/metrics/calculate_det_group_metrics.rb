@@ -66,29 +66,33 @@ module Metrics
 					detGroupCrowding[dgId] = 0
 				end
 
-				spatialDetGroupCrowding = spatial_det_group_crowding(Hash[singleMetrics
-					.where(frame_number: frameNum).in(detectable_id: @allDetectableIds)
-					.pluck(:detectable_id, :cumulative_area)])
+				# plucking entries each time makes db calls - even with
+				# caching on, mongoid makes separate db calls
+				se = singleMetrics.where(frame_number: frameNum).in(detectable_id: @allDetectableIds).entries
 
-				visualSaliency = visual_saliency(Hash[singleMetrics
-					.where(frame_number: frameNum).in(detectable_id: @allDetectableIds)
-					.pluck(:detectable_id, :visual_saliency)])
+				spatialDetGroupCrowding = spatial_det_group_crowding(Hash[se.map{ |e| 
+					[e.detectable_id, e.cumulative_area]
+				}])
 
-				eventScores = max_event_score(Hash[singleMetrics
-					.where(frame_number: frameNum).in(detectable_id: @allDetectableIds)
-					.pluck(:detectable_id, :event_score)])
+				visualSaliency = visual_saliency(Hash[se.map{ |e| 
+					[e.detectable_id, e.visual_saliency]
+				}])
 
-				spatialEffectiveness = spatial_effectiveness(Hash[singleMetrics
-					.where(frame_number: frameNum).in(detectable_id: @allDetectableIds)
-					.pluck(:detectable_id, :spatial_effectiveness)])
+				eventScores = max_event_score(Hash[se.map{ |e| 
+					[e.detectable_id, e.event_score]
+				}])
 
-				detectionsCount = detections_count(Hash[singleMetrics
-					.where(frame_number: frameNum).in(detectable_id: @allDetectableIds)
-					.pluck(:detectable_id, :detections_count)])
+				spatialEffectiveness = spatial_effectiveness(Hash[se.map{ |e| 
+					[e.detectable_id, e.spatial_effectiveness]
+				}])
 
-				quadrantsCount = quadrants_count(Hash[singleMetrics
-					.where(frame_number: frameNum).in(detectable_id: @allDetectableIds)
-					.pluck(:detectable_id, :quadrants)])
+				detectionsCount = detections_count(Hash[se.map{ |e| 
+					[e.detectable_id, e.detections_count]
+				}])
+
+				quadrantsCount = quadrants_count(Hash[se.map{ |e| 
+					[e.detectable_id, e.quadrants]
+				}])
 
 				# populate sliding window
 				@det_group_detectables.each do |dgId, detectablesId|

@@ -53,11 +53,12 @@ module Metrics
 			firstDgId = detGroupMetrics.keys[0]
 			frameTime = 0
 
-			firstDetGroupSingleMetrics = detGroupMetrics.first[1]
-			sortedFrameNums = firstDetGroupSingleMetrics.pluck(:frame_number).uniq.sort
+			frameNumTimes = Hash[detGroupMetrics[firstDgId].pluck(:frame_number, :frame_time)]
+			sortedFrameNums = frameNumTimes.keys.uniq.sort
+
 			# BEGIN - for each frame
 			sortedFrameNums.each do |frameNum|
-				frameTime = firstDetGroupSingleMetrics.where(frame_number: frameNum).first.frame_time
+				frameTime = frameNumTimes[frameNum]
 
 				# BEGIN - set variables to zero first
 				@resolutions.each do |t, res|
