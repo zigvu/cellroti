@@ -92,6 +92,9 @@ module Metrics
 				SingleDetectableMetric.collection.insert(detectableMetricHashArr)
 			end
 
+			# create indexes if not there yet
+			SingleDetectableMetric.create_indexes
+
 			return true
 		end
 

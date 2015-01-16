@@ -11,5 +11,8 @@ class SingleDetectableMetric
 	field :es, as: :event_score, type: Float
 	field :qd, as: :quadrants, type: Hash
 
+	# needed if we want to order_by on frame_number
+	index({ frame_number: 1 })
+
 	belongs_to :detectable_metric, index: true
 end

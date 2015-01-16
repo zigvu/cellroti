@@ -26,6 +26,160 @@ module Metrics
 			@mongoBatchInsertSize = 1000
 		end
 
+		def calculate_new
+			# sanity check
+			detectableMetrics = @video.detectable_metrics.first
+			raise "Video has no detectable metrics saved" if detectableMetrics == nil
+			singleMetrics = detectableMetrics.single_detectable_metrics.order_by([:frame_number, :asc])
+			raise "Video has no single detectable metrics saved" if singleMetrics.count == 0
+			vDetIds = singleMetrics.pluck(:detectable_id).uniq
+			@allDetectableIds.each do |dId|
+				raise "Video is not evaluated against some detectables" if not vDetIds.include?(dId)
+			end
+
+			# store results in hash to be saved in individual documents
+			detGroupMetricIds = {}
+			detGroupMetricHashArr = {}
+			@det_group_detectables.each do |dgId, detectablesId|
+				detGroupMetric = DetGroupMetric.create(video_id: @video.id, det_group_id: dgId)
+				detGroupMetricIds[dgId] = detGroupMetric.id
+				detGroupMetricHashArr[dgId] = []
+			end
+
+			# helper before loop:
+			firstDgId = @det_group_detectables.keys[0]
+
+			curFrameNumber = -1
+			metricEntries = []
+			singleMetrics = singleMetrics.in(detectable_id: @allDetectableIds)
+
+			# BEGIN: use mongo cursor to loop
+			singleMetrics.each do |singleMetric|
+				if curFrameNumber == singleMetric.frame_number
+					# if same frame, add to array
+					metricEntries << singleMetric
+				else
+					# if different frame and this is first loop
+					if curFrameNumber == -1
+						metricEntries = [singleMetric]
+						next
+					end
+
+					# if different frame, compute and store results
+					calcDetGroupMetricResults = calculate_frame_metrics(metricEntries, detGroupMetricIds)
+					@det_group_detectables.each do |dgId, detectablesId|
+						detGroupMetricHashArr[dgId] << calcDetGroupMetricResults[dgId]
+					end
+
+					# reset counters for next iteration
+					curFrameNumber = singleMetric.frame_number
+					metricEntries = [singleMetric]
+
+					# if batch size reached, then write to db
+					if detGroupMetricHashArr[firstDgId].count >= @mongoBatchInsertSize
+						@det_group_detectables.each do |dgId, detectablesId|
+							if detGroupMetricHashArr[dgId].count > 0
+								SingleDetGroupMetric.collection.insert(detGroupMetricHashArr[dgId])
+								detGroupMetricHashArr[dgId] = []
+							end
+						end
+					end
+				end
+			end
+			# END: use mongo cursor to loop
+
+			# write the last batch to db
+			@det_group_detectables.each do |dgId, detectablesId|
+				if detGroupMetricHashArr[dgId].count > 0
+					SingleDetGroupMetric.collection.insert(detGroupMetricHashArr[dgId])
+				end
+			end
+
+			# create indexes if not there yet
+			SingleDetGroupMetric.create_indexes
+
+			return true
+		end
+
+		def calculate_frame_metrics(metricEntries, detGroupMetricIds)
+			detGroupMetricHash = {}
+
+			# puts "Working on frame number: #{frameNum}"
+			frameTime = metricEntries.first.frame_time
+
+			# initialize variables for this frame
+			temporalDetGroupCrowding = {}    # spatial score of det_group in timeline
+			timingEffectiveness = {}         # score of events in timeline
+			detGroupCrowding = {}            # combined crowding scores - space and time
+
+			@det_group_detectables.each do |dgId, detectablesId|
+				temporalDetGroupCrowding[dgId] = 0
+				timingEffectiveness[dgId] = 0
+				detGroupCrowding[dgId] = 0
+			end
+
+			spatialDetGroupCrowding = spatial_det_group_crowding(Hash[metricEntries.map{ |e| 
+				[e.detectable_id, e.cumulative_area]
+			}])
+
+			visualSaliency = visual_saliency(Hash[metricEntries.map{ |e| 
+				[e.detectable_id, e.visual_saliency]
+			}])
+
+			eventScores = max_event_score(Hash[metricEntries.map{ |e| 
+				[e.detectable_id, e.event_score]
+			}])
+
+			spatialEffectiveness = spatial_effectiveness(Hash[metricEntries.map{ |e| 
+				[e.detectable_id, e.spatial_effectiveness]
+			}])
+
+			detectionsCount = detections_count(Hash[metricEntries.map{ |e| 
+				[e.detectable_id, e.detections_count]
+			}])
+
+			quadrantsCount = quadrants_count(Hash[metricEntries.map{ |e| 
+				[e.detectable_id, e.quadrants]
+			}])
+
+			# populate sliding window
+			@det_group_detectables.each do |dgId, detectablesId|
+				@temporalDetGroupCrowdingWindows[dgId].add(spatialDetGroupCrowding[dgId])
+				temporalDetGroupCrowding[dgId] = @temporalDetGroupCrowdingWindows[dgId].get_decayed_average
+				
+				@timingEffectivenessWindows[dgId].add(eventScores[dgId])
+				timingEffectiveness[dgId] = @timingEffectivenessWindows[dgId].get_decayed_average
+
+				detGroupCrowding[dgId] = (
+					(@spatialDetGroupCrowdingWeight * spatialDetGroupCrowding[dgId]) + 
+					(@temporalDetGroupCrowdingWeight * temporalDetGroupCrowding[dgId]))
+			end
+
+			# populate database
+			@det_group_detectables.each do |dgId, detectablesId|
+				brand_effectiveness = 
+					@be_detGroupCrowdingWeight   * detGroupCrowding[dgId] +
+					@be_visualSaliencyWeight       * visualSaliency[dgId] +
+					@be_timingEffectivenessWeight  * timingEffectiveness[dgId] +
+					@be_spatialEffectivenessWeight * spatialEffectiveness[dgId]
+
+				# Note: this is tied to schema in SingleDetGroupMetric class
+				detGroupMetricHash[dgId] = {
+					fn: frameNum,
+					ft: frameTime,
+					be: brand_effectiveness,
+					dgc: detGroupCrowding[dgId],
+					vs: visualSaliency[dgId],
+					te: timingEffectiveness[dgId],
+					se: spatialEffectiveness[dgId],
+					dc: detectionsCount[dgId],
+					qd: quadrantsCount[dgId],
+					det_group_metric_id: detGroupMetricIds[dgId]
+				}
+			end
+			return detGroupMetricHash
+		end
+
 		def calculate
 			# sanity check
 			detectableMetrics = @video.detectable_metrics.first
