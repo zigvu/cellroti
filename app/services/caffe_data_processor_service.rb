@@ -36,37 +36,23 @@ module Services
 			raise "No det group can be constructed from detectables in video" if detGroupIds.count == 0
 			
 
-			# if data for this video already exists, purge
-			# all old data
-			if video.video_detections.first != nil
-				video.video_detections.each do |vd|
-					vd.destroy
-				end
-				video.detectable_metrics.each do |dm|
-					dm.destroy
-				end
-				video.det_group_metrics.each do |dgm|
-					dgm.destroy
-				end
-				video.summary_metrics.each do |sm|
-					sm.destroy
-				end
+			# if data for this video already exists, purge all old data
+			video.video_detections.each do |vd|
+				vd.destroy
+				# this will cascade and detect frames data as well
+			end
+			video.summary_metrics.each do |sm|
+				sm.destroy
 			end
 
 			# store raw detections from chia
-			VideoDetection.create(
-				video_id: video.id,
-				detections: sanitizedDetectionsData,
-				detectable_ids: allDetectableIds)
+			VideoDetection.create(video_id: video.id, detectable_ids: allDetectableIds)
+			# create indexes if not there yet
+			VideoDetection.create_indexes
 
-			# calculate frame level detection metrics for each detectable
-			Metrics::CalculateDetectableMetrics.new(video).calculate
-
-			# aggregate detection metrics into det_group_metrics
-			Metrics::CalculateDetGroupMetrics.new(video, detGroupIds).calculate
-			
-			# aggregate det_group_metrics into summary_metrics
-			Metrics::CalculateSummaryMetrics.new(video, detGroupIds).calculate
+			# compute all intermediate/final metrics and save
+			cam = Metrics::CalculateAll.new(video)
+			cam.calculate_all(detGroupIds, sanitizedDetectionsData)
 
 			return true
 		end

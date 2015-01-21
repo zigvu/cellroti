@@ -1,8 +1,7 @@
 class SingleDetGroupMetric
 	include Mongoid::Document
 
-	field :fn, as: :frame_number, type: Integer
-	field :ft, as: :frame_time, type: Integer
+	field :dgId, as: :det_group_id, type: Integer
 	field :be, as: :brand_effectiveness, type: Float
 	field :dgc, as: :det_group_crowding, type: Float
 	field :vs, as: :visual_saliency, type: Float
@@ -11,8 +10,5 @@ class SingleDetGroupMetric
 	field :dc, as: :detections_count, type: Integer
 	field :qd, as: :quadrants, type: Hash
 
-	# needed if we want to order_by on frame_number
-	index({ frame_number: 1 })
-	
-	belongs_to :det_group_metric, index: true
+	embedded_in :frame_detection
 end

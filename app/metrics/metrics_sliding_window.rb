@@ -1,5 +1,5 @@
 module Metrics
-	class SlidingWindow
+	class MetricsSlidingWindow
 		def initialize(windowSize, decayArray)
 			@windowSize = windowSize
 			@decayArray = decayArray
@@ -24,14 +24,6 @@ module Metrics
 
 		def get_max
 			return @data.max
-		end
-
-		def self.get_sliding_window_hash(ids, slidingWindowSize, slidingWindowDecayValues)
-			sliding_windows = {}
-			ids.each do |id|
-				sliding_windows[id] = Metrics::SlidingWindow.new(slidingWindowSize, slidingWindowDecayValues)
-			end
-			return sliding_windows
 		end
 
 	end

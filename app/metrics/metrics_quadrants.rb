@@ -1,5 +1,5 @@
 module Metrics
-	class Quadrants
+	class MetricsQuadrants
 		def initialize(width, height, numRows, numCols)
 			@width = width
 			@height = height

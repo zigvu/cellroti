@@ -1,5 +1,5 @@
 module Metrics
-	class EventDistance
+	class MetricsEventDistance
 		def initialize(events, maxTimeSeconds, timeDecayWeight)
 			@events = events
 			@maxTimeSeconds = maxTimeSeconds

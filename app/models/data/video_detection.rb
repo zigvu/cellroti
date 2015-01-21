@@ -3,7 +3,6 @@ class VideoDetection
 	include Mongoid::Timestamps
 
 	field :video_id, type: Integer
-	field :detections, type: Hash
 	field :detectable_ids, type: Array
 
 	index({video_id: 1})
@@ -13,4 +12,5 @@ class VideoDetection
 		Video.find(self.video_id)
 	end
 
+	has_many :frame_detections, dependent: :destroy, autosave: true
 end
