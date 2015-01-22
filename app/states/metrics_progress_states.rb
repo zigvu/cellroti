@@ -9,7 +9,7 @@ module States
 			return "detGroup"
 		end
 
-		# type of process
+		# type of action
 		def self.cancelQueue
 			return "cancelQueue"
 		end

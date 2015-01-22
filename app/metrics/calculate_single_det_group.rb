@@ -1,27 +1,27 @@
 module Metrics
 	class CalculateSingleDetGroup
-		def initialize(mcr, video, detGroupId)
-			@mcr = mcr
+		def initialize(configReader, video, detGroupId)
+			@configReader = configReader
 			@video = video
 			@detGroupId = detGroupId
 
 			@detectableIds = DetGroup.find(detGroupId).detectables.pluck(:id)
 
 			@swTemporalDetGroupCrowding = Metrics::MetricsSlidingWindow.new(
-				@mcr.dgm_sw_size,
-				@mcr.dgm_sw_decayValues)
+				@configReader.dgm_sw_size,
+				@configReader.dgm_sw_decayValues)
 
 			@swTimingEffectiveness = Metrics::MetricsSlidingWindow.new(
-				@mcr.dgm_sw_size,
-				@mcr.dgm_sw_decayValues)
+				@configReader.dgm_sw_size,
+				@configReader.dgm_sw_decayValues)
 
-			@spatialDetGroupCrowdingWeight = @mcr.dgm_cw_spatialDetGroupCrowding
-			@temporalDetGroupCrowdingWeight = @mcr.dgm_cw_temporalDetGroupCrowding
+			@spatialDetGroupCrowdingWeight = @configReader.dgm_cw_spatialDetGroupCrowding
+			@temporalDetGroupCrowdingWeight = @configReader.dgm_cw_temporalDetGroupCrowding
 
-			@be_detGroupCrowdingWeight = @mcr.dgm_be_detGroupCrowding
-			@be_visualSaliencyWeight = @mcr.dgm_be_visualSaliency
-			@be_timingEffectivenessWeight = @mcr.dgm_be_timingEffectiveness
-			@be_spatialEffectivenessWeight = @mcr.dgm_be_spatialEffectiveness
+			@be_detGroupCrowdingWeight = @configReader.dgm_be_detGroupCrowding
+			@be_visualSaliencyWeight = @configReader.dgm_be_visualSaliency
+			@be_timingEffectivenessWeight = @configReader.dgm_be_timingEffectiveness
+			@be_spatialEffectivenessWeight = @configReader.dgm_be_spatialEffectiveness
 
 		end
 

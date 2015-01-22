@@ -10,15 +10,15 @@ module Admin
 		def index
 			@mps = States::MetricsProgressStates # no new required since accessing static vars
 			cs = Serializers::ClientSettingsSerializer.new(::Client.zigvu_client.client_setting)
-			@viQueue = Video.where(id: cs.getJobsViQueue)
-			@viWorking = Video.where(id: cs.getJobsViWorking)
-			@viFail = Video.where(id: cs.getJobsViFail)
-			@viReview = Video.where(id: cs.getJobsViReview)
+			@viQueue = ::Video.where(id: cs.getJobsViQueue)
+			@viWorking = ::Video.where(id: cs.getJobsViWorking)
+			@viFail = ::Video.where(id: cs.getJobsViFail)
+			@viReview = ::Video.where(id: cs.getJobsViReview)
 
-			@dgQueue = DetGroup.where(id: cs.getJobsDgQueue)
-			@dgWorking = DetGroup.where(id: cs.getJobsDgWorking)
-			@dgFail = DetGroup.where(id: cs.getJobsDgFail)
-			@dgReview = DetGroup.where(id: cs.getJobsDgReview)
+			@dgQueue = ::DetGroup.where(id: cs.getJobsDgQueue)
+			@dgWorking = ::DetGroup.where(id: cs.getJobsDgWorking)
+			@dgFail = ::DetGroup.where(id: cs.getJobsDgFail)
+			@dgReview = ::DetGroup.where(id: cs.getJobsDgReview)
 		end
 
 		# GET /metrics/change
@@ -32,22 +32,34 @@ module Admin
 			changeId = params[:changeId].to_i
 
 			if type == @mps.detGroup
+				detGroup = ::DetGroup.find(changeId)
+				dgas = Services::DetGroupAnalyticsService.new(::Client.zigvu_client, detGroup)
 				if process == @mps.cancelQueue
-					Services::DetGroupAnalyticsService.new(::Client.zigvu_client, DetGroup.find(changeId)).destroy()
+					# destroy associated jobs
+					dgas.destroy()
+					# and destroy the det group itself
+		      detGroup.destroy
 				elsif process == @mps.cancelWorking
 					# do nothing for now
 				elsif process == @mps.requeueFail
-					Services::DetGroupAnalyticsService.new(::Client.zigvu_client, DetGroup.find(changeId)).requeue()
+					dgas.requeue()
 				elsif process == @mps.passReview
-					Services::DetGroupAnalyticsService.new(::Client.zigvu_client, DetGroup.find(changeId)).release()
+					dgas.release()
 				end
 			end
 						
 			if type == @mps.videoIngestion
+				video = ::Video.find(changeId)
+				vdis = Services::VideoDataImportService.new(::Client.zigvu_client, video)
 				if process == @mps.cancelQueue
+					# destroy associated jobs
+					vdis.destroy()
 				elsif process == @mps.cancelWorking
+					# do nothing for now
 				elsif process == @mps.requeueFail
+					vdis.requeue()
 				elsif process == @mps.passReview
+					vdis.release()
 				end
 			end
 

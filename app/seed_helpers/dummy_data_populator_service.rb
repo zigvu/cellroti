@@ -109,8 +109,8 @@ module SeedHelpers
 			end
 
 			# populate data
-			cdps = Services::CaffeDataProcessorService.new()
-			cdps.populate(video, tempFile)
+			mvdi = Metrics::VideoDataImport.new()
+			mvdi.populate(video, tempFile)
 		end
 
 		def createTeams(countryList)

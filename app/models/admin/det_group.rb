@@ -13,14 +13,11 @@ class DetGroup < ActiveRecord::Base
       [cs.getJobsDgWorking] + 
       [cs.getJobsDgFail] + 
       [cs.getJobsDgReview]].flatten.uniq
-    return DetGroup.all - DetGroup.where(id: nonReleasedDGId)
+    allDGId = DetGroup.all.pluck(:id)
+    return DetGroup.where(id: (allDGId - nonReleasedDGId))
   end
 
   # Mock a has_many relationship with Mongoid models
-  def det_group_metrics
-    DetGroupMetric.where(det_group_id: self.id)
-  end
-
   def summary_metrics
     SummaryMetric.where(det_group_id: self.id)
   end
@@ -34,7 +31,6 @@ class DetGroup < ActiveRecord::Base
 
   private
     def destroy_mongo_documents
-      DetGroupMetric.destroy_all(det_group_id: self.id)
       SummaryMetric.destroy_all(det_group_id: self.id)
     end
 end

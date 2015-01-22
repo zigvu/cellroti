@@ -1,14 +1,23 @@
-module Metrics
-	class MetricsConfigReader
-
-		attr_accessor :g_mongoBatchInsertSize
-
+module States
+	class ConfigReader
 		def initialize
-			# general configs
-			@g_mongoBatchInsertSize = 1000
-
+			init_general_config()
 			init_detectable_metrics_config()
 			init_det_group_metrics_config()
+		end
+
+		attr_accessor :g_mongoBatchInsertSize
+		attr_accessor :g_videoImportLocalizationPath, :g_videoImportLocalizationFileName
+		attr_accessor :g_videoImportLocalizationImages
+
+		def init_general_config
+			# mongo write size
+			@g_mongoBatchInsertSize = 1000
+
+			# video import saving
+			@g_videoImportLocalizationPath = '/sftp/sftpuser/uploads'
+			@g_videoImportLocalizationFileName = 'localizations.json'
+			@g_videoImportLocalizationImages = 'images'
 		end
 
 
@@ -50,7 +59,6 @@ module Metrics
 			@dgm_be_visualSaliency = 0.25
 			@dgm_be_timingEffectiveness = 0.25
 			@dgm_be_spatialEffectiveness = 0.25
-
 		end
 
 	end

@@ -1,7 +1,7 @@
 module Metrics
 	class CalculateSingleDetectable
-		def initialize(mcr, video, detectableId)
-			@mcr = mcr
+		def initialize(configReader, video, detectableId)
+			@configReader = configReader
 			@video = video
 			@detectableId = detectableId
 
@@ -11,18 +11,18 @@ module Metrics
 			# event score
 			@eventDistance = Metrics::MetricsEventDistance.new(
 				@video.game.events, 
-				@mcr.dm_es_maxTimeSeconds, 
-				@mcr.dm_es_timeDecayWeight)
+				@configReader.dm_es_maxTimeSeconds, 
+				@configReader.dm_es_timeDecayWeight)
 
 			# sliding window
 			@slidingWindowScores = Metrics::MetricsSlidingWindow.new(
-				@mcr.dm_sw_size,
-				@mcr.dm_sw_decayValues)
+				@configReader.dm_sw_size,
+				@configReader.dm_sw_decayValues)
 
 			
 			# number of quadrants in frame
-			@numCols = @mcr.dm_qd_numCols
-			@numRows = @mcr.dm_qd_numRows
+			@numCols = @configReader.dm_qd_numCols
+			@numRows = @configReader.dm_qd_numRows
 			metricsQuads = Metrics::MetricsQuadrants.new(@width, @height, @numCols, @numRows)
 			@quadrant_weights = metricsQuads.get_quadrant_weights
 			@quadrants = metricsQuads.get_quadrant_boundaries

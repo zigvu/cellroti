@@ -63,7 +63,10 @@ module Admin
 
     # DELETE /det_groups/1
     def destroy
+      # destroy associated jobs
       Services::DetGroupAnalyticsService.new(::Client.zigvu_client, @det_group).destroy()
+      # and destroy the det group itself
+      @det_group.destroy
       redirect_to admin_det_groups_url, notice: 'Group was successfully deleted.'
     end
 

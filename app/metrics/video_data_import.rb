@@ -1,7 +1,7 @@
 require 'json'
 
-module Services
-	class CaffeDataProcessorService
+module Metrics
+	class VideoDataImport
 		def initialize
 		end
 
@@ -45,7 +45,7 @@ module Services
 				sm.destroy
 			end
 
-			# store raw detections from chia
+			# create new video detection
 			VideoDetection.create(video_id: video.id, detectable_ids: allDetectableIds)
 			# create indexes if not there yet
 			VideoDetection.create_indexes

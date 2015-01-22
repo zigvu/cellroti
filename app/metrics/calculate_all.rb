@@ -3,9 +3,9 @@ module Metrics
 
 		def initialize(video)
 			@video = video
-			@mcr = Metrics::MetricsConfigReader.new
+			@configReader = States::ConfigReader.new
 
-			@mongoBatchInsertSize = @mcr.g_mongoBatchInsertSize
+			@mongoBatchInsertSize = @configReader.g_mongoBatchInsertSize
 		end
 
 		def calculate_all(detGroupIds, allDetections)
@@ -44,7 +44,7 @@ module Metrics
 			# hold objects for single detectable metrics calculation
 			mcsd = {}
 			@allDetectableIds.each do |detectableId|
-				mcsd[detectableId] = Metrics::CalculateSingleDetectable.new(@mcr, @video, detectableId)
+				mcsd[detectableId] = Metrics::CalculateSingleDetectable.new(@configReader, @video, detectableId)
 			end
 
 			# array to hold frame detections
@@ -122,7 +122,7 @@ module Metrics
 			# hold objects for single detectable metrics calculation
 			mcsdg = {}
 			@detGroupIds.each do |dgId|
-				mcsdg[dgId] = Metrics::CalculateSingleDetGroup.new(@mcr, @video, dgId)
+				mcsdg[dgId] = Metrics::CalculateSingleDetGroup.new(@configReader, @video, dgId)
 			end
 
 			# has to store det group metrics by frame number
@@ -201,7 +201,7 @@ module Metrics
 			# hold objects for single detectable metrics calculation
 			mcss = {}
 			@detGroupIds.each do |dgId|
-				mcss[dgId] = Metrics::CalculateSingleSummary.new(@mcr, @video, dgId)
+				mcss[dgId] = Metrics::CalculateSingleSummary.new(@configReader, @video, dgId)
 				mcss[dgId].setup_data_structures()
 			end
 

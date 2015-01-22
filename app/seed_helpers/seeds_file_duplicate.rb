@@ -218,8 +218,8 @@ module SeedHelpers
 			# videoFrameFileName1 = '/home/evan/Vision/temp/sendto_cellroti/database_seed_localization.json'
 
 			# puts "Creating mongodb data"
-			# cdps = Services::CaffeDataProcessorService.new(wcGermanyVsBrazilVideo, videoFrameFileName1)
-			# cdps.populate()
+			# vdis = Services::VideoDataImportService.new(wcGermanyVsBrazilVideo, videoFrameFileName1)
+			# vdis.populate()
 
 
 			# # Game 2

@@ -11,17 +11,6 @@ class NewDetGroupAnalyticsJob < Struct.new(:newDetGroupAnalyticsHash)
 			process_single_video(videoId, [detGroupId])
 		end
 
-
-		# run each processing in own thread
-		# numOfProcessors = `cat /proc/cpuinfo | grep processor | wc -l`.to_i
-		# videoIds.each_slice(numOfProcessors) do |group|
-		# 	group.map do |videoId|
-		# 		Thread.new do
-		# 			process_single_video(videoId, [detGroupId])
-		# 		end
-		# 	end.each(&:join)
-		# end
-
 		return true
 	end
 
@@ -61,6 +50,9 @@ class NewDetGroupAnalyticsJob < Struct.new(:newDetGroupAnalyticsHash)
 		cs = Serializers::ClientSettingsSerializer.new(client.client_setting)
 		cs.removeJobsDgWorking(detGroupId)
 		cs.addJobsDgReview(detGroupId)
+
+		# after successfully creating metrics, link this det_group to client
+		client.det_group_clients.create(det_group: DetGroup.find(detGroupId))
 	end
 
 	def error(job, exception)
@@ -83,9 +75,9 @@ class NewDetGroupAnalyticsJob < Struct.new(:newDetGroupAnalyticsHash)
 			}
 			video = Video.find(videoId)
 
-			cdps = Services::CaffeDataProcessorService.new()
-			cdps.calculate_det_group_metrics(video, detGroupIds)
-			cdps.calculate_summary_metrics(video, detGroupIds)
+			# compute all intermediate/final metrics and save
+			cam = Metrics::CalculateAll.new(video)
+			cam.calculate_metrics_only(detGroupIds)
 		end
 
 end

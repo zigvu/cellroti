@@ -1,11 +1,11 @@
 module Metrics
 	class CalculateSingleSummary
-		def initialize(mcr, video, detGroupId)
-			@mcr = mcr
+		def initialize(configReader, video, detGroupId)
+			@configReader = configReader
 			@video = video
 			@detGroupId = detGroupId
 
-			@mongoBatchInsertSize = @mcr.g_mongoBatchInsertSize
+			@mongoBatchInsertSize = @configReader.g_mongoBatchInsertSize
 		end
 
 		# create data structure to hold average values
