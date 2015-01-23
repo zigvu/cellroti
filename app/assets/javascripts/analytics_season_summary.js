@@ -76,7 +76,7 @@ seasonsShowCrossFilterChart = function(parsedData) {
 
 	// Run the data through crossfilter
 	var ndx = crossfilter(ndxData);
-	var all = ndx.groupAll();
+	//var all = ndx.groupAll();
 
 	var counterDomain = d3.extent(ndxData, function(d) { return d.counter; });
 	var counterDim = ndx.dimension(function (d) { return d.counter; });

@@ -91,7 +91,7 @@ module Metrics
 			end
 
 			# create indexes if not there yet
-			FrameDetection.create_indexes
+			FrameDetection.no_timeout.create_indexes
 
 			return true
 		end
@@ -129,7 +129,7 @@ module Metrics
 			frameCounter = 0
 			detGroupMetricsHash = {}
 
-			@frameDetections.each do |frameDetection|
+			@frameDetections.no_timeout.each do |frameDetection|
 				frameNumber = frameDetection.frame_number
 				singleDetectableMetrics = frameDetection.single_detectable_metrics
 
@@ -187,7 +187,7 @@ module Metrics
 			videoDetection = @videoDetection || @video.video_detections.first
 			raise "Video has no detections saved" if videoDetection == nil
 
-			@frameDetections = @frameDetections || videoDetection.frame_detections.order_by([:frame_number, :asc])
+			@frameDetections = videoDetection.frame_detections.order_by([:frame_number, :asc])
 			raise "Video has no frame detections saved" if @frameDetections.count == 0
 
 			evaluatedDetGroups = @frameDetections.first.single_det_group_metrics.pluck(:det_group_id)
@@ -206,7 +206,7 @@ module Metrics
 			end
 
 			# note that database write happens inside CalculateSingleSummary class
-			@frameDetections.each do |frameDetection|
+			@frameDetections.no_timeout.each do |frameDetection|
 				@detGroupIds.each do |dgId|
 					mcss[dgId].addFrameData(frameDetection)
 				end
@@ -217,8 +217,8 @@ module Metrics
 			end
 
 			# create indexes if not there yet
-			SummaryMetric.create_indexes
-			SingleSummaryMetric.create_indexes
+			SummaryMetric.no_timeout.create_indexes
+			SingleSummaryMetric.no_timeout.create_indexes
 		end
 
 	end
