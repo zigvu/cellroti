@@ -18,21 +18,25 @@ class Api::V1::DataController < ApplicationController
     statusSuccess = false
     notice = "Couldn't parse request from cellroti"
 
-    video = Video.find(data_params[:video_id].to_i)
+    videoId = data_params[:video_id].to_i
     storeSuccess = data_params[:success]
 
-    if storeSuccess
-      # kick off metrics creation
-      status = Services::VideoDataImportService.new(::Client.zigvu_client, video).create()
-      #status = true
-      if status
-        statusSuccess = true
-        notice = "Successfully put in delayed job queue"
-      else
-        notice = "Could not start delayed job"
+    if Video.where(id: videoId).count == 0
+      notice = "Couldn't find video with given ID"
+    else
+      video = Video.find(videoId)
+      if storeSuccess
+        # kick off metrics creation
+        status = Services::VideoDataImportService.new(::Client.zigvu_client, video).create()
+        #status = true
+        if status
+          statusSuccess = true
+          notice = "Successfully put in delayed job queue"
+        else
+          notice = "Could not start delayed job"
+        end
       end
     end
-    # update video and kick off delayed_job
 
     # send response
     renderJSON = statusSuccess ? {success: notice} : {failure: notice}
