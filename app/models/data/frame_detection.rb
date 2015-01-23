@@ -6,7 +6,6 @@ class FrameDetection
 
 	embeds_many :single_raw_detections
 	embeds_many :single_detectable_metrics
-	embeds_many :single_det_group_metrics
 
 	# needed if we want to order_by on frame_number
 	index({ frame_number: 1 })

@@ -22,7 +22,6 @@ module Metrics
 			@be_visualSaliencyWeight = @configReader.dgm_be_visualSaliency
 			@be_timingEffectivenessWeight = @configReader.dgm_be_timingEffectiveness
 			@be_spatialEffectivenessWeight = @configReader.dgm_be_spatialEffectiveness
-
 		end
 
 		def calculate(singleDetectableMetrics)
@@ -72,18 +71,17 @@ module Metrics
 				@be_spatialEffectivenessWeight * spatialEffectiveness
 
 			# Note: this is tied to schema in SingleDetGroupMetric class
-			detGroupMetric = {
-				dgId: @detGroupId,
-				be: brand_effectiveness,
-				dgc: detGroupCrowding,
-				vs: visualSaliency,
-				te: timingEffectiveness,
-				se: spatialEffectiveness,
-				dc: detectionsCount,
-				qd: quadrantsCount
-			}
+			sdgm = ::SingleDetGroupMetric.new
+			sdgm.det_group_id = @detGroupId
+			sdgm.brand_effectiveness = brand_effectiveness
+			sdgm.det_group_crowding = detGroupCrowding
+			sdgm.visual_saliency = visualSaliency
+			sdgm.timing_effectiveness = timingEffectiveness
+			sdgm.spatial_effectiveness = spatialEffectiveness
+			sdgm.detections_count = detectionsCount
+			sdgm.quadrants = quadrantsCount
 
-			return detGroupMetric
+			return sdgm
 		end
 
 		# for det_group_crowding

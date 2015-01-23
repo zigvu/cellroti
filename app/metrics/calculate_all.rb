@@ -16,10 +16,7 @@ module Metrics
 		end
 
 		def calculate_metrics_only(detGroupIds)
-			# calculate det groups
-			setup_det_group_calculations(detGroupIds)
-			det_group_calculate()
-			# finally calculate metrics
+			# calculate det_group_metrics and summary_metrics
 			setup_summary_metrics_calculations(detGroupIds)
 			summary_metrics_calculate()
 		end
@@ -96,7 +93,7 @@ module Metrics
 			return true
 		end
 
-		def setup_det_group_calculations(detGroupIds)
+		def setup_summary_metrics_calculations(detGroupIds)
 			@detGroupIds = detGroupIds
 
 			# sanity check
@@ -118,97 +115,29 @@ module Metrics
 		end
 
 
-		def det_group_calculate
-			# hold objects for single detectable metrics calculation
-			mcsdg = {}
-			@detGroupIds.each do |dgId|
-				mcsdg[dgId] = Metrics::CalculateSingleDetGroup.new(@configReader, @video, dgId)
-			end
-
-			# has to store det group metrics by frame number
-			frameCounter = 0
-			detGroupMetricsHash = {}
-
-			@frameDetections.no_timeout.each do |frameDetection|
-				frameNumber = frameDetection.frame_number
-				singleDetectableMetrics = frameDetection.single_detectable_metrics
-
-				# array to hold det group computation
-				detGroupMetricsHash[frameNumber] = []
-				@detGroupIds.each do |dgId|
-					detGroupMetricsHash[frameNumber] << mcsdg[dgId].calculate(singleDetectableMetrics)
-				end
-
-				# write to db in batches
-				frameCounter += 1
-				if frameCounter >= @mongoBatchInsertSize
-					write_dgm_using_moped(detGroupMetricsHash)
-					frameCounter = 0
-					detGroupMetricsHash = {}
-				end
-			end
-
-			# write the last batch to db
-			if frameCounter > 0
-				write_dgm_using_moped(detGroupMetricsHash)
-			end
-
-			return true
-		end
-
-		# write using moped driver - individual writes are slow
-		def write_dgm_using_moped(detGroupMetricsHash)
-			@session = @session || Mongoid.default_session
-			updates = []
-			detGroupMetricsHash.each do |frameNumber, dgm|
-				updates << {
-					'q' => {'fn' => frameNumber},
-					'u' => {
-						'$push' => {
-							'single_det_group_metrics' => {
-								'$each' => dgm
-							}
-						}
-					},
-					'multi' => true
-				}
-			end
-			@session.command({
-				update: FrameDetection.collection_name.to_s,
-				updates: updates,
-				ordered: false 
-			})
-		end
-
-		def setup_summary_metrics_calculations(detGroupIds)
-			@detGroupIds = detGroupIds
-
-			# sanity check
-			videoDetection = @videoDetection || @video.video_detections.first
-			raise "Video has no detections saved" if videoDetection == nil
-
-			@frameDetections = videoDetection.frame_detections.order_by([:frame_number, :asc])
-			raise "Video has no frame detections saved" if @frameDetections.count == 0
-
-			evaluatedDetGroups = @frameDetections.first.single_det_group_metrics.pluck(:det_group_id)
-
-			@detGroupIds.each do |dgId|
-				raise "Video is not evaluated against det group #{dgId}" if not evaluatedDetGroups.include?(dgId)
-			end
-		end
-
 		def summary_metrics_calculate
-			# hold objects for single detectable metrics calculation
+			mcsdg = {}
 			mcss = {}
 			@detGroupIds.each do |dgId|
+				# hold objects for single det group metrics calculation
+				mcsdg[dgId] = Metrics::CalculateSingleDetGroup.new(@configReader, @video, dgId)
+				# hold objects for single summary metrics calculation
 				mcss[dgId] = Metrics::CalculateSingleSummary.new(@configReader, @video, dgId)
 				mcss[dgId].setup_data_structures()
 			end
 
-			# note that database write happens inside CalculateSingleSummary class
 			@frameDetections.no_timeout.each do |frameDetection|
+				frameNumber = frameDetection.frame_number
+				frameTime = frameDetection.frame_time
+				singleDetectableMetrics = frameDetection.single_detectable_metrics
+
 				@detGroupIds.each do |dgId|
-					mcss[dgId].addFrameData(frameDetection)
+					singleDetGroupMetric = mcsdg[dgId].calculate(singleDetectableMetrics)
+					singleDetGroupMetric.frame_number = frameNumber
+					singleDetGroupMetric.frame_time = frameTime
+
+					# note that database write happens inside CalculateSingleSummary class
+					mcss[dgId].addFrameData(singleDetGroupMetric)
 				end
 			end
 
@@ -219,6 +148,8 @@ module Metrics
 			# create indexes if not there yet
 			SummaryMetric.no_timeout.create_indexes
 			SingleSummaryMetric.no_timeout.create_indexes
+
+			return true
 		end
 
 	end

@@ -1,14 +1,23 @@
 class SingleDetGroupMetric
-	include Mongoid::Document
+	# NOTE:
+	# This class is only used as a temporary compute
+	# storage prior to creating summary metrics. Hence we do
+	# not need to save this class in database.
 
-	field :dgId, as: :det_group_id, type: Integer
-	field :be, as: :brand_effectiveness, type: Float
-	field :dgc, as: :det_group_crowding, type: Float
-	field :vs, as: :visual_saliency, type: Float
-	field :te, as: :timing_effectiveness, type: Float
-	field :se, as: :spatial_effectiveness, type: Float
-	field :dc, as: :detections_count, type: Integer
-	field :qd, as: :quadrants, type: Hash
+	# However, so that there is no confusion
+	# about the fields computed, we are using a class than
+	# a Hash to store intermediate results
 
-	embedded_in :frame_detection
+	attr_accessor :frame_number
+	attr_accessor :frame_time
+	attr_accessor :det_group_id
+
+	attr_accessor :brand_effectiveness
+	attr_accessor :det_group_crowding
+	attr_accessor :visual_saliency
+	attr_accessor :timing_effectiveness
+	attr_accessor :spatial_effectiveness
+	attr_accessor :detections_count
+	attr_accessor :quadrants
+
 end

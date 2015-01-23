@@ -57,18 +57,18 @@ module Metrics
 		end
 
 		# add value of det group to data structure
-		def add_dgvf_value_to_data_structure(t, dgvf)
-			@brand_effectiveness[t] += dgvf.brand_effectiveness
-			@det_group_crowding[t] += dgvf.det_group_crowding
-			@visual_saliency[t] += dgvf.visual_saliency
-			@timing_effectiveness[t] += dgvf.timing_effectiveness
-			@spatial_effectiveness[t] += dgvf.spatial_effectiveness
-			@detections_count[t] += dgvf.detections_count
+		def add_single_det_group_metric_to_data_structure(t, singleDetGroupMetric)
+			@brand_effectiveness[t] += singleDetGroupMetric.brand_effectiveness
+			@det_group_crowding[t] += singleDetGroupMetric.det_group_crowding
+			@visual_saliency[t] += singleDetGroupMetric.visual_saliency
+			@timing_effectiveness[t] += singleDetGroupMetric.timing_effectiveness
+			@spatial_effectiveness[t] += singleDetGroupMetric.spatial_effectiveness
+			@detections_count[t] += singleDetGroupMetric.detections_count
 
 			if @resolutions[t][:frame_counter] == 0
-				@quadrants[t] = dgvf.quadrants
+				@quadrants[t] = singleDetGroupMetric.quadrants
 			else
-				dgvf.quadrants.each do |k,v|
+				singleDetGroupMetric.quadrants.each do |k,v|
 					@quadrants[t][k] += v
 				end
 			end
@@ -104,8 +104,8 @@ module Metrics
 			}
 		end
 
-		def addFrameData(frameDetection)
-			@frameTime = frameDetection.frame_time
+		def addFrameData(singleDetGroupMetric)
+			@frameTime = singleDetGroupMetric.frame_time
 
 			# set variables to zero first
 			@resolutions.each do |t, res|
@@ -114,12 +114,9 @@ module Metrics
 				end
 			end
 
-			# get frame det group metrics data
-			dgvf = frameDetection.single_det_group_metrics.where(det_group_id: @detGroupId).first
-
 			# add value for reach resolution
 			@resolutions.each do |t, res|
-				add_dgvf_value_to_data_structure(t, dgvf)
+				add_single_det_group_metric_to_data_structure(t, singleDetGroupMetric)
 			end
 
 			# if we have added specified number of frames,
