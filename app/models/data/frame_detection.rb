@@ -8,7 +8,7 @@ class FrameDetection
 	embeds_many :single_detectable_metrics
 
 	# needed if we want to order_by on frame_number
-	index({ frame_number: 1 })
+	index({ frame_number: 1 }, { background: true })
 
 	belongs_to :video_detection, index: true
 end

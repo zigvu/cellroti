@@ -160,6 +160,7 @@ module Metrics
 			@resolutions.each do |t, res|
 				if @summaryMetricHashArr[t].count > 0
 					SingleSummaryMetric.collection.insert(@summaryMetricHashArr[t])
+					@summaryMetricHashArr[t] = []
 				end
 			end
 		end

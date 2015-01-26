@@ -5,7 +5,7 @@ class VideoDetection
 	field :video_id, type: Integer
 	field :detectable_ids, type: Array
 
-	index({video_id: 1})
+	index({ video_id: 1 }, { background: true })
 
 	# Mock a belongs_to relationship with Video model
 	def video

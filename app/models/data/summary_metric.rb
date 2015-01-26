@@ -6,7 +6,7 @@ class SummaryMetric
 	field :det_group_id, type: Integer
 	field :resolution_seconds, type: Integer
 
-	index({video_id: 1, det_group_id: 1, resolution_seconds: 1})
+	index({ video_id: 1, det_group_id: 1, resolution_seconds: 1 }, { background: true })
 
 	# Mock a belongs_to relationship with sql models
 	def video
