@@ -111,6 +111,7 @@ module SeedHelpers
 			# populate data
 			mvdi = Metrics::VideoDataImport.new()
 			mvdi.populate(video, tempFile)
+			File.delete(tempFile) if File.exist?(tempFile)
 		end
 
 		def createTeams(countryList)

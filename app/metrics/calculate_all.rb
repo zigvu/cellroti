@@ -59,10 +59,6 @@ module Metrics
 					# get detections or empty array if no detections
 					detections = @allDetections[frameNumber.to_s][detectableId.to_s] || []
 
-					# STORE: raw data
-					# Note: this is tied to schema in SingleRawDetection class
-					singleRawDetections << { di: detectableId, de: detections }
-
 					# STORE: detectables
 					singleDetectableMetrics += mcsd[detectableId].calculate(frameTime, detections)
 				end
@@ -71,7 +67,6 @@ module Metrics
 				frameDetections << {
 					fn: frameNumber,
 					ft: frameTime,
-					single_raw_detections: singleRawDetections,
 					single_detectable_metrics: singleDetectableMetrics,
 					video_detection_id: @videoDetection.id
 				}
