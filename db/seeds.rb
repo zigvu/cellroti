@@ -94,8 +94,8 @@ mc.addAllowedSeasonIds(wc2014.id)
 # Auto-populate data
 # numOfGames = 64
 # averageLengthMS = 90 * 60 * 1000 # 90 minutes
-numOfGames = 2
-averageLengthMS = 1 * 60 * 1000 # 1 minutes
+numOfGames = 3
+averageLengthMS = 3 * 60 * 1000 # 1 minutes
 
 countryList = [
 	"Algeria", "Argentina", "Australia", "Belgium", "Bosnia-Herzegovina", 

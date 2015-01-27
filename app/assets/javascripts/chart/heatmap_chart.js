@@ -2,7 +2,7 @@
 	Heatmap Chart
 	------------------------------------------------*/
 
-function HeatmapChart(ndx, heatmap_div){
+function HeatmapChart(parsedData){
 	//------------------------------------------------
 	// set groups
 
@@ -19,7 +19,7 @@ function HeatmapChart(ndx, heatmap_div){
 	];
 	
 	var qaudAccessors = quadMapping.map(function(d){ return d.q; });
-	var heatmapDim = ndx.dimension(function (d) { return d.bg_id; });
+	var heatmapDim = parsedData.ndx.dimension(function (d) { return d.bg_id; });
 	var heatmapGroup = heatmapDim.group().reduce(
 		reduceAddAvg(qaudAccessors), 
 		reduceRemoveAvg(qaudAccessors), 
@@ -43,6 +43,7 @@ function HeatmapChart(ndx, heatmap_div){
 
 	//------------------------------------------------
 	// set gemoetry
+	var heatmap_div = '#d3-spatial-position-heatmap-chart';
 
 	var margin = { top: 0, right: 50, bottom: 0, left: 0 };
 	var width = $(heatmap_div).parent().width() - margin.left - margin.right;
@@ -55,6 +56,8 @@ function HeatmapChart(ndx, heatmap_div){
 	var legendWidth = 15;
 	var legendHeight = Math.round(height/(heatmapColors.length));
 
+	this.getOuterDivHeight = function(){ return $(heatmap_div).outerHeight(); };
+	
 	//------------------------------------------------
 	// create elems
 
@@ -147,7 +150,6 @@ function HeatmapChart(ndx, heatmap_div){
     heatmap.transition().duration(1000)
       .style("fill", function(d) { return heatmapColorScale(d.value); });
 	};
-
 };
 
 //------------------------------------------------  

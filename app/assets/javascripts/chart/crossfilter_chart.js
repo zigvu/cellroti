@@ -6,26 +6,32 @@
 seasonsShowCrossFilterChart = function(parsedData) {
 
 	// decompose from tuple
-	var counterGameDemarcationMap = parsedData["counterGameDemarcationMap"];
-	var counterGameDemarcation = parsedData["counterGameDemarcation"];
-	var gameIds = parsedData["gameIds"];
-	var brandGroupIds = parsedData["brandGroupIds"];
-	var ndxData = parsedData["ndxData"];
+	// var counterGameDemarcationMap = parsedData["counterGameDemarcationMap"];
+	// var counterGameDemarcation = parsedData["counterGameDemarcation"];
+	// var gameIds = parsedData["gameIds"];
+	// var brandGroupIds = parsedData["brandGroupIds"];
+	// var ndxData = parsedData["ndxData"];
+
+	var counterGameDemarcationMap = parsedData.counterGameDemarcationMap();
+	var counterGameDemarcation = parsedData.counterGameDemarcation();
+	var gameIds = parsedData.gameIds();
+	var brandGroupIds = parsedData.brandGroupIds();
+	// var ndxData = parsedData.ndxData();
 
 	//------------------------------------------------
 	/* Create ndx dimensions/groups */
 	timeLogStart("ndxCreation");
 
 	// Run the data through crossfilter
-	var ndx = crossfilter(ndxData);
-	//var all = ndx.groupAll();
+	var ndx = parsedData.ndx;
+	var ndxData = parsedData.ndxData;
 
 	var counterDomain = d3.extent(ndxData, function(d) { return d.counter; });
 	var counterDim = ndx.dimension(function (d) { return d.counter; });
 	var counterDimGroup = counterDim.group(); // count
 
 	var brandEffectivenessDim = ndx.dimension(function (d) { 
-		return [d.counter, brandGroupIds[d.bg_id]];
+		return [d.counter, parsedData.getBrandGroupName(d.bg_id)];
 	});
 	var brandEffectivenessDimGroup = brandEffectivenessDim.group().reduceSum(function(d) { 
 		return d.brand_effectiveness;
@@ -58,25 +64,6 @@ seasonsShowCrossFilterChart = function(parsedData) {
 		reduceInitAvg
 	);
 
-	// color domain/range for game
-	var gameColors = d3.scale.category20().domain(Object.keys(counterGameDemarcation));
-	var gameColorsAccessor = function(d) { return counterGameDemarcationMap[d.key]; };
-
-	// color domain/range for brand_group - need brandGroups indexed by IDs and name
-	var brandGroupSorter = [];
-	for (var key in brandGroupIds) { brandGroupSorter.push([key, brandGroupIds[key]]); }
-	brandGroupSorter.sort(function(a,b){ a = a[1]; b = b[1]; return a < b ? -1 : (a > b ? 1 : 0); });
-	var brandGroupIdArr = []; brandGroupNameArr = [];
-	for (var i = 0; i < brandGroupSorter.length; i++){
-		brandGroupIdArr.push(brandGroupSorter[i][0]);
-		brandGroupNameArr.push(brandGroupSorter[i][1]);
-	}
-
-	var brandGroupIdColors = d3.scale.category10().domain(brandGroupIdArr);
-	var brandGroupIdColorsAccessor = function(d) { return d.key; };
-	var brandGroupNameColors = d3.scale.category10().domain(brandGroupNameArr);
-	// apparently : series chart doesn't need color accessor
-	// var brandGroupNameColorsAccessor = function(d) { return d.key; };
 
 	timeLogEnd("ndxCreation", "NDX Creation");
 	//------------------------------------------------
@@ -92,7 +79,6 @@ seasonsShowCrossFilterChart = function(parsedData) {
 	var bc_timingEffectiveness_div = '#dc-timing-effectiveness-bar-chart';
 	var bc_spatialEffectiveness_div = '#dc-spatial-effectiveness-bar-chart';
 	var pc_viewDuration_div = '#dc-view-duration-pie-chart';
-	var heatmap_div = '#d3-spatial-position-heatmap-chart';
 	var pc_detectionCount_div = '#dc-brand-count-pie-chart';
 
 	// reset buttons
@@ -262,7 +248,7 @@ seasonsShowCrossFilterChart = function(parsedData) {
 			var x = +rectStartEnd[i][0], y = 0;
 			var width = +(rectStartEnd[i][1] - rectStartEnd[i][0]);
 			var label = rectStartEnd[i][2];
-			var color = gameColors(rectStartEnd[i][3]);
+			var color = parsedData.gameColors(rectStartEnd[i][3]);
 			var g = bgRects.append('g').attr("transform", function(d, i) { 
 				return "translate(" + x + "," + y + ")";
 			});
@@ -318,8 +304,8 @@ seasonsShowCrossFilterChart = function(parsedData) {
 		.seriesAccessor(function(d) {return d.key[1];})
 		.keyAccessor(function(d) {return +d.key[0];})
 		.valueAccessor(function(d) {return +d.value;})
-		.colors(brandGroupNameColors)
-		// .colorAccessor(brandGroupNameColorsAccessor) - doesn't use this
+		.colors(parsedData.brandGroupNameColors)
+		// .colorAccessor(parsedData.brandGroupNameColorsAccessor) - doesn't use this
 		.rangeChart(rc_brandEffectiveness)
 		.renderlet(sc_brandEffectiveness_renderlet)
 		.seriesSort(d3.ascending)		
@@ -361,8 +347,8 @@ seasonsShowCrossFilterChart = function(parsedData) {
 		.x(d3.scale.linear().domain(counterDomain))
 		.dimension(counterDim)
 		.group(counterDimGroup)
-		.colors(gameColors)
-		.colorAccessor(gameColorsAccessor)
+		.colors(parsedData.gameColors)
+		.colorAccessor(parsedData.gameColorsAccessor)
 		.renderlet(gameLabelText)
 		.valueAccessor(function(d) {return 1;})
 		.brushOn(true)
@@ -393,13 +379,13 @@ seasonsShowCrossFilterChart = function(parsedData) {
 			.width(brandEffectivenessComposite_width)
 			.height(brandEffectivenessComposite_height)
 			.margins(brandEffectivenessComposite_margins)
-			.x(d3.scale.ordinal().domain(brandGroupIdArr))
+			.x(d3.scale.ordinal().domain(parsedData.brandGroupIdArr))
 			.xUnits(dc.units.ordinal)
 			.dimension(brandEffectivenessCompositeDim)
 			.group(brandEffectivenessCompositeGroup)
 			//.ordering(function(d) { console.log(d); return brandGroupIds[d.key]; }) // doesn't work!
-			.colors(brandGroupIdColors)
-			.colorAccessor(brandGroupIdColorsAccessor)
+			.colors(parsedData.brandGroupIdColors)
+			.colorAccessor(parsedData.brandGroupIdColorsAccessor)
 			.barPadding(0.1)
 			.outerPadding(0.05)
 			.brushOn(false)
@@ -459,7 +445,7 @@ seasonsShowCrossFilterChart = function(parsedData) {
 	//------------------------------------------------
 	/* Spatial position heatmap */
 
-	var heatmapChart = new HeatmapChart(ndx, heatmap_div);
+	var heatmapChart = new HeatmapChart(parsedData);
 
 	
 	//------------------------------------------------  
@@ -477,8 +463,8 @@ seasonsShowCrossFilterChart = function(parsedData) {
 			if (d.value.avg !== undefined){ return d.value.avg['detections_count'];
 			} else { return d.value; }
 		})
-		.colors(brandGroupIdColors)
-		.colorAccessor(brandGroupIdColorsAccessor)
+		.colors(parsedData.brandGroupIdColors)
+		.colorAccessor(parsedData.brandGroupIdColorsAccessor)
 		.label(function(d) { return "Count: " + Math.round(d.value.avg['detections_count']);})
 		.title(function (d) {
 			if (d.value.avg !== undefined){
@@ -508,8 +494,8 @@ seasonsShowCrossFilterChart = function(parsedData) {
 			if (d.value.avg !== undefined){ return d.value.avg['view_duration'];
 			} else { return d.value; }
 		})
-		.colors(brandGroupIdColors)
-		.colorAccessor(brandGroupIdColorsAccessor)
+		.colors(parsedData.brandGroupIdColors)
+		.colorAccessor(parsedData.brandGroupIdColorsAccessor)
 		.label(function(d) { return Math.round(d.value.avg['view_duration']) + " sec";})
 		.title(function (d) {
 			if (d.value.avg !== undefined){
@@ -540,12 +526,12 @@ seasonsShowCrossFilterChart = function(parsedData) {
 	timeLogStart("postRender");
 
 	// Add legend items
-	for(var i = 0; i < brandGroupNameArr.length; i++){
+	for(var i = 0; i < parsedData.brandGroupNameArr.length; i++){
 		var li = $("<li/>");
 		li.prepend(
 			$("<div/>", { class: "square" })
-				.css("background-color", brandGroupNameColors(brandGroupNameArr[i])));
-		li.append($("<div/>", { text: brandGroupNameArr[i], class: "text" }));
+				.css("background-color", parsedData.brandGroupNameColors(parsedData.brandGroupNameArr[i])));
+		li.append($("<div/>", { text: parsedData.brandGroupNameArr[i], class: "text" }));
 		$('#brand-legend-content-ul').append(li);
 	}
 
@@ -563,8 +549,8 @@ seasonsShowCrossFilterChart = function(parsedData) {
 
 	// for the pie charts, use height of heatmap if that is larger
 	var pcDivHeight = $(pc_detectionCount_div).outerHeight();
-	if (pcDivHeight < $(heatmap_div).outerHeight()) {
-		pcDivHeight = $(heatmap_div).outerHeight();
+	if (pcDivHeight < heatmapChart.getOuterDivHeight()) {
+		pcDivHeight = heatmapChart.getOuterDivHeight();
 	}
 	$(pc_detectionCount_div)
 		.parent().select('.chart-content')

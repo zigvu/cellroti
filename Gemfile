@@ -42,6 +42,7 @@ gem 'jquery-ui-rails', '~> 5.0.2'
 gem 'jquery-turbolinks'
 gem 'quiet_assets', group: :development # quits the asset prints in console
 gem 'parallel'
+gem 'underscore-rails'
 # delayed_job
 gem 'delayed_job_active_record'
 gem 'delayed_job_web'

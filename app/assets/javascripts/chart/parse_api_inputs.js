@@ -94,14 +94,16 @@ function parseSeasonData(seasonInfo, seasonData){
 		counterGameDemarcationMap[finalCounterValue] = key;
 	}
 	//console.log(ndxData[0]);
-
-	return {
-		counterGameDemarcationMap: counterGameDemarcationMap,
-		counterGameDemarcation: counterGameDemarcation,
-		gameIds: gameIds,
-		brandGroupIds: brandGroupIds,
-		ndxData: ndxData
-	};
+	var parsedData = new NDXData(counterGameDemarcationMap, counterGameDemarcation, gameIds, brandGroupIds, ndxData);
+	return parsedData;
+	// return {
+	// 	counterGameDemarcationMap: counterGameDemarcationMap,
+	// 	counterGameDemarcation: counterGameDemarcation,
+	// 	gameIds: gameIds,
+	// 	brandGroupIds: brandGroupIds,
+	// 	ndxData: ndxData
+	// };
+	
 };
 //------------------------------------------------  
 
