@@ -19,6 +19,7 @@
 //= require dc
 //= require jquery-readyselector
 //= require jquery.sticky
+//= require_tree ./chart
 //= require_tree .
 
 $(function(){ 

@@ -39,3 +39,20 @@ function timeLogEnd(logId, message){
 		console.log("Time: " + message + ": " + ((new Date()).getTime() - timeLogs[logId].getTime())/1000);
 	}
 };
+//------------------------------------------------
+
+//------------------------------------------------
+/* Debugging print tool for filters */
+function print_filter(filter){
+	var f=eval(filter);
+	if (typeof(f.length) != "undefined") {} else {}
+		if (typeof(f.top) != "undefined") {
+			f = f.top(Infinity);
+		} else {}
+		if (typeof(f.dimension) != "undefined") {
+			f = f.dimension(function(d) { return "";}).top(Infinity);
+		} else {}
+		console.log(filter+"("+f.length+") = "+JSON.stringify(f).replace("[","[\n\t").replace(/}\,/g,"},\n\t").replace("]","\n]"));
+	}
+//print_filter("brandCrowdingGroup");
+//------------------------------------------------  
