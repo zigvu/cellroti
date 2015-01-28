@@ -37,18 +37,6 @@ seasonsShowCrossFilterChart = function(parsedData) {
 		return d.brand_effectiveness;
 	});
 
-	var brandEffectivenessCompositeAccessors = [
-		'brand_group_crowding',
-		'visual_saliency',
-		'timing_effectiveness',
-		'spatial_effectiveness'
-	];
-	var brandEffectivenessCompositeDim = ndx.dimension(function (d) { return d.bg_id; });
-	var brandEffectivenessCompositeGroup = brandEffectivenessCompositeDim.group().reduce(
-		reduceAddAvg(brandEffectivenessCompositeAccessors), 
-		reduceRemoveAvg(brandEffectivenessCompositeAccessors), 
-		reduceInitAvg
-	);
 
 	var detectionCountDim = ndx.dimension(function (d) { return d.bg_id; });
 	var detectionCountGroup = detectionCountDim.group().reduce(
@@ -74,16 +62,11 @@ seasonsShowCrossFilterChart = function(parsedData) {
 
 	var sc_brandEffectiveness_div = '#dc-brand-effectiveness-series-chart';
 	var rc_brandEffectiveness_div = '#dc-brand-effectiveness-range-chart';
-	var bc_brandCrowding_div = '#dc-brand-crowding-bar-chart';
-	var bc_visualSaliency_div = '#dc-visual-saliency-bar-chart';
-	var bc_timingEffectiveness_div = '#dc-timing-effectiveness-bar-chart';
-	var bc_spatialEffectiveness_div = '#dc-spatial-effectiveness-bar-chart';
 	var pc_viewDuration_div = '#dc-view-duration-pie-chart';
 	var pc_detectionCount_div = '#dc-brand-count-pie-chart';
 
 	// reset buttons
 	var rc_brandEffectivenessResetId = '#dc-brand-effectiveness-series-chart-reset';
-	var brandEffectivenessComposite_ResetId = '#dc-brand-effectiveness-composite-reset';
 	var pc_viewDurationResetId = '#dc-view-duration-pie-chart-reset';
 	var pc_detectionCountResetId = '#dc-brand-count-pie-chart-reset';
 	var allChartsResetId = '#brand-legend-reset-all-charts';
@@ -92,19 +75,8 @@ seasonsShowCrossFilterChart = function(parsedData) {
 	// Create the dc.js chart objects & link to div
 	var sc_brandEffectiveness = dc.seriesChart(sc_brandEffectiveness_div);
 	var rc_brandEffectiveness = dc.barChart(rc_brandEffectiveness_div);
-	var bc_brandCrowding = dc.barChart(bc_brandCrowding_div);
-	var bc_visualSaliency = dc.barChart(bc_visualSaliency_div);
-	var bc_timingEffectiveness = dc.barChart(bc_timingEffectiveness_div);
-	var bc_spatialEffectiveness = dc.barChart(bc_spatialEffectiveness_div);
 	var pc_detectionCount = dc.pieChart(pc_detectionCount_div);
 	var pc_viewDuration = dc.pieChart(pc_viewDuration_div);
-
-	var allCompositeChartArr = [
-		bc_brandCrowding,
-		bc_visualSaliency,
-		bc_timingEffectiveness,
-		bc_spatialEffectiveness
-	];
 
 	// geometry
 	var sc_brandEffectiveness_width = $(sc_brandEffectiveness_div).parent().width();
@@ -118,10 +90,6 @@ seasonsShowCrossFilterChart = function(parsedData) {
 	var rc_brandEffectiveness_height = 45;
 	var rc_brandEffectiveness_margin = {top: 1, right: 1, bottom: 0, left: 40};
 
-	var brandEffectivenessComposite_width = $(bc_brandCrowding_div).parent().width();
-	var brandEffectivenessComposite_height = 250;
-	var brandEffectivenessComposite_margins = {top: 1, right: 0, bottom: 0, left: 0};
-
 	var pieChart_widthHeight = $(pc_detectionCount_div).parent().width();
 	if (pieChart_widthHeight > 200) { pieChart_widthHeight = 200; }
 	var pieChart_innerRadius = 20;
@@ -133,26 +101,6 @@ seasonsShowCrossFilterChart = function(parsedData) {
 
 	//------------------------------------------------
 	/* Chart helpers */
-
-	// Redraw Y axis for composite charts
-	function redrawCompositeDomainYAxis(compositeChartArr, compositeGroup) {
-		maxValue = -Infinity;
-		var allGroups = compositeGroup.all();
-		for (var i = 0; i < allGroups.length; i++){
-			for (key in allGroups[i].value.avg){
-				if (allGroups[i].value.avg[key] > maxValue){
-					maxValue = allGroups[i].value.avg[key];
-				}
-			}
-		}
-		domain = [0, maxValue];
-
-		for (var i = 0; i < compositeChartArr.length; i++){
-			compositeChartArr[i].y(d3.scale.linear().domain(domain));
-			compositeChartArr[i].redraw();
-			compositeChartArr[i].renderYAxis(compositeChartArr[i].g());
-		}
-	}
 
 	var sc_brandEffectiveness_renderlet = function(_chart){
 		// get min and max x positions in chart
@@ -320,10 +268,7 @@ seasonsShowCrossFilterChart = function(parsedData) {
 			return str;
 		})
 		.on("postRedraw", function(chart) {
-			redrawCompositeDomainYAxis(
-				allCompositeChartArr,
-				brandEffectivenessCompositeGroup
-			);
+			brandEffectivenessCharts.redrawCompositeDomainYAxis();
 			heatmapChart.updateHeatmap();
 		});
 
@@ -373,73 +318,8 @@ seasonsShowCrossFilterChart = function(parsedData) {
 	//------------------------------------------------
 	/* Brand effectiveness composite charts */
 
-	// create all composite chart components in one go
-	for(var i = 0; i < allCompositeChartArr.length; i++){
-		allCompositeChartArr[i]
-			.width(brandEffectivenessComposite_width)
-			.height(brandEffectivenessComposite_height)
-			.margins(brandEffectivenessComposite_margins)
-			.x(d3.scale.ordinal().domain(parsedData.brandGroupIdArr))
-			.xUnits(dc.units.ordinal)
-			.dimension(brandEffectivenessCompositeDim)
-			.group(brandEffectivenessCompositeGroup)
-			//.ordering(function(d) { console.log(d); return brandGroupIds[d.key]; }) // doesn't work!
-			.colors(parsedData.brandGroupIdColors)
-			.colorAccessor(parsedData.brandGroupIdColorsAccessor)
-			.barPadding(0.1)
-			.outerPadding(0.05)
-			.brushOn(false)
-			.elasticX(false)
-			.elasticY(false)
-			.xAxis().tickFormat(function(d) { return ""; });
-	}
+	brandEffectivenessCharts = new CumulativeBarChart(parsedData);
 
-	// Brand crowding bar chart specific
-	bc_brandCrowding
-		.valueAccessor(function(d) { return d.value.avg['brand_group_crowding']; })
-		.title(function (d) {
-			return brandGroupIds[d.key] + ": " + d3.format(',%')(d.value.avg['brand_group_crowding']);
-		})
-		.xAxisLabel('Brand Crowding')
-		.yAxisLabel('Score')
-		.yAxis().tickFormat(function(d) {return d3.format(',%')(d); });
-
-	// Visual Saliency bar chart specific
-	bc_visualSaliency
-		.valueAccessor(function(d) { return d.value.avg['visual_saliency']; })
-		.title(function (d) {
-			return brandGroupIds[d.key] + ": " + d3.format(',%')(d.value.avg['visual_saliency']);
-		})
-		.xAxisLabel('Visual Saliency')
-		.yAxisLabel(false)
-		.yAxis().tickFormat(function(d) {return ""; });
-
-	// Timing Effectiveness bar chart specific
-	bc_timingEffectiveness
-		.valueAccessor(function(d) { return d.value.avg['timing_effectiveness']; })
-		.title(function (d) {
-			return brandGroupIds[d.key] + ": " + d3.format(',%')(d.value.avg['timing_effectiveness']);
-		})
-		.xAxisLabel('Timing Effectiveness')
-		.yAxisLabel(false)
-		.yAxis().tickFormat(function(d) {return ""; });
-
-	// Spatial Effectiveness bar chart specific
-	bc_spatialEffectiveness
-		.valueAccessor(function(d) { return d.value.avg['spatial_effectiveness']; })
-		.title(function (d) {
-			return brandGroupIds[d.key] + ": " + d3.format(',%')(d.value.avg['spatial_effectiveness']);
-		})
-		.xAxisLabel('Spatial Effectiveness')
-		.yAxisLabel(false)
-		.yAxis().tickFormat(function(d) {return ""; });
-
-	$(brandEffectivenessComposite_ResetId).click(function(){
-		for(var i = 0; i < allCompositeChartArr.length; i++){
-			allCompositeChartArr[i].filterAll();
-		}
-		dc.redrawAll();
-	});
 	//------------------------------------------------
 
 	//------------------------------------------------
@@ -468,9 +348,9 @@ seasonsShowCrossFilterChart = function(parsedData) {
 		.label(function(d) { return "Count: " + Math.round(d.value.avg['detections_count']);})
 		.title(function (d) {
 			if (d.value.avg !== undefined){
-				return brandGroupIds[d.key] + ": " + Math.round(d.value.avg['detections_count']);
+				return parsedData.getBrandGroupName(d.key) + ": " + Math.round(d.value.avg['detections_count']);
 			} else { 
-				return brandGroupIds[d.data.key] + ": " + Math.round(d.value);
+				return parsedData.getBrandGroupName(d.data.key) + ": " + Math.round(d.value);
 			}
 		});
 		
@@ -499,9 +379,9 @@ seasonsShowCrossFilterChart = function(parsedData) {
 		.label(function(d) { return Math.round(d.value.avg['view_duration']) + " sec";})
 		.title(function (d) {
 			if (d.value.avg !== undefined){
-				return brandGroupIds[d.key] + ": " + Math.round(d.value.avg['view_duration']) + " sec";
+				return parsedData.getBrandGroupName(d.key) + ": " + Math.round(d.value.avg['view_duration']) + " sec";
 			} else { 
-				return brandGroupIds[d.data.key] + ": " + Math.round(d.value) + " sec";
+				return parsedData.getBrandGroupName(d.data.key) + ": " + Math.round(d.value) + " sec";
 			}
 		});
 		
@@ -543,9 +423,8 @@ seasonsShowCrossFilterChart = function(parsedData) {
 			$(rc_brandEffectiveness_div).outerHeight()
 		);
 
-	$(bc_brandCrowding_div)
-		.parent()
-		.height($(bc_brandCrowding_div).outerHeight());
+	brandEffectivenessCharts.resizeDiv();
+
 
 	// for the pie charts, use height of heatmap if that is larger
 	var pcDivHeight = $(pc_detectionCount_div).outerHeight();
@@ -561,7 +440,7 @@ seasonsShowCrossFilterChart = function(parsedData) {
 		.height(pcDivHeight);
 
 	// trigger click so that all charts are updated with latest values
-	//$(brandEffectivenessComposite_ResetId).trigger( "click" );
+	//$('#dc-brand-effectiveness-composite-reset').trigger( "click" );
 
 	timeLogEnd("postRender", "Post chart render");
 	//------------------------------------------------
