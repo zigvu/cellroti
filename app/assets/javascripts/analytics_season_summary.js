@@ -21,8 +21,6 @@ $(".analytics_seasons.summary").ready(function() {
 		});
 	});
 	
-
-
 	// Legend Show Hide
 	var explicitLogoHide = true;
 	$('#brand-legend').sticky({ 

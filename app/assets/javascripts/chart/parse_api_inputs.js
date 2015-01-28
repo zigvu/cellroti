@@ -13,15 +13,15 @@ function parseSeasonData(seasonInfo, seasonData){
 	// var eventTypesInfo = seasonInfo["event_types"];
 	// var teamsInfo = seasonInfo["teams"];
 	// var gamesInfo = seasonInfo["games"];
-	var gameIds = {};
+	var gameDataMap = {};
 	seasonInfo["games"].forEach(function (game) {
-		gameIds[+game["id"]] = game["name"];
+		gameDataMap[+game["id"]] = game["name"];
 	});
 
 	// disaggregate seasonData
-	var brandGroupIds = {};
+	var brandGroupMap = {};
 	seasonData["brand_groups"].forEach(function (brandGroup) {
-		brandGroupIds[+brandGroup["id"]] = brandGroup["name"];
+		brandGroupMap[+brandGroup["id"]] = brandGroup["name"];
 	});
 	var brandGroupDataKeys = seasonData["brand_group_data_keys"];
 
@@ -32,7 +32,7 @@ function parseSeasonData(seasonInfo, seasonData){
 	seasonData["games"].sort(sortById).forEach(function (games) {
 		// get summary data - assume sorted by time
 		counterDems.push({
-			series_label: "Game "+ games["id"] + " Desc.",
+			series_label: gameDataMap[+games["id"]],
 			range_label: +games["id"],
 			counter: counter
 		});
@@ -45,7 +45,7 @@ function parseSeasonData(seasonInfo, seasonData){
 					if (!bgData.hasOwnProperty(brandGroup)){
 						continue;
 					}
-					//var bgName = brandGroupIds[brandGroup];
+					//var bgName = brandGroupMap[brandGroup];
 					dataLine = {
 						counter: counter,
 						game_id: +games["id"],
@@ -68,42 +68,35 @@ function parseSeasonData(seasonInfo, seasonData){
 	});
 	var finalCounterValue = --counter;
 	// sort and save with range information
-	counterGameDemarcation = {};
+	var gameDemarcations = {};
 	counterDems.reverse().forEach(function (cd){
-		counterGameDemarcation[cd["counter"]] = {
+		gameDemarcations[cd["counter"]] = {
 			series_label: cd["series_label"],
 			range_label: cd["range_label"],
 			series_counters: [cd["counter"], counter]
 		}
 		counter = cd["counter"];
 	});
-	// create mapping to counterGameDemarcation to avoid expensive loops
-	counterGameDemarcationMap = {};
+	// create mapping to gameDemarcations to avoid expensive loops
+	var beginC, endC, key;
+	var gameDemarcationsMap = {};
 	for (var i = 0; i < finalCounterValue; i++){
 		// loop through
-		var beginC, endC, key;
-		for (key in counterGameDemarcation){
-			beginC = counterGameDemarcation[key]["series_counters"][0];
-			endC = counterGameDemarcation[key]["series_counters"][1];
+		for (key in gameDemarcations){
+			beginC = gameDemarcations[key]["series_counters"][0];
+			endC = gameDemarcations[key]["series_counters"][1];
 			if (i >= beginC && i < endC){ 
-				counterGameDemarcationMap[i] = key;
+				gameDemarcationsMap[i] = key;
 				break;
 			}
 		}
-		// the last entry is not in counterGameDemarcation map yet
-		counterGameDemarcationMap[finalCounterValue] = key;
 	}
+	// the last entry is not in gameDemarcations map yet
+	gameDemarcationsMap[finalCounterValue] = key;
+
 	//console.log(ndxData[0]);
-	var parsedData = new NDXData(counterGameDemarcationMap, counterGameDemarcation, gameIds, brandGroupIds, ndxData);
+	var parsedData = new NDXData(gameDemarcationsMap, gameDemarcations, brandGroupMap, ndxData);
 	return parsedData;
-	// return {
-	// 	counterGameDemarcationMap: counterGameDemarcationMap,
-	// 	counterGameDemarcation: counterGameDemarcation,
-	// 	gameIds: gameIds,
-	// 	brandGroupIds: brandGroupIds,
-	// 	ndxData: ndxData
-	// };
-	
 };
 //------------------------------------------------  
 

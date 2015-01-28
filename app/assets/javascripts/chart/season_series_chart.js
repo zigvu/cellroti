@@ -3,9 +3,6 @@
 	------------------------------------------------*/
 
 function SeasonSeriesChart(parsedData){
-	// TODO: remove:
-	var counterGameDemarcationMap = parsedData.counterGameDemarcationMap();
-	var counterGameDemarcation = parsedData.counterGameDemarcation();
 
 	//------------------------------------------------
 	// set associated charts
@@ -65,10 +62,10 @@ function SeasonSeriesChart(parsedData){
 
 		for (var i = bars[0].length - 1; i >= 0; i--) {
 			var b = bars[0][i];
-			if (counterGameDemarcation.hasOwnProperty(barsData[i].data.key)){
+			if (parsedData.isInDemarcationLine(barsData[i].data.key)){
 				gLabels
 					.append("text")
-					.text(counterGameDemarcation[barsData[i].data.key]['range_label'])
+					.text(parsedData.getRangeLabelForDemarcation(barsData[i].data.key))
 					.attr('x', +b.getAttribute('x') + (b.getAttribute('width')/2) )
 					.attr('y', +b.getAttribute('y') + 20)
 					.attr('text-anchor', 'left');
@@ -109,13 +106,14 @@ function SeasonSeriesChart(parsedData){
 		var rectStartEnd = [];
 		for (var i = 0; i < sortedPointsCounter.length; i++) {
 			var cnt = sortedPointsCounter[i]["counter"];
-			if (counterGameDemarcation.hasOwnProperty(cnt)){
+			if (parsedData.isInDemarcationLine(cnt)){
 				var beginPx = -1;
 				var endPx = -1;
 				// data extractors
-				var beginC = counterGameDemarcation[cnt]["series_counters"][0];
-				var endC = counterGameDemarcation[cnt]["series_counters"][1];
-				var label = counterGameDemarcation[cnt]["series_label"];
+				var seriesCounters = parsedData.getSeriesCountersForDemarcation(cnt);
+				var beginC = seriesCounters[0];
+				var endC = seriesCounters[1];
+				var label = parsedData.getSeriesLabelForDemarcation(cnt);
 				// loop to access right positions
 				for (var j = i; j < sortedPointsCounter.length; j++) {
 					if (beginPx != -1 && endPx != -1){ break; }
@@ -132,8 +130,8 @@ function SeasonSeriesChart(parsedData){
 		// if first rect was not included, include one rect from first position
 		// to the current first item in rectStartEnd
 		if (rectStartEnd.length > 0 && sortedPointsCounter[0]["px"] != rectStartEnd[0][0]){
-			var dmKey = counterGameDemarcationMap[sortedPointsCounter[0]["counter"]];
-			var label = counterGameDemarcation[dmKey]["series_label"];
+			var dmKey = parsedData.getLabelDemarcationKey(sortedPointsCounter[0]["counter"]);
+			var label = parsedData.getSeriesLabelForDemarcation(dmKey);
 			rectStartEnd.unshift([xAxisStartPos, rectStartEnd[0][0], label, dmKey]);
 		}
 		// if the last rect has out-of-bounds end point, correct to last point position
@@ -144,8 +142,8 @@ function SeasonSeriesChart(parsedData){
 		if ((rectStartEnd.length == 0) && 
 				(sortedPointsCounter[0] !== undefined) && 
 				(sortedPointsCounter[0].length > 2)){
-			var dmKey = counterGameDemarcationMap[sortedPointsCounter[0]["counter"]];
-			var label = counterGameDemarcation[dmKey]["series_label"];
+			var dmKey = parsedData.getLabelDemarcationKey(sortedPointsCounter[0]["counter"]);
+			var label = parsedData.getSeriesLabelForDemarcation(dmKey);
 			rectStartEnd.push([ xAxisStartPos, xAxisWidth, label, dmKey ]);
 		}
 
@@ -175,7 +173,7 @@ function SeasonSeriesChart(parsedData){
 				return "translate(" + x + "," + y + ")";
 			});
 			g.append('rect').attr('width', width).attr('height', yAxisHeight).attr('fill', color);
-			// don't label in too small a space
+			// don't label if too small a space
 			if (drawLabel && width > sc_MinLabelWidthIndv){
 				g.append('text')
 					.text(label).attr('x', 5).attr('y', 15)
@@ -207,7 +205,7 @@ function SeasonSeriesChart(parsedData){
 		.brushOn(false)
 		.mouseZoomable(false)
 		.title(function (d) {
-			var gameTitle = counterGameDemarcation[counterGameDemarcationMap[d.key[0]]]["series_label"];
+			var gameTitle = parsedData.getSeriesLabelForDemarcationCounter(d.key[0]);
 			var str = 
 				'Game:          ' + gameTitle + '\n' + 
 				'Group:         ' + d.key[1] + '\n' +
@@ -280,8 +278,6 @@ function SeasonSeriesChart(parsedData){
 		//console.log("Times");
 	}
 	var debouncedSeriesChartPostRedraw = _.debounce(seriesChartPostRedraw, 300);
-
-
 
 };
 
