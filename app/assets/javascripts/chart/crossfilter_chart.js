@@ -23,34 +23,18 @@ seasonsShowCrossFilterChart = function(parsedData) {
 	timeLogStart("ndxCreation");
 
 	// Run the data through crossfilter
-	var ndx = parsedData.ndx;
-	var ndxData = parsedData.ndxData;
 
-	var counterDomain = d3.extent(ndxData, function(d) { return d.counter; });
-	var counterDim = ndx.dimension(function (d) { return d.counter; });
+	var counterDomain = d3.extent(parsedData.ndxData, function(d) { return d.counter; });
+	var counterDim = parsedData.ndx.dimension(function (d) { return d.counter; });
 	var counterDimGroup = counterDim.group(); // count
 
-	var brandEffectivenessDim = ndx.dimension(function (d) { 
+	var brandEffectivenessDim = parsedData.ndx.dimension(function (d) { 
 		return [d.counter, parsedData.getBrandGroupName(d.bg_id)];
 	});
 	var brandEffectivenessDimGroup = brandEffectivenessDim.group().reduceSum(function(d) { 
 		return d.brand_effectiveness;
 	});
 
-
-	var detectionCountDim = ndx.dimension(function (d) { return d.bg_id; });
-	var detectionCountGroup = detectionCountDim.group().reduce(
-		REDUCEAVG.SINGLE.reduceAddAvg('detections_count'), 
-		REDUCEAVG.SINGLE.reduceRemoveAvg('detections_count'), 
-		REDUCEAVG.SINGLE.reduceInitAvg
-	);
-
-	var viewDurationDim = ndx.dimension(function (d) { return d.bg_id; });
-	var viewDurationGroup = viewDurationDim.group().reduce(
-		REDUCEAVG.SINGLE.reduceAddAvg('view_duration'), 
-		REDUCEAVG.SINGLE.reduceRemoveAvg('view_duration'), 
-		REDUCEAVG.SINGLE.reduceInitAvg
-	);
 
 
 	timeLogEnd("ndxCreation", "NDX Creation");
@@ -62,21 +46,16 @@ seasonsShowCrossFilterChart = function(parsedData) {
 
 	var sc_brandEffectiveness_div = '#dc-brand-effectiveness-series-chart';
 	var rc_brandEffectiveness_div = '#dc-brand-effectiveness-range-chart';
-	var pc_viewDuration_div = '#dc-view-duration-pie-chart';
-	var pc_detectionCount_div = '#dc-brand-count-pie-chart';
+
 
 	// reset buttons
 	var rc_brandEffectivenessResetId = '#dc-brand-effectiveness-series-chart-reset';
-	var pc_viewDurationResetId = '#dc-view-duration-pie-chart-reset';
-	var pc_detectionCountResetId = '#dc-brand-count-pie-chart-reset';
 	var allChartsResetId = '#brand-legend-reset-all-charts';
 
 
 	// Create the dc.js chart objects & link to div
 	var sc_brandEffectiveness = dc.seriesChart(sc_brandEffectiveness_div);
 	var rc_brandEffectiveness = dc.barChart(rc_brandEffectiveness_div);
-	var pc_detectionCount = dc.pieChart(pc_detectionCount_div);
-	var pc_viewDuration = dc.pieChart(pc_viewDuration_div);
 
 	// geometry
 	var sc_brandEffectiveness_width = $(sc_brandEffectiveness_div).parent().width();
@@ -89,10 +68,6 @@ seasonsShowCrossFilterChart = function(parsedData) {
 	var rc_brandEffectiveness_width = sc_brandEffectiveness_width;
 	var rc_brandEffectiveness_height = 45;
 	var rc_brandEffectiveness_margin = {top: 1, right: 1, bottom: 0, left: 40};
-
-	var pieChart_widthHeight = $(pc_detectionCount_div).parent().width();
-	if (pieChart_widthHeight > 200) { pieChart_widthHeight = 200; }
-	var pieChart_innerRadius = 20;
 
 
 	timeLogEnd("chartSetup", "Chart setup");
@@ -331,69 +306,10 @@ seasonsShowCrossFilterChart = function(parsedData) {
 	//------------------------------------------------  
 
 	//------------------------------------------------
-	/* Detection Count chart */
+	/* Pie Charts chart */
 
-	pc_detectionCount
-		.width(pieChart_widthHeight)
-		.height(pieChart_widthHeight)
-		.innerRadius(pieChart_innerRadius)
-		.dimension(detectionCountDim)
-		.group(detectionCountGroup)
-		.valueAccessor(function(d) { 
-			if (d.value.avg !== undefined){ return d.value.avg;
-			} else {
-				return d.value;
-			}
-		})
-		.colors(parsedData.brandGroupIdColors)
-		.colorAccessor(parsedData.brandGroupIdColorsAccessor)
-		.label(function(d) { return "Count: " + Math.round(d.value.avg);})
-		.title(function (d) {
-			if (d.value.avg !== undefined){
-				return parsedData.getBrandGroupName(d.key) + ": " + Math.round(d.value.avg);
-			} else { 
-				return parsedData.getBrandGroupName(d.data.key) + ": " + Math.round(d.value);
-			}
-		});
-		
+	var pieCharts = new PieChart(parsedData);
 
-	$(pc_detectionCountResetId).click(function(){
-		pc_detectionCount.filterAll();
-		dc.redrawAll();
-	});
-	//------------------------------------------------  
-
-	//------------------------------------------------
-	/* View duration chart */
-
-	pc_viewDuration
-		.width(pieChart_widthHeight)
-		.height(pieChart_widthHeight)
-		.innerRadius(pieChart_innerRadius)
-		.dimension(viewDurationDim)
-		.group(viewDurationGroup)
-		.valueAccessor(function(d) { 
-			if (d.value.avg !== undefined){ return d.value.avg;
-			} else {
-				return d.value;
-			}
-		})
-		.colors(parsedData.brandGroupIdColors)
-		.colorAccessor(parsedData.brandGroupIdColorsAccessor)
-		.label(function(d) { return Math.round(d.value.avg) + " sec";})
-		.title(function (d) {
-			if (d.value.avg !== undefined){
-				return parsedData.getBrandGroupName(d.key) + ": " + Math.round(d.value.avg) + " sec";
-			} else { 
-				return parsedData.getBrandGroupName(d.data.key) + ": " + Math.round(d.value) + " sec";
-			}
-		});
-		
-
-	$(pc_viewDurationResetId).click(function(){
-		pc_viewDuration.filterAll();
-		dc.redrawAll();
-	});
 	//------------------------------------------------  
 
 
@@ -431,17 +347,12 @@ seasonsShowCrossFilterChart = function(parsedData) {
 
 
 	// for the pie charts, use height of heatmap if that is larger
-	var pcDivHeight = $(pc_detectionCount_div).outerHeight();
+	var pcDivHeight = 0;
 	if (pcDivHeight < heatmapChart.getOuterDivHeight()) {
 		pcDivHeight = heatmapChart.getOuterDivHeight();
 	}
-	$(pc_detectionCount_div)
-		.parent().select('.chart-content')
-		.height(pcDivHeight);
+	pieCharts.setDivHeight(pcDivHeight);
 
-	$(pc_viewDuration_div)
-		.parent().select('.chart-content')
-		.height(pcDivHeight);
 
 	// trigger click so that all charts are updated with latest values
 	//$('#dc-brand-effectiveness-composite-reset').trigger( "click" );
