@@ -15,7 +15,7 @@ $(".analytics_seasons.summary").ready(function() {
 			var parsedData = parseSeasonData(seasonInfo, seasonData);			
 			timeLogEnd("parseData", "Parse data");
 
-			seasonsShowCrossFilterChart(parsedData);
+			seasonAllCharts(parsedData);
 		
 			timeLogEnd("totalChartPageTime", "Total JS time");
 		});

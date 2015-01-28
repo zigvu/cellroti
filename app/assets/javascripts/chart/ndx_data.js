@@ -3,6 +3,8 @@
 	------------------------------------------------*/
 
 function NDXData(counterGameDemarcationMap, counterGameDemarcation, gameIds, brandGroupIds, ndxData){
+	timeLogStart("NDXData");
+	
 	//var ndxData, gameIds, brandGroupIds, gameDemarcations;
 	//------------------------------------------------
 
@@ -17,7 +19,6 @@ function NDXData(counterGameDemarcationMap, counterGameDemarcation, gameIds, bra
 	// Run the data through crossfilter
 	this.ndxData = ndxData;
 	this.ndx = crossfilter(this.ndxData);
-
 	// color domain/range for game
 	this.gameColors = d3.scale.category20().domain(Object.keys(counterGameDemarcation));
 	this.gameColorsAccessor = function(d){ return counterGameDemarcationMap[d.key]; };
@@ -35,9 +36,13 @@ function NDXData(counterGameDemarcationMap, counterGameDemarcation, gameIds, bra
 	// this.brandGroupNameColorsAccessor = function(d) { return d.key; };
 
 	// accessor functions
-	
+
 
 	this.getBrandGroupName = function(brandGroupId){ return brandGroupIds[brandGroupId]; };
+
+	// data structure to hold charts
+	this.charts = {};
+	timeLogEnd("NDXData", "NDXData Creation");
 };
 
 //------------------------------------------------  

@@ -1,29 +1,22 @@
 /*------------------------------------------------
-	Cross filter chart scripts
+	Series Chart for Season
 	------------------------------------------------*/
 
-// Cross filter charts are created using dc.js library
-seasonsShowCrossFilterChart = function(parsedData) {
-
-	// decompose from tuple
-	// var counterGameDemarcationMap = parsedData["counterGameDemarcationMap"];
-	// var counterGameDemarcation = parsedData["counterGameDemarcation"];
-	// var gameIds = parsedData["gameIds"];
-	// var brandGroupIds = parsedData["brandGroupIds"];
-	// var ndxData = parsedData["ndxData"];
-
+function SeasonSeriesChart(parsedData){
+	// TODO: remove:
 	var counterGameDemarcationMap = parsedData.counterGameDemarcationMap();
 	var counterGameDemarcation = parsedData.counterGameDemarcation();
-	var gameIds = parsedData.gameIds();
-	var brandGroupIds = parsedData.brandGroupIds();
-	// var ndxData = parsedData.ndxData();
 
 	//------------------------------------------------
-	/* Create ndx dimensions/groups */
-	timeLogStart("ndxCreation");
+	// set associated charts
+	var heatmapChart, brandEffectivenessCharts;
+	this.setAssociatedCharts = function(_heatmapChart, _brandEffectivenessCharts){
+		heatmapChart = _heatmapChart;
+		brandEffectivenessCharts = _brandEffectivenessCharts;
+	};
 
-	// Run the data through crossfilter
-
+	//------------------------------------------------
+	// set groups
 	var counterDomain = d3.extent(parsedData.ndxData, function(d) { return d.counter; });
 	var counterDim = parsedData.ndx.dimension(function (d) { return d.counter; });
 	var counterDimGroup = counterDim.group(); // count
@@ -36,28 +29,17 @@ seasonsShowCrossFilterChart = function(parsedData) {
 	});
 
 
-
-	timeLogEnd("ndxCreation", "NDX Creation");
 	//------------------------------------------------
-
-	//------------------------------------------------
-	/* Chart setup */
-	timeLogStart("chartSetup");
-
+	// set charts
 	var sc_brandEffectiveness_div = '#dc-brand-effectiveness-series-chart';
 	var rc_brandEffectiveness_div = '#dc-brand-effectiveness-range-chart';
-
-
-	// reset buttons
 	var rc_brandEffectivenessResetId = '#dc-brand-effectiveness-series-chart-reset';
-	var allChartsResetId = '#brand-legend-reset-all-charts';
 
-
-	// Create the dc.js chart objects & link to div
 	var sc_brandEffectiveness = dc.seriesChart(sc_brandEffectiveness_div);
 	var rc_brandEffectiveness = dc.barChart(rc_brandEffectiveness_div);
 
-	// geometry
+	//------------------------------------------------
+	// set gemoetry
 	var sc_brandEffectiveness_width = $(sc_brandEffectiveness_div).parent().width();
 	var sc_brandEffectiveness_height = 300;
 	var sc_brandEffectiveness_margin = { top: 1, right: 1, bottom: 0, left: 40 };
@@ -69,13 +51,30 @@ seasonsShowCrossFilterChart = function(parsedData) {
 	var rc_brandEffectiveness_height = 45;
 	var rc_brandEffectiveness_margin = {top: 1, right: 1, bottom: 0, left: 40};
 
-
-	timeLogEnd("chartSetup", "Chart setup");
 	//------------------------------------------------
+	// create renderlets
+	// put text labels for game range chart
+	var gameLabelText_renderlet = function(_chart){
+		var barsData = [];
+		var bars = _chart.selectAll('.bar').each(function(d) { barsData.push(d); });
 
+		// remove old values (if found)
+		d3.select(bars[0][0].parentNode).select('#inline-labels').remove();
+		// create group for labels 
+		var gLabels = d3.select(bars[0][0].parentNode).append('g').attr('id','inline-labels');
 
-	//------------------------------------------------
-	/* Chart helpers */
+		for (var i = bars[0].length - 1; i >= 0; i--) {
+			var b = bars[0][i];
+			if (counterGameDemarcation.hasOwnProperty(barsData[i].data.key)){
+				gLabels
+					.append("text")
+					.text(counterGameDemarcation[barsData[i].data.key]['range_label'])
+					.attr('x', +b.getAttribute('x') + (b.getAttribute('width')/2) )
+					.attr('y', +b.getAttribute('y') + 20)
+					.attr('text-anchor', 'left');
+			}
+		}
+	};
 
 	var sc_brandEffectiveness_renderlet = function(_chart){
 		// get min and max x positions in chart
@@ -185,35 +184,8 @@ seasonsShowCrossFilterChart = function(parsedData) {
 		}
 		// console.log(rectStartEnd);
 	};
-
-	// put text labels for game range chart
-	var gameLabelText = function(_chart){
-		var barsData = [];
-		var bars = _chart.selectAll('.bar').each(function(d) { barsData.push(d); });
-
-		//Remove old values (if found)
-		d3.select(bars[0][0].parentNode).select('#inline-labels').remove();
-		//Create group for labels 
-		var gLabels = d3.select(bars[0][0].parentNode).append('g').attr('id','inline-labels');
-
-		for (var i = bars[0].length - 1; i >= 0; i--) {
-			var b = bars[0][i];
-			if (counterGameDemarcation.hasOwnProperty(barsData[i].data.key)){
-				gLabels
-					.append("text")
-					.text(counterGameDemarcation[barsData[i].data.key]['range_label'])
-					.attr('x', +b.getAttribute('x') + (b.getAttribute('width')/2) )
-					.attr('y', +b.getAttribute('y') + 20)
-					.attr('text-anchor', 'left');
-			}
-		}
-	};
-	//------------------------------------------------  
-
-
-	//------------------------------------------------  
-	/* Brand Effectiveness */
-	timeLogStart("chartsRender");
+	//------------------------------------------------
+	// create charts
 
 	// series chart 
 	sc_brandEffectiveness
@@ -243,8 +215,7 @@ seasonsShowCrossFilterChart = function(parsedData) {
 			return str;
 		})
 		.on("postRedraw", function(chart) {
-			brandEffectivenessCharts.redrawCompositeDomainYAxis();
-			heatmapChart.updateHeatmap();
+			debouncedSeriesChartPostRedraw();
 		});
 
 	sc_brandEffectiveness
@@ -269,7 +240,7 @@ seasonsShowCrossFilterChart = function(parsedData) {
 		.group(counterDimGroup)
 		.colors(parsedData.gameColors)
 		.colorAccessor(parsedData.gameColorsAccessor)
-		.renderlet(gameLabelText)
+		.renderlet(gameLabelText_renderlet)
 		.valueAccessor(function(d) {return 1;})
 		.brushOn(true)
 		.gap(0)
@@ -284,83 +255,34 @@ seasonsShowCrossFilterChart = function(parsedData) {
 		.yAxisLabel('Game')
 		.yAxis().ticks(0);
 
+	//------------------------------------------------
+	// reset charts and resize divs
 	$(rc_brandEffectivenessResetId).click(function(){
 		rc_brandEffectiveness.filterAll();
 		dc.redrawAll();
 	});
-	//------------------------------------------------
 
-	//------------------------------------------------
-	/* Brand effectiveness composite charts */
-
-	brandEffectivenessCharts = new CumulativeBarChart(parsedData);
-
-	//------------------------------------------------
-
-	//------------------------------------------------
-	/* Spatial position heatmap */
-
-	var heatmapChart = new HeatmapChart(parsedData);
-
+	this.resizeDiv = function(){
+		$(sc_brandEffectiveness_div)
+			.parent().select('.chart-content')
+			.height(
+				$(sc_brandEffectiveness_div).outerHeight() + 
+				$(rc_brandEffectiveness_div).outerHeight()
+			);	
+	};
 	
-	//------------------------------------------------  
 
 	//------------------------------------------------
-	/* Pie Charts chart */
-
-	var pieCharts = new PieChart(parsedData);
-
-	//------------------------------------------------  
-
-
-	//------------------------------------------------
-	/* Finally, render charts and update visual elements */	
-	dc.renderAll();
-
-	$(allChartsResetId).click(function(){
-		dc.filterAll();
-		dc.redrawAll();
-	});
-
-	timeLogEnd("chartsRender", "Chart render");	
-	timeLogStart("postRender");
-
-	// Add legend items
-	for(var i = 0; i < parsedData.brandGroupNameArr.length; i++){
-		var li = $("<li/>");
-		li.prepend(
-			$("<div/>", { class: "square" })
-				.css("background-color", parsedData.brandGroupNameColors(parsedData.brandGroupNameArr[i])));
-		li.append($("<div/>", { text: parsedData.brandGroupNameArr[i], class: "text" }));
-		$('#brand-legend-content-ul').append(li);
+	// helper functions
+	var seriesChartPostRedraw = function(){
+		brandEffectivenessCharts.redrawCompositeDomainYAxis();
+		heatmapChart.updateHeatmap();
+		//console.log("Times");
 	}
-
-	// Resize divs
-	$(sc_brandEffectiveness_div)
-		.parent().select('.chart-content')
-		.height(
-			$(sc_brandEffectiveness_div).outerHeight() + 
-			$(rc_brandEffectiveness_div).outerHeight()
-		);
-
-	brandEffectivenessCharts.resizeDiv();
+	var debouncedSeriesChartPostRedraw = _.debounce(seriesChartPostRedraw, 300);
 
 
-	// for the pie charts, use height of heatmap if that is larger
-	var pcDivHeight = 0;
-	if (pcDivHeight < heatmapChart.getOuterDivHeight()) {
-		pcDivHeight = heatmapChart.getOuterDivHeight();
-	}
-	pieCharts.setDivHeight(pcDivHeight);
 
-
-	// trigger click so that all charts are updated with latest values
-	//$('#dc-brand-effectiveness-composite-reset').trigger( "click" );
-
-	timeLogEnd("postRender", "Post chart render");
-	//------------------------------------------------
-
-	$("#debug_dump").click(function(){
-		print_filter("visualSaliencyGroup");
-	});
 };
+
+//------------------------------------------------  
