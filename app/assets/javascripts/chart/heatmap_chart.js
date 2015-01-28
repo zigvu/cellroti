@@ -21,9 +21,9 @@ function HeatmapChart(parsedData){
 	var qaudAccessors = quadMapping.map(function(d){ return d.q; });
 	var heatmapDim = parsedData.ndx.dimension(function (d) { return d.bg_id; });
 	var heatmapGroup = heatmapDim.group().reduce(
-		reduceAddAvg(qaudAccessors), 
-		reduceRemoveAvg(qaudAccessors), 
-		reduceInitAvg
+		REDUCEAVG.MULTIPLE.reduceAddAvg(qaudAccessors), 
+		REDUCEAVG.MULTIPLE.reduceRemoveAvg(qaudAccessors), 
+		REDUCEAVG.MULTIPLE.reduceInitAvg
 	);
 
 	//------------------------------------------------
@@ -57,7 +57,7 @@ function HeatmapChart(parsedData){
 	var legendHeight = Math.round(height/(heatmapColors.length));
 
 	this.getOuterDivHeight = function(){ return $(heatmap_div).outerHeight(); };
-	
+
 	//------------------------------------------------
 	// create elems
 

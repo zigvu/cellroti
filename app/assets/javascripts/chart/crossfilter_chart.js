@@ -40,16 +40,16 @@ seasonsShowCrossFilterChart = function(parsedData) {
 
 	var detectionCountDim = ndx.dimension(function (d) { return d.bg_id; });
 	var detectionCountGroup = detectionCountDim.group().reduce(
-		reduceAddAvg(['detections_count']), 
-		reduceRemoveAvg(['detections_count']), 
-		reduceInitAvg
+		REDUCEAVG.SINGLE.reduceAddAvg('detections_count'), 
+		REDUCEAVG.SINGLE.reduceRemoveAvg('detections_count'), 
+		REDUCEAVG.SINGLE.reduceInitAvg
 	);
 
 	var viewDurationDim = ndx.dimension(function (d) { return d.bg_id; });
 	var viewDurationGroup = viewDurationDim.group().reduce(
-		reduceAddAvg(['view_duration']), 
-		reduceRemoveAvg(['view_duration']), 
-		reduceInitAvg
+		REDUCEAVG.SINGLE.reduceAddAvg('view_duration'), 
+		REDUCEAVG.SINGLE.reduceRemoveAvg('view_duration'), 
+		REDUCEAVG.SINGLE.reduceInitAvg
 	);
 
 
@@ -340,15 +340,17 @@ seasonsShowCrossFilterChart = function(parsedData) {
 		.dimension(detectionCountDim)
 		.group(detectionCountGroup)
 		.valueAccessor(function(d) { 
-			if (d.value.avg !== undefined){ return d.value.avg['detections_count'];
-			} else { return d.value; }
+			if (d.value.avg !== undefined){ return d.value.avg;
+			} else {
+				return d.value;
+			}
 		})
 		.colors(parsedData.brandGroupIdColors)
 		.colorAccessor(parsedData.brandGroupIdColorsAccessor)
-		.label(function(d) { return "Count: " + Math.round(d.value.avg['detections_count']);})
+		.label(function(d) { return "Count: " + Math.round(d.value.avg);})
 		.title(function (d) {
 			if (d.value.avg !== undefined){
-				return parsedData.getBrandGroupName(d.key) + ": " + Math.round(d.value.avg['detections_count']);
+				return parsedData.getBrandGroupName(d.key) + ": " + Math.round(d.value.avg);
 			} else { 
 				return parsedData.getBrandGroupName(d.data.key) + ": " + Math.round(d.value);
 			}
@@ -371,15 +373,17 @@ seasonsShowCrossFilterChart = function(parsedData) {
 		.dimension(viewDurationDim)
 		.group(viewDurationGroup)
 		.valueAccessor(function(d) { 
-			if (d.value.avg !== undefined){ return d.value.avg['view_duration'];
-			} else { return d.value; }
+			if (d.value.avg !== undefined){ return d.value.avg;
+			} else {
+				return d.value;
+			}
 		})
 		.colors(parsedData.brandGroupIdColors)
 		.colorAccessor(parsedData.brandGroupIdColorsAccessor)
-		.label(function(d) { return Math.round(d.value.avg['view_duration']) + " sec";})
+		.label(function(d) { return Math.round(d.value.avg) + " sec";})
 		.title(function (d) {
 			if (d.value.avg !== undefined){
-				return parsedData.getBrandGroupName(d.key) + ": " + Math.round(d.value.avg['view_duration']) + " sec";
+				return parsedData.getBrandGroupName(d.key) + ": " + Math.round(d.value.avg) + " sec";
 			} else { 
 				return parsedData.getBrandGroupName(d.data.key) + ": " + Math.round(d.value) + " sec";
 			}

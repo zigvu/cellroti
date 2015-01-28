@@ -14,9 +14,9 @@ function CumulativeBarChart(parsedData){
 	];
 	var compositeDim = parsedData.ndx.dimension(function (d) { return d.bg_id; });
 	var compositeGroup = compositeDim.group().reduce(
-		reduceAddAvg(compositeAccessors), 
-		reduceRemoveAvg(compositeAccessors), 
-		reduceInitAvg
+		REDUCEAVG.MULTIPLE.reduceAddAvg(compositeAccessors), 
+		REDUCEAVG.MULTIPLE.reduceRemoveAvg(compositeAccessors), 
+		REDUCEAVG.MULTIPLE.reduceInitAvg
 	);
 
 	//------------------------------------------------
