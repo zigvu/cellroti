@@ -3,6 +3,12 @@
 	------------------------------------------------*/
 
 //------------------------------------------------
+/* Chart elements debounce time */
+// do not call the functions (those decorated by underscore.js)
+// more than once in the time below
+chartDebounceTime = 500; // milliseconds
+
+//------------------------------------------------
 /* Decorate top-bar navigation li items with "active" class */
 function decorateNavigationList(){
 	// for each page, we set class to controller name

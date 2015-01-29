@@ -3,6 +3,7 @@
 	------------------------------------------------*/
 
 function SeasonSeriesChart(parsedData){
+	timeLogStart("SeasonSeriesChart");
 
 	//------------------------------------------------
 	// set associated charts
@@ -277,8 +278,9 @@ function SeasonSeriesChart(parsedData){
 		heatmapChart.updateHeatmap();
 		//console.log("Times");
 	}
-	var debouncedSeriesChartPostRedraw = _.debounce(seriesChartPostRedraw, 300);
+	var debouncedSeriesChartPostRedraw = _.debounce(seriesChartPostRedraw, chartDebounceTime);
 
+	timeLogEnd("SeasonSeriesChart", "SeasonSeriesChart Creation");
 };
 
 //------------------------------------------------  

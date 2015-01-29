@@ -53,7 +53,7 @@ carbondatedDrinksDetGrp = Client.zigvu_client.det_groups.create(name: "Carbonate
 foodComboDetGrp = Client.zigvu_client.det_groups.create(name: "FoodComboForAllClient", pretty_name: "Food Combo")
 bestInClassDetGrp = Client.zigvu_client.det_groups.create(name: "BestInClassForAllClient", pretty_name: "Best In Class")
 
-[1,2,3,4].each do |detectable_id|
+[2,3,5].each do |detectable_id|
 	carbondatedDrinksDetGrp.det_group_detectables.create(detectable_id: detectable_id)
 end
 
@@ -61,7 +61,7 @@ end
 	foodComboDetGrp.det_group_detectables.create(detectable_id: detectable_id)
 end
 
-[1,3,5].each do |detectable_id|
+[3,5].each do |detectable_id|
 	bestInClassDetGrp.det_group_detectables.create(detectable_id: detectable_id)
 end
 

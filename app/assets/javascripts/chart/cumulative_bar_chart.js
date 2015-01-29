@@ -3,6 +3,7 @@
 	------------------------------------------------*/
 
 function CumulativeBarChart(parsedData){
+	timeLogStart("CumulativeBarChart");
 	//------------------------------------------------
 	// set groups
 
@@ -152,6 +153,7 @@ function CumulativeBarChart(parsedData){
 			.parent()
 			.height($(bc_brandCrowding_div).outerHeight());
 	};
+	
+	timeLogEnd("CumulativeBarChart", "CumulativeBarChart Creation");
 };
-
 //------------------------------------------------  

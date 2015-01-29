@@ -3,6 +3,8 @@
 	------------------------------------------------*/
 
 function PieChart(parsedData){
+	timeLogStart("PieChart");
+
 	//------------------------------------------------
 	// set groups
 
@@ -111,6 +113,8 @@ function PieChart(parsedData){
 			.parent().select('.chart-content')
 			.height(pcDivHeight);
 	};
+	
+	timeLogEnd("PieChart", "PieChart Creation");
 };
 
 //------------------------------------------------  

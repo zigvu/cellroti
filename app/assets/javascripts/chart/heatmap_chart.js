@@ -3,6 +3,8 @@
 	------------------------------------------------*/
 
 function HeatmapChart(parsedData){
+	timeLogStart("HeatmapChart");
+
 	//------------------------------------------------
 	// set groups
 
@@ -150,6 +152,8 @@ function HeatmapChart(parsedData){
     heatmap.transition().duration(1000)
       .style("fill", function(d) { return heatmapColorScale(d.value); });
 	};
+
+	timeLogEnd("HeatmapChart", "HeatmapChart Creation");
 };
 
 //------------------------------------------------  
