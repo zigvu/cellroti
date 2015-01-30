@@ -2,31 +2,17 @@ require 'json'
 include EventsHelper
 
 module Jsonifiers
-	class JAnalyticsGameData < Jsonifiers::JAnalytics
-		def initialize(game, client)
+	class JAnalyticsSingleGameSingleDetGroup < Jsonifiers::JAnalytics
+		def initialize(game, detGroup, summaryResolution)
 			@game = game
-			@cacheKey = "#{@game.cache_key}/#{client.cache_key}/JAnalyticsGameData"
-
-			@det_group_ids = client.det_groups.pluck(:id)
-			@summaryResolution = States::SummaryResolutions.gameResolution
+			@detGroup = detGroup
+			@summaryResolution = summaryResolution
+			@cacheKey = "#{@game.cache_key}/#{@detGroup.cache_key}/#{@summaryResolution}/JAnalyticsSingleGameSingleDetGroup"
 		end
 
-		def get_data_hash
-			retHash = {}
-			retHash[:id] = @game.id
-			retHash[:brand_group_data_keys] = Jsonifiers::JAnalyticsGameData.brand_group_data_keys
-
-			retHash[:events] = Jsonifiers::JAnalyticsGameData.getGameEvents(@game)
-
-			retHash[:brand_group_data] = Jsonifiers::JAnalyticsGameData.getGameSummaryData(
-				@game, @summaryResolution, @det_group_ids)
-
-			return retHash
-		end
-
-		def self.getGameEvents(game)
+		def getGameEvents
 			retArr = []
-			game.events.each do |event|
+			@game.events.each do |event|
 				retArr << {
 					id: event.event_type_id, 
 					#time: milliseconds_to_prettyprint(event.event_time)}
@@ -50,11 +36,18 @@ module Jsonifiers
 			]
 		end
 
-		def self.getGameSummaryData(game, summaryResolution, det_group_ids)
-			retArr = []
+		def getGameData
+			raise 'Need a cache key for JAnalyticsSingleGameSingleDetGroup class' if @cacheKey == nil
+			retJSON = Rails.cache.fetch(@cacheKey) do 
+				getGameData_NonChached()
+			end
+		end
+
+		def getGameData_NonChached
+			bgDataArr = {}
 			summaryMetric = SummaryMetric
-				.in(video_id: game.videos.pluck(:id), det_group_id: det_group_ids)
-				.where(resolution_seconds: summaryResolution)
+				.in(video_id: @game.videos.pluck(:id), det_group_id: @detGroup.id)
+				.where(resolution_seconds: @summaryResolution)
 			summaryMetric.each do |sm|
 				sm.single_summary_metrics.each do |sdata|
 
@@ -67,6 +60,8 @@ module Jsonifiers
 						quadrants << sprintf("%.4f", sdata.quadrants[k] * 4000) # <---- TODO: remove
 					end
 
+					# Note: the array ordering has to match with what we get from
+					# JAnalyticsSingleGameData.brand_group_data_keys call
 					data = [
 						sprintf("%.4f", sdata[:brand_effectiveness]),   # 0
 						sprintf("%.4f", sdata[:det_group_crowding]),    # 1
@@ -80,22 +75,11 @@ module Jsonifiers
 						quadrants                                       # 7
 					]
 
-					# save to right index - if none exist, create new entry
-					dataIdx = retArr.find_index {|d| d[:time] == sdata[:frame_time]}
-					if dataIdx == nil
-						retArr << {
-							time: sdata[:frame_time], 
-							bgData: []
-						}
-						dataIdx = retArr.find_index {|d| d[:time] == sdata[:frame_time]}
-					end
-					retArr[dataIdx][:bgData] << {
-						sm.det_group_id => data
-					}
+					bgDataArr[sdata[:frame_time]] = data
 				end
 			end
-			retArr.sort_by! {|h| h[:time]}
-			return retArr
+			
+			return bgDataArr
 		end
 
 	end

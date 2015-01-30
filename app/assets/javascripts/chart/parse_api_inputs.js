@@ -2,12 +2,29 @@
 	Parse API inputs
 	------------------------------------------------*/
 
+/*
+// seasonData Hash structure
+{
+	season_id:,
+	brand_group_map: [{:id => :name}, ],
+	brand_group_data_keys: [
+		:counter, :game_id, :bg_id,
+		:brand_effectiveness, :brand_group_crowding, :visual_saliency,
+		:timing_effectiveness, :spatial_effectiveness, :detections_count,
+		:view_duration, :quadrants
+	],
+	data_counter: [{game_id:, :data_count}, ],
+	ndxData: [
+		[array of values according to brand_group_data_keys],
+	]
+}
+*/
+
 //------------------------------------------------
 /* Convert season JSON data to crossfilter data for charts */
 
 function parseSeasonData(seasonInfo, seasonData){
-	var ndxData = [];
-	var counter = 0;
+	timeLogStart("parseSeasonData");
 
 	// disaggregate seasonInfo - convert to hashes like below
 	// var eventTypesInfo = seasonInfo["event_types"];
@@ -19,68 +36,43 @@ function parseSeasonData(seasonInfo, seasonData){
 	});
 
 	// disaggregate seasonData
-	var brandGroupMap = {};
-	seasonData["brand_groups"].forEach(function (brandGroup) {
-		brandGroupMap[+brandGroup["id"]] = brandGroup["name"];
-	});
+	var brandGroupMap = seasonData["brand_group_map"];
 	var brandGroupDataKeys = seasonData["brand_group_data_keys"];
 
-	// counter demarkation for games
-	var counterDems = [];
-
-	// iterate through games data and populate ndx
-	seasonData["games"].sort(sortById).forEach(function (games) {
-		// get summary data - assume sorted by time
-		counterDems.push({
-			series_label: gameDataMap[+games["id"]],
-			range_label: +games["id"],
-			counter: counter
+	// NDX data
+	var ndxData = [];
+	seasonData["ndxData"].forEach(function (dLine) {
+		dataLine = {};
+		dLine.forEach(function (d, idx, data){
+			if (brandGroupDataKeys[idx] === "quadrants"){
+				d.forEach(function(q, qidx, qdata){
+					dataLine["q" + qidx] = +q;
+				});
+			} else {
+				dataLine[brandGroupDataKeys[idx]] = +d;
+			}
 		});
-		
-		games["gameData"].forEach(function (gameData){
-			//var time = gameData["time"];
-
-			gameData["bgData"].forEach(function (bgData){
-				for (var brandGroup in bgData){
-					if (!bgData.hasOwnProperty(brandGroup)){
-						continue;
-					}
-					//var bgName = brandGroupMap[brandGroup];
-					dataLine = {
-						counter: counter,
-						game_id: +games["id"],
-						bg_id: +brandGroup
-					}
-					bgData[brandGroup].forEach(function (d, idx, data){
-						if (brandGroupDataKeys[idx] === "quadrants"){
-							d.forEach(function(q, qidx, qdata){
-								dataLine["q" + qidx] = +q;
-							});
-						} else {
-							dataLine[brandGroupDataKeys[idx]] = +d;
-						}
-					});
-					ndxData.push(dataLine);
-				}
-			});
-			counter++;
-		});
+		ndxData.push(dataLine);
 	});
-	var finalCounterValue = --counter;
-	// sort and save with range information
+
+	// create game demarcations
 	var gameDemarcations = {};
-	counterDems.reverse().forEach(function (cd){
-		gameDemarcations[cd["counter"]] = {
-			series_label: cd["series_label"],
-			range_label: cd["range_label"],
-			series_counters: [cd["counter"], counter]
+	var curDataCount = 0;
+	seasonData["data_counter"].forEach(function (dataCounter) {
+		if(dataCounter["data_count"] > 0){
+			gameDemarcations[curDataCount] = {
+				series_label: gameDataMap[dataCounter["game_id"]],
+				range_label: dataCounter["game_id"],
+				series_counters: [curDataCount, curDataCount + dataCounter["data_count"]]
+			};
+			curDataCount += dataCounter["data_count"];
 		}
-		counter = cd["counter"];
 	});
+
 	// create mapping to gameDemarcations to avoid expensive loops
 	var beginC, endC, key;
 	var gameDemarcationsMap = {};
-	for (var i = 0; i < finalCounterValue; i++){
+	for (var i = 0; i < curDataCount; i++){
 		// loop through
 		for (key in gameDemarcations){
 			beginC = gameDemarcations[key]["series_counters"][0];
@@ -91,11 +83,12 @@ function parseSeasonData(seasonInfo, seasonData){
 			}
 		}
 	}
-	// the last entry is not in gameDemarcations map yet
-	gameDemarcationsMap[finalCounterValue] = key;
 
 	//console.log(ndxData[0]);
 	var parsedData = new NDXData(gameDemarcationsMap, gameDemarcations, brandGroupMap, ndxData);
+
+	timeLogEnd("parseSeasonData", "Parse data and create NDX");
+
 	return parsedData;
 };
 //------------------------------------------------  

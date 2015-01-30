@@ -3,7 +3,6 @@
 	------------------------------------------------*/
 
 function NDXData(gameDemarcationsMap, gameDemarcations, brandGroupMap, ndxData){
-	timeLogStart("NDXData");
 	
 	//------------------------------------------------
 	// Run the data through crossfilter
@@ -39,7 +38,6 @@ function NDXData(gameDemarcationsMap, gameDemarcations, brandGroupMap, ndxData){
 	this.getSeriesLabelForDemarcation = function(dmKey){ return gameDemarcations[dmKey]["series_label"]; };
 	this.getSeriesCountersForDemarcation = function(dmKey){ return gameDemarcations[dmKey]["series_counters"]; };
 
-	timeLogEnd("NDXData", "NDXData Creation");
 };
 
 //------------------------------------------------  

@@ -6,6 +6,13 @@ module Jsonifiers
 		end
 
 		def get_data_hash
+			raise 'Need a cache key for JAnalyticsSeason class' if @cacheKey == nil
+			retJSON = Rails.cache.fetch(@cacheKey) do 
+				get_data_hash_NonChached()
+			end
+		end		
+
+		def get_data_hash_NonChached
 			retHash = {}
 			retHash[:id] = @season.id
 			retHash[:name] = @season.name

@@ -11,10 +11,7 @@ $(".analytics_seasons.summary").ready(function() {
 		d3.json(window.seasonShowPath, function(error, seasonData) {
 			timeLogEnd("jsonCall", "Data download");
 
-			timeLogStart("parseData");
-			var parsedData = parseSeasonData(seasonInfo, seasonData);			
-			timeLogEnd("parseData", "Parse data");
-
+			var parsedData = new parseSeasonData(seasonInfo, seasonData);
 			seasonAllCharts(parsedData);
 		
 			timeLogEnd("totalChartPageTime", "Total JS time");
