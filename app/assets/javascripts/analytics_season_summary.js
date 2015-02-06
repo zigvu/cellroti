@@ -2,7 +2,7 @@
 	Begin: Analytics Season Show Javascript
 	------------------------------------------------*/
 
-$(".analytics_seasons.summary").ready(function() {
+$(".analytics_seasons.summary_old").ready(function() {
 	timeLogStart("totalChartPageTime");
 
 	// read JSON - nested to force the first call to finish prior to second call
