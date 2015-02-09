@@ -1,6 +1,5 @@
 class SummaryMetric
   include Mongoid::Document
-	include Mongoid::Timestamps
 
 	field :video_id, type: Integer
 	field :det_group_id, type: Integer

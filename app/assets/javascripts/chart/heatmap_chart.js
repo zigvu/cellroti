@@ -2,7 +2,7 @@
 	Heatmap Chart
 	------------------------------------------------*/
 
-function HeatmapChart(ndxManager){
+function HeatmapChart(ndxManager, dataManager){
   //------------------------------------------------
   // set up
 
@@ -115,6 +115,13 @@ function HeatmapChart(ndxManager){
 	};
   //------------------------------------------------
 
+
+  //------------------------------------------------
+  // Get div height
+	this.getOuterDivHeight = function(){ 
+		return $(heatmap_div).outerHeight();
+	};
+  //------------------------------------------------
 
   //------------------------------------------------
   // finally, add call back to repaint charts

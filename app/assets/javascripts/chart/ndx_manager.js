@@ -4,36 +4,11 @@
 
 // TODO: scope variables properly - currently many in global scope
 
-function NDXManager(data){
+function NDXManager(dataManager){
   //------------------------------------------------
   // set up
+  var bCounter, eCounter;
   var maxDataPoints = 1000;
-
-  // coerce to number
-  data.forEach(function (d) {
-    d.averager = +d.averager;
-    d.counter = +d.counter;
-    d.game_id = +d.game_id;
-    d.det_group_id = +d.det_group_id;
-    d.brand_effectiveness = +d.brand_effectiveness;
-    d.brand_group_crowding = +d.brand_group_crowding;
-    d.visual_saliency = +d.visual_saliency;
-    d.timing_effectiveness = +d.timing_effectiveness;
-    d.spatial_effectiveness = +d.spatial_effectiveness;
-    d.detections_count = +d.detections_count;
-    d.view_duration = +d.view_duration;
-    d.q0 = +d.q0;
-    d.q1 = +d.q1;
-    d.q2 = +d.q2;
-    d.q3 = +d.q3;
-    d.q4 = +d.q4;
-    d.q5 = +d.q5;
-    d.q6 = +d.q6;
-    d.q7 = +d.q7;
-    d.q8 = +d.q8;
-  });
-  //------------------------------------------------
-
 
   //------------------------------------------------
   quadMapping = [
@@ -69,7 +44,7 @@ function NDXManager(data){
     quadComponentAccessors);
 
   // create cross filter
-  this.ndx = crossfilter(data);
+  this.ndx = crossfilter(dataManager.ndxData);
 
   averagerDim = this.ndx.dimension(function (d) { return d.averager; });
   averagerGroup = averagerDim.group();
@@ -83,10 +58,15 @@ function NDXManager(data){
   );
   var bgFilterGroupAll; // data to hold group all data
 
+  this.getBeginCounter = function(){ return bCounter; };
+  this.getEndCounter = function(){ return eCounter; };
+
   // set filters based on counter bounds
   this.setCounterBounds = function(beginCounter, endCounter){
     // reset all filters
     this.resetAllFilters();
+    bCounter = beginCounter;
+    eCounter = endCounter;
 
     // need to add a 1 to end counter since it is not inclusive
     counterDim.filterRange([beginCounter, endCounter + 1]);
@@ -113,7 +93,7 @@ function NDXManager(data){
   // get filtered data
   this.getBEData = function(){
     // format:
-    // [{name: det_group_id, values: [{counter: , brand_effectivesnss: ,... }]} ,... ]
+    // [{bgId: det_group_id, values: [{counter: , brand_effectivesnss: ,... }]} ,... ]
     var values;
     return _.chain(bgFilterDim.top(Infinity))
       .groupBy(function(d){ return d.det_group_id; })
@@ -124,7 +104,7 @@ function NDXManager(data){
             return { counter: +d.counter, brand_effectiveness: +d.brand_effectiveness };
           })
           .value();
-        return { name: det_group_id, values: values };
+        return { bgId: det_group_id, values: values };
       }).value();
   };
 

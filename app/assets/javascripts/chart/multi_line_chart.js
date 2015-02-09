@@ -2,17 +2,19 @@
 	Multi-line chart
 	------------------------------------------------*/
 
-function MultiLineChart(ndxManager){
+function MultiLineChart(ndxManager, dataManager){
   //------------------------------------------------
   // set up
   var debounceAutoReloadTime = 500; // 0.5 second
+  var pxSpaceForOneChar; // storage for game background label computation
 
   // div for chart
   var sc_brandEffectiveness_div = '#brand-effectiveness-series-chart';
   var divWidth = $(sc_brandEffectiveness_div).parent().width();
 
   var beData = ndxManager.getBEData();
-  var color = d3.scale.category10();
+  var gameData = dataManager.getBrushedGames(
+    ndxManager.getBeginCounter(), ndxManager.getEndCounter());
   //------------------------------------------------
 
 
@@ -26,6 +28,9 @@ function MultiLineChart(ndxManager){
 
   // how far to the left of y-axis we want our labels to be
   var yAxisLabelAnchorX = -35;
+
+  var gameLabelsAddPosX = 15;
+  var gameLabelsAddPosY = 15;
   //------------------------------------------------
 
 
@@ -86,6 +91,8 @@ function MultiLineChart(ndxManager){
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
       .attr("class", "focusSVG");
 
+  var focusGames = focusSVG.append("g").attr("class", "focusGames");
+
   var contextSVG = beSVG.append("g")
       .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")")
       .attr("class", "contextSVG");
@@ -108,8 +115,6 @@ function MultiLineChart(ndxManager){
 
   //------------------------------------------------
   // define domains
-  color.domain(d3.keys(beData));
-
   x.domain(d3.extent(beData[0].values, function(d) { return d.counter; }));
   y.domain([getMinEffectiveness(beData), getMaxEffectiveness(beData)]);
 
@@ -119,7 +124,8 @@ function MultiLineChart(ndxManager){
 
 
   //------------------------------------------------
-  // draw lines in both charts
+  // draw bars/lines in both charts
+
   var focusBE = focusSVG.selectAll(".focusBE")
       .data(beData)
     .enter().append("g")
@@ -129,7 +135,7 @@ function MultiLineChart(ndxManager){
       .attr("class", "line")
       .attr("clip-path", "url(#clip)")
       .attr("d", function(d) { return focusLine(d.values); })
-      .style("stroke", function(d) { return color(d.name); });
+      .style("stroke", function(d) { return dataManager.getBrandGroupColor(d.bgId); }); 
 
   var contextBE = contextSVG.selectAll(".contextBE")
       .data(beData)
@@ -139,7 +145,35 @@ function MultiLineChart(ndxManager){
   contextBE.append("path")
       .attr("class", "line")
       .attr("d", function(d) { return contextLine(d.values); })
-      .style("stroke", function(d) { return color(d.name); });
+      .style("stroke", function(d) { return dataManager.getBrandGroupColor(d.bgId); }); 
+
+  // draw background rects
+  var gameRects = focusGames.selectAll("rect")
+      .data(gameData, function(d){ return d.game_id; })
+    .enter()
+      .append("rect")
+      .attr("clip-path", "url(#clip)")
+      .attr("width", function(d) { return x(d.end_count) - x(d.begin_count); })
+      .attr("x", function(d) { return x(d.begin_count); })
+      .attr("y", 0)
+      .attr("height", function(d) { return height; })
+      .style("fill", function(d) { return dataManager.getGameColor(d.game_id); });
+      
+  gameRects.append("svg:title").text(function (d) { return dataManager.getGameName(d.game_id); });
+
+  // draw background labels
+  var gameLabels = focusGames.selectAll(".gameLabel")
+      .data(gameData, function(d){ return d.game_id; })
+    .enter()
+      .append("text")
+      .attr("class", "gameLabel")
+      .attr("x", function(d) { return x(d.begin_count) + gameLabelsAddPosX; })
+      .attr("y", gameLabelsAddPosY)
+      .text(function (d) { 
+        return getModifiedGameLabel(
+          dataManager.getGameName(d.game_id), 
+          x(d.end_count) - x(d.begin_count));
+      });
   //------------------------------------------------
 
 
@@ -188,13 +222,27 @@ function MultiLineChart(ndxManager){
     focusSVG.select(".x.axis").call(xAxis);
     focusSVG.select(".y.axis").call(yAxis);
 
-    debouncedAutoReloadDuringBrush()
+    debouncedAutoReloadDuringBrush();
   };
 
   // on mouse release after brushing, pull in new set of data
   function brushEnd() {
     isStillBrushing = false;
     triggerNewData();
+  };
+
+  // allow outsiders to simulate brush events
+  this.brushSet = function(beginCounter, endCounter){
+    // set x2 values
+    var beginX2 = (x2(beginCounter) > x2.domain()[0]) ? x2(beginCounter) : x2.domain()[0];
+    var endX2 = (x2(endCounter) < x2.domain()[1]) ? x2(endCounter) : x2.domain()[1];
+    if(beginX2 >= endX2){ endX2 = beginX2 + 1; }
+    brush.extent([beginX2, endX2]);
+
+    if(beginCounter === 0 && endCounter === Infinity){ brush.clear(); };
+
+    brush(d3.select(".brush"));
+    brush.event(d3.select(".brush"));
   };
   //------------------------------------------------
 
@@ -210,8 +258,11 @@ function MultiLineChart(ndxManager){
     focusBE.data(beData);
     focusBE.select("path").attr("d", function(d) { return focusLine(d.values); });
 
+    gameData = dataManager.getBrushedGames(ndxManager.getBeginCounter(), ndxManager.getEndCounter());
+    drawGameBackground(gameData);
+
     focusSVG.select(".x.axis").call(xAxis);
-    focusSVG.select(".y.axis").transition().duration(750).call(yAxis);
+    focusSVG.select(".y.axis").transition().duration(750).call(yAxis);    
   };
 
   function triggerNewData() {
@@ -239,6 +290,81 @@ function MultiLineChart(ndxManager){
     }
   }
   var debouncedAutoReloadDuringBrush = _.debounce(autoReloadDuringBrush, debounceAutoReloadTime);
+
+  // drawing background rects
+  function drawGameBackground(data){
+    gameRects = focusGames.selectAll("rect").data(data, function(d){ return d.game_id; });
+    gameLabels = focusGames.selectAll(".gameLabel").data(gameData, function(d){ return d.game_id; })
+
+    // enter
+    gameRects.enter().append("rect")
+        .attr("clip-path", "url(#clip)")
+        .attr("width", function(d) { return x(d.end_count) - x(d.begin_count); })
+        .attr("x", function(d) { return x(d.begin_count); })
+        .attr("y", 0)
+        .attr("height", function(d) { return height; })
+        .style("fill", function(d) { return dataManager.getGameColor(d.game_id); });
+
+    gameRects.append("svg:title").text(function (d) { return dataManager.getGameName(d.game_id); });
+        
+    gameLabels.enter().append("text")
+        .attr("class", "gameLabel")
+        .attr("x", function(d) { return x(d.begin_count) + gameLabelsAddPosX; })
+        .attr("y", gameLabelsAddPosY)
+        .text(function (d) { 
+          return getModifiedGameLabel(
+            dataManager.getGameName(d.game_id), 
+            x(d.end_count) - x(d.begin_count));
+        });
+
+    // update
+    gameRects
+        .attr("width", function(d) { return x(d.end_count) - x(d.begin_count); })
+        .attr("x", function(d) { return x(d.begin_count); });
+
+    gameLabels
+        .attr("x", function(d) { return x(d.begin_count) + 10; })
+        .text(function (d) { 
+          return getModifiedGameLabel(
+            dataManager.getGameName(d.game_id), 
+            x(d.end_count) - x(d.begin_count));
+        });
+        
+    // exit
+    gameRects.exit().remove();
+    gameLabels.exit().remove();
+  };
+
+  function drawGameBackground_old(data){
+    var gameRects = focusGames.selectAll(".gameLabel").data(data, function(d){ return d.game_id; });
+
+    gameRects.enter().append("g")
+        .attr("class", "gameLabel")
+        .attr("clip-path", "url(#clip)");
+
+    gameRects.append("rect")
+        .attr("width", function(d) { return x(d.end_count) - x(d.begin_count); })
+        .attr("x", function(d) { return x(d.begin_count); })
+        .attr("y", 0)
+        .attr("height", function(d) { return height; })
+        .style("fill", function(d) { return dataManager.getGameColor(d.game_id); });
+        
+    gameRects.append("svg:title").text(function (d) { return dataManager.getGameName(d.game_id); });
+    gameRects.append("text")
+        .attr("x", function(d) { return x(d.begin_count) + 10; })
+        .attr("y", 15)
+        .text(function (d) { 
+          return getModifiedGameLabel(
+            dataManager.getGameName(d.game_id), 
+            x(d.end_count) - x(d.begin_count));
+        });
+
+    gameRects.select("rect")
+        .attr("width", function(d) { return x(d.end_count) - x(d.begin_count); })
+        .attr("x", function(d) { return x(d.begin_count); });
+
+    gameRects.exit().remove();
+  };
   //------------------------------------------------
 
 
@@ -260,6 +386,35 @@ function MultiLineChart(ndxManager){
         })
       ]);
   };
+  //------------------------------------------------
+
+
+  //------------------------------------------------
+  // get modified text for game label based on width
+  function getModifiedGameLabel(gameLabel, pxLength){
+    if (pxSpaceForOneChar === undefined){
+      textFW = "abcdefghijklmnopqrstuvdxyz";
+      // get width of characters in SVG
+      var textForWidth = focusGames.selectAll(".textForWidth")
+          .data([textFW])
+        .enter().append("text")
+          .attr("id", "textForWidth")
+          .attr("class", "focusGames")
+          .attr("x", 0)
+          .text(function(d) { return d; });
+      pxSpaceForOneChar = textForWidth.node().getComputedTextLength()/textFW.length;
+      focusGames.selectAll("#textForWidth").remove();
+    }
+    var retLabel = gameLabel.substring(0, parseInt(pxLength/pxSpaceForOneChar));
+    // if truncated, show ellipeses
+    if (retLabel.length != gameLabel.length){
+      retLabel = retLabel.substring(0, retLabel.length - 4) + "..."
+    }
+    // if less than 5 characters, show nothing
+    retLabel = retLabel.length <= 5 ? "" : retLabel;
+    return retLabel;
+  };
+
   //------------------------------------------------
 
 

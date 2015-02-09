@@ -2,18 +2,24 @@
 	Donut chart
 	------------------------------------------------*/
 
-function AllDonutCharts(ndxManager){
-  new DonutChart(ndxManager, 'getDetectionsCountData', '#brand-count-pie-chart');
-  new DonutChart(ndxManager, 'getViewDurationData', '#view-duration-pie-chart');
+function AllDonutCharts(ndxManager, dataManager){
+  var pcBrandCount = new DonutChart(
+    ndxManager, dataManager, 'getDetectionsCountData', '#brand-count-pie-chart');
+  var pcViewDuration = new DonutChart(
+    ndxManager, dataManager, 'getViewDurationData', '#view-duration-pie-chart');
+
+  this.setDivHeight = function(height){
+    pcBrandCount.setDivHeight(height);
+    pcViewDuration.setDivHeight(height);
+  };
 };
 
-function DonutChart(ndxManager, ndxDataAccessMethod, chartDiv){
+function DonutChart(ndxManager, dataManager, ndxDataAccessMethod, chartDiv){
   //------------------------------------------------
   // set up
 
-  // div for chart
-  var pc_detectionCount_div = chartDiv;
-  var divWidth = $(pc_detectionCount_div).parent().width();
+  // width for chart
+  var divWidth = $(chartDiv).parent().width();
 
   var pcData = ndxManager[ndxDataAccessMethod]();
   // var color = d3.scale.category10();
@@ -44,7 +50,7 @@ function DonutChart(ndxManager, ndxDataAccessMethod, chartDiv){
 
   //------------------------------------------------
   // start drawing
-  var pcSVG = d3.select(pc_detectionCount_div).append("svg")
+  var pcSVG = d3.select(chartDiv).append("svg")
       .attr("width", width)
       .attr("height", height)
     .append("g")
@@ -58,7 +64,7 @@ function DonutChart(ndxManager, ndxDataAccessMethod, chartDiv){
 
   arcs.append("path")
       .attr("d", arc)
-      .style("fill", function(d) { return color(d.data.bgId); });
+      .style("fill", function(d) { return dataManager.getBrandGroupColor(d.data.bgId); });
 
   arcs.append("text")
       .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
@@ -67,7 +73,9 @@ function DonutChart(ndxManager, ndxDataAccessMethod, chartDiv){
       .text(function(d) { return d.data.count; });
 
   arcs.append("svg:title")
-      .text(function (d) { return 'Brand Group Name Here' + ": " + d3.format(',%')(d.data.percent); });      
+      .text(function (d) { 
+        return dataManager.getBrandGroupName(d.data.bgId) + ": " + d3.format(',%')(d.data.percent); 
+      });
   //------------------------------------------------
 
 
@@ -83,6 +91,16 @@ function DonutChart(ndxManager, ndxDataAccessMethod, chartDiv){
       .text(function(d) { return d.data.count; });
     arcs.select("title")
       .text(function (d) { return 'Brand Group Name Here' + ": " + d3.format(',%')(d.data.percent); });      
+  };
+  //------------------------------------------------
+
+
+  //------------------------------------------------
+  // Set div height
+  this.setDivHeight = function(height){
+    $(chartDiv)
+      .parent().select('.chart-content')
+      .height(height);
   };
   //------------------------------------------------
 

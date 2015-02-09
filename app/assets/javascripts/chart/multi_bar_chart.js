@@ -2,19 +2,16 @@
 	Multi-line chart
 	------------------------------------------------*/
 
-function MultiBarChart(ndxManager){
+function MultiBarChart(ndxManager, dataManager){
   //------------------------------------------------
   // set up
 
   // div for chart
-  var sc_brandEffectiveness_div = '#component-bar-chart';
-  var divWidth = $(sc_brandEffectiveness_div).parent().width();
+  var bc_ComponentBarChart_div = '#component-bar-chart';
+  var divWidth = $(bc_ComponentBarChart_div).parent().width();
 
   var bcData = ndxManager.getBEComponentData();
   var bgIds = _.pluck(ndxManager.getBEComponentData()[0].bgValues, 'bgId');
-  // var color = d3.scale.category10();
-  var color = d3.scale.ordinal().range(d3.scale.category10().range());
-
   //------------------------------------------------
   // set up gemoetry
   var margin = {top: 10, right: 20, bottom: 40, left: 50},
@@ -43,7 +40,7 @@ function MultiBarChart(ndxManager){
 
   //------------------------------------------------
   // start drawing
-  var bcSVG = d3.select("#d3-component-bar-chart").append("svg")
+  var bcSVG = d3.select(bc_ComponentBarChart_div).append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
     .append("g")
@@ -77,10 +74,12 @@ function MultiBarChart(ndxManager){
       .attr("x", function(d) { return x1(d.bgId); })
       .attr("y", function(d) { return y(d.value); })
       .attr("height", function(d) { return height - y(d.value); })
-      .style("fill", function(d) { return color(d.bgId); });
+      .style("fill", function(d) { return dataManager.getBrandGroupColor(d.bgId); });
       
   componentRects.append("svg:title")
-      .text(function (d) { return 'Brand Group Name Here' + ": " + d3.format(',%')(d.value); });      
+      .text(function (d) { 
+        return dataManager.getBrandGroupName(d.bgId) + ": " + d3.format(',%')(d.value); 
+      });
   //------------------------------------------------
 
 
@@ -89,7 +88,9 @@ function MultiBarChart(ndxManager){
   bcSVG.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
-      .call(xAxis);
+      .call(xAxis)
+      .selectAll("text")
+      .text(function(k){ return dataManager.getComponentBarChartLabel(k); });
 
   bcSVG.append("g")
       .attr("class", "y axis")

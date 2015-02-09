@@ -5,14 +5,18 @@ module Jsonifiers
 			@cacheKey = "#{@season.cache_key}/JAnalyticsSeason"
 		end
 
-		def get_data_hash
+		def to_json
+			return getSeasonSummary()
+		end
+
+		def getSeasonSummary
 			raise 'Need a cache key for JAnalyticsSeason class' if @cacheKey == nil
 			retJSON = Rails.cache.fetch(@cacheKey) do 
-				get_data_hash_NonChached()
+				getSeasonSummary_NonChached()
 			end
-		end		
+		end
 
-		def get_data_hash_NonChached
+		def getSeasonSummary_NonChached
 			retHash = {}
 			retHash[:id] = @season.id
 			retHash[:name] = @season.name
@@ -37,7 +41,7 @@ module Jsonifiers
 					venue_city: game.venue_city, venue_stadium: game.venue_stadium}
 			end
 
-			return retHash
+			return retHash.to_json
 		end
 
 	end

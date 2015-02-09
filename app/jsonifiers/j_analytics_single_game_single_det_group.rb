@@ -3,6 +3,8 @@ include EventsHelper
 
 module Jsonifiers
 	class JAnalyticsSingleGameSingleDetGroup < Jsonifiers::JAnalytics
+		attr_accessor :cacheKey
+
 		def initialize(game, detGroup, summaryResolution)
 			@game = game
 			@detGroup = detGroup
@@ -32,10 +34,11 @@ module Jsonifiers
 				:spatial_effectiveness, # 4
 				:detections_count,      # 5
 				:view_duration,         # 6
-				:quadrants              # 7
+				:q0, :q1, :q2, :q3, :q4, :q5, :q6, :q7, :q8 # quadrants 
 			]
 		end
 
+		# Note: do NOT save JSON in cache - save hash itself
 		def getGameData
 			raise 'Need a cache key for JAnalyticsSingleGameSingleDetGroup class' if @cacheKey == nil
 			retJSON = Rails.cache.fetch(@cacheKey) do 
@@ -43,11 +46,18 @@ module Jsonifiers
 			end
 		end
 
+		# Note: do NOT save JSON in cache - save hash itself
 		def getGameData_NonChached
-			bgDataArr = {}
+			# return objects
+			sortedTimeKeys = []
+			dataHash = {}
+
+			# create cursor
 			summaryMetric = SummaryMetric
 				.in(video_id: @game.videos.pluck(:id), det_group_id: @detGroup.id)
 				.where(resolution_seconds: @summaryResolution)
+
+			# loop through each data point
 			summaryMetric.each do |sm|
 				sm.single_summary_metrics.each do |sdata|
 
@@ -71,15 +81,18 @@ module Jsonifiers
 						sdata[:detections_count],                       # 5
 						# TODO TODO TODO TODO TODO TODO TODO
 						# TODO TODO TODO TODO TODO TODO TODO
-						sdata[:detections_count],                       # 6   <---- TODO: change to proper view duration
-						quadrants                                       # 7
-					]
+						sdata[:detections_count] + 1,                   # 6   <---- TODO: change to proper view duration
+					] + quadrants
 
-					bgDataArr[sdata[:frame_time]] = data
+					dataHash[sdata[:frame_time]] = data
+					sortedTimeKeys << sdata[:frame_time]
 				end
 			end
 			
-			return bgDataArr
+			sortedTimeKeys.sort!
+			
+			# Note: do NOT save JSON in cache - save hash itself
+			return {dataHash: dataHash, sortedTimeKeys: sortedTimeKeys}
 		end
 
 	end

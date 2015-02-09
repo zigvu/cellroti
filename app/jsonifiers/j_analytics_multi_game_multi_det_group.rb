@@ -1,110 +1,133 @@
-require 'json'
-include EventsHelper
+require 'digest'
 
 module Jsonifiers
 	class JAnalyticsMultiGameMultiDetGroup < Jsonifiers::JAnalytics
+		attr_accessor :cacheKey
+
 		def initialize(gameIds, detGroupIds, summaryResolution)
-			@gameIds = gameIds
-			@detGroupIds = detGroupIds
+			@gameIds = gameIds.sort
+			@detGroupIds = detGroupIds.sort
 			@summaryResolution = summaryResolution
-		end
 
-		def getMax(inputArr)
-			outputArr = []
-			for i in 0..(inputArr[0].count - 1)
-				outputArr << inputArr.map{|a| a[i]}.max
+			# check for caches
+			md5 = Digest::MD5.new
+
+			# create single game single det group objects
+			@singleGameSingleDetGroups = {}
+			@gameIds.each do |gameId|
+				@singleGameSingleDetGroups[gameId] = {}
+				@detGroupIds.each do |detGroupId|
+					jd = Jsonifiers::JAnalyticsSingleGameSingleDetGroup.new(
+							Game.find(gameId), DetGroup.find(detGroupId), @summaryResolution)
+					@singleGameSingleDetGroups[gameId][detGroupId] = jd
+					# also compute md5 hash
+					md5 << jd.cacheKey
+				end
 			end
-			return outputArr
+
+			@cacheKey = md5.hexdigest
 		end
 
-		def get_data_new
-			# new data keys for ndx cross filter
-			dataKeys = [:averager, :counter, :game_id, :bg_id] + JAnalyticsSingleGameSingleDetGroup.brand_group_data_keys
+		def to_json
+			return getSeasonData()
+		end
+
+		def getSeasonData
+			# check to see if we already have computed results in mongo
+			seasonData = SerializedCacheStore.where(cachekey: @cacheKey).first
+			return seasonData.data if seasonData != nil
+
+			# if no data exists
+			data = getSeasonData_NonChached()
+
+			# save to database for future reference
+			SerializedCacheStore.create(
+				cachekey: @cacheKey,
+				game_ids: @gameIds,
+				det_group_ids: @detGroupIds,
+				summary_resolution: @summaryResolution,
+				data: data)
+
+			return data
+		end
+
+		def getSeasonData_NonChached
+			# add to data keys
+			dataKeys = [:averager, :counter, :game_id, :det_group_id] + 
+				JAnalyticsSingleGameSingleDetGroup.brand_group_data_keys
 
 			# averager storage
-			averagerIntervals = [5, 10, 30, 100]
+			averagerIntervals = Jsonifiers::JAnalyticsArrayAverager.intervals
 			averagerIntervalsHash = {}
-			averagerIntervals.each do |i|
-				averagerIntervalsHash[i] = {}
-				@detGroupIds.each do |detGroupId|
-					averagerIntervalsHash[i][detGroupId] = []
+			@detGroupIds.each do |detGroupId|
+				averagerIntervalsHash[detGroupId] = {}
+				averagerIntervals.each do |interval|
+					averagerIntervalsHash[detGroupId][interval] = Jsonifiers::JAnalyticsArrayAverager.new(interval)
 				end
 			end
 
 			aggregateData = []
-			dataCounter = []
+			gameDemarcations = []
+
 			counter = 0
-			@gameIds.sort.each do |gameId|
+			gameBeginCounter = 0
+			@gameIds.each do |gameId|
 				# save counter demarcations
-				dataCount = 0
+				gameBeginCounter = counter
 
 				# get data for single game
-				game = Game.find(gameId)
 				gameDetGroupData = {}
+				sortedTimeKeys = nil
 				@detGroupIds.each do |detGroupId|
-					gameDetGroupData[detGroupId] = Jsonifiers::JAnalyticsSingleGameSingleDetGroup.new(
-						game, DetGroup.find(detGroupId), @summaryResolution).getGameData()
+					gameData = @singleGameSingleDetGroups[gameId][detGroupId].getGameData()
+					gameDetGroupData[detGroupId] = gameData[:dataHash]
+					sortedTimeKeys = gameData[:sortedTimeKeys]
 				end
 				
-				# inject additional variables for each time stamp
-				timeKeys = gameDetGroupData[@detGroupIds.first].keys
-				timeKeys.sort.each do |tKey|
+				# create multi-game counter and averager
+				sortedTimeKeys.each do |tKey|
 					@detGroupIds.each do |detGroupId|
-						dataLine = gameDetGroupData[detGroupId][tKey].flatten
+						dataLine = gameDetGroupData[detGroupId][tKey]
 
+						# put in the original non-averaged data
 						aggregateData << [1, counter, gameId, detGroupId] + dataLine
-						averagerIntervals.each do |i|
-							averagerIntervalsHash[i][detGroupId] << dataLine
-							# if size reached, dump into outputArr
-							if averagerIntervalsHash[i][detGroupId].count == i
-								aggregateData << [i, counter, gameId, detGroupId] + getMax(averagerIntervalsHash[i][detGroupId])
-								averagerIntervalsHash[i][detGroupId] = []
+
+						# put in data for each averager interval
+						averagerIntervals.each do |interval|
+							averagerIntervalsHash[detGroupId][interval].addData(dataLine)
+						end
+
+						# if size reached, dump into output array
+						averagerIntervals.each do |interval|
+							if averagerIntervalsHash[detGroupId][interval].isFull?
+								aggregateData << [interval, counter, gameId, detGroupId] + \
+									averagerIntervalsHash[detGroupId][interval].getData()
+								averagerIntervalsHash[detGroupId][interval].reset()
 							end
 						end
+
 					end
-					dataCount += 1
 					counter += 1
 				end
 
-				dataCounter << { game_id: gameId, data_count: dataCount }
+				gameDemarcations << { game_id: gameId, begin_count: gameBeginCounter, end_count: counter }
 			end
-			return dataKeys, dataCounter, aggregateData
-		end
 
-		def get_data
-			# new data keys for ndx cross filter
-			dataKeys = [:counter, :game_id, :bg_id] + JAnalyticsSingleGameSingleDetGroup.brand_group_data_keys
+			# add in some extra information in JSON
+			retHash = {}
 
-			aggregateData = []
-			dataCounter = []
-			counter = 0
-			@gameIds.sort.each do |gameId|
-				# save counter demarcations
-				dataCount = 0
-
-				# get data for single game
-				game = Game.find(gameId)
-				gameDetGroupData = {}
-				@detGroupIds.each do |detGroupId|
-					gameDetGroupData[detGroupId] = Jsonifiers::JAnalyticsSingleGameSingleDetGroup.new(
-						game, DetGroup.find(detGroupId), @summaryResolution).getGameData()
-				end
-				
-				# inject additional variables for each time stamp
-				timeKeys = gameDetGroupData[@detGroupIds.first].keys
-				timeKeys.sort.each do |tKey|
-					@detGroupIds.each do |detGroupId|
-						aggregateData << [counter, gameId, detGroupId] + gameDetGroupData[detGroupId][tKey]
-					end
-					dataCount += 1
-					counter += 1
-				end
-
-				dataCounter << { game_id: gameId, data_count: dataCount }
+			# det group information
+			retHash[:brand_group_map] = {}
+			@detGroupIds.each do |detGroupId|
+				retHash[:brand_group_map][detGroupId] = DetGroup.find(detGroupId).pretty_name
 			end
-			return dataKeys, dataCounter, aggregateData
-		end
 
+			retHash[:brand_group_data_keys] = dataKeys
+			retHash[:game_demarcations] = gameDemarcations
+			retHash[:ndx_data] = aggregateData
+
+			return retHash.to_json
+		end
 
 	end
 end
