@@ -42,42 +42,44 @@ $chart-range-bg-bar-opacity: 0.5;
 		stroke-width: 1.5px;
 	}
 
-	// multi-series chart
-	.contextSVGBackground {
-		fill: scale-color($chart-range-bg-bar-color, $lightness: 80%);
-		stroke: $chart-range-bg-bar-color;
-		stroke-width: 1px;
-	}
+	// brush chart
+	.brush-chart {
+		rect.bg-rect {
+			fill: scale-color($chart-range-bg-bar-color, $lightness: 80%);
+			stroke: $chart-range-bg-bar-color;
+			stroke-width: 1px;
+		}
 
-	.contextSVG {
 		path {
 			stroke-width: 1px;
 			pointer-events: none;
 		}
-	}
 
-	.focusGames {
-		rect {
-			stroke: black;
+		.brush .extent {
+			fill-opacity: $chart-range-bg-bar-opacity;
+			stroke: $chart-range-bg-bar-color;
 			stroke-width: 1px;
 			shape-rendering: crispedges;
-			opacity: $chart-series-bg-bar-opacity;
-		}
-		text {
-			text-transform: uppercase;
-			font-size: rem-calc(10);
-			fill: black;
-			opacity: 0.9;
 		}
 	}
 
-	.brush .extent {
-		fill-opacity: $chart-range-bg-bar-opacity;
-		stroke: $chart-range-bg-bar-color;
-		stroke-width: 1px;
-		shape-rendering: crispedges;
+	// multi-series chart
+	.multi-line-chart {
+		.game-bg-rect {
+			rect {
+				stroke: black;
+				stroke-width: 1px;
+				shape-rendering: crispedges;
+				opacity: $chart-series-bg-bar-opacity;
+			}
+			text {
+				text-transform: uppercase;
+				font-size: rem-calc(10);
+				fill: black;
+				opacity: 0.9;
+			}
+		}
 	}
-
 
 	// multi bar chart
 	.bar-chart {

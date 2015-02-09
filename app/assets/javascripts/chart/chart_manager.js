@@ -19,6 +19,7 @@ function ChartManager(seasonInfo, seasonData){
 
   // draw charts
   multiLineChart = new MultiLineChart(ndxManager, dataManager);
+  brushChart = new BrushChart(ndxManager, dataManager, multiLineChart);
   multiBarChart = new MultiBarChart(ndxManager, dataManager);
   allDonutCharts = new AllDonutCharts(ndxManager, dataManager);
   heatmapChart = new HeatmapChart(ndxManager, dataManager);
@@ -26,7 +27,7 @@ function ChartManager(seasonInfo, seasonData){
   timeLogEnd("chartDrawing", "All chart drawing done");
 
   // draw legend
-  chartLegend = new ChartLegend(dataManager, multiLineChart);
+  chartLegend = new ChartLegend(dataManager, brushChart);
 };
 
 //------------------------------------------------  

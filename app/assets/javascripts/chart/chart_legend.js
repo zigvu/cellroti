@@ -2,7 +2,7 @@
 	Chart Legend
 	------------------------------------------------*/
 
-function ChartLegend(dataManager, multiLineChart){
+function ChartLegend(dataManager, brushChart){
 
   //------------------------------------------------
 	// Add legend items
@@ -21,7 +21,7 @@ function ChartLegend(dataManager, multiLineChart){
 	// Reset Chart
   var resetChartsId = '#brand-legend-reset-charts';
   $(resetChartsId).click(function(){
-		multiLineChart.brushSet(0, Infinity);
+		brushChart.brushSet(0, Infinity);
 	});
   //------------------------------------------------
 
