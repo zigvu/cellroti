@@ -1,5 +1,5 @@
 /*------------------------------------------------
-	Multi-line chart
+	Multi-bar chart
 	------------------------------------------------*/
 
 function MultiBarChart(ndxManager, dataManager){

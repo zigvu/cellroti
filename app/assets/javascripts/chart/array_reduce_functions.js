@@ -1,5 +1,10 @@
 /*------------------------------------------------
-	Generic reduce add/average for arrays
+	Generic reduce sum/count/average for arrays
+
+	Note: It is inefficient to perform the average
+	operation for each `p`. Hence, only sum and count
+	are computed - at the point of usage, they can be
+	used to compute average.
 	------------------------------------------------*/
 
 // Namespace array functions
@@ -13,14 +18,12 @@ var REDUCEAVG = REDUCEAVG || {
 				if(p.count === 0){ 
 					for(var i = 0; i < attrArr.length; i++){
 						p.sum[attrArr[i]] = 0;
-						p.avg[attrArr[i]] = 0;
 					}
 				}
 				
 				++p.count;
 				for(var i = 0; i < attrArr.length; i++){
 					p.sum[attrArr[i]] += v[attrArr[i]];
-					p.count === 0 ? p.avg[attrArr[i]] = 0 : p.avg[attrArr[i]] = p.sum[attrArr[i]]/p.count;
 				}
 				return p;
 			};
@@ -32,7 +35,6 @@ var REDUCEAVG = REDUCEAVG || {
 				--p.count;
 				for(var i = 0; i < attrArr.length; i++){
 					p.sum[attrArr[i]] -= v[attrArr[i]];
-					p.count === 0 ? p.avg[attrArr[i]] = 0 : p.avg[attrArr[i]] = p.sum[attrArr[i]]/p.count;
 				}
 				return p;
 			};
@@ -40,7 +42,7 @@ var REDUCEAVG = REDUCEAVG || {
 		//------------------------------------------------
 		/* Init */
 		reduceInitAvg: function() {
-			return { count:0, sum:{}, avg:{} };
+			return { count:0, sum:{} };
 		}
 	},
 	SINGLE: {
@@ -50,7 +52,6 @@ var REDUCEAVG = REDUCEAVG || {
 			return function(p,v) {
 				++p.count;
 				p.sum += v[attr];
-				p.count === 0 ? p.avg = 0 : p.avg = p.sum/p.count;
 
 				return p;
 			};
@@ -61,7 +62,6 @@ var REDUCEAVG = REDUCEAVG || {
 			return function(p,v) {
 				--p.count;
 				p.sum -= v[attr];
-				p.count === 0 ? p.avg = 0 : p.avg = p.sum/p.count;
 
 				return p;
 			};
@@ -69,54 +69,7 @@ var REDUCEAVG = REDUCEAVG || {
 		//------------------------------------------------
 		/* Init */
 		reduceInitAvg: function() {
-			return { count:0, sum:0, avg:0 };
+			return { count:0, sum:0 };
 		}
 	}
 };
-
-// //------------------------------------------------
-// /* Add average */
-
-// function reduceAddAvg(attrArr) {
-// 	return function(p,v) {
-// 		// initialize
-// 		if(p.count === 0){ 
-// 			for(var i = 0; i < attrArr.length; i++){
-// 				p.sum[attrArr[i]] = 0;
-// 				p.avg[attrArr[i]] = 0;
-// 			}
-// 		}
-		
-// 		++p.count;
-// 		for(var i = 0; i < attrArr.length; i++){
-// 			p.sum[attrArr[i]] += v[attrArr[i]];
-// 			p.count === 0 ? p.avg[attrArr[i]] = 0 : p.avg[attrArr[i]] = p.sum[attrArr[i]]/p.count;
-// 		}
-// 		return p;
-// 	};
-// }
-
-// //------------------------------------------------  
-
-// //------------------------------------------------
-// /* Remove average */
-// function reduceRemoveAvg(attrArr) {
-// 	return function(p,v) {
-// 		--p.count;
-// 		for(var i = 0; i < attrArr.length; i++){
-// 			p.sum[attrArr[i]] -= v[attrArr[i]];
-// 			p.count === 0 ? p.avg[attrArr[i]] = 0 : p.avg[attrArr[i]] = p.sum[attrArr[i]]/p.count;
-// 		}
-// 		return p;
-// 	};
-// }
-
-// //------------------------------------------------  
-
-// //------------------------------------------------
-// /* Init */
-// function reduceInitAvg() {
-// 	return { count:0, sum:{}, avg:{} };
-// }
-
-//------------------------------------------------  

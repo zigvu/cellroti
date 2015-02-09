@@ -33,7 +33,6 @@ gem 'simple_token_authentication' # for API authentication using devise
 gem 'authority'
 gem 'rolify'
 # analytics
-#gem 'dcjs-rails', '~> 1.6.0'   --> pulled in from github and put in vendor manually
 gem 'd3-rails'
 gem 'crossfilter-rails'
 # misc.

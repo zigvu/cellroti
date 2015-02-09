@@ -2,8 +2,6 @@
 
 $chart-panel-rounded-corner-radius: $global-radius;
 
-$chart-panel-help-icon-color: $steel;
-$chart-panel-help-icon-color-hover: $primary-color;
 $chart-panel-label-title-color: $oil;
 $chart-panel-footer-color: $oil;
 
@@ -15,11 +13,10 @@ $chart-panel-legend-box-color: scale-color($chart-panel-border-color-light, $lig
 $chart-series-bg-bar-opacity: 0.1;
 $chart-range-bg-bar-color: $chart-panel-border-color-light;
 $chart-range-bg-bar-opacity: 0.5;
-$chart-axis-hide-opacity: 0.0;
 
 
 .d3-chart {
-	// chart agnostic
+	// common elements
 	.axis-label {
 		text-transform: uppercase;
 		line-height: 80%;
@@ -91,9 +88,7 @@ $chart-axis-hide-opacity: 0.0;
 				font-size: rem-calc(12);
 			}
 		}
-	}
 
-	.componentSVG {
 		rect {
 			stroke: white;
 			stroke-width: 1px;
@@ -156,81 +151,6 @@ $chart-axis-hide-opacity: 0.0;
 		}		
 	}
 }
-
-
-// .dc-chart {
-// 	.y-axis-label, .x-axis-label {
-// 		text-transform: uppercase;
-// 		line-height: 80%;
-// 		font-size: rem-calc(12);
-// 	}
-// }
-
-// #dc-brand-effectiveness-series-chart {
-// 	#bg-rects {
-// 		rect {
-// 			opacity: $chart-series-bg-bar-opacity;
-// 		}
-// 		text {
-// 			text-transform: uppercase;
-// 			font-size: rem-calc(10);
-// 			fill: black;
-// 			opacity: 0.9;
-// 		}
-// 	}
-// 	text {
-// 		fill: black;
-// 	}
-// }
-
-// #dc-brand-effectiveness-range-chart {
-// 	.bar {
-// 		opacity: $chart-range-bg-bar-opacity;
-// 	}
-// 	#inline-labels {
-// 		text {
-// 			text-transform: uppercase;
-// 			font-size: rem-calc(10);
-// 			fill: black;
-// 			opacity: 0.9;
-// 		}		
-// 	}
-// 	.x {
-// 		opacity: $chart-axis-hide-opacity;
-// 	}
-// }
-
-// #dc-visual-saliency-bar-chart,
-// #dc-timing-effectiveness-bar-chart,
-// #dc-spatial-effectiveness-bar-chart {
-// 	.y {
-// 		opacity: $chart-axis-hide-opacity;
-// 	}
-// }
-
-// #dc-brand-effectiveness-composite-row {
-// 	@media #{$small-only} {
-// 		padding: 0;
-// 	}
-// 	@media #{$medium-up} {
-// 		padding: 0 1rem 0 1rem;
-// 	}
-// 	.columns {
-// 		padding: 0px;
-// 	}
-// }
-
-// #d3-spatial-position-heatmap-chart {
-// 	rect.bordered {
-// 		stroke: $chart-panel-border-color-light;
-// 		stroke-width: 1px;
-// 	}
-
-// 	text.legend {
-// 		font-size: rem-calc(9);
-// 		fill: $chart-panel-label-title-color;
-// 	}
-// }
 
 #brand-legend {
 	border: 1px solid $chart-panel-border-color-light;

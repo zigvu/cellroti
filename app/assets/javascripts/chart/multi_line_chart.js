@@ -5,8 +5,7 @@
 function MultiLineChart(ndxManager, dataManager){
   //------------------------------------------------
   // set up
-  var debounceAutoReloadTime = 500; // 0.5 second
-  var pxSpaceForOneChar; // storage for game background label computation
+  var pxSpaceForOneChar; // cache px mapper for game background label length computation
 
   // div for chart
   var sc_brandEffectiveness_div = '#brand-effectiveness-series-chart';
@@ -289,7 +288,7 @@ function MultiLineChart(ndxManager, dataManager){
       triggerNewData();
     }
   }
-  var debouncedAutoReloadDuringBrush = _.debounce(autoReloadDuringBrush, debounceAutoReloadTime);
+  var debouncedAutoReloadDuringBrush = _.debounce(autoReloadDuringBrush, chartDebounceTime);
 
   // drawing background rects
   function drawGameBackground(data){
