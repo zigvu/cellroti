@@ -15,8 +15,10 @@
 //= require jquery-ui
 //= require foundation
 //= require d3
+//= require colorbrewer
 //= require crossfilter
 //= require jquery-readyselector
+//= require jquery-spinner
 //= require jquery.sticky
 //= require underscore
 //= require_tree ./chart

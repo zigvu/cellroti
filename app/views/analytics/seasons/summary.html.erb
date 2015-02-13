@@ -3,6 +3,7 @@
 <script type="text/javascript">
   window.seasonLabelPath = "/api/v1/analytics/seasons/" + <%= @season.id %>;
   window.seasonShowPath = "/api/v1/analytics/seasons/" + <%= @season.id %> + "/summary";
+  window.gameShowPath = "/api/v1/analytics/seasons/" + <%= @season.id %> + "/game/";
 </script>
 
 <%= render 'summary_panel' %>
@@ -22,14 +23,14 @@
             <div class="text left">Brand Effectiveness</div>
             <div class="help right">
               <ul class="button-group radius">
-                <li>
+                <li id="reset-charts">
                   <span class="button title-button" title="Reset Chart">
-                    <i class="fi-refresh" id="brand-effectiveness-series-chart-reset"></i>
+                    <i class="fi-refresh"></i>
                   </span>
                 </li>
-                <li>
+                <li data-reveal-id="series-chart-info-reveal" id="series-chart-info">
                   <span class="button title-button" title="Help!">
-                    <i data-reveal-id="brand-effectiveness-series-chart-info-reveal" class="fi-info" id="brand-effectiveness-series-chart-info"></i>
+                    <i class="fi-info"></i>
                   </span>
                 </li>
               </ul>
@@ -45,12 +46,17 @@
           <div class="chart-content">
             <div class="row">
               <div class="small-12 columns">
-                <div id="brand-effectiveness-series-chart"></div>
+                <div id="series-chart"></div>
               </div>
             </div>
             <div class="row">
               <div class="small-12 columns">
-              <div id="brand-effectiveness-brush-chart"></div>
+                <div id="brush-chart"></div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="small-12 columns">
+                <div id="game-selection-chart"></div>
               </div>
             </div>
           </div>
@@ -76,17 +82,17 @@
                     <div class="brand-label-titles">Chart Tools</div>
                     <ul class="button-group radius stack" id="brand-legend-buttons">
                       <li>
-                        <div class="button small expand alert" id="brand-legend-reset-charts">
-                          Reset Charts
-                        </div>
-                      </li>
-                      <li>
-                        <div class="button small expand" id="brand-legend-update-charts">
+                        <div class="button small expand success" id="brand-legend-update-charts">
                           Update Charts
                         </div>
                       </li>
                       <li>
-                        <div class="button small expand success" id="brand-legend-normal-hide">
+                        <div class="button small expand secondary" id="brand-legend-generate-report">
+                          Generate Report
+                        </div>
+                      </li>
+                      <li>
+                        <div class="button small expand" id="brand-legend-normal-hide">
                           Hide Legend
                         </div>
                       </li>
@@ -103,7 +109,7 @@
                   <div class="brand-legend-hidden-text">Click to show legend</div>
                 </div>
                 <div class="small-5 medium-2 columns">
-                  <div class="button small radius expand success" id="brand-legend-hidden-show">
+                  <div class="button small radius expand" id="brand-legend-hidden-show">
                     Show Legend
                   </div>
                 </div>
@@ -125,43 +131,21 @@
 <div class="row">
   <div class="small-12 columns">
     <div class="chart-panel">
-
-      <!-- BEGIN: Bar chart component title bar row -->
-      <div class="row">
-        <div class="small-12 columns">
-          <div class="chart-title clearfix">
-            <div class="text left">Brand Effectiveness Components</div>
-            <div class="help right">
-              <ul class="button-group radius">
-                <li>
-                  <span class="button title-button" title="Reset Chart">
-                    <i class="fi-refresh" id="brand-effectiveness-composite-reset"></i>
-                  </span>
-                </li>
-                <li>
-                  <span class="button title-button" title="Help!">
-                    <i data-reveal-id="brand-effectiveness-composite-info-reveal" class="fi-info" id="brand-effectiveness-composite-info"></i>
-                  </span>
-                </li>
-              </ul>
-            </div>
-          </div>
+      <div class="chart-title clearfix">
+        <div class="text left">Brand Effectiveness Components</div>
+        <div class="help right">
+          <ul class="button-group radius">
+            <li data-reveal-id="component-bar-chart-info-reveal" id="component-bar-chart-info">
+              <span class="button title-button" title="Help!">
+                <i class="fi-info"></i>
+              </span>
+            </li>
+          </ul>
         </div>
       </div>
-      <!-- END: Bar chart component title bar row -->
-
-      <!-- BEGIN: Bar chart component charts row -->
-      <div id="brand-effectiveness-composite-row">
-        <div class="chart-content">
-          <div class="row">
-            <div class="small-12 columns">
-                <div id="component-bar-chart"></div>
-            </div>
-          </div>
-        </div>
+      <div class="chart-content">
+        <div id="component-bar-chart"></div>
       </div>
-      <!-- END: Bar chart component charts row -->
-
     </div>
   </div>
 </div>
@@ -176,14 +160,9 @@
         <div class="text left">Brand Count</div>
         <div class="help right">
           <ul class="button-group radius">
-            <li>
-              <span class="button title-button" title="Reset Chart">
-                <i class="fi-refresh" id="brand-count-pie-chart-reset"></i>
-              </span>
-            </li>
-            <li>
+            <li data-reveal-id="brand-count-pie-chart-info-reveal" id="brand-count-pie-chart-info">
               <span class="button title-button" title="Help!">
-                <i data-reveal-id="brand-count-pie-chart-info-reveal" class="fi-info" id="brand-count-pie-chart-info"></i>
+                <i class="fi-info"></i>
               </span>
             </li>
           </ul>
@@ -203,14 +182,9 @@
         <div class="text left">View Duration</div>
         <div class="help right">
           <ul class="button-group radius">
-            <li>
-              <span class="button title-button" title="Reset Chart">
-                <i class="fi-refresh" id="view-duration-pie-chart-reset"></i>
-              </span>
-            </li>
-            <li>
+            <li data-reveal-id="view-duration-pie-chart-info-reveal" id="view-duration-pie-chart-info">
               <span class="button title-button" title="Help!">
-                <i data-reveal-id="view-duration-pie-chart-info-reveal" class="fi-info" id="view-duration-pie-chart-info"></i>
+                <i class="fi-info"></i>
               </span>
             </li>
           </ul>
@@ -230,9 +204,9 @@
         <div class="text left">Spatial Position</div>
         <div class="help right">
           <ul class="button-group radius">
-            <li>
+            <li data-reveal-id="heatmap-chart-info-reveal" id="heatmap-chart-info">
               <span class="button title-button" title="Help!">
-                <i data-reveal-id="heatmap-chart-info-reveal" class="fi-info" id="heatmap-chart-info"></i>
+                <i class="fi-info"></i>
               </span>
             </li>
           </ul>
@@ -257,21 +231,51 @@
   </div>
 </div>
 
+
+
+<!-- BEGIN: Table whole -->
 <div class="row">
   <div class="small-12 columns">
-    <div class="panel">10-row data table here</div>
+    <div class="chart-panel">
+      <div class="chart-title clearfix">
+        <div class="text left">Highest Brand Effectiveness Values</div>
+        <div class="help right">
+          <ul class="button-group radius">
+            <li data-reveal-id="table-chart-info-reveal" id="table-chart-info">
+              <span class="button title-button" title="Help!">
+                <i class="fi-info"></i>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div id="table-chart"></div>
+    </div>
   </div>
 </div>
+<!-- END: Table whole -->
 
-<div class="button" id="debug_dump">Debug dump</div>
 
-<!-- Help Sections -->
-<div id="brand-effectiveness-series-chart-info-reveal" class="reveal-modal large" data-reveal>
-  <h3>Brand Effectiveness Chart Help</h3>
-  <p class="lead">Your couch.  It is mine.</p>
-  <p>I'm a cool paragraph that lives inside of an even cooler modal. Wins!</p>
-  <a class="close-reveal-modal">&#215;</a>
-</div>
+<!-- BEGIN: Help Sections -->
+  <div id="series-chart-info-reveal" class="reveal-modal large" data-reveal>
+    <%= render 'summary_info_series_chart' %>
+  </div>
+  <div id="component-bar-chart-info-reveal" class="reveal-modal large" data-reveal>
+    <%= render 'summary_info_series_chart' %>
+  </div>
+  <div id="brand-count-pie-chart-info-reveal" class="reveal-modal large" data-reveal>
+    <%= render 'summary_info_series_chart' %>
+  </div>
+  <div id="view-duration-pie-chart-info-reveal" class="reveal-modal large" data-reveal>
+    <%= render 'summary_info_series_chart' %>
+  </div>
+  <div id="heatmap-chart-info-reveal" class="reveal-modal large" data-reveal>
+    <%= render 'summary_info_series_chart' %>
+  </div>
+  <div id="table-chart-info-reveal" class="reveal-modal large" data-reveal>
+    <%= render 'summary_info_series_chart' %>
+  </div>
+<!-- END: Help Sections -->
 
 
 </div>

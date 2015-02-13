@@ -2,7 +2,7 @@
 	Heatmap Chart
 	------------------------------------------------*/
 
-function HeatmapChart(ndxManager, dataManager){
+function HeatmapChart(chartManager){
   //------------------------------------------------
   // set up
 
@@ -10,12 +10,12 @@ function HeatmapChart(ndxManager, dataManager){
 	var heatmap_div = '#heatmap-chart';
   var divWidth = $(heatmap_div).parent().width();
 
-
-	var quadMapping = ndxManager.getHeatmapData();
+	var quadMapping = chartManager.getHeatmapData();
 	
+	// python command: matplotlib.colors.rgb2hex(pylab.cm.jet(0.1))
 	var heatmapColors = [
-		"#0000FF", "#0032CC", "#006599", "#009965", "#00CC32",
-		"#33CB00", "#669800", "#996500", "#CB3300", "#FF0000"
+		'#000080', '#0000f1', '#004dff', '#00b1ff', '#29ffce',
+		'#7dff7a', '#ceff29', '#ffc400', '#ff6800', '#f10800'
 	];
 	var heatmapColorsDomain = $.map(heatmapColors, function(val, i){
 		return Math.round(10 * i / (heatmapColors.length))/10;
@@ -64,7 +64,7 @@ function HeatmapChart(ndxManager, dataManager){
 
 	heatmap
 		.transition()
-			.duration(1000)
+			.duration(750)
 			.style("fill", function(d) { return heatmapColorScale(d.value); });
 
 	var legend = heatmapSVG.selectAll(".legend")
@@ -102,7 +102,7 @@ function HeatmapChart(ndxManager, dataManager){
   //------------------------------------------------
   // repainting and loading new data
   function repaint(){
-  	quadMapping = ndxManager.getHeatmapData();
+  	quadMapping = chartManager.getHeatmapData();
 
     heatmap.data(quadMapping, function(d){ return d.q; });
     heatmap.select("title")
@@ -110,7 +110,7 @@ function HeatmapChart(ndxManager, dataManager){
 
     heatmap
     	.transition()
-	    	.duration(1000)
+	    	.duration(750)
 	      .style("fill", function(d) { return heatmapColorScale(d.value); });
 	};
   //------------------------------------------------
@@ -125,6 +125,6 @@ function HeatmapChart(ndxManager, dataManager){
 
   //------------------------------------------------
   // finally, add call back to repaint charts
-  ndxManager.addCallback(repaint);
+  chartManager.addCallback(repaint);
   //------------------------------------------------
 };

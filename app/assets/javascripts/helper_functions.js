@@ -8,6 +8,23 @@
 // more than once in the time below
 chartDebounceTime = 500; // milliseconds
 
+
+//------------------------------------------------
+/* To show/hide wait spinners */
+showSpinner = function() {
+  $("#spinner-overlay").center();
+  $("#spinner-popup").center();
+  $("#spinner-overlay").show();
+  $("#spinner-popup").show();
+  $("#spinner-popup").spin("large", "white");
+}
+hideSpinner = function() {
+  $("#spinner-overlay").hide();
+  $("#spinner-popup").hide();
+  $("#spinner-popup").spin(false);
+};
+//------------------------------------------------
+
 //------------------------------------------------
 /* Decorate top-bar navigation li items with "active" class */
 function decorateNavigationList(){

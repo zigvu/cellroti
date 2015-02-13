@@ -2,18 +2,19 @@
   Multi-line chart
   ------------------------------------------------*/
 
-function MultiLineChart(ndxManager, dataManager){
+function MultiLineChart(chartManager){
   //------------------------------------------------
   // set up
+  var chartHelpers = chartManager.chartHelpers;
+
   var pxSpaceForOneChar; // cache px mapper for game background label length computation
 
   // div for chart
-  var sc_brandEffectiveness_div = '#brand-effectiveness-series-chart';
-  var divWidth = $(sc_brandEffectiveness_div).parent().width();
+  var seriesChart_div = '#series-chart';
+  var divWidth = $(seriesChart_div).parent().width();
 
-  var beData = ndxManager.getBEData();
-  var gameData = dataManager.getBrushedGames(
-    ndxManager.getBeginCounter(), ndxManager.getEndCounter());
+  var beData = chartManager.getBEData();
+  var gameData = chartManager.getBrushedGames();
   //------------------------------------------------
 
 
@@ -26,7 +27,7 @@ function MultiLineChart(ndxManager, dataManager){
   // how far to the left of y-axis we want our labels to be
   var yAxisLabelAnchorX = -35;
 
-  var gameLabelsAddPosX = 15;
+  var gameLabelsAddPosX = 5;
   var gameLabelsAddPosY = 15;
   //------------------------------------------------
 
@@ -55,7 +56,7 @@ function MultiLineChart(ndxManager, dataManager){
 
   //------------------------------------------------
   // start drawing
-  var multiLineSVG = d3.select(sc_brandEffectiveness_div).append("svg")
+  var multiLineSVG = d3.select(seriesChart_div).append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
     .append("g")
@@ -76,7 +77,7 @@ function MultiLineChart(ndxManager, dataManager){
   //------------------------------------------------
   // define domains
   x.domain(d3.extent(beData[0].values, function(d) { return d.counter; }));
-  y.domain([getMinEffectiveness(beData), getMaxEffectiveness(beData)]);
+  y.domain([chartHelpers.getMinEffectiveness(beData), chartHelpers.getMaxEffectiveness(beData)]);
   //------------------------------------------------
 
 
@@ -91,7 +92,7 @@ function MultiLineChart(ndxManager, dataManager){
       .attr("class", "line")
       .attr("clip-path", "url(#clip)")
       .attr("d", function(d) { return focusLine(d.values); })
-      .style("stroke", function(d) { return dataManager.getBrandGroupColor(d.bgId); }); 
+      .style("stroke", function(d) { return chartManager.getBrandGroupColor(d.bgId); }); 
 
   // draw background rects
   var gameRects = gameBgRect.selectAll("rect")
@@ -103,9 +104,7 @@ function MultiLineChart(ndxManager, dataManager){
       .attr("x", function(d) { return x(d.begin_count); })
       .attr("y", 0)
       .attr("height", function(d) { return height; })
-      .style("fill", function(d) { return dataManager.getGameColor(d.game_id); });
-      
-  gameRects.append("svg:title").text(function (d) { return dataManager.getGameName(d.game_id); });
+      .style("fill", function(d) { return chartManager.getGameColor(d.game_id); });
 
   // draw background labels
   var gameLabels = gameBgRect.selectAll(".gameLabel")
@@ -116,9 +115,7 @@ function MultiLineChart(ndxManager, dataManager){
       .attr("x", function(d) { return x(d.begin_count) + gameLabelsAddPosX; })
       .attr("y", gameLabelsAddPosY)
       .text(function (d) { 
-        return getModifiedGameLabel(
-          dataManager.getGameName(d.game_id), 
-          x(d.end_count) - x(d.begin_count));
+        return getModifiedLabel(chartManager.getGameName(d.game_id), x(d.end_count) - x(d.begin_count));
       });
   //------------------------------------------------
 
@@ -143,9 +140,7 @@ function MultiLineChart(ndxManager, dataManager){
 
   //------------------------------------------------
   // brush event handling 
-  this.getXDomain = function() {
-    return x.domain();
-  };
+  this.getXDomain = function() { return x.domain(); };
 
   // on brush 
   this.setNewExtent = function(brushExtent) {
@@ -161,16 +156,18 @@ function MultiLineChart(ndxManager, dataManager){
   //------------------------------------------------
   // repainting and loading new data
   function repaint(){
-    beData = ndxManager.getBEData();
+    beData = chartManager.getBEData();
 
     x.domain(d3.extent(beData[0].values, function(d) { return d.counter; }));
-    y.domain([getMinEffectiveness(beData), getMaxEffectiveness(beData)]);
+    y.domain([chartHelpers.getMinEffectiveness(beData), chartHelpers.getMaxEffectiveness(beData)]);
 
     focusBE.data(beData);
     focusBE.select("path").attr("d", function(d) { return focusLine(d.values); });
 
-    gameData = dataManager.getBrushedGames(ndxManager.getBeginCounter(), ndxManager.getEndCounter());
-    drawGameBackground(gameData);
+    if(!chartManager.isGameDisplaying){
+      gameData = chartManager.getBrushedGames();
+      drawGameBackground(gameData);
+    }
 
     multiLineSVG.select(".x.axis").call(xAxis);
     multiLineSVG.select(".y.axis").transition().duration(750).call(yAxis);    
@@ -188,18 +185,14 @@ function MultiLineChart(ndxManager, dataManager){
         .attr("x", function(d) { return x(d.begin_count); })
         .attr("y", 0)
         .attr("height", function(d) { return height; })
-        .style("fill", function(d) { return dataManager.getGameColor(d.game_id); });
-
-    gameRects.append("svg:title").text(function (d) { return dataManager.getGameName(d.game_id); });
-        
+        .style("fill", function(d) { return chartManager.getGameColor(d.game_id); });
+    
     gameLabels.enter().append("text")
         .attr("class", "gameLabel")
         .attr("x", function(d) { return x(d.begin_count) + gameLabelsAddPosX; })
         .attr("y", gameLabelsAddPosY)
         .text(function (d) { 
-          return getModifiedGameLabel(
-            dataManager.getGameName(d.game_id), 
-            x(d.end_count) - x(d.begin_count));
+          return getModifiedLabel(chartManager.getGameName(d.game_id), x(d.end_count) - x(d.begin_count));
         });
 
     // update
@@ -208,11 +201,9 @@ function MultiLineChart(ndxManager, dataManager){
         .attr("x", function(d) { return x(d.begin_count); });
 
     gameLabels
-        .attr("x", function(d) { return x(d.begin_count) + 10; })
+        .attr("x", function(d) { return x(d.begin_count) + gameLabelsAddPosX; })
         .text(function (d) { 
-          return getModifiedGameLabel(
-            dataManager.getGameName(d.game_id), 
-            x(d.end_count) - x(d.begin_count));
+          return getModifiedLabel(chartManager.getGameName(d.game_id), x(d.end_count) - x(d.begin_count));
         });
         
     // exit
@@ -223,57 +214,18 @@ function MultiLineChart(ndxManager, dataManager){
 
 
   //------------------------------------------------
-  // Get min/max of brand effectiveness - adjust
-  // slightly so that it doesn't touch the bounds of chart
-  function getMinEffectiveness(curData){
-    return _.max(
-      [0, d3.min(curData, function(s) { 
-          return d3.min(s.values, function(v) { return v.brand_effectiveness - 0.01; }); 
-        })
-      ]);
-  };
-
-  function getMaxEffectiveness(curData){
-    return _.min(
-      [1, d3.max(curData, function(s) { 
-          return d3.max(s.values, function(v) { return v.brand_effectiveness + 0.01; }); 
-        })
-      ]);
-  };
-  //------------------------------------------------
-
-
-  //------------------------------------------------
   // get modified text for game label based on width
-  function getModifiedGameLabel(gameLabel, pxLength){
+  function getModifiedLabel(label, pxContainerLength){
     if (pxSpaceForOneChar === undefined){
-      var textFW = "abcdefghijklmnopqrstuvdxyz";
-      // get width of characters in SVG
-      var textForWidth = gameBgRect.selectAll(".textForWidth")
-          .data([textFW])
-        .enter().append("text")
-          .attr("id", "textForWidth")
-          .attr("class", "game-bg-rect")
-          .attr("x", 0)
-          .text(function(d) { return d; });
-      pxSpaceForOneChar = textForWidth.node().getComputedTextLength()/textFW.length;
-      gameBgRect.selectAll("#textForWidth").remove();
+      pxSpaceForOneChar = chartHelpers.getPxSpaceForOneChar(gameBgRect, "game-bg-rect");
     }
-    var retLabel = gameLabel.substring(0, parseInt(pxLength/pxSpaceForOneChar));
-    // if truncated, show ellipeses
-    if (retLabel.length != gameLabel.length){
-      retLabel = retLabel.substring(0, retLabel.length - 4) + "..."
-    }
-    // if less than 5 characters, show nothing
-    retLabel = retLabel.length <= 5 ? "" : retLabel;
-    return retLabel;
+    return chartHelpers.ellipsis(label, pxContainerLength, pxSpaceForOneChar);
   };
-
   //------------------------------------------------
 
 
   //------------------------------------------------
   // finally, add call back to repaint charts
-  ndxManager.addCallback(repaint);
+  chartManager.addCallback(repaint);
   //------------------------------------------------
 };

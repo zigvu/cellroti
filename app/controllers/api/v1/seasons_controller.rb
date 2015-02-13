@@ -1,6 +1,7 @@
 class Api::V1::SeasonsController < ApplicationController
   authorize_actions_for ::Season
   authority_actions :summary => :read
+  authority_actions :game => :read
 
   before_filter :ensure_json_format
   before_action :set_season, only: [:show, :summary]
@@ -14,14 +15,21 @@ class Api::V1::SeasonsController < ApplicationController
 
   # GET /seasons/1
   def show
-    jas = Jsonifiers::JAnalyticsSeason.new(@season)
-    render json: jas.to_json
+    jass = Jsonifiers::JAnalyticsSeasonSummary.new(@season)
+    render json: jass.to_json
   end
 
   # GET /seasons/1/summary
   def summary
     jasd = Jsonifiers::JAnalyticsSeasonData.new(@season, @client)
     render json: jasd.to_json
+  end
+
+  # GET /seasons/1/game/1
+  def game
+    game = Game.find(params[:game_id])
+    jagd = Jsonifiers::JAnalyticsGameData.new(game, @client)
+    render json: jagd.to_json
   end
 
   private
@@ -38,6 +46,6 @@ class Api::V1::SeasonsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def season_params
-      params.permit(:id, :format)
+      params.permit(:id, :format, :game_id)
     end
 end

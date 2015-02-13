@@ -2,15 +2,16 @@
 	Brush chart
 	------------------------------------------------*/
 
-function BrushChart(ndxManager, dataManager, multiLineChart){
+function BrushChart(chartManager){
   //------------------------------------------------
   // set up
+  var chartHelpers = chartManager.chartHelpers;
 
   // div for chart
-  var bc_brandEffectiveness_div = '#brand-effectiveness-brush-chart';
-  var divWidth = $(bc_brandEffectiveness_div).parent().width();
+  var brushChart_div = '#brush-chart';
+  var divWidth = $(brushChart_div).parent().width();
 
-  var beData = ndxManager.getBEData();
+  var beData = chartManager.getBEData();
   //------------------------------------------------
 
 
@@ -18,10 +19,8 @@ function BrushChart(ndxManager, dataManager, multiLineChart){
   // set up gemoetry
   var margin = {top: 1, right: 1, bottom: 1, left: 50},
       width = divWidth - margin.left - margin.right, 
-      height = 37 - margin.top - margin.bottom;     // 35
+      height = 28 - margin.top - margin.bottom;     // 26
 
-  // how far to the left of y-axis we want our labels to be
-  var yAxisLabelAnchorX = -35;
   //------------------------------------------------
 
 
@@ -29,9 +28,6 @@ function BrushChart(ndxManager, dataManager, multiLineChart){
   // define axis and brush
   var x = d3.scale.linear().range([0, width]),
       y = d3.scale.linear().range([height, 0]);
-
-  var xAxis = d3.svg.axis().scale(x).ticks(0).orient("bottom"),
-      yAxis = d3.svg.axis().scale(y).ticks(0).orient("left");
 
   var brush = d3.svg.brush()
       .x(x)
@@ -52,7 +48,7 @@ function BrushChart(ndxManager, dataManager, multiLineChart){
 
   //------------------------------------------------
   // start drawing
-  var brushSVG = d3.select(bc_brandEffectiveness_div).append("svg")
+  var brushSVG = d3.select(brushChart_div).append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
     .append("g")
@@ -78,15 +74,12 @@ function BrushChart(ndxManager, dataManager, multiLineChart){
   //------------------------------------------------
   // define domains
   x.domain(d3.extent(beData[0].values, function(d) { return d.counter; }));
-  y.domain([
-    d3.min(beData, function(s) { return d3.min(s.values, function(v) { return v.brand_effectiveness; }); }),
-    d3.max(beData, function(s) { return d3.max(s.values, function(v) { return v.brand_effectiveness; }); })
-  ]);
+  y.domain([chartHelpers.getMinEffectiveness(beData), chartHelpers.getMaxEffectiveness(beData)]);
   //------------------------------------------------
 
 
   //------------------------------------------------
-  // draw bars/lines in both charts
+  // draw lines
   var contextBE = brushSVG.selectAll(".contextBE")
       .data(beData)
     .enter().append("g")
@@ -95,20 +88,21 @@ function BrushChart(ndxManager, dataManager, multiLineChart){
   contextBE.append("path")
       .attr("class", "line")
       .attr("d", function(d) { return contextLine(d.values); })
-      .style("stroke", function(d) { return dataManager.getBrandGroupColor(d.bgId); }); 
+      .style("stroke", function(d) { return chartManager.getBrandGroupColor(d.bgId); }); 
   //------------------------------------------------
 
-
   //------------------------------------------------
-  // draw axes
-  brushSVG.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-    .append("text")
-      .attr("transform", "translate("+ (yAxisLabelAnchorX) +","+(height/2)+")rotate(-90)")  
-      .style("text-anchor", "middle")
-      .text("Game")
-      .attr("class", "axis-label");
+  // repainting and loading new data
+  this.repaint = function(){
+    beData = chartManager.getBEData();
+
+    x.domain(d3.extent(beData[0].values, function(d) { return d.counter; }));
+    y.domain([chartHelpers.getMinEffectiveness(beData), chartHelpers.getMaxEffectiveness(beData)]);
+
+
+    contextBE.data(beData);
+    contextBE.select("path").attr("d", function(d) { return contextLine(d.values); });
+  };
   //------------------------------------------------
 
 
@@ -118,13 +112,13 @@ function BrushChart(ndxManager, dataManager, multiLineChart){
 
   // brush start
   function brushStart() {
-    oldXDomain = multiLineChart.getXDomain();
+    oldXDomain = chartManager.getMultiLineXDomain();
     isStillBrushing = true;
   };
 
   // on brush 
   function brushed() {
-    multiLineChart.setNewExtent(brush.empty() ? x.domain() : brush.extent());
+    chartManager.setMultiLineNewExtent(brush.empty() ? x.domain() : brush.extent());
 
     debouncedAutoReloadDuringBrush();
   };
@@ -137,10 +131,8 @@ function BrushChart(ndxManager, dataManager, multiLineChart){
 
   // allow outsiders to simulate brush events
   this.brushSet = function(beginCounter, endCounter){
-    // set x2 values
-    var beginX = (x(beginCounter) > x.domain()[0]) ? x(beginCounter) : x.domain()[0];
-    var endX = (x(endCounter) < x.domain()[1]) ? x(endCounter) : x.domain()[1];
-    if(beginX >= endX){ endX = beginX + 1; }
+    var beginX = beginCounter > x.domain()[0] ? beginCounter : x.domain()[0];
+    var endX = endCounter < x.domain()[1] ? endCounter : x.domain()[1];
     brush.extent([beginX, endX]);
 
     if(beginCounter === 0 && endCounter === Infinity){ brush.clear(); };
@@ -148,6 +140,16 @@ function BrushChart(ndxManager, dataManager, multiLineChart){
     brush(d3.select(".brush"));
     brush.event(d3.select(".brush"));
   };
+
+  // convenience function that calls burshSet
+  this.brushReset = function(){
+    this.brushSet(0, Infinity);
+  };
+
+  this.brushGame = function(gameId){
+    gameCounter = chartManager.getCounterForGame(gameId);
+    this.brushSet(gameCounter.begin_count, gameCounter.end_count);
+  }
   //------------------------------------------------
 
 
@@ -158,7 +160,7 @@ function BrushChart(ndxManager, dataManager, multiLineChart){
     if (!isStillBrushing){ return; };
 
     // else, if we are out of bounds of existing data, reload
-    var newXDomain = multiLineChart.getXDomain();
+    var newXDomain = chartManager.getMultiLineXDomain();
     if ((oldXDomain[0] > newXDomain[0]) || // if swiping left of existing bound
       (oldXDomain[1] < newXDomain[1]) ||   // if swiping right of existing bound
       (oldXDomain[0] === x.domain()[0] && oldXDomain[1] === x.domain()[1])){ // no previous brush
@@ -167,7 +169,7 @@ function BrushChart(ndxManager, dataManager, multiLineChart){
   }
   var debouncedAutoReloadDuringBrush = _.debounce(autoReloadDuringBrush, chartDebounceTime);
 
-  // trigger for new data from ndxManager
+  // trigger for new data
   function triggerNewData() {
     var brushLeft, brushRight;
     if(brush.empty()){
@@ -178,8 +180,8 @@ function BrushChart(ndxManager, dataManager, multiLineChart){
       brushRight = brush.extent()[1];
     }
 
-    // this triggers repaint of all charts through ndxManager
-    ndxManager.setCounterBounds(brushLeft, brushRight);
+    // this triggers repaint of all charts
+    chartManager.setCounterBounds(brushLeft, brushRight);
   };
   //------------------------------------------------
 };

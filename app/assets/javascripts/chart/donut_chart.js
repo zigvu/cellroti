@@ -2,11 +2,9 @@
 	Donut chart
 	------------------------------------------------*/
 
-function AllDonutCharts(ndxManager, dataManager){
-  var pcBrandCount = new DonutChart(
-    ndxManager, dataManager, 'getDetectionsCountData', '#brand-count-pie-chart');
-  var pcViewDuration = new DonutChart(
-    ndxManager, dataManager, 'getViewDurationData', '#view-duration-pie-chart');
+function AllDonutCharts(chartManager){
+  var pcBrandCount = new DonutChart(chartManager, 'getDetectionsCountData', '#brand-count-pie-chart');
+  var pcViewDuration = new DonutChart(chartManager, 'getViewDurationData', '#view-duration-pie-chart');
 
   this.setDivHeight = function(height){
     pcBrandCount.setDivHeight(height);
@@ -14,16 +12,14 @@ function AllDonutCharts(ndxManager, dataManager){
   };
 };
 
-function DonutChart(ndxManager, dataManager, ndxDataAccessMethod, chartDiv){
+function DonutChart(chartManager, ndxDataAccessMethod, chartDiv){
   //------------------------------------------------
   // set up
 
   // width for chart
   var divWidth = $(chartDiv).parent().width();
 
-  var pcData = ndxManager[ndxDataAccessMethod]();
-  // var color = d3.scale.category10();
-  var color = d3.scale.ordinal().range(d3.scale.category10().range());
+  var pcData = chartManager.getPCData(ndxDataAccessMethod);
 
   //------------------------------------------------
   // set up gemoetry
@@ -64,7 +60,7 @@ function DonutChart(ndxManager, dataManager, ndxDataAccessMethod, chartDiv){
 
   arcs.append("path")
       .attr("d", arc)
-      .style("fill", function(d) { return dataManager.getBrandGroupColor(d.data.bgId); });
+      .style("fill", function(d) { return chartManager.getBrandGroupColor(d.data.bgId); });
 
   arcs.append("text")
       .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
@@ -74,7 +70,7 @@ function DonutChart(ndxManager, dataManager, ndxDataAccessMethod, chartDiv){
 
   arcs.append("svg:title")
       .text(function (d) { 
-        return dataManager.getBrandGroupName(d.data.bgId) + ": " + d3.format(',%')(d.data.percent); 
+        return chartManager.getBrandGroupName(d.data.bgId) + ": " + d3.format(',%')(d.data.percent); 
       });
   //------------------------------------------------
 
@@ -82,7 +78,7 @@ function DonutChart(ndxManager, dataManager, ndxDataAccessMethod, chartDiv){
   //------------------------------------------------
   // repainting and loading new data
   function repaint(){
-    pcData = ndxManager[ndxDataAccessMethod]();
+    pcData = chartManager.getPCData(ndxDataAccessMethod);
 
     arcs.data(pie(pcData));
     arcs.select("path").transition().duration(750).attr("d", arc);
@@ -107,6 +103,6 @@ function DonutChart(ndxManager, dataManager, ndxDataAccessMethod, chartDiv){
 
   //------------------------------------------------
   // finally, add call back to repaint charts
-  ndxManager.addCallback(repaint);
+  chartManager.addCallback(repaint);
   //------------------------------------------------
 };

@@ -33,7 +33,7 @@ module Jsonifiers
 		end
 
 		def getSeasonData
-			# check to see if we already have computed results in mongo
+			# check to see if we already have serialized computed results in mongo
 			seasonData = SerializedCacheStore.where(cachekey: @cacheKey).first
 			return seasonData.data if seasonData != nil
 

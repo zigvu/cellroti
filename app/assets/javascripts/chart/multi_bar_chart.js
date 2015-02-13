@@ -2,16 +2,17 @@
 	Multi-bar chart
 	------------------------------------------------*/
 
-function MultiBarChart(ndxManager, dataManager){
+function MultiBarChart(chartManager){
   //------------------------------------------------
   // set up
+  var chartHelpers = chartManager.chartHelpers;
 
   // div for chart
   var bc_ComponentBarChart_div = '#component-bar-chart';
   var divWidth = $(bc_ComponentBarChart_div).parent().width();
 
-  var bcData = ndxManager.getBEComponentData();
-  var bgIds = _.pluck(ndxManager.getBEComponentData()[0].bgValues, 'bgId');
+  var bcData = chartManager.getBEComponentData();
+  var bgIds = _.pluck(bcData[0].bgValues, 'bgId');
   //------------------------------------------------
   // set up gemoetry
   var margin = {top: 10, right: 20, bottom: 40, left: 50},
@@ -74,11 +75,11 @@ function MultiBarChart(ndxManager, dataManager){
       .attr("x", function(d) { return x1(d.bgId); })
       .attr("y", function(d) { return y(d.value); })
       .attr("height", function(d) { return height - y(d.value); })
-      .style("fill", function(d) { return dataManager.getBrandGroupColor(d.bgId); });
+      .style("fill", function(d) { return chartManager.getBrandGroupColor(d.bgId); });
       
   componentRects.append("svg:title")
       .text(function (d) { 
-        return dataManager.getBrandGroupName(d.bgId) + ": " + d3.format(',%')(d.value); 
+        return chartManager.getBrandGroupName(d.bgId) + ": " + d3.format(',%')(d.value); 
       });
   //------------------------------------------------
 
@@ -90,7 +91,7 @@ function MultiBarChart(ndxManager, dataManager){
       .attr("transform", "translate(0," + height + ")")
       .call(xAxis)
       .selectAll("text")
-      .text(function(k){ return dataManager.getComponentBarChartLabel(k); });
+      .text(function(k){ return chartHelpers.getComponentBarChartLabel(k); });
 
   bcSVG.append("g")
       .attr("class", "y axis")
@@ -106,7 +107,7 @@ function MultiBarChart(ndxManager, dataManager){
   //------------------------------------------------
   // repainting and loading new data
   function repaint(){
-    bcData = ndxManager.getBEComponentData();
+    bcData = chartManager.getBEComponentData();
 
     y.domain([0, d3.max(bcData, function(d) { return d3.max(d.bgValues, function(d) { return d.value; }); })]);
 
@@ -128,6 +129,6 @@ function MultiBarChart(ndxManager, dataManager){
 
   //------------------------------------------------
   // finally, add call back to repaint charts
-  ndxManager.addCallback(repaint);
+  chartManager.addCallback(repaint);
   //------------------------------------------------
 };

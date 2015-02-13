@@ -2,16 +2,16 @@
 	Chart Legend
 	------------------------------------------------*/
 
-function ChartLegend(dataManager, brushChart){
+function ChartLegend(chartManager){
 
   //------------------------------------------------
 	// Add legend items
-	_.each(dataManager.brandGroupIdArr, function(bgId){
+	_.each(chartManager.getBrandGroupIds(), function(bgId){
 		var li = $("<li/>");
 		li.prepend(
 			$("<div/>", { class: "square" })
-				.css("background-color", dataManager.getBrandGroupColor(bgId)));
-		li.append($("<div/>", { text: dataManager.getBrandGroupName(bgId), class: "text" }));
+				.css("background-color", chartManager.getBrandGroupColor(bgId)));
+		li.append($("<div/>", { text: chartManager.getBrandGroupName(bgId), class: "text" }));
 		$('#brand-legend-content-ul').append(li);
 	});
   //------------------------------------------------
@@ -19,9 +19,9 @@ function ChartLegend(dataManager, brushChart){
 
   //------------------------------------------------
 	// Reset Chart
-  var resetChartsId = '#brand-legend-reset-charts';
+  var resetChartsId = '#reset-charts';
   $(resetChartsId).click(function(){
-		brushChart.brushSet(0, Infinity);
+		chartManager.brushReset();
 	});
   //------------------------------------------------
 

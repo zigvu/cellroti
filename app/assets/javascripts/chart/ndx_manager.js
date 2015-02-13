@@ -2,26 +2,17 @@
 	NDX Manager
 	------------------------------------------------*/
 
-// TODO: scope variables properly - currently many in global scope
-
-function NDXManager(dataManager){
+function NDXManager(ndxData, chartManager){
   //------------------------------------------------
   // set up
+  var chartHelpers = chartManager.chartHelpers;
+
+  var maxDataPoints = chartManager.numOfDataPtsPerBGInSeriesChart;
+  var numRowsInTableChart = chartManager.numRowsInTableChart;
   var bCounter, eCounter;
-  var maxDataPoints = 1000;
 
   //------------------------------------------------
-  quadMapping = [
-    {q: 'q0', name: 'Left Top', row: 0, col: 0, value: 0, count: 0},
-    {q: 'q1', name: 'Center Top', row: 0, col: 1, value: 0, count: 0},
-    {q: 'q2', name: 'Right Top', row: 0, col: 2, value: 0, count: 0},
-    {q: 'q3', name: 'Left Center', row: 1, col: 0, value: 0, count: 0},
-    {q: 'q4', name: 'Center', row: 1, col: 1, value: 0, count: 0},
-    {q: 'q5', name: 'Right Center', row: 1, col: 2, value: 0, count: 0},
-    {q: 'q6', name: 'Left Bottom', row: 2, col: 0, value: 0, count: 0},
-    {q: 'q7', name: 'Center Bottom', row: 2, col: 1, value: 0, count: 0},
-    {q: 'q8', name: 'Right Bottom', row: 2, col: 2, value: 0, count: 0}
-  ];
+  var quadMapping = chartHelpers.quadMapping;
 
   //------------------------------------------------
   var bcComponentAccessors = [
@@ -44,20 +35,31 @@ function NDXManager(dataManager){
     quadComponentAccessors);
 
   // create cross filter
-  this.ndx = crossfilter(dataManager.ndxData);
+  this.ndx = crossfilter(ndxData);
 
-  averagerDim = this.ndx.dimension(function (d) { return d.averager; });
-  averagerGroup = averagerDim.group();
-  
-  counterDim = this.ndx.dimension(function (d) { return d.counter; });
-  bgFilterDim = this.ndx.dimension(function (d) { return d.det_group_id; });
-  bgFilterGroup = bgFilterDim.group().reduce(
+  // needed for multi-series chart
+  var averagerDim = this.ndx.dimension(function (d) { return d.averager; });
+  var averagerGroup = averagerDim.group();
+
+  // needed for table
+  var brandEffectivenessDim = this.ndx.dimension(function (d) { return d.brand_effectiveness; });
+
+  // needed for rest of the charts
+  var counterDim = this.ndx.dimension(function (d) { return d.counter; });
+  var bgFilterDim = this.ndx.dimension(function (d) { return d.det_group_id; });
+  var bgFilterGroup = bgFilterDim.group().reduce(
     REDUCEAVG.MULTIPLE.reduceAddAvg(compositeAccessors), 
     REDUCEAVG.MULTIPLE.reduceRemoveAvg(compositeAccessors), 
     REDUCEAVG.MULTIPLE.reduceInitAvg
   );
   var bgFilterGroupAll; // data to hold group all data
 
+  // TODO: delete
+  this.avd = averagerDim
+  this.avg = averagerGroup
+  this.bed = brandEffectivenessDim;
+
+  // get currently set counters
   this.getBeginCounter = function(){ return bCounter; };
   this.getEndCounter = function(){ return eCounter; };
 
@@ -84,7 +86,7 @@ function NDXManager(dataManager){
     bgFilterGroupAll = bgFilterGroup.all();
 
     // trigger all repaints
-    this.fire();
+    chartManager.fire();
 
     // return the best averager
     return bestAverager;
@@ -143,7 +145,7 @@ function NDXManager(dataManager){
     allDC = _.map(allDC, function(v){ 
       var avg = total === 0 ? 0 : v.count/total;
       return _.extend(v, {percent: avg}); 
-    })
+    });
     // if all percent are zero, chart will disappear - so put in equal percents
     if( _.filter(allDC, function(d){ return d.percent !== 0; }).length == 0 ){
       _.each(allDC, function(d) { d.percent = 1.0/allDC.length; })
@@ -169,16 +171,20 @@ function NDXManager(dataManager){
       d.value = d.count === 0 ? 0 : d.value/d.count;
     });
     return quadMapping;
-  }
+  };
+
+  // we need array of array numbers in format as specified in tableKeys
+  this.getTableData = function(){
+    var beTop = brandEffectivenessDim.top(numRowsInTableChart);
+    var tableData = _.map(beTop, function(d){
+      return _.map(chartHelpers.tableKeys, function(tk){ return d[tk]; });
+    });
+    return tableData;
+  };
 
   // reset all filters
   this.resetAllFilters = function(){
     counterDim.filterAll();
     averagerDim.filterAll();
   };
-
-  // let jquery manage call backs to update all charts
-  var callbacks = $.Callbacks("unique");
-  this.addCallback = function(callback){ callbacks.add(callback); };
-  this.fire = function(){ callbacks.fire(); };
 };
