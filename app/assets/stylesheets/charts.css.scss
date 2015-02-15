@@ -252,6 +252,13 @@ $chart-table-row-color-hover: #CBC6F7;
 		}
 	}
 
+	// thumbnail chart
+	// note : thumbnail-image-reveal : needs to exist in body name space
+
+}
+
+.thumbnail-image-reveal {
+	padding: 10px;
 }
 
 #brand-legend {

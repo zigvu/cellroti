@@ -34,6 +34,12 @@ function ChartHelpers(){
   this.tableKeys = _.flatten(_.map(this.tableHeadLabels, function(k){ return _.keys(k); }));
   this.tableColLabels = _.flatten(_.map(this.tableHeadLabels, function(k){ return _.values(k); }));
 
+
+  // thumbnail viewer ids for modal
+  this.thumbnailModalIds = [
+    'thumbnail_li_0_reveal', 'thumbnail_li_1_reveal', 
+    'thumbnail_li_2_reveal', 'thumbnail_li_3_reveal' 
+  ];
   //------------------------------------------------
   // coerce to number
   this.coercer = function(dataKeys, arr){

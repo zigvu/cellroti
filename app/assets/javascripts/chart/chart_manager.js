@@ -36,6 +36,7 @@ function ChartManager(seasonInfo, seasonData){
     this.allDonutCharts = new AllDonutCharts(this);
     this.heatmapChart = new HeatmapChart(this);
     this.tableChart = new TableChart(this);
+    this.thumbnailChart = new ThumbnailChart(this);
     this.chartLegend = new ChartLegend(this);
 
     // set heights
@@ -129,6 +130,9 @@ function ChartManager(seasonInfo, seasonData){
   };
   this.getTableData = function(){ 
     return this.seasonDataManager.formatTableChartData(this.ndxManager.getTableData());
+  };
+  this.getThumbnailData = function(){
+    return this.seasonDataManager.formatThumbnailChartData(this.ndxManager.getThumbnailData());
   };
 
   // GameDataManager

@@ -182,6 +182,17 @@ function NDXManager(ndxData, chartManager){
     return tableData;
   };
 
+  this.getThumbnailData = function(){
+    // TODO: get this from dim
+    var thumbnailData = [
+      {game_id: 1, frame_id: 1},
+      {game_id: 1, frame_id: 2},
+      {game_id: 1, frame_id: 3},
+      {game_id: 1, frame_id: 4}
+    ];
+    return thumbnailData;
+  };
+
   // reset all filters
   this.resetAllFilters = function(){
     counterDim.filterAll();

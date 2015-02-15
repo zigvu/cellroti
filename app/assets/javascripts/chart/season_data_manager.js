@@ -209,4 +209,22 @@ function SeasonDataManager(seasonInfo, seasonData, chartManager){
   };
 
   //------------------------------------------------
+
+  //------------------------------------------------
+  // table chart data
+
+  this.formatThumbnailChartData = function(tcData){
+    var thumbnailData = new Object();
+    _.each(chartHelpers.thumbnailModalIds, function(id, idx, obj){
+      if(idx < tcData.length){
+        thumbnailData[id] = tcData[idx];
+      } else {
+        thumbnailData[id] = {game_id: 0, frame_id: 0};
+      }
+    });
+    return thumbnailData;
+  };
+
+  //------------------------------------------------
+
 };

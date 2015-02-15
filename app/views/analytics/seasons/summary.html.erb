@@ -220,17 +220,65 @@
   <!-- END: Heatmap chart whole -->
 </div>
 
+
+
+<!-- BEGIN: Thumbnail Viewer whole -->
 <div class="row">
   <div class="small-12 columns">
-    <ul class="small-block-grid-2 medium-block-grid-4">
-      <li><div class="panel">Some Representative thumbnails</div></li>
-      <li><div class="panel">Some Representative thumbnails</div></li>
-      <li><div class="panel">Some Representative thumbnails</div></li>
-      <li><div class="panel">Some Representative thumbnails</div></li>
-    </ul>   
+    <div class="chart-panel">
+      <div class="chart-title clearfix">
+        <div class="text left">Highest Brand Effectiveness Frames</div>
+        <div class="help right">
+          <ul class="button-group radius">
+            <li data-reveal-id="thumbnail-viewer-info-reveal" id="thumbnail-viewer-info">
+              <span class="button title-button" title="Help!">
+                <i class="fi-info"></i>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- BEGIN: Thumbnail Row -->
+      <div class="chart-content">
+        <div class="row">
+          <div class="small-12 columns">
+            <ul id="thumbnail-chart" class="small-block-grid-2 medium-block-grid-4">
+              <li data-reveal-id="thumbnail_li_0_reveal">
+                <a class="th" href="#">
+                  <img src="/uploads/refresh_to_load.jpg">
+                </a>
+              </li>
+              <li data-reveal-id="thumbnail_li_1_reveal">
+                <a class="th" href="#">
+                  <img src="/uploads/refresh_to_load.jpg">
+                </a>
+              </li>
+              <li data-reveal-id="thumbnail_li_2_reveal">
+                <a class="th" href="#">
+                  <img src="/uploads/refresh_to_load.jpg">
+                </a>
+              </li>
+              <li data-reveal-id="thumbnail_li_3_reveal">
+                <a class="th" href="#">
+                  <img src="/uploads/refresh_to_load.jpg">
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="row">
+          <div class="small-12 columns">
+            <div class="button small" id="thumbnail-chart-refresh">Refresh Thumbnails</div>
+          </div>
+        </div>
+      </div>
+      <!-- END: Thumbnail Row -->
+
+    </div>
   </div>
 </div>
-
+<!-- END: Thumbnail Viewer whole -->
 
 
 <!-- BEGIN: Table whole -->
@@ -275,7 +323,31 @@
   <div id="table-chart-info-reveal" class="reveal-modal large" data-reveal>
     <%= render 'summary_info_series_chart' %>
   </div>
+  <div id="thumbnail-viewer-info-reveal" class="reveal-modal large" data-reveal>
+    <%= render 'summary_info_series_chart' %>
+  </div>
 <!-- END: Help Sections -->
+
+<!-- BEGIN: Thumbnail pop-ups -->
+  <div id="thumbnail-chart-reveals">
+    <div id="thumbnail_li_0_reveal" class="reveal-modal large" data-reveal>
+      <img class="thumbnail-image-reveal" src="/uploads/refresh_to_load.jpg">
+      <a class="close-reveal-modal">&#215;</a>
+    </div>
+    <div id="thumbnail_li_1_reveal" class="reveal-modal large" data-reveal>
+      <img class="thumbnail-image-reveal" src="/uploads/refresh_to_load.jpg">
+      <a class="close-reveal-modal">&#215;</a>
+    </div>
+    <div id="thumbnail_li_2_reveal" class="reveal-modal large" data-reveal>
+      <img class="thumbnail-image-reveal" src="/uploads/refresh_to_load.jpg">
+      <a class="close-reveal-modal">&#215;</a>
+    </div>
+    <div id="thumbnail_li_3_reveal" class="reveal-modal large" data-reveal>
+      <img class="thumbnail-image-reveal" src="/uploads/refresh_to_load.jpg">
+      <a class="close-reveal-modal">&#215;</a>
+    </div>
+  </div>
+<!-- END: Thumbnail pop-ups -->
 
 
 </div>
