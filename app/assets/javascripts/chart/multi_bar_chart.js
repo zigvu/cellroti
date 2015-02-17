@@ -120,7 +120,9 @@ function MultiBarChart(chartManager){
         .attr("height", function(d) { return height - y(d.value); });
 
     componentRects.select("title")
-        .text(function (d) { return 'Brand Group Name Here' + ": " + d3.format(',%')(d.value); });
+        .text(function (d) { 
+          return chartManager.getBrandGroupName(d.bgId) + ": " + d3.format(',%')(d.value); 
+        });
 
     bcSVG.select(".y.axis").transition().duration(750).call(yAxis);
   };

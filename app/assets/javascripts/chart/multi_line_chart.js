@@ -71,6 +71,20 @@ function MultiLineChart(chartManager){
       .attr("height", height);
 
   var gameBgRect = multiLineSVG.append("g").attr("class", "game-bg-rect");
+
+  // track mouse movements with dashed lines
+  var mouseTrackingSVG = multiLineSVG.append("g")
+      .attr("class", "mouse-tracking-svg")
+      .style("display", "none");
+
+  multiLineSVG.append("rect")
+      .attr("width", width)
+      .attr("height", height)
+      .style("fill", "none")
+      .style("pointer-events", "all")
+      .on("mouseover", function() { mouseTrackingSVG.style("display", null); })
+      .on("mouseout", function() { mouseTrackingSVG.style("display", "none"); })
+      .on("mousemove", mousemove);
   //------------------------------------------------
 
 
@@ -117,6 +131,16 @@ function MultiLineChart(chartManager){
       .text(function (d) { 
         return getModifiedLabel(chartManager.getGameName(d.game_id), x(d.end_count) - x(d.begin_count));
       });
+
+  // draw mouse tracking lines
+  var mouseTrackingX = mouseTrackingSVG.append("line").attr("y1", 0).attr("y2", height);
+  var mouseTrackingY = mouseTrackingSVG.append("line").attr("x1", 0).attr("x2", width);
+
+  // move mouse tracking lines as mouse moves
+  function mousemove(){
+    mouseTrackingX.attr("transform", "translate(" + d3.mouse(this)[0] + "," + 0 + ")");
+    mouseTrackingY.attr("transform", "translate(" + 0 + "," + d3.mouse(this)[1] + ")");
+  };
   //------------------------------------------------
 
 

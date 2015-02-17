@@ -86,7 +86,9 @@ function DonutChart(chartManager, ndxDataAccessMethod, chartDiv){
       .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
       .text(function(d) { return d.data.count; });
     arcs.select("title")
-      .text(function (d) { return 'Brand Group Name Here' + ": " + d3.format(',%')(d.data.percent); });      
+      .text(function (d) { 
+        return chartManager.getBrandGroupName(d.data.bgId) + ": " + d3.format(',%')(d.data.percent); 
+      });
   };
   //------------------------------------------------
 

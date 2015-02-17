@@ -50,6 +50,9 @@ $chart-table-row-color-hover: #CBC6F7;
 
 	// multi-series chart
 	.multi-line-chart {
+		path {
+			pointer-events: none;
+		}
 		.game-bg-rect {
 			rect {
 				stroke: black;
@@ -63,6 +66,15 @@ $chart-table-row-color-hover: #CBC6F7;
 				fill: black;
 				opacity: 0.9;
 				pointer-events: none;
+			}
+		}
+		.mouse-tracking-svg {
+			line {
+				stroke: blue;
+				stroke-width: 1px;
+				stroke-opacity: 0.5;
+				stroke-dasharray: 3, 3;
+				shape-rendering: crispedges;
 			}
 		}
 	}
@@ -255,6 +267,29 @@ $chart-table-row-color-hover: #CBC6F7;
 	// thumbnail chart
 	// note : thumbnail-image-reveal : needs to exist in body name space
 
+	// gray out thumbnail
+	#thumbnail-chart-refresh {
+		position: absolute;
+		cursor: pointer;
+
+		top: 0px;
+		left: 0px;
+		width: 100%;
+		height: 100%;
+
+		color: black;
+		font-size: rem-calc(32);
+		font-weight: bold;
+
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		background-color: white;
+		opacity: 0.7;
+		background-repeat: no-repeat;
+		background-position: center;
+	}
 }
 
 .thumbnail-image-reveal {
