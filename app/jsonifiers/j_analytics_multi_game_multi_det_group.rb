@@ -68,6 +68,7 @@ module Jsonifiers
 
 			aggregateData = []
 			gameDemarcations = []
+			gameEvents = []
 
 			counter = 0
 			gameBeginCounter = 0
@@ -75,17 +76,19 @@ module Jsonifiers
 				# save counter demarcations
 				gameBeginCounter = counter
 
+				# save game events
+				gameEventsHash = {game_id: gameId, events: []}
+
 				# get data for single game
 				gameDetGroupData = {}
-				sortedTimeKeys = nil
+				gameData = nil
 				@detGroupIds.each do |detGroupId|
 					gameData = @singleGameSingleDetGroups[gameId][detGroupId].getGameData()
 					gameDetGroupData[detGroupId] = gameData[:dataHash]
-					sortedTimeKeys = gameData[:sortedTimeKeys]
 				end
 				
 				# create multi-game counter and averager
-				sortedTimeKeys.each do |tKey|
+				gameData[:sortedTimeKeys].each do |tKey|
 					@detGroupIds.each do |detGroupId|
 						dataLine = gameDetGroupData[detGroupId][tKey]
 
@@ -107,10 +110,19 @@ module Jsonifiers
 						end
 
 					end
+
+					# add in game events
+					if gameData[:gameEvents][tKey] != nil
+						gameEventsHash[:events] << {counter: counter, event_id: gameData[:gameEvents][tKey]}
+					end
+
 					counter += 1
 				end
 
 				gameDemarcations << { game_id: gameId, begin_count: gameBeginCounter, end_count: counter }
+
+				# only save game events for single game case
+				gameEvents << gameEventsHash if @gameIds.count == 1
 			end
 
 			# add in some extra information in JSON
@@ -124,6 +136,7 @@ module Jsonifiers
 
 			retHash[:brand_group_data_keys] = dataKeys
 			retHash[:game_demarcations] = gameDemarcations
+			retHash[:game_events] = gameEvents
 			retHash[:ndx_data] = aggregateData
 
 			return retHash.to_json

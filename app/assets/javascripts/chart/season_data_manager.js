@@ -11,7 +11,8 @@
     :timing_effectiveness, :spatial_effectiveness, :detections_count,
     :view_duration, :q0, :q1, :q2, :q3, :q4, :q5, :q6, :q7, :q8
   ],
-  game_demarcations: [{begin_count:, end_count:}, ],
+  game_demarcations: [{:begin_count, :end_count}, ],
+  game_events: [],
   ndx_data: [
     [array of values according to brand_group_data_keys],
   ]
@@ -29,7 +30,7 @@ function SeasonDataManager(seasonInfo, seasonData, chartManager){
   // ingest data
 
   // disaggregate seasonInfo - convert to hashes like below
-  // var eventTypesInfo = seasonInfo["event_types"];
+  var eventTypesInfo = seasonInfo["event_types"];
   // var teamsInfo = seasonInfo["teams"];
   var gamesInfo = seasonInfo["games"];
   var subSeasonsInfo = seasonInfo["sub_season"];
@@ -44,9 +45,6 @@ function SeasonDataManager(seasonInfo, seasonData, chartManager){
   var brandGroupMap = seasonData["brand_group_map"];
   var dataKeys = seasonData["brand_group_data_keys"];
   var gameDemarcations = seasonData["game_demarcations"];
-
-  // TODO: Delete
-  this.gameD = gameDemarcations;
   
   // coerce all numbers
   this.ndxData = _.map(seasonData["ndx_data"], function(arr){ 
@@ -115,6 +113,12 @@ function SeasonDataManager(seasonInfo, seasonData, chartManager){
   var brandGroupColors = d3.scale.category10().domain(this.brandGroupIdArr);
   this.getBrandGroupName = function(bgId){ return brandGroupMap[bgId]; };
   this.getBrandGroupColor = function(bgId){ return brandGroupColors(bgId); };
+
+  var gameEventsMap = new Object();
+  _.each(eventTypesInfo, function(e){ gameEventsMap[e.id] = _.omit(e, 'id'); });
+  var gameEventColors = d3.scale.ordinal().domain(_.keys(gameEventsMap)).range(colorbrewer.Set1["9"]);
+  this.getGameEventName = function(geId){ return gameEventsMap[geId].name; }
+  this.getGameEventColor = function(geId){ return gameEventColors(geId); }
   //------------------------------------------------
 
 
@@ -187,8 +191,23 @@ function SeasonDataManager(seasonInfo, seasonData, chartManager){
 
 
   //------------------------------------------------
-  // table chart data
+  // thumbnail chart data
+  this.formatThumbnailChartData = function(tcData){
+    var thumbnailData = new Object();
+    _.each(chartHelpers.thumbnailModalIds, function(id, idx, obj){
+      if(idx < tcData.length){
+        thumbnailData[id] = tcData[idx];
+      } else {
+        thumbnailData[id] = {game_id: 0, frame_id: 0};
+      }
+    });
+    return thumbnailData;
+  };
+  //------------------------------------------------
 
+
+  //------------------------------------------------
+  // table chart data
   this.formatTableChartData = function(tcData){
     var that = this;
     var tableData = _.map(tcData, function(tr){
@@ -207,24 +226,7 @@ function SeasonDataManager(seasonInfo, seasonData, chartManager){
     });
     return tableData;
   };
-
   //------------------------------------------------
 
-  //------------------------------------------------
-  // table chart data
-
-  this.formatThumbnailChartData = function(tcData){
-    var thumbnailData = new Object();
-    _.each(chartHelpers.thumbnailModalIds, function(id, idx, obj){
-      if(idx < tcData.length){
-        thumbnailData[id] = tcData[idx];
-      } else {
-        thumbnailData[id] = {game_id: 0, frame_id: 0};
-      }
-    });
-    return thumbnailData;
-  };
-
-  //------------------------------------------------
 
 };

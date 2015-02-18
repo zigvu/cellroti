@@ -92,7 +92,9 @@ function ChartHelpers(){
   this.getMinEffectiveness = function(beData){
     return _.max(
       [0, d3.min(beData, function(s) { 
-          return d3.min(s.values, function(v) { return v.brand_effectiveness - 0.01; }); 
+          return d3.min(s.values, function(v) { 
+            return v.brand_effectiveness - (0.1 * v.brand_effectiveness); 
+          }); 
         })
       ]);
   };
@@ -100,7 +102,9 @@ function ChartHelpers(){
   this.getMaxEffectiveness = function(beData){
     return _.min(
       [1, d3.max(beData, function(s) { 
-          return d3.max(s.values, function(v) { return v.brand_effectiveness + 0.01; }); 
+          return d3.max(s.values, function(v) { 
+            return v.brand_effectiveness + (0.1 * v.brand_effectiveness); 
+          }); 
         })
       ]);
   };

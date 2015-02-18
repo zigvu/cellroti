@@ -32,16 +32,16 @@ function ChartManager(seasonInfo, seasonData){
     this.multiLineChart = new MultiLineChart(this);
     this.brushChart = new BrushChart(this);
     this.gameSelectionChart = new GameSelectionChart(this);
-    this.multiBarChart = new MultiBarChart(this);
-    this.allDonutCharts = new AllDonutCharts(this);
-    this.heatmapChart = new HeatmapChart(this);
-    this.tableChart = new TableChart(this);
-    this.thumbnailChart = new ThumbnailChart(this);
-    this.chartLegend = new ChartLegend(this);
+    // this.multiBarChart = new MultiBarChart(this);
+    // this.allDonutCharts = new AllDonutCharts(this);
+    // this.heatmapChart = new HeatmapChart(this);
+    // this.tableChart = new TableChart(this);
+    // this.thumbnailChart = new ThumbnailChart(this);
+    // this.chartLegend = new ChartLegend(this);
 
-    // set heights
-    this.allDonutCharts.setDivHeight(this.heatmapChart.getOuterDivHeight());
-    timeLogEnd("chartDrawing", "All chart drawing done");
+    // // set heights
+    // this.allDonutCharts.setDivHeight(this.heatmapChart.getOuterDivHeight());
+    // timeLogEnd("chartDrawing", "All chart drawing done");
   };
 
   // update data and ndx managers
@@ -134,9 +134,21 @@ function ChartManager(seasonInfo, seasonData){
   this.getThumbnailData = function(){
     return this.seasonDataManager.formatThumbnailChartData(this.ndxManager.getThumbnailData());
   };
+  this.getGameEventName = function(geId){ return this.seasonDataManager.getGameEventName(geId); };
+  this.getGameEventColor = function(geId){ return this.seasonDataManager.getGameEventColor(geId); };
+
 
   // GameDataManager
-  // None
+  this.getBrushedEvents = function(){
+    if(this.isGameDisplaying){
+      return this.gameDataManager.getBrushedEvents(
+        this.ndxManager.getBeginCounter(), 
+        this.ndxManager.getEndCounter());
+    } else {
+      return [];
+    }
+  };
+
 
   // chart manipulation
   this.brushSet = function(beginCounter, endCounter){

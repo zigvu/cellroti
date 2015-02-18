@@ -12,19 +12,6 @@ module Jsonifiers
 			@cacheKey = "#{@game.cache_key}/#{@detGroup.cache_key}/#{@summaryResolution}/JAnalyticsSingleGameSingleDetGroup"
 		end
 
-		def getGameEvents
-			retArr = []
-			@game.events.each do |event|
-				retArr << {
-					id: event.event_type_id, 
-					#time: milliseconds_to_prettyprint(event.event_time)}
-					time: event.event_time
-				}
-			end
-			retArr.sort_by! {|h| h[:time]}
-			return retArr
-		end
-		
 		def self.brand_group_data_keys
 			return [
 				:brand_effectiveness,   # 0
@@ -90,9 +77,30 @@ module Jsonifiers
 			end
 			
 			sortedTimeKeys.sort!
+
 			
 			# Note: do NOT save JSON in cache - save hash itself
-			return {dataHash: dataHash, sortedTimeKeys: sortedTimeKeys}
+			return {
+				dataHash: dataHash, 
+				sortedTimeKeys: sortedTimeKeys,
+				gameEvents: getGameEvents(sortedTimeKeys)
+			}
+		end
+
+		def getGameEvents(sortedTimeKeys)
+			gameEvents = {}
+
+			# align event times with frame times so that counter calculations are correct
+			timeKeyIdx = 0
+			@game.events.order(:event_time).each do |gameEvent|
+				while ((sortedTimeKeys[timeKeyIdx] < gameEvent.event_time) and 
+					(timeKeyIdx < (sortedTimeKeys.count - 1)))
+					timeKeyIdx += 1
+				end
+				gameEvents[sortedTimeKeys[timeKeyIdx]] = gameEvent.event_type_id
+			end
+
+			return gameEvents
 		end
 
 	end

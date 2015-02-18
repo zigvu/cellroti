@@ -15,6 +15,7 @@ function MultiLineChart(chartManager){
 
   var beData = chartManager.getBEData();
   var gameData = chartManager.getBrushedGames();
+  var gameEventData = chartManager.getBrushedEvents();
   //------------------------------------------------
 
 
@@ -72,6 +73,8 @@ function MultiLineChart(chartManager){
 
   var gameBgRect = multiLineSVG.append("g").attr("class", "game-bg-rect");
 
+  var gameEventSVG = multiLineSVG.append("g").attr("class", "game-event-svg");
+
   // track mouse movements with dashed lines
   var mouseTrackingSVG = multiLineSVG.append("g")
       .attr("class", "mouse-tracking-svg")
@@ -108,29 +111,9 @@ function MultiLineChart(chartManager){
       .attr("d", function(d) { return focusLine(d.values); })
       .style("stroke", function(d) { return chartManager.getBrandGroupColor(d.bgId); }); 
 
-  // draw background rects
-  var gameRects = gameBgRect.selectAll("rect")
-      .data(gameData, function(d){ return d.game_id; })
-    .enter()
-      .append("rect")
-      .attr("clip-path", "url(#clip)")
-      .attr("width", function(d) { return x(d.end_count) - x(d.begin_count); })
-      .attr("x", function(d) { return x(d.begin_count); })
-      .attr("y", 0)
-      .attr("height", function(d) { return height; })
-      .style("fill", function(d) { return chartManager.getGameColor(d.game_id); });
-
-  // draw background labels
-  var gameLabels = gameBgRect.selectAll(".gameLabel")
-      .data(gameData, function(d){ return d.game_id; })
-    .enter()
-      .append("text")
-      .attr("class", "gameLabel")
-      .attr("x", function(d) { return x(d.begin_count) + gameLabelsAddPosX; })
-      .attr("y", gameLabelsAddPosY)
-      .text(function (d) { 
-        return getModifiedLabel(chartManager.getGameName(d.game_id), x(d.end_count) - x(d.begin_count));
-      });
+  // background decorations
+  drawGameBackground(gameData);
+  drawGameEvents(gameEventData);
 
   // draw mouse tracking lines
   var mouseTrackingX = mouseTrackingSVG.append("line").attr("y1", 0).attr("y2", height);
@@ -193,14 +176,17 @@ function MultiLineChart(chartManager){
       drawGameBackground(gameData);
     }
 
+    gameEventData = chartManager.getBrushedEvents();
+    drawGameEvents(gameEventData);
+
     multiLineSVG.select(".x.axis").call(xAxis);
     multiLineSVG.select(".y.axis").transition().duration(750).call(yAxis);    
   };
 
   // drawing background rects
   function drawGameBackground(data){
-    gameRects = gameBgRect.selectAll("rect").data(data, function(d){ return d.game_id; });
-    gameLabels = gameBgRect.selectAll(".gameLabel").data(gameData, function(d){ return d.game_id; })
+    var gameRects = gameBgRect.selectAll("rect").data(data, function(d){ return d.game_id; });
+    var gameLabels = gameBgRect.selectAll(".gameLabel").data(gameData, function(d){ return d.game_id; })
 
     // enter
     gameRects.enter().append("rect")
@@ -233,6 +219,66 @@ function MultiLineChart(chartManager){
     // exit
     gameRects.exit().remove();
     gameLabels.exit().remove();
+  };
+
+
+  function drawGameEvents(gameEventData){
+    var gameEventLineLong = gameEventSVG.selectAll(".gameEventLineLong")
+        .data(gameEventData, function(d){ return d.counter; });
+    var gameEventLineShort = gameEventSVG.selectAll(".gameEventLineShort")
+        .data(gameEventData, function(d){ return d.counter; });
+    var gameEventLabels = gameEventSVG.selectAll(".gameEventLabel")
+        .data(gameEventData, function(d){ return d.counter; });
+
+    // enter
+    gameEventLineLong.enter()
+      .append("line")
+      .attr("class", "gameEventLineLong")
+      .attr("x1", function(d){ return x(d.begin_count); })
+      .attr("x2", function(d){ return x(d.begin_count); })
+      .attr("y1", 0)
+      .attr("y2", height);
+      // .style("stroke", function(d){ return chartManager.getGameEventColor(d.event_id); });
+
+    gameEventLineShort.enter()
+      .append("line")
+      .attr("class", "gameEventLineShort")
+      .attr("x1", function(d){ return x(d.begin_count); })
+      .attr("x2", function(d){ return x(d.begin_count); })
+      .attr("y1", height - 5)
+      .attr("y2", height);
+
+    gameEventLabels.enter()
+      .append("text")
+      .attr("class", "gameEventLabel")
+      .attr("x", function(d) { return x(d.begin_count) + gameLabelsAddPosX; })
+      .attr("y", gameLabelsAddPosY * 2)
+      .text(function (d) { 
+        return getModifiedLabel(
+          chartManager.getGameEventName(d.event_id), x(d.end_count) - x(d.begin_count)
+        );
+      });
+
+    // update
+    gameEventLineLong
+        .attr("x1", function(d){ return x(d.begin_count); })
+        .attr("x2", function(d){ return x(d.begin_count); });
+    gameEventLineShort
+        .attr("x1", function(d){ return x(d.begin_count); })
+        .attr("x2", function(d){ return x(d.begin_count); });
+
+    gameEventLabels
+        .attr("x", function(d) { return x(d.begin_count) + gameLabelsAddPosX; })
+      .text(function (d) { 
+        return getModifiedLabel(
+          chartManager.getGameEventName(d.event_id), x(d.end_count) - x(d.begin_count)
+        );
+      });
+
+    // exit
+    gameEventLineLong.exit().remove();
+    gameEventLineShort.exit().remove();
+    gameEventLabels.exit().remove();
   };
   //------------------------------------------------
 
