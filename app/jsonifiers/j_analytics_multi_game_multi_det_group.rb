@@ -53,7 +53,7 @@ module Jsonifiers
 
 		def getSeasonData_NonChached
 			# add to data keys
-			dataKeys = [:averager, :counter, :game_id, :det_group_id] + 
+			dataKeys = [:averager, :counter, :frame_time, :game_id, :det_group_id] + 
 				JAnalyticsSingleGameSingleDetGroup.brand_group_data_keys
 
 			# averager storage
@@ -93,7 +93,7 @@ module Jsonifiers
 						dataLine = gameDetGroupData[detGroupId][tKey]
 
 						# put in the original non-averaged data
-						aggregateData << [1, counter, gameId, detGroupId] + dataLine
+						aggregateData << [1, counter, tKey, gameId, detGroupId] + dataLine
 
 						# put in data for each averager interval
 						averagerIntervals.each do |interval|
@@ -103,7 +103,7 @@ module Jsonifiers
 						# if size reached, dump into output array
 						averagerIntervals.each do |interval|
 							if averagerIntervalsHash[detGroupId][interval].isFull?
-								aggregateData << [interval, counter, gameId, detGroupId] + \
+								aggregateData << [interval, counter, tKey, gameId, detGroupId] + \
 									averagerIntervalsHash[detGroupId][interval].getData()
 								averagerIntervalsHash[detGroupId][interval].reset()
 							end
@@ -119,7 +119,7 @@ module Jsonifiers
 					counter += 1
 				end
 
-				gameDemarcations << { game_id: gameId, begin_count: gameBeginCounter, end_count: counter }
+				gameDemarcations << { game_id: gameId, begin_count: gameBeginCounter, end_count: (counter - 1) }
 
 				# only save game events for single game case
 				gameEvents << gameEventsHash if @gameIds.count == 1

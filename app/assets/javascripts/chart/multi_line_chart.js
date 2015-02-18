@@ -191,7 +191,7 @@ function MultiLineChart(chartManager){
     // enter
     gameRects.enter().append("rect")
         .attr("clip-path", "url(#clip)")
-        .attr("width", function(d) { return x(d.end_count) - x(d.begin_count); })
+        .attr("width", function(d) { return x(d.end_count + 1) - x(d.begin_count); })
         .attr("x", function(d) { return x(d.begin_count); })
         .attr("y", 0)
         .attr("height", function(d) { return height; })
@@ -202,18 +202,18 @@ function MultiLineChart(chartManager){
         .attr("x", function(d) { return x(d.begin_count) + gameLabelsAddPosX; })
         .attr("y", gameLabelsAddPosY)
         .text(function (d) { 
-          return getModifiedLabel(chartManager.getGameName(d.game_id), x(d.end_count) - x(d.begin_count));
+          return getModifiedLabel(chartManager.getGameName(d.game_id), x(d.end_count + 1) - x(d.begin_count));
         });
 
     // update
     gameRects
-        .attr("width", function(d) { return x(d.end_count) - x(d.begin_count); })
+        .attr("width", function(d) { return x(d.end_count + 1) - x(d.begin_count); })
         .attr("x", function(d) { return x(d.begin_count); });
 
     gameLabels
         .attr("x", function(d) { return x(d.begin_count) + gameLabelsAddPosX; })
         .text(function (d) { 
-          return getModifiedLabel(chartManager.getGameName(d.game_id), x(d.end_count) - x(d.begin_count));
+          return getModifiedLabel(chartManager.getGameName(d.game_id), x(d.end_count + 1) - x(d.begin_count));
         });
         
     // exit

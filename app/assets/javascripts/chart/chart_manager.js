@@ -32,16 +32,17 @@ function ChartManager(seasonInfo, seasonData){
     this.multiLineChart = new MultiLineChart(this);
     this.brushChart = new BrushChart(this);
     this.gameSelectionChart = new GameSelectionChart(this);
-    // this.multiBarChart = new MultiBarChart(this);
-    // this.allDonutCharts = new AllDonutCharts(this);
-    // this.heatmapChart = new HeatmapChart(this);
-    // this.tableChart = new TableChart(this);
-    // this.thumbnailChart = new ThumbnailChart(this);
-    // this.chartLegend = new ChartLegend(this);
+    this.multiBarChart = new MultiBarChart(this);
+    this.allDonutCharts = new AllDonutCharts(this);
+    this.heatmapChart = new HeatmapChart(this);
+    this.tableChart = new TableChart(this);
+    this.thumbnailChart = new ThumbnailChart(this);
+    this.chartLegend = new ChartLegend(this);
+    this.summaryPanelChart = new SummaryPanelChart(this);
 
-    // // set heights
-    // this.allDonutCharts.setDivHeight(this.heatmapChart.getOuterDivHeight());
-    // timeLogEnd("chartDrawing", "All chart drawing done");
+    // finalize inits
+    this.allDonutCharts.setDivHeight(this.heatmapChart.getOuterDivHeight());
+    timeLogEnd("chartDrawing", "All chart drawing done");
   };
 
   // update data and ndx managers
@@ -110,7 +111,18 @@ function ChartManager(seasonInfo, seasonData){
   // None
 
   // Common DataManager
-  // None
+  // get brushed time
+  this.getBrushedFrameTime = function(){
+    if(this.isGameDisplaying){
+      return this.gameDataManager.getBrushedFrameTime(
+        this.ndxManager.getBeginCounter(), 
+        this.ndxManager.getEndCounter());
+    } else {
+      return this.seasonDataManager.getBrushedFrameTime(
+        this.ndxManager.getBeginCounter(), 
+        this.ndxManager.getEndCounter());
+    }
+  };
 
   // SeasonDataManager
   this.getBrandGroupIds = function(){ return this.seasonDataManager.brandGroupIdArr; };

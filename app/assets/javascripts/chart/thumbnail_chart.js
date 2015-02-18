@@ -27,10 +27,10 @@ function ThumbnailChart(chartManager){
     // only require to refresh if we get new frame numbers
     var oldFrameIds = _.chain(thumbnailData).values().pluck('frame_id').value();
     var newFrameIds = _.chain(newThumbnailData).values().pluck('frame_id').value();
-    //if (!(_.isEqual(oldFrameIds, newFrameIds))){
+    if (!(_.isEqual(oldFrameIds, newFrameIds))){
       $(thumbnailChartRefresh_div).css("display", "flex");
       thumbnailData = newThumbnailData;
-    //}
+    }
   };
 
   function redrawThumbnails(){

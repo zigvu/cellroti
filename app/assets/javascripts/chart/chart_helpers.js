@@ -108,5 +108,41 @@ function ChartHelpers(){
         })
       ]);
   };
+
+  this.getReadableTime = function(brushedTimes){
+    var timeInMS = _.reduce(brushedTimes, function(total, d){ 
+      return total + d.end_time - d.begin_time; 
+    }, 0);
+    var seconds = timeInMS/1000;
+    var numyears = Math.floor(seconds / 31536000);
+    var numdays = Math.floor((seconds % 31536000) / 86400); 
+    var numhours = Math.floor(((seconds % 31536000) % 86400) / 3600);
+    var numminutes = Math.floor((((seconds % 31536000) % 86400) % 3600) / 60);
+    var numseconds = (((seconds % 31536000) % 86400) % 3600) % 60;
+
+    var time, unit;
+    if(numyears != 0){
+      time = numyears + (numdays/365);
+      unit = "yrs";
+    } else if (numdays != 0){
+      time = numdays + (numhours/24);
+      unit = "days";
+    } else if (numhours != 0){
+      time = numhours + (numminutes/60);
+      unit = "hrs";
+    } else if (numminutes != 0){
+      time = numminutes + (numseconds/60);
+      unit = "min";
+    } else {
+      time = numseconds;
+      unit = "sec";
+    }
+
+    return { 
+      time: Math.round(time * 10)/10, 
+      unit: unit,
+      num_games: brushedTimes.length 
+    };
+  };
   //------------------------------------------------
 };

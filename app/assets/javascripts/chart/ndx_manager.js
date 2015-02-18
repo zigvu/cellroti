@@ -95,7 +95,7 @@ function NDXManager(ndxData, chartManager){
   // get filtered data
   this.getBEData = function(){
     // format:
-    // [{bgId: det_group_id, values: [{counter: , brand_effectivesnss: ,... }]} ,... ]
+    // [{bgId: det_group_id, values: [{counter: , brand_effectivesnss: } ,...]} ,... ]
     var values;
     return _.chain(bgFilterDim.top(Infinity))
       .groupBy(function(d){ return d.det_group_id; })
