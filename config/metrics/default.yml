@@ -1,0 +1,36 @@
+# This is tied to app/states/config_reader.rb parser
+
+
+# general config
+
+general:
+  mongo_batch_insert_size:                  1000
+  video_localization_path:                  '/sftp/sftpuser/uploads'
+  localization_filename:                    'localizations.json'
+  localization_image_folder:                'images'
+  localization_thumbnail_folder:            'thumbnails'
+
+detectable_metrics:
+  # time decays
+  event_score_time_decay_seconds:            5
+  event_score_time_decay_weights:            [0.05, 0.1, 0.15, 0.2, 0.3]
+  # sliding window
+  sliding_window_size:                       5
+  sliding_window_decay_weights:              [0.05, 0.05, 0.1, 0.3, 0.5]
+  # quadrants
+  quadrants_num_cols:                        3
+  quadrants_num_rows:                        3
+
+det_group_metrics:
+  # sliding window
+  sliding_window_size:                       5
+  sliding_window_decay_weights:              [0.05, 0.05, 0.1, 0.3, 0.5]
+  # crowding weights
+  spatial_crowding_weight:                   0.75
+  temporal_crowding_weight:                  0.25
+  # brand effectiveness weights
+  be_det_group_crowding:                     0.25
+  be_visual_saliency:                        0.25
+  be_timing_effectiveness:                   0.25
+  be_spatial_effectiveness:                  0.25
+

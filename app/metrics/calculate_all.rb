@@ -60,7 +60,7 @@ module Metrics
 					detections = @allDetections[frameNumber.to_s][detectableId.to_s] || []
 
 					# STORE: detectables
-					singleDetectableMetrics += mcsd[detectableId].calculate(frameTime, detections)
+					singleDetectableMetrics += [mcsd[detectableId].calculate(frameTime, detections)]
 				end
 				# STORE: frame detection
 				# Note: this is tied to schema in FrameDetection class

@@ -117,6 +117,8 @@ module Metrics
 			# add value for reach resolution
 			@resolutions.each do |t, res|
 				add_single_det_group_metric_to_data_structure(t, singleDetGroupMetric)
+				# increment counter
+				res[:frame_counter] += 1
 			end
 
 			# if we have added specified number of frames,
@@ -127,9 +129,6 @@ module Metrics
 					@summaryMetricHashArr[t] << get_current_data_in_data_structure(t, @frameTime)
 					# reset counter
 					res[:frame_counter] = 0
-				else
-					# increment counter
-					res[:frame_counter] += 1
 				end
 			end
 

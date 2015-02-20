@@ -1,8 +1,10 @@
+// testx
+
 /*------------------------------------------------
 	Chart Manager
 	------------------------------------------------*/
 
-function ChartManager(seasonInfo, seasonData){
+function ChartManagerTestX(seasonInfo, seasonData){
   // variables for different charts
   this.numOfDataPtsPerBGInSeriesChart = 1000;
   this.numRowsInTableChart = 10;
@@ -31,17 +33,17 @@ function ChartManager(seasonInfo, seasonData){
     this.multiLineChart = new MultiLineChart(this);
     this.brushChart = new BrushChart(this);
     this.gameSelectionChart = new GameSelectionChart(this);
-    this.multiBarChart = new MultiBarChart(this);
-    this.allDonutCharts = new AllDonutCharts(this);
-    this.heatmapChart = new HeatmapChart(this);
-    this.tableChart = new TableChart(this);
-    this.thumbnailChart = new ThumbnailChart(this);
-    this.chartLegend = new ChartLegend(this);
-    this.summaryPanelChart = new SummaryPanelChart(this);
+    // this.multiBarChart = new MultiBarChart(this);
+    // this.allDonutCharts = new AllDonutCharts(this);
+    // this.heatmapChart = new HeatmapChart(this);
+    // this.tableChart = new TableChart(this);
+    // this.thumbnailChart = new ThumbnailChart(this);
+    // this.chartLegend = new ChartLegend(this);
+    // this.summaryPanelChart = new SummaryPanelChart(this);
 
-    // finalize inits
-    this.allDonutCharts.setDivHeight(this.heatmapChart.getOuterDivHeight());
-    timeLogEnd("chartDrawing", "All chart drawing done");
+    // // finalize inits
+    // this.allDonutCharts.setDivHeight(this.heatmapChart.getOuterDivHeight());
+    // timeLogEnd("chartDrawing", "All chart drawing done");
   };
 
   // update data and ndx managers

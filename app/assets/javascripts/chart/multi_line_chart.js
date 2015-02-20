@@ -184,8 +184,8 @@ function MultiLineChart(chartManager){
   };
 
   // drawing background rects
-  function drawGameBackground(data){
-    var gameRects = gameBgRect.selectAll("rect").data(data, function(d){ return d.game_id; });
+  function drawGameBackground(gameData){
+    var gameRects = gameBgRect.selectAll("rect").data(gameData, function(d){ return d.game_id; });
     var gameLabels = gameBgRect.selectAll(".gameLabel").data(gameData, function(d){ return d.game_id; })
 
     // enter

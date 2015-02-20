@@ -1,6 +1,11 @@
+require 'yaml'
+
 module States
 	class ConfigReader
 		def initialize
+			# @default = YAML.load_file("#{Rails.root}/config/metrics/default.yml")
+			@default = YAML.load_file("#{Rails.root}/config/metrics/first_try.yml")
+
 			init_general_config()
 			init_detectable_metrics_config()
 			init_det_group_metrics_config()
@@ -11,13 +16,15 @@ module States
 		attr_accessor :g_videoImportLocalizationImages
 
 		def init_general_config
+			g_default = @default["general"]
 			# mongo write size
-			@g_mongoBatchInsertSize = 1000
+			@g_mongoBatchInsertSize = g_default["mongo_batch_insert_size"]
 
 			# video import saving
-			@g_videoImportLocalizationPath = '/sftp/sftpuser/uploads'
-			@g_videoImportLocalizationFileName = 'localizations.json'
-			@g_videoImportLocalizationImages = 'images'
+			@g_videoImportLocalizationPath = g_default["video_localization_path"]
+			@g_videoImportLocalizationFileName = g_default["localization_filename"]
+			@g_videoImportLocalizationImages = g_default["localization_image_folder"]
+			@g_videoImportLocalizationThumbnails = g_default["localization_thumbnail_folder"]
 		end
 
 
@@ -26,17 +33,19 @@ module States
 		attr_accessor :dm_qd_numCols, :dm_qd_numRows
 
 		def init_detectable_metrics_config
+			dm_default = @default["detectable_metrics"]
+
 			# event score
-			@dm_es_maxTimeSeconds = 5
-			@dm_es_timeDecayWeight = [0.05, 0.1, 0.15, 0.2, 0.3]
+			@dm_es_maxTimeSeconds = dm_default["event_score_time_decay_seconds"]
+			@dm_es_timeDecayWeight = dm_default["event_score_time_decay_weights"]
 
 			# sliding window
-			@dm_sw_size = 5
-			@dm_sw_decayValues = [0.05, 0.05, 0.1, 0.3, 0.5]
+			@dm_sw_size = dm_default["sliding_window_size"]
+			@dm_sw_decayValues = dm_default["sliding_window_decay_weights"]
 
 			# quadrants in frame
-			@dm_qd_numCols = 3
-			@dm_qd_numRows = 3
+			@dm_qd_numCols = dm_default["quadrants_num_cols"]
+			@dm_qd_numRows = dm_default["quadrants_num_rows"]
 		end
 
 
@@ -46,19 +55,21 @@ module States
 		attr_accessor :dgm_be_timingEffectiveness, :dgm_be_spatialEffectiveness
 
 		def init_det_group_metrics_config
+			dgm_default = @default["det_group_metrics"]
+
 			# sliding window
-			@dgm_sw_size = 5
-			@dgm_sw_decayValues = [0.05, 0.05, 0.1, 0.3, 0.5]
+			@dgm_sw_size = dgm_default["sliding_window_size"]
+			@dgm_sw_decayValues = dgm_default["sliding_window_decay_weights"]
 
 			# crowding weights
-			@dgm_cw_spatialDetGroupCrowding = 0.75
-			@dgm_cw_temporalDetGroupCrowding = 0.25
+			@dgm_cw_spatialDetGroupCrowding = dgm_default["spatial_crowding_weight"]
+			@dgm_cw_temporalDetGroupCrowding = dgm_default["temporal_crowding_weight"]
 
 			# brand effectiveness weights
-			@dgm_be_detGroupCrowding = 0.25
-			@dgm_be_visualSaliency = 0.25
-			@dgm_be_timingEffectiveness = 0.25
-			@dgm_be_spatialEffectiveness = 0.25
+			@dgm_be_detGroupCrowding = dgm_default["be_det_group_crowding"]
+			@dgm_be_visualSaliency = dgm_default["be_visual_saliency"]
+			@dgm_be_timingEffectiveness = dgm_default["be_timing_effectiveness"]
+			@dgm_be_spatialEffectiveness = dgm_default["be_spatial_effectiveness"]
 		end
 
 	end

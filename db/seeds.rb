@@ -53,15 +53,18 @@ carbondatedDrinksDetGrp = Client.zigvu_client.det_groups.create(name: "Carbonate
 foodComboDetGrp = Client.zigvu_client.det_groups.create(name: "FoodComboForAllClient", pretty_name: "Food Combo")
 bestInClassDetGrp = Client.zigvu_client.det_groups.create(name: "BestInClassForAllClient", pretty_name: "Best In Class")
 
-[2,3,5].each do |detectable_id|
+# [2,3,5].each do |detectable_id|
+[2].each do |detectable_id|
 	carbondatedDrinksDetGrp.det_group_detectables.create(detectable_id: detectable_id)
 end
 
-[5,6].each do |detectable_id|
+# [5,6].each do |detectable_id|
+[3].each do |detectable_id|
 	foodComboDetGrp.det_group_detectables.create(detectable_id: detectable_id)
 end
 
-[3,5].each do |detectable_id|
+# [3,5].each do |detectable_id|
+[2,3].each do |detectable_id|
 	bestInClassDetGrp.det_group_detectables.create(detectable_id: detectable_id)
 end
 
@@ -94,8 +97,8 @@ mc.addAllowedSeasonIds(wc2014.id)
 # Auto-populate data
 # numOfGames = 64
 # averageLengthMS = 90 * 60 * 1000 # 90 minutes
-numOfGames = 3
-averageLengthMS = 3 * 60 * 1000 # 1 minutes
+numOfGames = 64
+averageLengthMS = 1 * 60 * 1000 # 1 minutes
 
 countryList = [
 	"Algeria", "Argentina", "Australia", "Belgium", "Bosnia-Herzegovina", 

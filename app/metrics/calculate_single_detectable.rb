@@ -32,9 +32,6 @@ module Metrics
 			# frameTime : time of frame
 			# detections : raw scores from localization.json from khajuri
 
-			# save scores in array
-			detectableMetrics = []
-
 			# quadrant information of detections
 			intersectionQuadrants = find_intersection_quadrants(detections)
 			# spatial effectiveness
@@ -50,7 +47,7 @@ module Metrics
 			eventScore = get_event_score(detections, frameTime)
 
 			# Note: this is tied to schema in SingleDetectableMetric class
-			detectableMetrics << {
+			detectableMetrics = {
 				di: @detectableId,
 				se: spatialEffectiveness,
 				vs: visualSaliency,
