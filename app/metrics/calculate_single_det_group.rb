@@ -9,11 +9,11 @@ module Metrics
 
 			@swTemporalDetGroupCrowding = Metrics::MetricsSlidingWindow.new(
 				@configReader.dgm_sw_size,
-				@configReader.dgm_sw_decayValues)
+				@configReader.dgm_sw_decayWeights)
 
 			@swTimingEffectiveness = Metrics::MetricsSlidingWindow.new(
 				@configReader.dgm_sw_size,
-				@configReader.dgm_sw_decayValues)
+				@configReader.dgm_sw_decayWeights)
 
 			@spatialDetGroupCrowdingWeight = @configReader.dgm_cw_spatialDetGroupCrowding
 			@temporalDetGroupCrowdingWeight = @configReader.dgm_cw_temporalDetGroupCrowding

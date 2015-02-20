@@ -28,8 +28,8 @@ module States
 		end
 
 
-		attr_accessor :dm_es_maxTimeSeconds, :dm_es_timeDecayWeight
-		attr_accessor :dm_sw_size, :dm_sw_decayValues
+		attr_accessor :dm_es_maxTimeSeconds, :dm_es_timeDecayWeights
+		attr_accessor :dm_sw_size, :dm_sw_decayWeights
 		attr_accessor :dm_qd_numCols, :dm_qd_numRows
 
 		def init_detectable_metrics_config
@@ -37,11 +37,11 @@ module States
 
 			# event score
 			@dm_es_maxTimeSeconds = dm_default["event_score_time_decay_seconds"]
-			@dm_es_timeDecayWeight = dm_default["event_score_time_decay_weights"]
+			@dm_es_timeDecayWeights = dm_default["event_score_time_decay_weights"]
 
 			# sliding window
 			@dm_sw_size = dm_default["sliding_window_size"]
-			@dm_sw_decayValues = dm_default["sliding_window_decay_weights"]
+			@dm_sw_decayWeights = dm_default["sliding_window_decay_weights"]
 
 			# quadrants in frame
 			@dm_qd_numCols = dm_default["quadrants_num_cols"]
@@ -49,7 +49,7 @@ module States
 		end
 
 
-		attr_accessor :dgm_sw_size, :dgm_sw_decayValues
+		attr_accessor :dgm_sw_size, :dgm_sw_decayWeights
 		attr_accessor :dgm_cw_spatialDetGroupCrowding, :dgm_cw_temporalDetGroupCrowding
 		attr_accessor :dgm_be_detGroupCrowding, :dgm_be_visualSaliency
 		attr_accessor :dgm_be_timingEffectiveness, :dgm_be_spatialEffectiveness
@@ -59,7 +59,7 @@ module States
 
 			# sliding window
 			@dgm_sw_size = dgm_default["sliding_window_size"]
-			@dgm_sw_decayValues = dgm_default["sliding_window_decay_weights"]
+			@dgm_sw_decayWeights = dgm_default["sliding_window_decay_weights"]
 
 			# crowding weights
 			@dgm_cw_spatialDetGroupCrowding = dgm_default["spatial_crowding_weight"]

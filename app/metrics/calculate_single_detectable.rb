@@ -12,12 +12,12 @@ module Metrics
 			@eventDistance = Metrics::MetricsEventDistance.new(
 				@video.game.events, 
 				@configReader.dm_es_maxTimeSeconds, 
-				@configReader.dm_es_timeDecayWeight)
+				@configReader.dm_es_timeDecayWeights)
 
 			# sliding window
 			@slidingWindowScores = Metrics::MetricsSlidingWindow.new(
 				@configReader.dm_sw_size,
-				@configReader.dm_sw_decayValues)
+				@configReader.dm_sw_decayWeights)
 
 			
 			# number of quadrants in frame

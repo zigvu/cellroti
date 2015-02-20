@@ -33,7 +33,7 @@ function ChartManagerTestX(seasonInfo, seasonData){
     this.multiLineChart = new MultiLineChart(this);
     this.brushChart = new BrushChart(this);
     this.gameSelectionChart = new GameSelectionChart(this);
-    // this.multiBarChart = new MultiBarChart(this);
+    this.multiBarChart = new MultiBarChart(this);
     // this.allDonutCharts = new AllDonutCharts(this);
     // this.heatmapChart = new HeatmapChart(this);
     // this.tableChart = new TableChart(this);
