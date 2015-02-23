@@ -1,9 +1,10 @@
 module Metrics
 	class MetricsEventDistance
+		attr_accessor :events, :timeWeight, :eventWeights, :maxTimeSeconds
+
 		def initialize(events, maxTimeSeconds, timeDecayWeight)
 			@events = events
 			@maxTimeSeconds = maxTimeSeconds
-			#timeDecayWeight = [0.05, 0.1, 0.15, 0.2, 0.3]
 			if timeDecayWeight.size() != @maxTimeSeconds
 				raise "Decay array must be the same size as maxTimeSeconds"
 			end
@@ -26,9 +27,11 @@ module Metrics
 				timeDiff = (time_diff(timeStamp, eventDetails[:time])).floor
 				if timeDiff < @maxTimeSeconds
 					#puts "Hit at: #{timeDiff}"
-					score += @timeWeight[timeDiff] * @eventWeights[eventId][:weight]
+					score += @timeWeight[timeDiff] * eventDetails[:weight]
 				end
 			end
+			# we have no control over the frequency and closeness of events
+			# so need an upper-bound limit
 			score = 1.0 if score > 1.0
 			return score
 		end

@@ -8,12 +8,14 @@ module Metrics
 			@detectableIds = DetGroup.find(detGroupId).detectables.pluck(:id)
 
 			@swTemporalDetGroupCrowding = Metrics::MetricsSlidingWindow.new(
-				@configReader.dgm_sw_size,
-				@configReader.dgm_sw_decayWeights)
+				@configReader.dgm_sw_size_seconds_temporalCrowding,
+				@configReader.dgm_sw_decayWeights_temporalCrowding,
+				@video.detection_frame_rate)
 
 			@swTimingEffectiveness = Metrics::MetricsSlidingWindow.new(
-				@configReader.dgm_sw_size,
-				@configReader.dgm_sw_decayWeights)
+				@configReader.dgm_sw_size_seconds_timingEffectiveness,
+				@configReader.dgm_sw_decayWeights_timingEffectiveness,
+				@video.detection_frame_rate)
 
 			@spatialDetGroupCrowdingWeight = @configReader.dgm_cw_spatialDetGroupCrowding
 			@temporalDetGroupCrowdingWeight = @configReader.dgm_cw_temporalDetGroupCrowding

@@ -16,8 +16,9 @@ module Metrics
 
 			# sliding window
 			@slidingWindowScores = Metrics::MetricsSlidingWindow.new(
-				@configReader.dm_sw_size,
-				@configReader.dm_sw_decayWeights)
+				@configReader.dm_sw_size_seconds_scores,
+				@configReader.dm_sw_decayWeights_scores,
+				@video.detection_frame_rate)
 
 			
 			# number of quadrants in frame

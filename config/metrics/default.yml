@@ -12,25 +12,28 @@ general:
 
 detectable_metrics:
   # time decays
-  event_score_time_decay_seconds:            5
-  event_score_time_decay_weights:            [0.05, 0.1, 0.15, 0.2, 0.3]
-  # sliding window
-  sliding_window_size:                       5
-  sliding_window_decay_weights:              [0.05, 0.05, 0.1, 0.3, 0.5]
+  event_score_time_decay_seconds:                      5
+  event_score_time_decay_weights:                      [0.05, 0.1, 0.15, 0.2, 0.3]
+  # sliding window - scores
+  sliding_window_size_seconds_scores:                  5
+  sliding_window_decay_weights_scores:                 [0, 0, 0, 0, 1.0]
   # quadrants
-  quadrants_num_cols:                        3
-  quadrants_num_rows:                        3
+  quadrants_num_cols:                                  3
+  quadrants_num_rows:                                  3
 
 det_group_metrics:
-  # sliding window
-  sliding_window_size:                       5
-  sliding_window_decay_weights:              [0.05, 0.05, 0.1, 0.3, 0.5]
+  # sliding window - temporal crowding
+  sliding_window_size_seconds_temporal_crowding:       5
+  sliding_window_decay_weights_temporal_crowding:      [0.05, 0.05, 0.1, 0.3, 0.5]
+  # sliding window - timing effectivness
+  sliding_window_size_seconds_timing_effectivness:     5
+  sliding_window_decay_weights_timing_effectivness:    [0.05, 0.05, 0.1, 0.3, 0.5]
   # crowding weights
-  spatial_crowding_weight:                   0.75
-  temporal_crowding_weight:                  0.25
+  spatial_crowding_weight:                             0.75
+  temporal_crowding_weight:                            0.25
   # brand effectiveness weights
-  be_det_group_crowding:                     0.25
-  be_visual_saliency:                        0.25
-  be_timing_effectiveness:                   0.25
-  be_spatial_effectiveness:                  0.25
+  be_det_group_crowding:                               0.25
+  be_visual_saliency:                                  0.25
+  be_timing_effectiveness:                             0.25
+  be_spatial_effectiveness:                            0.25
 
