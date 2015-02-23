@@ -100,7 +100,7 @@ module Metrics
 		end
 
 		def visual_saliency(visualSaliencyHash)
-			return operate_det_hash(visualSaliencyHash, :average)
+			return operate_det_hash(visualSaliencyHash, :max)
 		end
 
 		# for timing_effectiveness

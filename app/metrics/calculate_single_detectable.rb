@@ -38,7 +38,7 @@ module Metrics
 			# spatial effectiveness
 			spatialEffectiveness = spatial_effectiveness(intersectionQuadrants)
 			# visual saliency
-			@slidingWindowScores.add(get_score_averages(detections))
+			@slidingWindowScores.add(get_score_max(detections))
 			visualSaliency = @slidingWindowScores.get_decayed_average
 			# num of detections per detectable
 			detectionsCount = detections.count
@@ -69,12 +69,11 @@ module Metrics
 			return score
 		end
 
-		def get_score_averages(detections)
+		def get_score_max(detections)
 			score = 0.0
 			detections.each do |d|
-				score += d[:score]
+				score = d[:score] if d[:score] > score
 			end
-			score = score/detections.count if detections.count > 0
 			return score
 		end
 
