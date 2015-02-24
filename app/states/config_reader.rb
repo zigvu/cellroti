@@ -50,7 +50,6 @@ module States
 
 
 		attr_accessor :dgm_sw_size_seconds_temporalCrowding, :dgm_sw_decayWeights_temporalCrowding
-		attr_accessor :dgm_sw_size_seconds_timingEffectiveness, :dgm_sw_decayWeights_timingEffectiveness
 		attr_accessor :dgm_cw_spatialDetGroupCrowding, :dgm_cw_temporalDetGroupCrowding
 		attr_accessor :dgm_be_detGroupCrowding, :dgm_be_visualSaliency
 		attr_accessor :dgm_be_timingEffectiveness, :dgm_be_spatialEffectiveness
@@ -61,10 +60,6 @@ module States
 			# sliding window - temporal crowding
 			@dgm_sw_size_seconds_temporalCrowding = dgm_default["sliding_window_size_seconds_temporal_crowding"]
 			@dgm_sw_decayWeights_temporalCrowding = dgm_default["sliding_window_decay_weights_temporal_crowding"]
-
-			# sliding window - timing effectiveness
-			@dgm_sw_size_seconds_timingEffectiveness = dgm_default["sliding_window_size_seconds_timing_effectivness"]
-			@dgm_sw_decayWeights_timingEffectiveness = dgm_default["sliding_window_decay_weights_timing_effectivness"]
 
 			# crowding weights
 			@dgm_cw_spatialDetGroupCrowding = dgm_default["spatial_crowding_weight"]

@@ -12,11 +12,6 @@ module Metrics
 				@configReader.dgm_sw_decayWeights_temporalCrowding,
 				@video.detection_frame_rate)
 
-			@swTimingEffectiveness = Metrics::MetricsSlidingWindow.new(
-				@configReader.dgm_sw_size_seconds_timingEffectiveness,
-				@configReader.dgm_sw_decayWeights_timingEffectiveness,
-				@video.detection_frame_rate)
-
 			@spatialDetGroupCrowdingWeight = @configReader.dgm_cw_spatialDetGroupCrowding
 			@temporalDetGroupCrowdingWeight = @configReader.dgm_cw_temporalDetGroupCrowding
 
@@ -57,8 +52,7 @@ module Metrics
 			temporalDetGroupCrowding = @swTemporalDetGroupCrowding.get_decayed_average
 			
 			# score of events in timeline
-			@swTimingEffectiveness.add(eventScores)
-			timingEffectiveness = @swTimingEffectiveness.get_decayed_average
+			timingEffectiveness = eventScores
 
 			# combined crowding scores - space and time
 			detGroupCrowding = (
