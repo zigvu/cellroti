@@ -20,13 +20,9 @@ module Metrics
 				@configReader.dm_sw_decayWeights_scores,
 				@video.detection_frame_rate)
 
-			
-			# number of quadrants in frame
-			@numCols = @configReader.dm_qd_numCols
-			@numRows = @configReader.dm_qd_numRows
-			metricsQuads = Metrics::MetricsQuadrants.new(@width, @height, @numCols, @numRows)
-			@quadrant_weights = metricsQuads.get_quadrant_weights
-			@quadrants = metricsQuads.get_quadrant_boundaries
+			# quadrants in frame
+			@metricsQuads = Metrics::MetricsQuadrants.new(@width, @height, configReader)
+
 		end
 
 		def calculate(frameTime, detections)
@@ -34,7 +30,7 @@ module Metrics
 			# detections : raw scores from localization.json from khajuri
 
 			# quadrant information of detections
-			intersectionQuadrants = find_intersection_quadrants(detections)
+			intersectionQuadrants = @metricsQuads.find_intersection_quadrants(detections)
 			# spatial effectiveness
 			spatialEffectiveness = spatial_effectiveness(intersectionQuadrants)
 			# visual saliency
@@ -95,46 +91,6 @@ module Metrics
 			effectiveness = 1 if effectiveness > 1.0
 			#puts "#{effectiveness}"
 			return effectiveness
-		end
-
-		def find_intersection_quadrants(detections)
-			intersection_quads = {}
-			# initialize data structure
-			@quadrants.each do |qNum, qBbox|
-				intersection_quads[qNum] = 0
-			end
-			# combine multiple detections
-			detections.each do |detection|
-				@quadrants.each do |qNum, qBbox|
-					intersection_quads[qNum] += (overlap(detection[:bbox], qBbox)/(@numCols * @numRows))
-				end
-			end
-			# reweight
-			@quadrants.each do |qNum, qBbox|
-				intersection_quads[qNum] = intersection_quads[qNum] * @quadrant_weights[qNum]
-			end
-			#puts intersection_quads
-			return intersection_quads
-		end
-
-		# overlap fraction based on area of bbox2
-		def overlap(bbox1, bbox2)
-			b1_x0 = bbox1[:x]
-			b1_x3 = bbox1[:width] + bbox1[:x]
-			b1_y0 = bbox1[:y]
-			b1_y3 = bbox1[:height] + bbox1[:y]
-
-			b2_x0 = bbox2[:x]
-			b2_x3 = bbox2[:width] + bbox2[:x]
-			b2_y0 = bbox2[:y]
-			b2_y3 = bbox2[:height] + bbox2[:y]
-
-			width = bbox2[:width]
-			height = bbox2[:height]
-
-			xOverlap = [0, ([b1_x3, b2_x3].min - [b1_x0, b2_x0].max)].max
-			yOverlap = [0, ([b1_y3, b2_y3].min - [b1_y0, b2_y0].max)].max
-			return (1.0 * xOverlap * yOverlap / (width * height))
 		end
 
 	end

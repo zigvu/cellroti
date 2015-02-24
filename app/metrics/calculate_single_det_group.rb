@@ -33,7 +33,7 @@ module Metrics
 			visualSaliency = visual_saliency(Hash[
 				singleDetectableMetrics.pluck(:detectable_id, :visual_saliency)])
 
-			eventScores = max_event_score(Hash[
+			timingEffectiveness = max_event_score(Hash[
 				singleDetectableMetrics.pluck(:detectable_id, :event_score)])
 
 			spatialEffectiveness = spatial_effectiveness(Hash[
@@ -42,7 +42,7 @@ module Metrics
 			detectionsCount = detections_count(Hash[
 				singleDetectableMetrics.pluck(:detectable_id, :detections_count)])
 
-			quadrantsCount = quadrants_count(Hash[
+			quadrantsAverage = quadrants_average(Hash[
 				singleDetectableMetrics.pluck(:detectable_id, :quadrants)])
 
 			# populate sliding window
@@ -50,9 +50,6 @@ module Metrics
 			# spatial score of det_group in timeline
 			@swTemporalDetGroupCrowding.add(spatialDetGroupCrowding)
 			temporalDetGroupCrowding = @swTemporalDetGroupCrowding.get_decayed_average
-			
-			# score of events in timeline
-			timingEffectiveness = eventScores
 
 			# combined crowding scores - space and time
 			detGroupCrowding = (
@@ -75,7 +72,7 @@ module Metrics
 			sdgm.timing_effectiveness = timingEffectiveness
 			sdgm.spatial_effectiveness = spatialEffectiveness
 			sdgm.detections_count = detectionsCount
-			sdgm.quadrants = quadrantsCount
+			sdgm.quadrants = quadrantsAverage
 
 			return sdgm
 		end
@@ -110,7 +107,7 @@ module Metrics
 			return operate_det_hash(detectionsCountHash, :add)
 		end
 
-		def quadrants_count(quadrantsCountHash)
+		def quadrants_average(quadrantsCountHash)
 			qdTotal = {}
 			@detectableIds.each_with_index do |dId, idx|
 				if idx == 0
@@ -121,6 +118,13 @@ module Metrics
 					quadrantsCountHash[dId].each do |k, v|
 						qdTotal[k] += v
 					end
+				end
+			end
+			# average
+			detectableCount = @detectableIds.count
+			if detectableCount > 0
+				qdTotal.each do |k, v|
+					qdTotal[k] = v/detectableCount
 				end
 			end
 			return qdTotal

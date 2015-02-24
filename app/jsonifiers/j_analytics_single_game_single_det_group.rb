@@ -49,12 +49,8 @@ module Jsonifiers
 				sm.single_summary_metrics.each do |sdata|
 
 					quadrants = []
-					#qdata = JSON.parse()
 					sdata.quadrants.keys.sort.each do |k|
-						#quadrants << sprintf("%.4f", sdata.quadrants[k])
-						# TODO TODO TODO TODO TODO TODO TODO
-						# TODO TODO TODO TODO TODO TODO TODO
-						quadrants << sprintf("%.4f", sdata.quadrants[k] * 4000) # <---- TODO: remove
+						quadrants << sprintf("%.4f", sdata.quadrants[k])
 					end
 
 					# Note: the array ordering has to match with what we get from

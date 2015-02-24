@@ -31,6 +31,7 @@ module States
 		attr_accessor :dm_es_maxTimeSeconds, :dm_es_timeDecayWeights
 		attr_accessor :dm_sw_size_seconds_scores, :dm_sw_decayWeights_scores
 		attr_accessor :dm_qd_numCols, :dm_qd_numRows
+		attr_accessor :dm_qd_centerWeight, :dm_qd_cornerWeight, :dm_qd_nonCornerEdgeWeight
 
 		def init_detectable_metrics_config
 			dm_default = @default["detectable_metrics"]
@@ -46,6 +47,9 @@ module States
 			# quadrants in frame
 			@dm_qd_numCols = dm_default["quadrants_num_cols"]
 			@dm_qd_numRows = dm_default["quadrants_num_rows"]
+			@dm_qd_centerWeight  = dm_default["quadrants_center_weight"]
+			@dm_qd_cornerWeight  = dm_default["quadrants_corner_weight"]
+			@dm_qd_nonCornerEdgeWeight  = dm_default["quadrants_non_corner_edge_weight"]
 		end
 
 

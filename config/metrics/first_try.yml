@@ -25,6 +25,10 @@ detectable_metrics:
   # quadrants
   quadrants_num_cols:                                  3
   quadrants_num_rows:                                  3
+  # the center weight is always unity - all other quadrant weights are smaller than it
+  quadrants_center_weight:                             1.0
+  quadrants_corner_weight:                             0.25
+  quadrants_non_corner_edge_weight:                    0.5
 
 det_group_metrics:
   # sliding window - temporal crowding
@@ -36,6 +40,6 @@ det_group_metrics:
   # brand effectiveness weights
   be_det_group_crowding:                               0
   be_visual_saliency:                                  0
-  be_timing_effectiveness:                             1.0
-  be_spatial_effectiveness:                            0
+  be_timing_effectiveness:                             0
+  be_spatial_effectiveness:                            1.0
 
