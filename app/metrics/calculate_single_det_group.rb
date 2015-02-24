@@ -42,7 +42,7 @@ module Metrics
 			detectionsCount = detections_count(Hash[
 				singleDetectableMetrics.pluck(:detectable_id, :detections_count)])
 
-			quadrantsAverage = quadrants_average(Hash[
+			quadrantsCount = quadrants_count(Hash[
 				singleDetectableMetrics.pluck(:detectable_id, :quadrants)])
 
 			# populate sliding window
@@ -72,7 +72,7 @@ module Metrics
 			sdgm.timing_effectiveness = timingEffectiveness
 			sdgm.spatial_effectiveness = spatialEffectiveness
 			sdgm.detections_count = detectionsCount
-			sdgm.quadrants = quadrantsAverage
+			sdgm.quadrants = quadrantsCount
 
 			return sdgm
 		end
@@ -107,7 +107,7 @@ module Metrics
 			return operate_det_hash(detectionsCountHash, :add)
 		end
 
-		def quadrants_average(quadrantsCountHash)
+		def quadrants_count(quadrantsCountHash)
 			qdTotal = {}
 			@detectableIds.each_with_index do |dId, idx|
 				if idx == 0
@@ -120,13 +120,8 @@ module Metrics
 					end
 				end
 			end
-			# average
-			detectableCount = @detectableIds.count
-			if detectableCount > 0
-				qdTotal.each do |k, v|
-					qdTotal[k] = v/detectableCount
-				end
-			end
+			# note: do not average since if multiple detectable/detections
+			# present, we want heatmap chart to glow brighter
 			return qdTotal
 		end
 
