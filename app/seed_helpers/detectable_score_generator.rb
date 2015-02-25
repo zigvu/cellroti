@@ -16,6 +16,9 @@ module SeedHelpers
 			@sineSteps = 10
 			@sineTrendingUp = true
 
+			@dataCounter = 0
+			@sineBroken = false
+
 			reset()
 		end
 
@@ -25,6 +28,22 @@ module SeedHelpers
 			@y = @y_orig
 			@w = @w_orig
 			@h = @h_orig
+		end
+
+		def updateBrokenSine
+			# every 2 cycles, insert zero data for another 2 cycles
+			if (@dataCounter % (@sineSteps * 4)) == 0
+				@sineBroken = (not @sineBroken)
+			end
+			@dataCounter += 1
+			# if return positive, then we should grab score values
+			if @sineBroken
+				reset()
+				return false
+			else
+				updateSine()
+				return true
+			end
 		end
 
 		def updateSine

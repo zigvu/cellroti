@@ -8,9 +8,9 @@ module Metrics
 			@detectableIds = DetGroup.find(detGroupId).detectables.pluck(:id)
 
 			@swTemporalDetGroupCrowding = Metrics::MetricsSlidingWindow.new(
+				@video.detection_frame_rate,
 				@configReader.dgm_sw_size_seconds_temporalCrowding,
-				@configReader.dgm_sw_decayWeights_temporalCrowding,
-				@video.detection_frame_rate)
+				@configReader.dgm_sw_decayWeights_temporalCrowding)
 
 			@spatialDetGroupCrowdingWeight = @configReader.dgm_cw_spatialDetGroupCrowding
 			@temporalDetGroupCrowdingWeight = @configReader.dgm_cw_temporalDetGroupCrowding
@@ -104,7 +104,7 @@ module Metrics
 		end
 
 		def detections_count(detectionsCountHash)
-			return operate_det_hash(detectionsCountHash, :add)
+			return operate_det_hash(detectionsCountHash, :max)
 		end
 
 		def quadrants_count(quadrantsCountHash)

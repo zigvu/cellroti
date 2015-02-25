@@ -16,9 +16,15 @@ module Metrics
 
 			# sliding window
 			@slidingWindowScores = Metrics::MetricsSlidingWindow.new(
+				@video.detection_frame_rate,
 				@configReader.dm_sw_size_seconds_scores,
-				@configReader.dm_sw_decayWeights_scores,
-				@video.detection_frame_rate)
+				@configReader.dm_sw_decayWeights_scores)
+
+			@slidingWindowDetectionsCount = Metrics::MetricsSlidingWindow.new(
+				@video.detection_frame_rate,
+				@configReader.dm_sw_size_seconds_detectionsCount,
+				nil)
+
 
 			# quadrants in frame
 			@metricsQuads = Metrics::MetricsQuadrants.new(@width, @height, configReader)
@@ -35,9 +41,10 @@ module Metrics
 			spatialEffectiveness = spatial_effectiveness(intersectionQuadrants)
 			# visual saliency
 			@slidingWindowScores.add(get_score_max(detections))
-			visualSaliency = @slidingWindowScores.get_decayed_average
+			visualSaliency = @slidingWindowScores.get_decayed_average()
 			# num of detections per detectable
-			detectionsCount = detections.count
+			@slidingWindowDetectionsCount.add(detections.count)
+			detectionsCount = @slidingWindowDetectionsCount.get_min()
 			# area of detections per detectable as fraction of frame area
 			cumulativeArea = get_cumulative_area(detections)
 			# event score if detectable present in frame

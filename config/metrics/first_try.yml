@@ -29,6 +29,8 @@ detectable_metrics:
   quadrants_center_weight:                             1.0
   quadrants_corner_weight:                             1.0
   quadrants_non_corner_edge_weight:                    1.0
+  # detection count
+  sliding_window_size_seconds_detection_count:         1
 
 det_group_metrics:
   # sliding window - temporal crowding
@@ -38,8 +40,8 @@ det_group_metrics:
   spatial_crowding_weight:                             0
   temporal_crowding_weight:                            1
   # brand effectiveness weights
-  be_det_group_crowding:                               1.0
-  be_visual_saliency:                                  0
+  be_det_group_crowding:                               0
+  be_visual_saliency:                                  1.0
   be_timing_effectiveness:                             0
   be_spatial_effectiveness:                            0
 

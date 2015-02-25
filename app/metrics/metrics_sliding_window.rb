@@ -1,8 +1,15 @@
 module Metrics
 	class MetricsSlidingWindow
-		def initialize(sizeSeconds, decayWeights, detectionFPS)
-			@decayArray = constructWindow(sizeSeconds, decayWeights, detectionFPS)
-			@data = Array.new(@decayArray.size(), 0)
+		def initialize(detectionFPS, sizeSeconds, decayWeights)
+			@decayArray = nil
+			@data = nil
+			# if we don't need to decay weights, no decay array will be supplied
+			if decayWeights == nil
+				@data = Array.new(detectionFPS * sizeSeconds, 0)
+			else
+				@decayArray = constructWindow(detectionFPS, sizeSeconds, decayWeights)
+				@data = Array.new(@decayArray.size(), 0)
+			end
 		end
 
 		def add(newValue)
@@ -18,7 +25,11 @@ module Metrics
 			return avg
 		end
 
-		def constructWindow(sizeSeconds, decayWeights, detectionFPS)
+		def get_min
+			return @data.min
+		end
+
+		def constructWindow(detectionFPS, sizeSeconds, decayWeights)
 			decayArray = []
 			jumpIdx = ((detectionFPS * sizeSeconds - decayWeights.size())/(decayWeights.size() - 1)).floor + 1
 			jumpIdx = 1 if jumpIdx <= 0

@@ -32,6 +32,7 @@ module States
 		attr_accessor :dm_sw_size_seconds_scores, :dm_sw_decayWeights_scores
 		attr_accessor :dm_qd_numCols, :dm_qd_numRows
 		attr_accessor :dm_qd_centerWeight, :dm_qd_cornerWeight, :dm_qd_nonCornerEdgeWeight
+		attr_accessor :dm_sw_size_seconds_detectionsCount
 
 		def init_detectable_metrics_config
 			dm_default = @default["detectable_metrics"]
@@ -50,6 +51,9 @@ module States
 			@dm_qd_centerWeight  = dm_default["quadrants_center_weight"]
 			@dm_qd_cornerWeight  = dm_default["quadrants_corner_weight"]
 			@dm_qd_nonCornerEdgeWeight  = dm_default["quadrants_non_corner_edge_weight"]
+
+			# detections count
+			@dm_sw_size_seconds_detectionsCount = dm_default["sliding_window_size_seconds_detection_count"]
 		end
 
 

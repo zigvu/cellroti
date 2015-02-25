@@ -3,7 +3,7 @@ module SeedHelpers
 	class StructuredDataGenerator
 		# structure types:
 		def self.structureTypes
-			[:random, :constant, :sine]
+			[:random, :constant, :sine, :brokenSine]
 		end
 
 		def initialize(structureType, numOfFrames, frameStep, seededRandom)
@@ -29,8 +29,51 @@ module SeedHelpers
 				return generateRandom()
 			elsif @structureType == :sine
 				return generateSine()
+			elsif @structureType == :brokenSine
+				return generateBrokenSine()
 			end
 		end
+
+		# -----------------------------------------------------
+		# BEGIN: broken-sine
+		def generateBrokenSine
+			@detectableScoreGenerators = {}
+			@detectableIds.each_with_index do |dId, idx|
+				@detectableScoreGenerators[dId] = SeedHelpers::DetectableScoreGenerator.new(\
+					nil, nil, nil, nil, nil)
+
+				# start data generation off-phase
+				for i in 0..idx
+					@detectableScoreGenerators[dId].updateBrokenSine()
+				end
+			end
+
+			vd = {}
+			counter = 1
+			for i in 0..@numOfFrames
+				vd.merge!({ counter =>  nextBrokenSineData() })
+				counter += @frameStep
+			end
+			return vd
+		end
+
+		def nextBrokenSineData
+			data = {}
+			@detectableScoreGenerators.each do |dId, sg|
+				# if return value is positive, then we write
+				if(sg.updateBrokenSine())
+					bboxes = [{
+							score: sg.score,
+							bbox: { x: sg.x, y: sg.y, width: sg.w, height: sg.h }
+						}]
+					data.merge!({dId => bboxes})
+				end
+			end
+			return data
+		end
+
+		# END: broken-sine
+		# -----------------------------------------------------
 
 		# -----------------------------------------------------
 		# BEGIN: sine
