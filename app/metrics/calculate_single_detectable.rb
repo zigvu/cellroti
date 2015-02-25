@@ -25,30 +25,39 @@ module Metrics
 				@configReader.dm_sw_size_seconds_detectionsCount,
 				nil)
 
-
 			# quadrants in frame
 			@metricsQuads = Metrics::MetricsQuadrants.new(@width, @height, configReader)
 
+			# view duration
+			@timeForSingleFrame = States::ConfigReader.frameTimeStampResolution / @video.detection_frame_rate
 		end
 
 		def calculate(frameTime, detections)
 			# frameTime : time of frame
 			# detections : raw scores from localization.json from khajuri
 
-			# quadrant information of detections
+			# spatial position: quadrant information of detections
 			intersectionQuadrants = @metricsQuads.find_intersection_quadrants(detections)
-			# spatial effectiveness
+
+			# spatial effectiveness: derived from spatial position
 			spatialEffectiveness = spatial_effectiveness(intersectionQuadrants)
-			# visual saliency
+
+			# visual saliency: decayed average of detection scores
 			@slidingWindowScores.add(get_score_max(detections))
 			visualSaliency = @slidingWindowScores.get_decayed_average()
-			# num of detections per detectable
+
+			# detection count: count detections in window and reset to avoid double counting
 			@slidingWindowDetectionsCount.add(detections.count)
 			detectionsCount = @slidingWindowDetectionsCount.get_min()
 			@slidingWindowDetectionsCount.reset() if detectionsCount > 0
-			# area of detections per detectable as fraction of frame area
+
+			# view duration: count interval time of consecutive detections
+			viewDuration = detections.count > 0 ? @timeForSingleFrame : 0
+
+			# brand group crowding: area of detections per detectable as fraction of frame area
 			cumulativeArea = get_cumulative_area(detections)
-			# event score if detectable present in frame
+
+			# timing effectiveness: event score if detectable present in frame
 			eventScore = get_event_score(detections, frameTime)
 
 			# Note: this is tied to schema in SingleDetectableMetric class
@@ -57,6 +66,7 @@ module Metrics
 				se: spatialEffectiveness,
 				vs: visualSaliency,
 				dc: detectionsCount,
+				vd: viewDuration,
 				ca: cumulativeArea,
 				es: eventScore,
 				qd: intersectionQuadrants,

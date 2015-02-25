@@ -24,7 +24,7 @@ module Metrics
 		def get_event_score(timeStamp)
 			score = 0.0
 			@eventWeights.each do |eventId, eventDetails|
-				timeDiff = (time_diff(timeStamp, eventDetails[:time])).floor
+				timeDiff = (time_diff(eventDetails[:time], timeStamp)).floor
 				if timeDiff < @maxTimeSeconds
 					#puts "Hit at: #{timeDiff}"
 					score += @timeWeight[timeDiff] * eventDetails[:weight]
@@ -36,9 +36,9 @@ module Metrics
 			return score
 		end
 
-		def time_diff(timeStamp1, timeStamp2)
+		def time_diff(earlierTimeStamp, laterTimeStamp)
 			# subtract time, convert to seconds and return
-			return (timeStamp1 - timeStamp2).abs / 1000.0
+			return (laterTimeStamp - earlierTimeStamp).abs / States::ConfigReader.frameTimeStampResolution
 		end
 
 	end

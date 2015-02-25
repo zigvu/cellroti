@@ -18,6 +18,7 @@ module Metrics
 			@timing_effectiveness = {}
 			@spatial_effectiveness = {}
 			@detections_count = {}
+			@view_duration = {}
 			@quadrants = {}
 
 			@summaryMetricHashArr = {}
@@ -30,6 +31,7 @@ module Metrics
 				@timing_effectiveness[t] = {}
 				@spatial_effectiveness[t] = {}
 				@detections_count[t] = {}
+				@view_duration[t] = {}
 				@quadrants[t] = {}
 
 				@summaryMetricHashArr[t] = []
@@ -45,15 +47,16 @@ module Metrics
 			@frameTime = 0
 		end
 
-		# set the data structures to given value
-		def set_data_structure_to_value(t, setToValue)
-			@brand_effectiveness[t] = setToValue
-			@det_group_crowding[t] = setToValue
-			@visual_saliency[t] = setToValue
-			@timing_effectiveness[t] = setToValue
-			@spatial_effectiveness[t] = setToValue
-			@detections_count[t] = setToValue
-			@quadrants[t] = setToValue
+		# reset the data structures
+		def reset_data_structure(t)
+			@brand_effectiveness[t] = 0
+			@det_group_crowding[t] = 0
+			@visual_saliency[t] = 0
+			@timing_effectiveness[t] = 0
+			@spatial_effectiveness[t] = 0
+			@detections_count[t] = 0
+			@view_duration[t] = 0
+			@quadrants[t] = 0
 		end
 
 		# add value of det group to data structure
@@ -64,6 +67,7 @@ module Metrics
 			@timing_effectiveness[t] += singleDetGroupMetric.timing_effectiveness
 			@spatial_effectiveness[t] += singleDetGroupMetric.spatial_effectiveness
 			@detections_count[t] += singleDetGroupMetric.detections_count
+			@view_duration[t] += singleDetGroupMetric.view_duration
 
 			if @resolutions[t][:frame_counter] == 0
 				@quadrants[t] = singleDetGroupMetric.quadrants
@@ -83,6 +87,7 @@ module Metrics
 			@timing_effectiveness[t] /= @resolutions[t][:frame_counter]
 			@spatial_effectiveness[t] /= @resolutions[t][:frame_counter]
 			#@detections_count[t] = @detections_count[t] --> raw count, not average
+			#@view_duration[t] = @view_duration[t] --> raw count, not average
 			@quadrants[t].each do |k,v|
 				@quadrants[t][k] = v/@resolutions[t][:frame_counter]
 			end
@@ -99,6 +104,7 @@ module Metrics
 				te: @timing_effectiveness[t],
 				se: @spatial_effectiveness[t],
 				dc: @detections_count[t],
+				vd: @view_duration[t],
 				qd: @quadrants[t],
 				summary_metric_id: @summaryMetricIds[t]
 			}
@@ -110,7 +116,7 @@ module Metrics
 			# set variables to zero first
 			@resolutions.each do |t, res|
 				if res[:frame_counter] == 0
-					set_data_structure_to_value(t, 0)
+					reset_data_structure(t)
 				end
 			end
 

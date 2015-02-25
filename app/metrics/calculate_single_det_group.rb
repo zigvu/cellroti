@@ -42,6 +42,9 @@ module Metrics
 			detectionsCount = detections_count(Hash[
 				singleDetectableMetrics.pluck(:detectable_id, :detections_count)])
 
+			viewDuration = view_duration(Hash[
+				singleDetectableMetrics.pluck(:detectable_id, :view_duration)])
+
 			quadrantsCount = quadrants_count(Hash[
 				singleDetectableMetrics.pluck(:detectable_id, :quadrants)])
 
@@ -72,6 +75,7 @@ module Metrics
 			sdgm.timing_effectiveness = timingEffectiveness
 			sdgm.spatial_effectiveness = spatialEffectiveness
 			sdgm.detections_count = detectionsCount
+			sdgm.view_duration = viewDuration
 			sdgm.quadrants = quadrantsCount
 
 			return sdgm
@@ -82,7 +86,7 @@ module Metrics
 			spatialDetGroupCrowding = 0
 			allGroupArea = cumulativeAreaHash.collect{|k,v| v}.sum
 
-			detGroupArea = operate_det_hash(cumulativeAreaHash, :add)
+			detGroupArea = operate_det_hash(cumulativeAreaHash, :sum)
 
 			if allGroupArea > 0
 				spatialDetGroupCrowding = detGroupArea/allGroupArea
@@ -104,7 +108,11 @@ module Metrics
 		end
 
 		def detections_count(detectionsCountHash)
-			return operate_det_hash(detectionsCountHash, :max)
+			return operate_det_hash(detectionsCountHash, :sum)
+		end
+
+		def view_duration(viewDurationHash)
+			return operate_det_hash(viewDurationHash, :max)
 		end
 
 		def quadrants_count(quadrantsCountHash)
@@ -131,7 +139,7 @@ module Metrics
 			@detectableIds.each do |dId|
 				if opMethod == :max
 					output = [output, inputHash[dId]].max
-				elsif (opMethod == :add) || (opMethod == :average)
+				elsif (opMethod == :sum) || (opMethod == :average)
 					output += inputHash[dId]
 				else
 					raise "Unknown method to operate on hash"

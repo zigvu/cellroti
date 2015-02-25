@@ -32,7 +32,7 @@ function SummaryPanelChart(chartManager){
   //------------------------------------------------
   // Repaint upon request
   function repaint(){
-    var mediaLength = chartHelpers.getReadableTime(chartManager.getBrushedFrameTime());
+    var mediaLength = chartHelpers.getReadableBrushedTime(chartManager.getBrushedFrameTime());
     var mediaText;
     if(mediaLength.num_games > 1){
       mediaText = "Media length across " + mediaLength.num_games + " games";

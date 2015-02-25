@@ -109,10 +109,20 @@ function ChartHelpers(){
       ]);
   };
 
-  this.getReadableTime = function(brushedTimes){
+  this.getReadableBrushedTime = function(brushedTimes){
     var timeInMS = _.reduce(brushedTimes, function(total, d){ 
       return total + d.end_time - d.begin_time; 
     }, 0);
+    readableTime = this.getReadableTime(timeInMS);
+
+    return { 
+      time: Math.round(readableTime.time * 10)/10, 
+      unit: readableTime.unit,
+      num_games: brushedTimes.length 
+    };
+  };
+
+  this.getReadableTime = function(timeInMS){
     var seconds = timeInMS/1000;
     var numyears = Math.floor(seconds / 31536000);
     var numdays = Math.floor((seconds % 31536000) / 86400); 
@@ -140,8 +150,7 @@ function ChartHelpers(){
 
     return { 
       time: Math.round(time * 10)/10, 
-      unit: unit,
-      num_games: brushedTimes.length 
+      unit: unit
     };
   };
   //------------------------------------------------

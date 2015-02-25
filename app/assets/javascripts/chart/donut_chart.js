@@ -15,11 +15,13 @@ function AllDonutCharts(chartManager){
 function DonutChart(chartManager, ndxDataAccessMethod, chartDiv){
   //------------------------------------------------
   // set up
+  var chartHelpers = chartManager.chartHelpers;
 
   // width for chart
   var divWidth = $(chartDiv).parent().width();
 
   var pcData = chartManager.getPCData(ndxDataAccessMethod);
+  var isViewDurationChart = (ndxDataAccessMethod === 'getViewDurationData');
 
   //------------------------------------------------
   // set up gemoetry
@@ -66,7 +68,7 @@ function DonutChart(chartManager, ndxDataAccessMethod, chartDiv){
       .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
       .attr("dy", ".35em")
       .style("text-anchor", "middle")
-      .text(function(d) { return d.data.count; });
+      .text(function(d) { return getLabel(d.data.count); });
 
   arcs.append("svg:title")
       .text(function (d) { 
@@ -84,7 +86,7 @@ function DonutChart(chartManager, ndxDataAccessMethod, chartDiv){
     arcs.select("path").transition().duration(750).attr("d", arc);
     arcs.select("text")
       .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
-      .text(function(d) { return d.data.count; });
+      .text(function(d) { return getLabel(d.data.count); });
     arcs.select("title")
       .text(function (d) { 
         return chartManager.getBrandGroupName(d.data.bgId) + ": " + d3.format(',%')(d.data.percent); 
@@ -92,6 +94,19 @@ function DonutChart(chartManager, ndxDataAccessMethod, chartDiv){
   };
   //------------------------------------------------
 
+
+  //------------------------------------------------
+  // Format label
+  function getLabel(count){
+    if(isViewDurationChart){
+      var readableTime = chartHelpers.getReadableTime(count);
+      return readableTime.time + " " + readableTime.unit;
+    } else {
+      return count;
+    }
+  };
+
+  //------------------------------------------------
 
   //------------------------------------------------
   // Set div height

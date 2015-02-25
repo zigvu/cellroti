@@ -1,12 +1,11 @@
 class SingleDetGroupMetric
 	# NOTE:
-	# This class is only used as a temporary compute
-	# storage prior to creating summary metrics. Hence we do
-	# not need to save this class in database.
+	# This class is only used as a temporary compute storage prior to
+	# creating summary metrics. Hence we do not need to save this
+	# class in database.
 
-	# However, so that there is no confusion
-	# about the fields computed, we are using a class than
-	# a Hash to store intermediate results
+	# However, so that there is no confusion about the fields computed,
+	# we are using a class rather than a Hash to store intermediate results
 
 	attr_accessor :frame_number
 	attr_accessor :frame_time
@@ -18,6 +17,7 @@ class SingleDetGroupMetric
 	attr_accessor :timing_effectiveness
 	attr_accessor :spatial_effectiveness
 	attr_accessor :detections_count
+	attr_accessor :view_duration
 	attr_accessor :quadrants
 
 end

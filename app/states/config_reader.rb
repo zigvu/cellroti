@@ -80,5 +80,10 @@ module States
 			@dgm_be_spatialEffectiveness = dgm_default["be_spatial_effectiveness"]
 		end
 
+		# currently, we get time stamp in millisecond resolution
+		def self.frameTimeStampResolution
+			return 1000.0
+		end
+
 	end
 end

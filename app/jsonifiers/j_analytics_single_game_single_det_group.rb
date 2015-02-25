@@ -54,7 +54,7 @@ module Jsonifiers
 					end
 
 					# Note: the array ordering has to match with what we get from
-					# JAnalyticsSingleGameData.brand_group_data_keys call
+					# JAnalyticsSingleGameSingleDetGroup.brand_group_data_keys call
 					data = [
 						sprintf("%.4f", sdata[:brand_effectiveness]),   # 0
 						sprintf("%.4f", sdata[:det_group_crowding]),    # 1
@@ -62,9 +62,7 @@ module Jsonifiers
 						sprintf("%.4f", sdata[:timing_effectiveness]),  # 3
 						sprintf("%.4f", sdata[:spatial_effectiveness]), # 4
 						sdata[:detections_count],                       # 5
-						# TODO TODO TODO TODO TODO TODO TODO
-						# TODO TODO TODO TODO TODO TODO TODO
-						sdata[:detections_count] + 1,                   # 6   <---- TODO: change to proper view duration
+						sprintf("%.4f", sdata[:view_duration])          # 6
 					] + quadrants
 
 					dataHash[sdata[:frame_time]] = data

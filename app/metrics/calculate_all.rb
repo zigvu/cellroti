@@ -33,7 +33,7 @@ module Metrics
 			# sort detections by frame number
 			@sortedFrameNums = @allDetections.keys.collect{|i| i.to_i}.sort
 
-			@frameRateToMSFactor = 1000.0 / @video.playback_frame_rate
+			@frameRateToMSFactor = States::ConfigReader.frameTimeStampResolution / @video.playback_frame_rate
 			return true
 		end
 

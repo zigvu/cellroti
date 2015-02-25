@@ -8,6 +8,7 @@ class SingleSummaryMetric
 	field :te, as: :timing_effectiveness, type: Float
 	field :se, as: :spatial_effectiveness, type: Float
 	field :dc, as: :detections_count, type: Integer
+	field :vd, as: :view_duration, type: Float
 	field :qd, as: :quadrants, type: Hash
 
 	belongs_to :summary_metric, index: true
