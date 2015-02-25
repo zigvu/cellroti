@@ -45,6 +45,7 @@ module Metrics
 			# num of detections per detectable
 			@slidingWindowDetectionsCount.add(detections.count)
 			detectionsCount = @slidingWindowDetectionsCount.get_min()
+			@slidingWindowDetectionsCount.reset() if detectionsCount > 0
 			# area of detections per detectable as fraction of frame area
 			cumulativeArea = get_cumulative_area(detections)
 			# event score if detectable present in frame

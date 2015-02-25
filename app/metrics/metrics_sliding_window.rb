@@ -29,6 +29,10 @@ module Metrics
 			return @data.min
 		end
 
+		def reset
+			@data = Array.new(@data.size(), 0)
+		end
+
 		def constructWindow(detectionFPS, sizeSeconds, decayWeights)
 			decayArray = []
 			jumpIdx = ((detectionFPS * sizeSeconds - decayWeights.size())/(decayWeights.size() - 1)).floor + 1
