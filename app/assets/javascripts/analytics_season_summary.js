@@ -14,6 +14,7 @@ $(".analytics_seasons.summary").ready(function() {
       seasonInfos = seasonInfo;
       chartManager = new ChartManager(seasonInfo, seasonData);
       chartManager.drawCharts();
+      // chartManager.loadGame(1);
 
       // hide spinner
       hideSpinner();
