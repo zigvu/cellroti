@@ -140,6 +140,7 @@ module Jsonifiers
 			retHash[:ndx_data] = aggregateData
 
 			return retHash.to_json
+			#return retHash
 		end
 
 	end

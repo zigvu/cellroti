@@ -4,7 +4,7 @@
 # general config
 
 general:
-  mongo_batch_insert_size:                  1000
+  mongo_batch_insert_size:                  500
   video_localization_path:                  '/sftp/sftpuser/uploads'
   localization_filename:                    'localizations.json'
   localization_image_folder:                'images'

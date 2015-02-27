@@ -4,6 +4,8 @@ class SummaryMetric
 	field :video_id, type: Integer
 	field :det_group_id, type: Integer
 	field :resolution_seconds, type: Integer
+	field :sequence_counter_begin, type: Integer
+	field :sequence_counter_end, type: Integer
 
 	index({ video_id: 1, det_group_id: 1, resolution_seconds: 1 }, { background: true })
 
@@ -16,5 +18,5 @@ class SummaryMetric
 		DetGroup.find(self.det_group_id)
 	end
 
-	has_many :single_summary_metrics, dependent: :destroy, autosave: true
+	has_many :single_summary_metrics, dependent: :destroy, autosave: true, :order => :frame_time.asc
 end

@@ -28,9 +28,10 @@ module Jsonifiers
 		# Note: do NOT save JSON in cache - save hash itself
 		def getGameData
 			raise 'Need a cache key for JAnalyticsSingleGameSingleDetGroup class' if @cacheKey == nil
-			retJSON = Rails.cache.fetch(@cacheKey) do 
-				getGameData_NonChached()
-			end
+			# retJSON = Rails.cache.fetch(@cacheKey) do 
+			# 	getGameData_NonChached()
+			# end
+			getGameData_NonChached()
 		end
 
 		# Note: do NOT save JSON in cache - save hash itself
@@ -50,7 +51,8 @@ module Jsonifiers
 
 					quadrants = []
 					sdata.quadrants.keys.sort.each do |k|
-						quadrants << sprintf("%.4f", sdata.quadrants[k])
+						#quadrants << sprintf("%.4f", sdata.quadrants[k])
+						quadrants << sdata.quadrants[k]
 					end
 
 					# Note: the array ordering has to match with what we get from

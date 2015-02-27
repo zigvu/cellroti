@@ -12,6 +12,6 @@ class SerializedCacheStore
 	field :cachekey, type: String
 	field :game_ids, type: Array
 	field :det_group_ids, type: Array
-	field :summary_resolution, type: Integer
+	field :summary_resolution, type: Array
 	field :data, type: String
 end

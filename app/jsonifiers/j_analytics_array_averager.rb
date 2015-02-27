@@ -2,8 +2,7 @@ module Jsonifiers
 	class JAnalyticsArrayAverager < Jsonifiers::JAnalytics
 		def initialize(size)
 			@size = size
-			@count = 0
-			@arr = nil
+			@arr = []
 		end
 
 		def self.intervals
@@ -11,27 +10,32 @@ module Jsonifiers
 		end
 
 		def isFull?
-			return @count == @size
+			return @arr.count == @size
 		end
 
 		def addData(data)
-			if @arr == nil
-				@arr = data
-			else
-				data.each_with_index do |d, i|
-					@arr[i] = [@arr[i], d].max
-				end
-			end
-			@count += 1
+			@arr << data
 		end
 
 		def getData
-			return @arr
+			retArr = nil
+			@arr.each do |d|
+				if retArr == nil
+					retArr = d.map{ |v| v.to_f }
+				else
+					d.each_with_index do |dv, i|
+						retArr[i] += dv.to_f
+					end
+				end
+			end
+			retArr.each_with_index do |dv, i|
+				retArr[i] = dv/@arr.count if i != 6
+			end
+			return retArr
 		end
 
 		def reset
-			@arr = nil
-			@count = 0
+			@arr = []
 		end
 
 	end

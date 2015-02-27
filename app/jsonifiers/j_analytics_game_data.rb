@@ -5,14 +5,12 @@ module Jsonifiers
 			@game = game
 
 			@detGroupIds = client.det_groups.pluck(:id)
-			@summaryResolution = States::SummaryResolutions.gameResolution
+			# @summaryResolution = States::SummaryResolutions.gameResolution
+			@summaryResolution = [1,10]
 		end
 
 		def to_json
-			jd = Jsonifiers::JAnalyticsMultiGameMultiDetGroup.new(
-				[@game.id], @detGroupIds, @summaryResolution)
-
-			return jd.to_json()
+			return Jsonifiers::MongoCachedPackager.new([@game.id], @detGroupIds, @summaryResolution).getCachedData()
 		end
 
 	end

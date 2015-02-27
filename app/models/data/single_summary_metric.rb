@@ -1,7 +1,12 @@
 class SingleSummaryMetric
 	include Mongoid::Document
 
+	field :fn, as: :frame_number, type: Integer
 	field :ft, as: :frame_time, type: Integer
+
+	field :re, as: :resolution, type: Integer
+	field :sc, as: :sequence_counter, type: Integer
+
 	field :be, as: :brand_effectiveness, type: Float
 	field :dgc, as: :det_group_crowding, type: Float
 	field :vs, as: :visual_saliency, type: Float

@@ -1,6 +1,8 @@
+// testx
+
 /*------------------------------------------------
-	Chart Manager
-	------------------------------------------------*/
+  Chart Manager
+  ------------------------------------------------*/
 
 function ChartManager(seasonInfo, seasonData){
   // variables for different charts
@@ -14,7 +16,8 @@ function ChartManager(seasonInfo, seasonData){
     this.chartHelpers = new ChartHelpers();
 
     timeLogStart("dataManager");
-    this.dataManager = new SeasonDataManager(seasonInfo, seasonData, this);
+    var dataParser = new DataParser(seasonInfo, seasonData, this);
+    this.dataManager = new SeasonDataManager(dataParser, this);
     this.seasonDataManager = this.dataManager; // keep a second reference around
     timeLogEnd("dataManager", "Data averaging done");
 
@@ -63,7 +66,8 @@ function ChartManager(seasonInfo, seasonData){
     d3.json(gameURL, function(error, gameData) {
       that.isGameDisplaying = true;
   
-      that.dataManager = new GameDataManager('gameInfo', gameData, that);
+      var dataParser = new DataParser(seasonInfo, gameData, that);
+      that.dataManager = new GameDataManager(dataParser, that);
       that.gameDataManager = that.dataManager; // keep a second reference around
 
       that.ndxManager = new NDXManager(that.gameDataManager.ndxData, that);

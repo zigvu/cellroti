@@ -1,26 +1,57 @@
 /*------------------------------------------------
   Season Data Manager
   ------------------------------------------------*/
+/*
+// SeasonData Hash structure
+{
+  brand_group_map: {:id => :name, },
+  brand_group_data_keys: [
+    :averager, :counter, :game_id, :det_group_id,
+    :brand_effectiveness, :brand_group_crowding, :visual_saliency,
+    :timing_effectiveness, :spatial_effectiveness, :detections_count,
+    :view_duration, :q0, :q1, :q2, :q3, :q4, :q5, :q6, :q7, :q8
+  ],
+  game_demarcations: [{:game_id, :begin_count, :end_count}, ],
+  game_events: [],
+  ndx_data: [
+    [array of values according to brand_group_data_keys],
+  ]
+}
+*/
 
 // TODO: scope variables properly - currently many in global scope
 
-function SeasonDataManager(dataParser, chartManager){
+function SeasonDataManagerOld(seasonInfo, seasonData, chartManager){
   //------------------------------------------------
   // set up
   var chartHelpers = chartManager.chartHelpers;
+
   //------------------------------------------------
   // ingest data
 
-  var eventTypesInfo = dataParser.eventTypesInfo;
-  var gamesInfo = dataParser.gamesInfo;
-  var subSeasonsInfo = dataParser.subSeasonsInfo;
+  // disaggregate seasonInfo - convert to hashes like below
+  var eventTypesInfo = seasonInfo["event_types"];
+  // var teamsInfo = seasonInfo["teams"];
+  var gamesInfo = seasonInfo["games"];
+  var subSeasonsInfo = seasonInfo["sub_season"];
 
-  var gameDataMap = dataParser.gameDataMap;
-  var brandGroupMap = dataParser.brandGroupMap;
+  // create game id to name map
+  var gameDataMap = {};
+  gamesInfo.forEach(function (game) {
+    gameDataMap[+game["id"]] = game["name"];
+  });
 
-  var gameDemarcations = dataParser.gameDemarcations;
-  this.ndxData = dataParser.ndxData;
-
+  // disaggregate seasonData
+  var brandGroupMap = seasonData["brand_group_map"];
+  var dataKeys = seasonData["brand_group_data_keys"];
+  var gameDemarcations = seasonData["game_demarcations"];
+  
+  // coerce all numbers
+  this.ndxData = _.map(seasonData["ndx_data"], function(arr){ 
+    return chartHelpers.coercer(dataKeys, arr);
+  });
+  // help GC by marking as null
+  seasonData["ndx_data"] = null;
   //------------------------------------------------
 
 

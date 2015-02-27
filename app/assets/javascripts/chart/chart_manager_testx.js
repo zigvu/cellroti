@@ -16,7 +16,8 @@ function ChartManagerTestX(seasonInfo, seasonData){
     this.chartHelpers = new ChartHelpers();
 
     timeLogStart("dataManager");
-    this.dataManager = new SeasonDataManager(seasonInfo, seasonData, this);
+    var dataParser = new DataParser(seasonInfo, seasonData, this);
+    this.dataManager = new SeasonDataManager(dataParser, this);
     this.seasonDataManager = this.dataManager; // keep a second reference around
     timeLogEnd("dataManager", "Data averaging done");
 
@@ -35,15 +36,15 @@ function ChartManagerTestX(seasonInfo, seasonData){
     this.gameSelectionChart = new GameSelectionChart(this);
     this.multiBarChart = new MultiBarChart(this);
     this.allDonutCharts = new AllDonutCharts(this);
-    // this.heatmapChart = new HeatmapChart(this);
-    // this.tableChart = new TableChart(this);
-    // this.thumbnailChart = new ThumbnailChart(this);
-    // this.chartLegend = new ChartLegend(this);
-    // this.summaryPanelChart = new SummaryPanelChart(this);
+    this.heatmapChart = new HeatmapChart(this);
+    this.tableChart = new TableChart(this);
+    this.thumbnailChart = new ThumbnailChart(this);
+    this.chartLegend = new ChartLegend(this);
+    this.summaryPanelChart = new SummaryPanelChart(this);
 
-    // // finalize inits
-    // this.allDonutCharts.setDivHeight(this.heatmapChart.getOuterDivHeight());
-    // timeLogEnd("chartDrawing", "All chart drawing done");
+    // finalize inits
+    this.allDonutCharts.setDivHeight(this.heatmapChart.getOuterDivHeight());
+    timeLogEnd("chartDrawing", "All chart drawing done");
   };
 
   // update data and ndx managers
@@ -65,7 +66,8 @@ function ChartManagerTestX(seasonInfo, seasonData){
     d3.json(gameURL, function(error, gameData) {
       that.isGameDisplaying = true;
   
-      that.dataManager = new GameDataManager('gameInfo', gameData, that);
+      var dataParser = new DataParser(seasonInfo, gameData, that);
+      that.dataManager = new GameDataManager(dataParser, that);
       that.gameDataManager = that.dataManager; // keep a second reference around
 
       that.ndxManager = new NDXManager(that.gameDataManager.ndxData, that);
