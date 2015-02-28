@@ -21,12 +21,13 @@ function MultiLineChart(chartManager){
 
   //------------------------------------------------
   // set up gemoetry
-  var margin = {top: 5, right: 1, bottom: 1, left: 50},
+  var margin = {top: 5, right: 1, bottom: 35, left: 50},
       width = divWidth - margin.left - margin.right, 
-      height = 306 - margin.top - margin.bottom;     // 300
+      height = 340 - margin.top - margin.bottom;     // 300
 
   // how far to the left of y-axis we want our labels to be
   var yAxisLabelAnchorX = -35;
+  var xAxisLabelAnchorY = 30;
 
   var gameLabelsAddPosX = 5;
   var gameLabelsAddPosY = 15;
@@ -38,11 +39,47 @@ function MultiLineChart(chartManager){
   var x = d3.scale.linear().range([0, width]),
       y = d3.scale.linear().range([height, 0]);
 
-  var xAxis = d3.svg.axis().scale(x).ticks(0).orient("bottom"),
-      yAxis = d3.svg.axis()
+  // time formatting for x-axis
+  var xAxisMaxDateStatic = new Date(2000,0,0,0,0,0,0); // Jan 1 2000
+  var xAxisTimeFormatter, xAxisTimeScale;
+  var xAxisTimeFormatLabel = xAxisTimeFormatXAxis();
+
+  var xAxis = d3.svg.axis()
+          .scale(x)
+          .ticks(10)
+          .tickFormat(function(d) {return xAxisTimeTickLabel(d); })
+          .orient("bottom");
+  var yAxis = d3.svg.axis()
           .scale(y)
           .tickFormat(function(d) {return d3.format(',%')(d); })
           .orient("left");
+
+  //------------------------------------------------
+  // define domains
+  x.domain(d3.extent(beData[0].values, function(d) { return d.counter; }));
+  y.domain([chartHelpers.getMinEffectiveness(beData), chartHelpers.getMaxEffectiveness(beData)]);
+  xAxisTimeFormatLabel = xAxisTimeFormatXAxis();
+  //------------------------------------------------
+
+
+  //------------------------------------------------
+  // X axis time formatting
+  function xAxisTimeFormatXAxis(){
+    var brushedTime = chartManager.getBrushedFrameTime();
+    var totalTime = _.reduce(brushedTime, function(total, d){ 
+      return total + d.end_time - d.begin_time; }, 
+    0);
+    var readableTime = chartHelpers.getReadableTime(totalTime);
+    xAxisTimeFormatter = readableTime.formatter;
+    xAxisTimeScale = d3.time.scale()
+        .range(x.domain())
+        .domain([xAxisMaxDateStatic, new Date(xAxisMaxDateStatic.getTime() + totalTime)]);
+    return readableTime.unit_chart;
+  };
+
+  function xAxisTimeTickLabel(d){
+    return xAxisTimeFormatter(xAxisTimeScale.invert(d));
+  };
   //------------------------------------------------
 
 
@@ -92,13 +129,6 @@ function MultiLineChart(chartManager){
 
 
   //------------------------------------------------
-  // define domains
-  x.domain(d3.extent(beData[0].values, function(d) { return d.counter; }));
-  y.domain([chartHelpers.getMinEffectiveness(beData), chartHelpers.getMaxEffectiveness(beData)]);
-  //------------------------------------------------
-
-
-  //------------------------------------------------
   // draw bars/lines
   var focusBE = multiLineSVG.selectAll(".focusBE")
       .data(beData)
@@ -142,6 +172,13 @@ function MultiLineChart(chartManager){
       .style("text-anchor", "middle")
       .text("Brand Effectiveness")
       .attr("class", "axis-label");
+
+  multiLineSVG.append("g")
+    .append("text")
+      .attr("transform", "translate("+ (width/2 - 30) +","+ (height + xAxisLabelAnchorY) +")")  
+      .style("text-anchor", "middle")
+      .text("TIME (" + xAxisTimeFormatLabel + ")")
+      .attr("class", "x-axis-time-label");
   //------------------------------------------------
 
 
@@ -167,6 +204,9 @@ function MultiLineChart(chartManager){
 
     x.domain(d3.extent(beData[0].values, function(d) { return d.counter; }));
     y.domain([chartHelpers.getMinEffectiveness(beData), chartHelpers.getMaxEffectiveness(beData)]);
+    xAxisTimeFormatLabel = xAxisTimeFormatXAxis();
+    multiLineSVG.select(".x-axis-time-label").text("TIME (" + xAxisTimeFormatLabel + ")");
+
 
     focusBE.data(beData);
     focusBE.select("path").attr("d", function(d) { return focusLine(d.values); });

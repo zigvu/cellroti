@@ -43,7 +43,7 @@ module Jsonifiers
 					gd << '{"brand_group_id": ' << "#{detGroupId}" << ', "data": ' << dj << '},'
 				end
 				gd.chomp!(',')
-				sj = Jsonifiers::GameDetGroupPackager.sequenceJSON(Game.find(@gameIds.first))
+				sj = Jsonifiers::GameDetGroupPackager.sequenceJSON(Game.find(gameId))
 
 				gd << '], "game_counters": ' << sj << "},"
 				gameData << gd

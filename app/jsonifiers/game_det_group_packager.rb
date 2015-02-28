@@ -25,19 +25,22 @@ module Jsonifiers
 				.in(video_id: game.videos.pluck(:id))
 				.in(resolution_seconds: States::SummaryResolutions.gameResolution).first
 
-			sequenceCounters << {
-				video_id: summaryMetric.video_id,
-				begin_count: summaryMetric.sequence_counter_begin,
-				end_count: summaryMetric.sequence_counter_end
-			}
-			# for when we have multipe videos in a game
-			# summaryMetric.each do |sm|
-			# 	sequenceCounters << {
-			# 		video_id: sm.video_id,
-			# 		begin_count: sm.sequence_counter_begin,
-			# 		end_count: sm.sequence_counter_end
-			# 	}
-			# end
+			# in case when video has been processed
+			if summaryMetric != nil
+				sequenceCounters << {
+					video_id: summaryMetric.video_id,
+					begin_count: summaryMetric.sequence_counter_begin,
+					end_count: summaryMetric.sequence_counter_end
+				}
+				# for when we have multipe videos in a game
+				# summaryMetric.each do |sm|
+				# 	sequenceCounters << {
+				# 		video_id: sm.video_id,
+				# 		begin_count: sm.sequence_counter_begin,
+				# 		end_count: sm.sequence_counter_end
+				# 	}
+				# end
+			end
 			return sequenceCounters
 		end
 

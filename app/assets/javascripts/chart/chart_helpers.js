@@ -113,7 +113,7 @@ function ChartHelpers(){
     var timeInMS = _.reduce(brushedTimes, function(total, d){ 
       return total + d.end_time - d.begin_time; 
     }, 0);
-    readableTime = this.getReadableTime(timeInMS);
+    var readableTime = this.getReadableTime(timeInMS);
 
     return { 
       time: Math.round(readableTime.time * 10)/10, 
@@ -122,6 +122,11 @@ function ChartHelpers(){
     };
   };
 
+  this.timeFormatter_yrs = d3.time.format("%B:%Y");        // 2011:Feb
+  this.timeFormatter_days = d3.time.format("%d:%H");       // 06:3
+  this.timeFormatter_hrs = d3.time.format("%H:%M");        // 4:03
+  this.timeFormatter_min = d3.time.format("%M:%S");        // 3:05
+  this.timeFormatter_sec = d3.time.format("%S.%L");        // 3.032
   this.getReadableTime = function(timeInMS){
     var seconds = timeInMS/1000;
     var numyears = Math.floor(seconds / 31536000);
@@ -130,28 +135,41 @@ function ChartHelpers(){
     var numminutes = Math.floor((((seconds % 31536000) % 86400) % 3600) / 60);
     var numseconds = (((seconds % 31536000) % 86400) % 3600) % 60;
 
-    var time, unit;
+    var time, unit, formatter;
     if(numyears != 0){
       time = numyears + (numdays/365);
       unit = "yrs";
+      unit_chart = "year:month";
+      formatter = this.timeFormatter_yrs;
     } else if (numdays != 0){
       time = numdays + (numhours/24);
       unit = "days";
+      unit_chart = "day:hour";
+      formatter = this.timeFormatter_days;
     } else if (numhours != 0){
       time = numhours + (numminutes/60);
       unit = "hrs";
+      unit_chart = "hour:min";
+      formatter = this.timeFormatter_hrs;
     } else if (numminutes != 0){
       time = numminutes + (numseconds/60);
       unit = "min";
+      unit_chart = "min:sec";
+      formatter = this.timeFormatter_min;
     } else {
       time = numseconds;
       unit = "sec";
+      unit_chart = "sec.msec";
+      formatter = this.timeFormatter_sec;
     }
 
     return { 
       time: Math.round(time * 10)/10, 
-      unit: unit
+      unit: unit,
+      unit_chart: unit_chart,
+      formatter: formatter
     };
   };
+
   //------------------------------------------------
 };

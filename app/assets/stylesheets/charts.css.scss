@@ -29,6 +29,11 @@ $chart-table-row-color-hover: #CBC6F7;
 		font-size: rem-calc(12);
 	}
 
+	.x-axis-time-label {
+		line-height: 80%;
+		font-size: rem-calc(12);
+	}
+
 	.axis {
 		-moz-user-select: none;
 		pointer-events: none;
