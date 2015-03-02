@@ -20,50 +20,76 @@ module Metrics
 			return (@frameCounter == @numOfFrames)
 		end
 
-		def addData(singleDetGroupMetric)
+		# add singleDetGroupMetric (abbr. sdgm)
+		def addData(sdgm)
 			# replace current frame reference
-			@data[:frame_number] = singleDetGroupMetric.frame_number
-			@data[:frame_time] = singleDetGroupMetric.frame_time
+			@data[:frame_number] = sdgm.frame_number
+			@data[:frame_time] = sdgm.frame_time
 
 			@data[:resolution] = @resolution
 			#@data[:sequence_counter] = sequenceCounter <- done when getting data
 
-			# update data values
-			@data[:brand_effectiveness] += singleDetGroupMetric.brand_effectiveness
-			@data[:det_group_crowding] += singleDetGroupMetric.det_group_crowding
-			@data[:visual_saliency] += singleDetGroupMetric.visual_saliency
-			@data[:timing_effectiveness] += singleDetGroupMetric.timing_effectiveness
-			@data[:spatial_effectiveness] += singleDetGroupMetric.spatial_effectiveness
-			@data[:detections_count] += singleDetGroupMetric.detections_count
-			@data[:view_duration] += singleDetGroupMetric.view_duration
+			# update data values - use max
+			@data[:brand_effectiveness] = sdgm.brand_effectiveness if sdgm.brand_effectiveness > @data[:brand_effectiveness]
+			@data[:det_group_crowding] = sdgm.det_group_crowding if sdgm.det_group_crowding > @data[:det_group_crowding]
+			@data[:visual_saliency] = sdgm.visual_saliency if sdgm.visual_saliency > @data[:visual_saliency]
+			@data[:timing_effectiveness] = sdgm.timing_effectiveness if sdgm.timing_effectiveness > @data[:timing_effectiveness]
+			@data[:spatial_effectiveness] = sdgm.spatial_effectiveness if sdgm.spatial_effectiveness > @data[:spatial_effectiveness]
+			@data[:detections_count] += sdgm.detections_count  #  --> raw count, not max
+			@data[:view_duration] += sdgm.view_duration        #  --> raw count, not max
 
 			if @frameCounter == 0
 				@data[:quadrants] = {}
-				singleDetGroupMetric.quadrants.each do |k,v|
+				sdgm.quadrants.each do |k,v|
 					@data[:quadrants][k] = v
 				end
 			else
-				singleDetGroupMetric.quadrants.each do |k,v|
-					@data[:quadrants][k] += v
+				sdgm.quadrants.each do |k,v|
+					@data[:quadrants][k] = v if v > @data[:quadrants][k]
 				end
 			end
+
+
+			# keep code around in case needed to do averaging
+			# # update data values
+			# @data[:brand_effectiveness] += sdgm.brand_effectiveness
+			# @data[:det_group_crowding] += sdgm.det_group_crowding
+			# @data[:visual_saliency] += sdgm.visual_saliency
+			# @data[:timing_effectiveness] += sdgm.timing_effectiveness
+			# @data[:spatial_effectiveness] += sdgm.spatial_effectiveness
+			# @data[:detections_count] += sdgm.detections_count
+			# @data[:view_duration] += sdgm.view_duration
+
+			# if @frameCounter == 0
+			# 	@data[:quadrants] = {}
+			# 	sdgm.quadrants.each do |k,v|
+			# 		@data[:quadrants][k] = v
+			# 	end
+			# else
+			# 	sdgm.quadrants.each do |k,v|
+			# 		@data[:quadrants][k] += v
+			# 	end
+			# end
 
 			@frameCounter += 1
 		end
 
 		# average value in data structure
 		def aggregateValues
-			# frame_counter keeps track of how many data points were added
-			@data[:brand_effectiveness] /= @frameCounter
-			@data[:det_group_crowding] /= @frameCounter
-			@data[:visual_saliency] /= @frameCounter
-			@data[:timing_effectiveness] /= @frameCounter
-			@data[:spatial_effectiveness] /= @frameCounter
-			#@data[:detections_count] = @data[:detections_count] --> raw count, not average
-			#@data[:view_duration] = @data[:view_duration] --> raw count, not average
-			@data[:quadrants].each do |k,v|
-				@data[:quadrants][k] = v/@frameCounter
-			end
+			# since no averaging is required, do nothing
+
+			# keep code around in case needed to do averaging
+			# # frame_counter keeps track of how many data points were added
+			# @data[:brand_effectiveness] /= @frameCounter
+			# @data[:det_group_crowding] /= @frameCounter
+			# @data[:visual_saliency] /= @frameCounter
+			# @data[:timing_effectiveness] /= @frameCounter
+			# @data[:spatial_effectiveness] /= @frameCounter
+			# # @data[:detections_count] = @data[:detections_count] --> raw count, not average
+			# # @data[:view_duration] = @data[:view_duration] --> raw count, not average
+			# @data[:quadrants].each do |k,v|
+			# 	@data[:quadrants][k] = v/@frameCounter
+			# end
 		end
 
 		# get current snapshot of data in data structure
