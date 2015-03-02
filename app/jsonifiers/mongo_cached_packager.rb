@@ -9,7 +9,7 @@ module Jsonifiers
 		end
 
 		def getCachedData
-			cacheKey = getCacheKey(@gameIds, @detGroupIds)
+			cacheKey = getCacheKey(@gameIds, @detGroupIds, @summaryResolution)
 			seasonData = SerializedCacheStore.where(cachekey: cacheKey).first
 			return seasonData.data if seasonData != nil
 
@@ -27,7 +27,7 @@ module Jsonifiers
 			return seasonData
 		end
 
-		def getCacheKey(gameIds, detGroupIds)
+		def getCacheKey(gameIds, detGroupIds, summaryResolution)
 			md5 = Digest::MD5.new
 
 			gameIds.each do |gameId|
@@ -36,6 +36,8 @@ module Jsonifiers
 			detGroupIds.each do |detGroupId|
 				md5 << "#{DetGroup.find(detGroupId).cache_key}"
 			end
+
+			md5 << "#{summaryResolution}"
 
 			return md5.hexdigest
 		end

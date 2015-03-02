@@ -6,8 +6,8 @@ module Jsonifiers
 			
 			@gameIds = @season.games.pluck(:id)
 			@detGroupIds = client.det_groups.pluck(:id)
-			#@summaryResolution = States::SummaryResolutions.seasonResolution
-			@summaryResolution = [1,10]
+			@summaryResolution = States::SummaryResolutions.resolutionsSeason
+			#@summaryResolution = [1,10]
 		end
 
 		def to_json

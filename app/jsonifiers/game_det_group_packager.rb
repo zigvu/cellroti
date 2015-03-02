@@ -11,7 +11,7 @@ module Jsonifiers
 		def self.sequenceJSON(game)
 			# check for cache
 			cacheKey = "#{game.cache_key}/" + 
-					"#{States::SummaryResolutions.gameResolution}/GameDetGroupPackager/sequenceJSON"
+					"#{States::SummaryResolutions.finestGameResolution}/GameDetGroupPackager/sequenceJSON"
 			retJSON = Rails.cache.fetch(cacheKey) do 
 				Jsonifiers::GameDetGroupPackager.getSequenceCounters(game).to_json
 			end
@@ -23,7 +23,7 @@ module Jsonifiers
 			sequenceCounters = []
 			summaryMetric = SummaryMetric
 				.in(video_id: game.videos.pluck(:id))
-				.in(resolution_seconds: States::SummaryResolutions.gameResolution).first
+				.in(resolution_seconds: States::SummaryResolutions.finestGameResolution).first
 
 			# in case when video has been processed
 			if summaryMetric != nil
@@ -76,7 +76,7 @@ module Jsonifiers
 					end
 
 					# Note: the array ordering has to match with what we get from
-					# VideoDetGroupPackager.brand_group_data_keys call
+					# GameDetGroupPackager.brand_group_data_keys call
 					data = [
 						sdata[:resolution],
 						sdata[:sequence_counter],
