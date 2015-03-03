@@ -10,12 +10,13 @@ module SeedHelpers
 		end
 
 		def generateAndSave(videoId, lengthMS, structureType)
-			videoAttributes, videoData = generate(lengthMS, structureType)
+			videoAttributes, videoData, extractedFrames = generate(lengthMS, structureType)
 
 			saveData = {
 				video_id: videoId,
 				video_attributes: videoAttributes,
-				detections: videoData
+				detections: videoData,
+				extracted_frames: extractedFrames
 			}
 			
 			video = Video.find(videoId)
@@ -50,8 +51,9 @@ module SeedHelpers
 
 			sdg = SeedHelpers::StructuredDataGenerator.new(structureType, numOfFrames, frameStep, @rnd)
 			videoData = sdg.generate()
+			extractedFrames = sdg.getExtractedFrames()
 
-			return videoAttributes, videoData
+			return videoAttributes, videoData, extractedFrames
 		end
 	end
 end

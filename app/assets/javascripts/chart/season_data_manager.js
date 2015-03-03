@@ -171,15 +171,24 @@ function SeasonDataManager(dataParser, chartManager){
   //------------------------------------------------
   // thumbnail chart data
   this.formatThumbnailChartData = function(tcData){
+    var that = this;
+
     var thumbnailData = new Object();
     _.each(chartHelpers.thumbnailModalIds, function(id, idx, obj){
       if(idx < tcData.length){
         thumbnailData[id] = tcData[idx];
+        thumbnailData[id]['video_id'] = that.getVideoForGame(tcData[idx].game_id);
       } else {
-        thumbnailData[id] = {game_id: 0, frame_id: 0};
+        thumbnailData[id] = {game_id: 0, video_id: 0, frame_id: 0};
       }
     });
     return thumbnailData;
+  };
+
+  // assume only 1 video per game
+  this.getVideoForGame = function(gameId){
+    gameD = _.findWhere(gameDemarcations, {game_id: gameId});
+    return gameD.video_id;
   };
   //------------------------------------------------
 
@@ -208,15 +217,12 @@ function SeasonDataManager(dataParser, chartManager){
 
 
   //------------------------------------------------
-  // summary panel time calculations
+  // time calculations
   this.getBrushedFrameTime = function(beginCounter, endCounter){
+    //  brushed games also includes time information
     return this.getBrushedGames(beginCounter, endCounter);
   };
 
-  this.getFrameTime = function(counter){ 
-    var counterData = _.findWhere(this.ndxData, {counter: counter});
-    return counterData === undefined ? -1 : counterData.frame_time;
-  };
   //------------------------------------------------
 
 };

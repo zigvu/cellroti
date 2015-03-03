@@ -58,16 +58,16 @@ function ThumbnailChart(chartManager){
   };
 
   function getThumbnailURL(d){
-    if (d.game_id > 0){
-      return "/uploads/" + d.game_id + "/thumbnails/" + d.frame_id + ".jpg";
+    if (d.video_id > 0){
+      return "/uploads/" + d.video_id + "/thumbnails/" + d.frame_id + ".jpg";
     } else {
       return "/uploads/refresh_to_load.jpg";
     }
   };
 
   function getFrameURL(d){
-    if (d.game_id > 0){
-      return "/uploads/" + d.game_id + "/frames/" + d.frame_id + ".jpg";
+    if (d.video_id > 0){
+      return "/uploads/" + d.video_id + "/frames/" + d.frame_id + ".jpg";
     } else {
       return "/uploads/refresh_to_load.jpg";
     }

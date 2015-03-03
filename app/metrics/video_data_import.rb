@@ -11,7 +11,7 @@ module Metrics
 			raise "Wrong video data file" if caffe_data['video_id'].to_i != video.id
 
 			update_video(video, caffe_data['video_attributes'])
-			write_detections(video, caffe_data['detections'])
+			write_detections(video, caffe_data['detections'], caffe_data['extracted_frames'])
 		end
 
 		def update_video(video, videoAttributes)
@@ -27,15 +27,15 @@ module Metrics
 		end
 
 		# write data to database
-		def write_detections(video, detectionsData)
+		def write_detections(video, detectionsData, extractedFrames)
 			raise "Detections data not proper JSON" if detectionsData.class != Hash
 			sanitizedDetectionsData, allDetectableIds = sanitize_detections_data(detectionsData)
+			sanitizedExtractedFrames = sanitize_extracted_frames(extractedFrames)
 
 			# find det groups which will be filled by given data
 			detGroupIds = find_det_group_ids(allDetectableIds)
 			raise "No det group can be constructed from detectables in video" if detGroupIds.count == 0
 			
-
 			# if data for this video already exists, purge all old data
 			video.video_detections.each do |vd|
 				vd.destroy
@@ -46,7 +46,11 @@ module Metrics
 			end
 
 			# create new video detection
-			VideoDetection.create(video_id: video.id, detectable_ids: allDetectableIds)
+			VideoDetection.create(
+				video_id: video.id,
+				detectable_ids: allDetectableIds,
+				extracted_frames: sanitizedExtractedFrames
+			)
 			# create indexes if not there yet
 			VideoDetection.create_indexes
 
@@ -82,6 +86,11 @@ module Metrics
 				allDetectableIds.uniq!
 			end
 			return sanitizedDetectionsData, allDetectableIds.sort!
+		end
+
+		def sanitize_extracted_frames(extractedFrames)
+			raise "Extracted frames data not proper array" if extractedFrames.class != Array
+			return extractedFrames.uniq.sort!
 		end
 
 		# find all det groups that can be constructed from a set of detectable Ids

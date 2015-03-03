@@ -4,6 +4,7 @@ class VideoDetection
 
 	field :video_id, type: Integer
 	field :detectable_ids, type: Array
+	field :extracted_frames, type: Array
 
 	index({ video_id: 1 }, { background: true })
 
@@ -12,5 +13,5 @@ class VideoDetection
 		Video.find(self.video_id)
 	end
 
-	has_many :frame_detections, dependent: :destroy, autosave: true
+	has_many :frame_detections, dependent: :destroy, autosave: true, :order => :frame_number.asc
 end

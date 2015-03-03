@@ -18,10 +18,17 @@ module SeedHelpers
 
 			@width = 1280
 			@height = 720
+
+			@extractedFrames = []
+			@frameExtractionThresh = 0.81
 		end
 
 		def setDetectableIds(detectableIds)
 			@detectableIds = detectableIds
+		end
+
+		def getExtractedFrames
+			return @extractedFrames
 		end
 
 		def generate
@@ -52,6 +59,8 @@ module SeedHelpers
 			counter = 1
 			for i in 0..@numOfFrames
 				vd.merge!({ counter =>  nextBrokenSineData() })
+				addToExtractedFrames(vd[counter], counter)
+
 				counter += @frameStep
 			end
 			return vd
@@ -93,6 +102,8 @@ module SeedHelpers
 			counter = 1
 			for i in 0..@numOfFrames
 				vd.merge!({ counter =>  nextSineData() })
+				addToExtractedFrames(vd[counter], counter)
+
 				counter += @frameStep
 			end
 			return vd
@@ -128,6 +139,8 @@ module SeedHelpers
 			counter = 1
 			for i in 0..@numOfFrames
 				vd.merge!({ counter =>  nextRandomData() })
+				addToExtractedFrames(vd[counter], counter)
+
 				counter += @frameStep
 			end
 			return vd
@@ -152,6 +165,19 @@ module SeedHelpers
 		end
 		# END: random
 		# -----------------------------------------------------
+
+		def addToExtractedFrames(generatedData, frameNumber)
+			highestScore = 0
+			generatedData.each do |dId, bboxes|
+				bboxes.each do |bbox|
+					highestScore = bbox[:score] if bbox[:score] > highestScore
+				end
+			end
+
+			if highestScore > @frameExtractionThresh
+				@extractedFrames << frameNumber
+			end
+		end
 
 	end
 end

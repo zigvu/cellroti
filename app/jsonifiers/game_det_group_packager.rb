@@ -90,6 +90,7 @@ module Jsonifiers
 						sdata[:sequence_counter],
 
 						#sdata[:frame_number],
+						sdata[:extracted_frame_number],
 						sdata[:frame_time],
 
 						@game.id,
@@ -116,6 +117,7 @@ module Jsonifiers
 				:counter,
 
 				#:frame_number,
+				:extracted_frame_number,
 				:frame_time,
 
 				:game_id,

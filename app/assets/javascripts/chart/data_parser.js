@@ -56,6 +56,7 @@ function DataParser(seasonInfo, seasonData, chartManager){
     var gameCounters = gData.game_counters;
     if (gameCounters.length === 0) { return; }
 
+    var videoId = gameCounters[0].video_id;
     var gameBeginCount = gameCounters[0].begin_count;
     var gameEndCount = gameCounters[0].end_count;
     var beginTime = gameCounters[0].begin_time;
@@ -63,6 +64,7 @@ function DataParser(seasonInfo, seasonData, chartManager){
 
     lastGameEndCount += gameBeginCount;
     gameDemarcations.push({
+      video_id: videoId,
       game_id: gameId,
       begin_count: lastGameEndCount,
       end_count: lastGameEndCount + gameEndCount,
@@ -91,8 +93,8 @@ function DataParser(seasonInfo, seasonData, chartManager){
   this.gameEvents = seasonData["game_events"];
 
   // add event bounds
-  gameEventsWithBounds(this.gameEvents);
-  function gameEventsWithBounds(gameEventsRaw){
+  createBoundsForGameEvents(this.gameEvents);
+  function createBoundsForGameEvents(gameEventsRaw){
     var allCounters = _.map(gameEventsRaw, function(ge){ return ge.counter; });
     allCounters.push(ndxMaxCounter);
 

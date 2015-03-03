@@ -52,7 +52,8 @@ function NDXManager(ndxData, chartManager){
     REDUCEAVG.MULTIPLE.reduceRemoveAvg(compositeAccessors), 
     REDUCEAVG.MULTIPLE.reduceInitAvg
   );
-  var bgFilterGroupAll; // data to hold group all data
+  var bgFilterGroupAll; // structure to hold group all data
+  var beTop1K; // structure to hold top 1K highest brand effectiveness values
 
   // TODO: delete
   this.avd = averagerDim
@@ -74,22 +75,22 @@ function NDXManager(ndxData, chartManager){
     counterDim.filterRange([beginCounter, endCounter + 1]);
 
     // determine the most appropriate averager - in the worst case, show the least dense data
-    var bestAverager;
+    var bestAverager, totalDataPoints;
     _.find(averagerGroup.top(Infinity), function(k){
       bestAverager = k.key;
+      totalDataPoints = k.value;
       // break when satisfied
-      if (k.value <= maxDataPoints){ return true; }
+      if (totalDataPoints <= maxDataPoints){ return true; }
     });
 
     // filter to the right averager and update group data
     averagerDim.filterExact(bestAverager);
     bgFilterGroupAll = bgFilterGroup.all();
+    beTop1K = brandEffectivenessDim.top(1000);
 
-    // trigger all repaints
-    chartManager.fire();
-
-    // return the best averager
-    return bestAverager;
+    // return total number of filtered data points and averager used
+    var boundDetails = {averager: bestAverager, total_data_points: totalDataPoints};
+    return boundDetails;
   };
 
   // get filtered data
@@ -175,21 +176,23 @@ function NDXManager(ndxData, chartManager){
 
   // we need array of array numbers in format as specified in tableKeys
   this.getTableData = function(){
-    var beTop = brandEffectivenessDim.top(numRowsInTableChart);
-    var tableData = _.map(beTop, function(d){
-      return _.map(chartHelpers.tableKeys, function(tk){ return d[tk]; });
+    var tableData = [];
+    _.find(beTop1K, function(d, idx, list){
+      tableData.push(_.map(chartHelpers.tableKeys, function(tk){ return d[tk]; }));
+      return idx >= (numRowsInTableChart - 1);
     });
     return tableData;
   };
 
   this.getThumbnailData = function(){
-    // TODO: get this from dim
-    var thumbnailData = [
-      {game_id: 1, frame_id: 1},
-      {game_id: 1, frame_id: 2},
-      {game_id: 1, frame_id: 3},
-      {game_id: 1, frame_id: 4}
-    ];
+    var thumbnailData = [];
+    _.find(beTop1K, function(d, idx, list){
+      if(d.extracted_frame_number > 0){ 
+        thumbnailData.push({game_id: d.game_id, frame_id: d.extracted_frame_number});
+      }
+      return thumbnailData.length >= 4;
+    });
+
     return thumbnailData;
   };
 

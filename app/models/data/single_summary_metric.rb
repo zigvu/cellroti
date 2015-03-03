@@ -2,6 +2,7 @@ class SingleSummaryMetric
 	include Mongoid::Document
 
 	field :fn, as: :frame_number, type: Integer
+	field :efn, as: :extracted_frame_number, type: Integer
 	field :ft, as: :frame_time, type: Integer
 
 	field :re, as: :resolution, type: Integer
@@ -15,6 +16,9 @@ class SingleSummaryMetric
 	field :dc, as: :detections_count, type: Integer
 	field :vd, as: :view_duration, type: Float
 	field :qd, as: :quadrants, type: Hash
+
+	# index for faster traversal during ordering
+	index({ frame_time: 1 }, { background: true })
 
 	belongs_to :summary_metric, index: true
 end

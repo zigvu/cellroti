@@ -1,12 +1,12 @@
 module Metrics
 	class MetricsDataAggregator
-		attr_accessor :numOfFrames
 
-		def initialize(configReader, resolution, detectionFrameRate, summaryMetricId)
+		def initialize(configReader, resolution, detectionFrameRate, summaryMetricId, extractedFrames)
 			@resolution = resolution
 
 			@numOfFrames = (resolution * detectionFrameRate).to_i
 			@summaryMetricId = summaryMetricId
+			@extractedFrames = extractedFrames
 
 			@data = {}
 			@frameCounter = 0
@@ -22,12 +22,12 @@ module Metrics
 
 		# add singleDetGroupMetric (abbr. sdgm)
 		def addData(sdgm)
-			# replace current frame reference
 			@data[:frame_number] = sdgm.frame_number
+			@data[:extracted_frame_number][sdgm.frame_number] = sdgm.brand_effectiveness
 			@data[:frame_time] = sdgm.frame_time
 
 			@data[:resolution] = @resolution
-			#@data[:sequence_counter] = sequenceCounter <- done when getting data
+			#@data[:sequence_counter] = sequenceCounter <- called in `getCurrentData` function
 
 			# update data values - use max
 			@data[:brand_effectiveness] = sdgm.brand_effectiveness if sdgm.brand_effectiveness > @data[:brand_effectiveness]
@@ -97,6 +97,7 @@ module Metrics
 			# Note: this is tied to schema in SingleSummaryMetric class
 			return {
 				fn: @data[:frame_number],
+				efn: getHighestBEFrameNumber(),
 				ft: @data[:frame_time],
 
 				re: @data[:resolution],
@@ -115,11 +116,32 @@ module Metrics
 			}
 		end
 
+		def getHighestBEFrameNumber
+			presentEfn = {}
+			# one pass through all extracted frames
+			@extractedFrames.each do |efn|
+				# collect all frames that are in both data structures
+				if @data[:extracted_frame_number][efn] != nil
+					presentEfn[efn] = @data[:extracted_frame_number][efn]
+				end
+			end
+			# if no frames were extracted, then handle in UI
+			if presentEfn.length() == 0
+				return -1
+			end
+
+			# sort and return the highest value
+			sortedEfn = presentEfn.sort_by {|k,v| v}.reverse()
+			return sortedEfn[0][0]
+		end
+
 		def reset
 			@data = {}
 			Metrics::MetricsDataAggregator.dataKeys().each do |k|
 				@data[k] = 0
 			end
+			# this is a hash of {fn: be}
+			@data[:extracted_frame_number] = {}
 			@frameCounter = 0
 		end
 
@@ -127,6 +149,7 @@ module Metrics
 			# Note: this is tied to schema in SingleSummaryMetric class
 			return [
 				:frame_number,
+				:extracted_frame_number,
 				:frame_time,
 
 				:resolution,

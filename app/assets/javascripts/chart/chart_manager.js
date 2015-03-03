@@ -29,7 +29,7 @@ function ChartManager(seasonInfo, seasonData){
     
     timeLogStart("chartDrawing");
     // this is the normal 100% resolution for all charts
-    this.ndxManager.setCounterBounds(0,Infinity);
+    this.setCounterBounds(0,Infinity);
 
     this.multiLineChart = new MultiLineChart(this);
     this.brushChart = new BrushChart(this);
@@ -73,7 +73,7 @@ function ChartManager(seasonInfo, seasonData){
       that.ndxManager = new NDXManager(that.gameDataManager.ndxData, that);
       that.gameNDXManager = that.ndxManager; // keep a second reference around
 
-      that.ndxManager.setCounterBounds(0,Infinity);
+      that.setCounterBounds(0,Infinity);
 
       // set mode in charts
       that.gameSelectionChart.setGameMode();
@@ -90,7 +90,7 @@ function ChartManager(seasonInfo, seasonData){
 
     this.dataManager = this.seasonDataManager;
     this.ndxManager = this.seasonNDXManager;
-    this.ndxManager.setCounterBounds(0,Infinity);
+    this.setCounterBounds(0,Infinity);
 
     // set mode in charts
     this.brushChart.repaint();
@@ -103,7 +103,23 @@ function ChartManager(seasonInfo, seasonData){
 
   // Common NDXManager
   this.setCounterBounds = function(brushLeft, brushRight){ 
-    return this.ndxManager.setCounterBounds(brushLeft, brushRight);
+    var numBrandGroups = this.seasonDataManager.brandGroupIdArr.length;
+    var boundDetails = this.ndxManager.setCounterBounds(brushLeft, brushRight);
+    
+    // max of 100 updates
+    var boundariesUpdated = false;
+    for(var i = 0; i < 100; i++){
+      if(boundDetails.total_data_points/numBrandGroups >= 2){ break; }
+      brushLeft = _.max([0, brushLeft - 1]);
+      brushRight = brushRight + 1;
+      boundDetails = this.ndxManager.setCounterBounds(brushLeft, brushRight);
+      boundariesUpdated = true;
+    }
+    if(boundariesUpdated){
+      this.brushSet(brushLeft, brushRight);
+    } else {
+      this.fire();
+    }
   };
   this.getBEData = function(){ return this.ndxManager.getBEData(); };
   this.getBEComponentData = function(){ return this.ndxManager.getBEComponentData(); };

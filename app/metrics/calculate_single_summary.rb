@@ -15,6 +15,8 @@ module Metrics
 			@summaryMetrics = {}
 			@sequenceCounter = 0
 
+			extractedFrames = @video.video_detections.first.extracted_frames
+
 			@timeFactors = States::SummaryResolutions.new.timeFactors
 			@minTimeFactor = @timeFactors.min
 
@@ -25,7 +27,7 @@ module Metrics
 					resolution_seconds: t)
 
 				@metricsDataAggregator[t] = Metrics::MetricsDataAggregator.new(
-					@configReader, t, @video.detection_frame_rate, @summaryMetrics[t].id) 
+					@configReader, t, @video.detection_frame_rate, @summaryMetrics[t].id, extractedFrames) 
 				@metricsDataAggregator[t].reset()
 			end
 		end

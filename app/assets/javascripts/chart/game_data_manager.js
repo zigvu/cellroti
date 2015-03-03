@@ -10,6 +10,7 @@ function GameDataManager(dataParser, chartManager){
   //------------------------------------------------
   // ingest data
   var gameEvents = dataParser.gameEvents;
+  var gameDemarcations = dataParser.gameDemarcations;
   this.ndxData = dataParser.ndxData;
 
   //------------------------------------------------
@@ -34,37 +35,21 @@ function GameDataManager(dataParser, chartManager){
 
 
   //------------------------------------------------
-  // summary panel time calculations
+  // time calculations
+
+  // there is only 1 game in game demarcations
+  var gd = gameDemarcations[0];
+  var timeRatio = (gd.end_time - gd.begin_time)/(gd.end_count - gd.begin_count);
 
   this.getBrushedFrameTime = function(beginCounter, endCounter){
-    var that = this;
-    var brushedTimes = [];
-    var curGameId = this.ndxData[0].game_id;
-    var beginTime = -1;
-    var endTime = -1;
-    _.each(this.ndxData, function(d, idx, list){
-      // loop through only the first det_group_id and averager values
-      // for the current game
-      if(d.det_group_id !== that.ndxData[0].det_group_id){ return; }
-      if(d.averager !== that.ndxData[0].averager){ return; }
-      if(d.game_id !== that.ndxData[0].game_id){ return; }
+    var newGd = _.clone(gd);
+    newGd.begin_count = beginCounter; 
+    newGd.end_count = endCounter;
+    newGd.begin_time = gd.begin_time + (newGd.begin_count - gd.begin_count) * timeRatio;
+    newGd.end_time = gd.end_time - (gd.end_count - newGd.end_count) * timeRatio;
 
-      // if prior to beginCounter or after endCounter
-      if((d.counter < beginCounter) || (d.counter > endCounter)){ return; }
-
-      if((d.counter >= beginCounter) && (beginTime == -1)){ 
-        beginTime = d.frame_time;
-        return;
-      }
-      if(d.counter <= endCounter){ 
-        endTime = d.frame_time;
-        return;
-      }
-    });
-    brushedTimes.push({game_id: curGameId, begin_time: beginTime, end_time: endTime});
-    return brushedTimes;
+    return [newGd];
   };
   //------------------------------------------------
-
 
 };
