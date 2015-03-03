@@ -22,8 +22,7 @@ module Metrics
 				@summaryMetrics[t] = SummaryMetric.create(
 					video_id: @video.id,
 					det_group_id: @detGroupId,
-					resolution_seconds: t,
-					sequence_counter_begin: @sequenceCounter)
+					resolution_seconds: t)
 
 				@metricsDataAggregator[t] = Metrics::MetricsDataAggregator.new(
 					@configReader, t, @video.detection_frame_rate, @summaryMetrics[t].id) 
@@ -66,7 +65,6 @@ module Metrics
 					@metricsDataAggregator[t].aggregateValues()
 					@summaryMetricHashArr << @metricsDataAggregator[t].getCurrentData(@sequenceCounter)
 				end
-				@summaryMetrics[t].update(sequence_counter_end: @sequenceCounter)
 			end
 
 			# write the last batch to db

@@ -27,17 +27,25 @@ module Jsonifiers
 
 			# in case when video has been processed
 			if summaryMetric != nil
+				firstSingleSummaryMetrics = summaryMetric.single_summary_metrics.first
+				lastSingleSummaryMetrics = summaryMetric.single_summary_metrics.last
 				sequenceCounters << {
 					video_id: summaryMetric.video_id,
-					begin_count: summaryMetric.sequence_counter_begin,
-					end_count: summaryMetric.sequence_counter_end
+					begin_count: firstSingleSummaryMetrics.sequence_counter,
+					end_count: lastSingleSummaryMetrics.sequence_counter,
+					begin_time: firstSingleSummaryMetrics.frame_time,
+					end_time: lastSingleSummaryMetrics.frame_time
 				}
 				# for when we have multipe videos in a game
 				# summaryMetric.each do |sm|
+				# 	firstSingleSummaryMetrics = summaryMetric.single_summary_metrics.first
+				# 	lastSingleSummaryMetrics = summaryMetric.single_summary_metrics.last
 				# 	sequenceCounters << {
-				# 		video_id: sm.video_id,
-				# 		begin_count: sm.sequence_counter_begin,
-				# 		end_count: sm.sequence_counter_end
+				# 		video_id: summaryMetric.video_id,
+				# 		begin_count: firstSingleSummaryMetrics.sequence_counter,
+				# 		end_count: lastSingleSummaryMetrics.sequence_counter,
+				# 		begin_time: firstSingleSummaryMetrics.frame_time,
+				# 		end_time: lastSingleSummaryMetrics.frame_time
 				# 	}
 				# end
 			end

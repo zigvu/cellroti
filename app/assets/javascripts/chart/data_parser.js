@@ -58,12 +58,16 @@ function DataParser(seasonInfo, seasonData, chartManager){
 
     var gameBeginCount = gameCounters[0].begin_count;
     var gameEndCount = gameCounters[0].end_count;
+    var beginTime = gameCounters[0].begin_time;
+    var endTime = gameCounters[0].end_time;
 
     lastGameEndCount += gameBeginCount;
     gameDemarcations.push({
       game_id: gameId,
       begin_count: lastGameEndCount,
-      end_count: lastGameEndCount + gameEndCount
+      end_count: lastGameEndCount + gameEndCount,
+      begin_time: beginTime,
+      end_time: endTime
     });
     // ingest to ndxData
     _.each(gData.game_data, function(gDataBG){

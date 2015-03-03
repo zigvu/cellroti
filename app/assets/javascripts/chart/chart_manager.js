@@ -116,15 +116,9 @@ function ChartManager(seasonInfo, seasonData){
   // Common DataManager
   // get brushed time
   this.getBrushedFrameTime = function(){
-    if(this.isGameDisplaying){
-      return this.gameDataManager.getBrushedFrameTime(
+    return this.dataManager.getBrushedFrameTime(
         this.ndxManager.getBeginCounter(), 
         this.ndxManager.getEndCounter());
-    } else {
-      return this.seasonDataManager.getBrushedFrameTime(
-        this.ndxManager.getBeginCounter(), 
-        this.ndxManager.getEndCounter());
-    }
   };
 
   // SeasonDataManager

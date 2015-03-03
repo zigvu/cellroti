@@ -96,19 +96,29 @@ function SeasonDataManager(dataParser, chartManager){
   this.getBrushedGames = function(beginCounter, endCounter){
     var bg = [];
     _.each(gameDemarcations, function(gd){
+      // NOTE: need to return after each push in array to avoid double counting
       // add games that are inside the range
-      if((gd.begin_count >= beginCounter) && (gd.end_count <= endCounter)){ bg.push(gd); };
+      if((gd.begin_count >= beginCounter) && (gd.end_count <= endCounter)){ 
+        bg.push(gd);
+        return;
+      };
+      
+      var timeRatio = (gd.end_time - gd.begin_time)/(gd.end_count - gd.begin_count);
       // if some part of the game is before the beginCounter
       if((gd.begin_count < beginCounter) && (gd.end_count > beginCounter)){
         var newGd = _.clone(gd);
         newGd.begin_count = beginCounter; 
+        newGd.begin_time = gd.end_time - (gd.end_count - newGd.begin_count) * timeRatio;
         bg.push(newGd);
+        return;
       }
       // if some part of the game is after the endCounter
       if((gd.begin_count < endCounter) && (gd.end_count > endCounter)){
         var newGd = _.clone(gd);
         newGd.end_count = endCounter;
+        newGd.end_time = gd.begin_time + (newGd.end_count - gd.begin_count) * timeRatio;
         bg.push(newGd);
+        return;
       }
     });
     return bg;
@@ -200,40 +210,7 @@ function SeasonDataManager(dataParser, chartManager){
   //------------------------------------------------
   // summary panel time calculations
   this.getBrushedFrameTime = function(beginCounter, endCounter){
-    var that = this;
-    var brushedTimes = [];
-    var curGameId, beginTime, endTime;
-    _.each(this.ndxData, function(d, idx, list){
-      // loop through only the first det_group_id and averager values
-      if(d.det_group_id !== that.ndxData[0].det_group_id){ return; }
-      if(d.averager !== that.ndxData[0].averager){ return; }
-
-      // if prior to beginCounter or after endCounter
-      if((d.counter < beginCounter) || (d.counter > endCounter)){ return; }
-
-      // if at beginCounter
-      if(d.counter == beginCounter){
-        curGameId = d.game_id;
-        beginTime = d.frame_time;
-        return;
-      }
-      // if in same game, update end time
-      if(d.game_id == curGameId){
-        endTime = d.frame_time;
-      } else {
-        // need at least two data points
-        if(endTime !== undefined){
-          brushedTimes.push({game_id: curGameId, begin_time: beginTime, end_time: endTime});
-        }
-        curGameId = d.game_id;
-        beginTime = d.frame_time;
-        endTime = undefined;
-      }
-    });
-    if ((curGameId !== undefined) && (endTime !== undefined)){
-      brushedTimes.push({game_id: curGameId, begin_time: beginTime, end_time: endTime});
-    }
-    return brushedTimes;
+    return this.getBrushedGames(beginCounter, endCounter);
   };
 
   this.getFrameTime = function(counter){ 
