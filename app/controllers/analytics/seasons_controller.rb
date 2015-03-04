@@ -3,10 +3,9 @@ module Analytics
     authorize_actions_for ::Season
 
     authority_actions :summary => :read
-    authority_actions :summary_testx => :read
 
     before_filter :ensure_html_format
-    before_action :set_season, only: [:show, :summary, :summary_testx]
+    before_action :set_season, only: [:show, :summary]
     before_action :set_client
 
     # GET /seasons
@@ -21,10 +20,6 @@ module Analytics
 
     # GET /seasons/1/summary
     def summary
-    end
-
-    # GET /seasons/1/summary_testx
-    def summary_testx
     end
 
     private

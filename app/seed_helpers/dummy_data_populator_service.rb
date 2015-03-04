@@ -21,6 +21,8 @@ module SeedHelpers
 			@avgFrameRate = @videoAttributes["playback_frame_rate"]
 
 			@rnd = Random.new(1234567890)
+			@structureTypes = [:brokenSine, :random, :sine]
+			@structureTypesIdx = 0
 		end
 
 		def createManyGames(numOfGames, averageLengthMS)
@@ -96,12 +98,13 @@ module SeedHelpers
 
 			# generate data
 			numOfFrames = (((lengthMS/1000) * @avgFrameRate).to_i / @frameStep).to_i
-			videoData = generateVideoData(numOfFrames, @frameStep)
+			videoData, extractedFrames = generateStructuredVideoData(numOfFrames, @frameStep)
 
 			saveData = {
 				video_id: video.id,
 				video_attributes: @videoAttributes,
-				detections: videoData
+				detections: videoData,
+				extracted_frames: extractedFrames
 			}
 			tempFile = "#{@tempFolder}/videoTempJSON_#{video.id}.json"
 			File.open(tempFile, "w") do |f|
@@ -121,18 +124,14 @@ module SeedHelpers
 			end
 		end
 
-		def generateVideoData(numOfFrames, frameStep)
-			vd = {}
-			counter = 1
-			for i in 0..numOfFrames
-				vd.merge!({ counter =>  nextRandomData()})
-				counter += 5
-			end
-			return vd
-		end
+		def generateStructuredVideoData(numOfFrames, frameStep)
+			structureType = @structureTypes[@structureTypesIdx % @structureTypes.count]
+			sdg = SeedHelpers::StructuredDataGenerator.new(structureType, numOfFrames, frameStep, @rnd)
+			videoData = sdg.generate()
+			extractedFrames = sdg.getExtractedFrames()
+			@structureTypesIdx += 1
 
-		def nextRandomData
-			return @caffeData[@caffeDataKeys.sample(random: @rnd)]
+			return videoData, extractedFrames
 		end
 
 	end

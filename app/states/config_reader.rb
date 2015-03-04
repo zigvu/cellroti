@@ -3,8 +3,8 @@ require 'yaml'
 module States
 	class ConfigReader
 		def initialize
-			# @default = YAML.load_file("#{Rails.root}/config/metrics/default.yml")
-			@default = YAML.load_file("#{Rails.root}/config/metrics/first_try.yml")
+			@default = YAML.load_file("#{Rails.root}/config/metrics/default.yml")
+			#@default = YAML.load_file("#{Rails.root}/config/metrics/first_try.yml")
 
 			init_general_config()
 			init_detectable_metrics_config()

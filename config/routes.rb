@@ -22,7 +22,6 @@ Cellroti::Application.routes.draw do
     resources :seasons, only: [:index, :show] do
       member do
         get 'summary'
-        get 'summary_testx'
       end
     end
   end
