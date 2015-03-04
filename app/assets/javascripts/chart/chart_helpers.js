@@ -171,5 +171,31 @@ function ChartHelpers(){
     };
   };
 
+  this.getReadableCount = function(count){
+    var millions = Math.floor(count/1000000);
+    var thousands = Math.floor((count % 1000000) / 1000);
+    var units = Math.floor(((count % 1000000) % 1000) / 1);
+    
+    // limit to total of 5 characters including decimal
+    var number, unit;
+    if(millions != 0){
+      number = millions + Math.round(10 * (thousands/1000))/10;
+      unit = "M";
+    } else if (thousands != 0){
+      number = thousands + Math.round(10 * (units/1000))/10;
+      unit = "K";
+    } else {
+      number = units;
+      unit = "";
+    }
+    // limit to 4 characters total
+    if ((number + "").length > 4){ number = Math.round(number); }
+
+    return {
+      number: number,
+      unit: unit
+    };
+  };
+
   //------------------------------------------------
 };

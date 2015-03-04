@@ -4,6 +4,7 @@
 $summary-panel-rounded-corner-radius: $global-radius;
 
 $summary-panel-contrast-color: $zigvu-footer-background-color;
+$summary-panel-large-text-prefix-color: $steel;
 $summary-panel-large-text-number-color: $white;
 $summary-panel-large-text-unit-color: $warning-color;
 
@@ -60,6 +61,13 @@ $summary-panel-large-text-unit-color: $warning-color;
 
 		text-align: center !important;
     font-weight: bold;
+    .num-prefix {
+    	display: inline;
+    	color: $summary-panel-large-text-prefix-color;
+			@media #{$small-only} { font-size: rem-calc(14); }
+			@media #{$medium-only} { font-size: rem-calc(20); }
+			@media #{$large-up} { font-size: rem-calc(28); }
+    }
     .number {
     	display: inline;
     	color: $summary-panel-large-text-number-color;

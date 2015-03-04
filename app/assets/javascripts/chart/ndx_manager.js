@@ -58,7 +58,7 @@ function NDXManager(ndxData, chartManager){
   // TODO: delete
   this.avd = averagerDim
   this.avg = averagerGroup
-  this.bed = brandEffectivenessDim;
+  this.bfga = bgFilterGroup;
 
   // get currently set counters
   this.getBeginCounter = function(){ return bCounter; };
@@ -140,12 +140,12 @@ function NDXManager(ndxData, chartManager){
 
   var getPieChartData = function(chartDataKey){
     var allDC = _.map(bgFilterGroupAll, function(bfg){
-      return {bgId: bfg.key, count: bfg.value.sum[chartDataKey]};
+      return {bgId: bfg.key, count: bfg.value.count, sum: bfg.value.sum[chartDataKey]};
     });
-    var total = _.reduce(allDC, function(total, v){ return total + v.count; }, 0);
+    var totalSum = _.reduce(allDC, function(total, v){ return total + v.sum; }, 0);
     allDC = _.map(allDC, function(v){ 
-      var avg = total === 0 ? 0 : v.count/total;
-      return _.extend(v, {percent: avg}); 
+      var percent = totalSum === 0 ? 0 : v.sum/totalSum;
+      return _.extend(v, {percent: percent}); 
     });
     // if all percent are zero, chart will disappear - so put in equal percents
     if( _.filter(allDC, function(d){ return d.percent !== 0; }).length == 0 ){

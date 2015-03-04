@@ -68,7 +68,7 @@ function DonutChart(chartManager, ndxDataAccessMethod, chartDiv){
       .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
       .attr("dy", ".35em")
       .style("text-anchor", "middle")
-      .text(function(d) { return getLabel(d.data.count); });
+      .text(function(d) { return getLabel(d.data.sum); });
 
   arcs.append("svg:title")
       .text(function (d) { 
@@ -86,7 +86,7 @@ function DonutChart(chartManager, ndxDataAccessMethod, chartDiv){
     arcs.select("path").transition().duration(750).attr("d", arc);
     arcs.select("text")
       .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
-      .text(function(d) { return getLabel(d.data.count); });
+      .text(function(d) { return getLabel(d.data.sum); });
     arcs.select("title")
       .text(function (d) { 
         return chartManager.getBrandGroupName(d.data.bgId) + ": " + d3.format(',%')(d.data.percent); 
@@ -97,12 +97,13 @@ function DonutChart(chartManager, ndxDataAccessMethod, chartDiv){
 
   //------------------------------------------------
   // Format label
-  function getLabel(count){
+  function getLabel(sum){
     if(isViewDurationChart){
-      var readableTime = chartHelpers.getReadableTime(count);
+      var readableTime = chartHelpers.getReadableTime(sum);
       return readableTime.time + " " + readableTime.unit;
     } else {
-      return count;
+      var readableCount = chartHelpers.getReadableCount(sum);
+      return readableCount.number + " " + readableCount.unit;
     }
   };
 
