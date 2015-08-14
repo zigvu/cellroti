@@ -1,5 +1,3 @@
-@import 'foundation_and_overrides';
-
 $chart-panel-rounded-corner-radius: $global-radius;
 
 $chart-panel-label-title-color: $oil;
@@ -447,29 +445,4 @@ $chart-table-row-color-hover: #CBC6F7;
 		width: 100%;
 		text-align: center;
 	}
-}
-
-
-#spinner-overlay {
-  position: absolute;
-  top:0;
-  left:0;
-  min-width:400px;
-  min-height:400px;
-  z-index:998;
-  background-color: Black;
-
-  opacity: .8;
-  display: none;
-
-  border-radius: 10px;
-}
-
-#spinner-popup {
-  position: absolute;
-  min-width:400px;
-  min-height:400px;
-  z-index: 999;
-
-  display: none;
 }

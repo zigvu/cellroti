@@ -73,7 +73,7 @@ GEM
       activesupport (>= 3.0)
       request_store (~> 1.0)
     erubis (2.7.0)
-    execjs (2.5.2)
+    execjs (2.6.0)
     fancybox2-rails (0.2.8)
       railties (>= 3.1.0, < 5.0)
     font-awesome-rails (4.4.0.0)
@@ -81,9 +81,9 @@ GEM
     foundation-icons-sass-rails (3.0.0)
       railties (>= 3.1.1)
       sass-rails (>= 3.1.1)
-    foundation-rails (5.5.2.1)
+    foundation-rails (5.4.1.0)
       railties (>= 3.1.0)
-      sass (>= 3.3.0, < 3.5)
+      sass (>= 3.2.0)
     foundation_rails_helper (0.4)
       actionpack (>= 3.0)
       railties (>= 3.0)
@@ -181,13 +181,12 @@ GEM
     request_store (1.2.0)
     rolify (4.1.1)
     safe_yaml (1.0.4)
-    sass (3.4.16)
-    sass-rails (5.0.3)
+    sass (3.2.19)
+    sass-rails (4.0.5)
       railties (>= 4.0.0, < 5.0)
-      sass (~> 3.1)
-      sprockets (>= 2.8, < 4.0)
-      sprockets-rails (>= 2.0, < 4.0)
-      tilt (~> 1.1)
+      sass (~> 3.2.2)
+      sprockets (~> 2.8, < 3.0)
+      sprockets-rails (~> 2.0)
     sdoc (0.4.1)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
@@ -264,7 +263,7 @@ DEPENDENCIES
   rails (= 4.0.0)
   rails_admin
   rolify
-  sass-rails (~> 5.0.0)
+  sass-rails (~> 4.0.0)
   sdoc
   simple_form
   simple_token_authentication
