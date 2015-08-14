@@ -11,7 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141115001034) do
+ActiveRecord::Schema.define(version: 20150813204728) do
+
+  create_table "channels", force: true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.string   "url"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "client_detectables", force: true do |t|
     t.integer  "client_id"
@@ -132,15 +140,14 @@ ActiveRecord::Schema.define(version: 20141115001034) do
     t.string   "name"
     t.text     "description"
     t.datetime "start_date"
-    t.datetime "end_date"
     t.string   "venue_city"
     t.string   "venue_stadium"
-    t.integer  "season_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "sub_season_id"
   end
 
-  add_index "games", ["season_id"], name: "index_games_on_season_id", using: :btree
+  add_index "games", ["sub_season_id"], name: "index_games_on_sub_season_id", using: :btree
 
   create_table "leagues", force: true do |t|
     t.string   "name"
@@ -186,6 +193,16 @@ ActiveRecord::Schema.define(version: 20141115001034) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "sub_seasons", force: true do |t|
+    t.string   "name"
+    t.text     "description"
+    t.integer  "season_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "sub_seasons", ["season_id"], name: "index_sub_seasons_on_season_id", using: :btree
 
   create_table "teams", force: true do |t|
     t.string   "name"
@@ -246,8 +263,10 @@ ActiveRecord::Schema.define(version: 20141115001034) do
     t.float    "detection_frame_rate"
     t.integer  "width"
     t.integer  "height"
+    t.integer  "channel_id"
   end
 
+  add_index "videos", ["channel_id"], name: "index_videos_on_channel_id", using: :btree
   add_index "videos", ["game_id"], name: "index_videos_on_game_id", using: :btree
 
 end

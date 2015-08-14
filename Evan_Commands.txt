@@ -1,21 +1,26 @@
 ___________________________
-Business logic construction
+Business logic construction (partial only)
 
+# Admin 
 rails g model ClientDetectable client:references detectable:references
+rails g scaffold DetGroup name client:references
+rails g model DetGroupDetectable det_group:references detectable:references
 
 
 # Sports:
 rails g model Sport name description:text
 rails g model League name description:text sport:references
 rails g model Season name description:text league:references
-rails g model Team name description:text icon_path season:references
-rails g model Game name description:text start_date:datetime end_date:datetime venue_city venue_stadium season:references
+rails g model SubSeason name description:text season:references
+rails g model Team name description:text icon_path league:references
+rails g model Game name description:text start_date:datetime venue_city venue_stadium sub_season:references
 rails g model GameTeam game:references team:references
 rails g model EventType name description:text sport:references
 rails g model Event event_time:integer event_type:references game:references team:references
-rails g scaffold DetGroup name client:references
-rails g model DetGroupDetectable det_group:references detectable:references
 
-rails g model Video title:text description:text comment:text source_type:string source_url:string quality:string format:string length:integer runstatus:string start_time:datetime end_time:datetime avg_frame_rate:float game:references
+# Channels:
+rails g model Channel name description:text url
+
+rails g model Video title:text description:text comment:text source_type:string source_url:string quality:string format:string length:integer runstatus:string start_time:datetime end_time:datetime avg_frame_rate:float game:references channel:references
 rails g model VideoFrame frame_time:datetime frame_number:integer video:references
 

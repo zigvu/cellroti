@@ -1,5 +1,6 @@
 Cellroti::Application.routes.draw do
 
+  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   namespace :admin do
     resources :clients do
       member do
@@ -26,13 +27,9 @@ Cellroti::Application.routes.draw do
     end
   end
 
-  namespace :sprt do
-    resources :sports, :teams, :event_types, :events
-    resources :games, :leagues, :seasons
-  end
-
   #namespace :api, :path => "", :constraints => {:subdomain => "api"} do
   namespace :api, :defaults => {:format => :json} do
+    # client facing API
     namespace :v1 do
       resources :det_groups, :path => "brands/groups", only: [:index, :show]
       
@@ -45,8 +42,15 @@ Cellroti::Application.routes.draw do
           get "game/:game_id" => "seasons#game", :as => :game
         end
       end
-
     end
+
+    # kheer APIs
+    namespace :stream do
+      resources :sports, :event_types, :leagues, :seasons, :sub_seasons, :teams
+      resources :games, :game_teams, :events
+      resources :channels
+    end
+
   end
 
   devise_for :users
