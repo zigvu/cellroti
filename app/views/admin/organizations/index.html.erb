@@ -21,7 +21,7 @@
         <td>
           <ul>
             <% organization.detectables.each do |d| %>
-              <li><%= d.pretty_name %></li>
+              <li><%= "[#{d.id}] #{d.pretty_name}" %></li>
             <% end %>
           </ul>
         </td>

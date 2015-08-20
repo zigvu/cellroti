@@ -50,6 +50,9 @@ class Api::Stream::StreamController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def streamObj_params
+      # Note: adding these additional parameters to permit will result in rails
+      # requiring them to be present as a field in the model - which we don't want
+      # :id, :format, :user_email, :user_token
       params.permit(@streamObjParamsPermit)
     end
 end

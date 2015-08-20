@@ -3,16 +3,9 @@ module Services
 		def initialize(client, video)
 			@client = client
 			@video = video
-			@localizationFile = Managers::MVideo.new(@video).get_localization_file()
 		end
 
 		def create
-			# if video already has detections and metrics created,
-			# then inform controller
-			return false if @video.video_detections.count > 0
-
-			# if there have been no detection present, then we can enque
-			# the ingest process
 			enqueue()
 		end
 
@@ -52,8 +45,7 @@ module Services
 		def enqueue
 			videoDataImportJobHash = {
 				client_id: @client.id,
-				video_id: @video.id,
-				localization_file: @localizationFile
+				video_id: @video.id
 			}
 			Delayed::Job.enqueue VideoDataImportJob.new(
 				videoDataImportJobHash), :queue => 'videoDataImport', :priority => 20

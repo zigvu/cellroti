@@ -12,8 +12,8 @@ module States
 		end
 
 		attr_accessor :g_mongoBatchInsertSize
-		attr_accessor :g_videoImportLocalizationPath, :g_videoImportLocalizationFileName
-		attr_accessor :g_videoImportLocalizationImages
+		attr_accessor :g_videoImportLocalizationPath
+		attr_accessor :g_videoImportLocalizationImages, :g_videoImportLocalizationThumbnails
 
 		def init_general_config
 			g_default = @default["general"]
@@ -22,7 +22,6 @@ module States
 
 			# video import saving
 			@g_videoImportLocalizationPath = g_default["video_localization_path"]
-			@g_videoImportLocalizationFileName = g_default["localization_filename"]
 			@g_videoImportLocalizationImages = g_default["localization_image_folder"]
 			@g_videoImportLocalizationThumbnails = g_default["localization_thumbnail_folder"]
 		end
@@ -32,7 +31,7 @@ module States
 		attr_accessor :dm_sw_size_seconds_scores, :dm_sw_decayWeights_scores
 		attr_accessor :dm_qd_numCols, :dm_qd_numRows
 		attr_accessor :dm_qd_centerWeight, :dm_qd_cornerWeight, :dm_qd_nonCornerEdgeWeight
-		attr_accessor :dm_sw_size_seconds_detectionsCount
+		attr_accessor :dm_sw_size_seconds_detectionsCount, :dm_ef_num_of_seconds
 
 		def init_detectable_metrics_config
 			dm_default = @default["detectable_metrics"]
@@ -54,6 +53,9 @@ module States
 
 			# detections count
 			@dm_sw_size_seconds_detectionsCount = dm_default["sliding_window_size_seconds_detection_count"]
+
+			# num of second per extracted frame
+			@dm_ef_num_of_seconds = dm_default["num_seconds_per_sample_frame"]
 		end
 
 

@@ -4,101 +4,24 @@ module Metrics
 		def initialize(video)
 			@video = video
 			@configReader = States::ConfigReader.new
-
-			@mongoBatchInsertSize = @configReader.g_mongoBatchInsertSize
 		end
 
-		def calculate_all(detGroupIds, allDetections)
-			# first ingest raw data into detectable metrics
-			setup_initial_ingest(allDetections)
-			ingest_raw_data()
-			calculate_metrics_only(detGroupIds)
-		end
-
-		def calculate_metrics_only(detGroupIds)
-			# calculate det_group_metrics and summary_metrics
-			setup_summary_metrics_calculations(detGroupIds)
-			summary_metrics_calculate()
-		end
-
-		def setup_initial_ingest(allDetections)
-			# sanity check
-			@videoDetection = @video.video_detections.first
-			raise "Video has no detections saved" if @videoDetection == nil
-
-			# set detections
-			@allDetections = allDetections
-			@allDetectableIds = @videoDetection.detectable_ids.map{|i| i.to_i}
-
-			# sort detections by frame number
-			@sortedFrameNums = @allDetections.keys.collect{|i| i.to_i}.sort
-
-			@frameRateToMSFactor = States::ConfigReader.frameTimeStampResolution / @video.playback_frame_rate
-			return true
-		end
-
-		def ingest_raw_data
-			# hold objects for single detectable metrics calculation
-			mcsd = {}
-			@allDetectableIds.each do |detectableId|
-				mcsd[detectableId] = Metrics::CalculateSingleDetectable.new(@configReader, @video, detectableId)
-			end
-
-			# array to hold frame detections
-			frameDetections = []
-
-			@sortedFrameNums.each do |frameNumber|
-				# array to hold intermediate compute
-				singleRawDetections = []
-				singleDetectableMetrics = []
-
-				# puts "Working on frame number: #{frameNumber}"
-				frameTime = (frameNumber * @frameRateToMSFactor).to_i
-
-				@allDetectableIds.each do |detectableId|
-					# get detections or empty array if no detections
-					detections = @allDetections[frameNumber.to_s][detectableId.to_s] || []
-
-					# STORE: detectables
-					singleDetectableMetrics += [mcsd[detectableId].calculate(frameTime, detections)]
-				end
-				# STORE: frame detection
-				# Note: this is tied to schema in FrameDetection class
-				frameDetections << {
-					fn: frameNumber,
-					ft: frameTime,
-					single_detectable_metrics: singleDetectableMetrics,
-					video_detection_id: @videoDetection.id
-				}
-
-				# write to db in batches
-				if frameDetections.count >= @mongoBatchInsertSize
-					FrameDetection.collection.insert(frameDetections)
-					frameDetections = []
-				end
-			end
-			# write the last batch to db
-			if frameDetections.count > 0
-				FrameDetection.collection.insert(frameDetections)
-			end
-
-			# create indexes if not there yet
-			FrameDetection.no_timeout.create_indexes
-
-			return true
-		end
-
-		def setup_summary_metrics_calculations(detGroupIds)
+		def calculate_all(detGroupIds)
 			@detGroupIds = detGroupIds
+			# calculate det_group_metrics and summary_metrics
+			setup_summary_metrics_calculations
+			calculate_summary_metrics
+		end
 
+		def setup_summary_metrics_calculations
 			# sanity check
-			videoDetection = @videoDetection || @video.video_detections.first
+			videoDetection = @video.video_detections.first
 			raise "Video has no detections saved" if videoDetection == nil
 
-			@frameDetections = videoDetection.frame_detections.order_by([:frame_number, :asc])
+			@frameDetections = videoDetection.frame_detections.order_by(frame_number: :asc)
 			raise "Video has no frame detections saved" if @frameDetections.count == 0
 
-			allDetectableIds = @allDetectableIds || videoDetection.detectable_ids.map{|i| i.to_i}
+			allDetectableIds = videoDetection.detectable_ids.map{|i| i.to_i}
 			dgDetectableIds = []
 			@detGroupIds.each do |dgId|
 				dgDetectableIds += DetGroup.find(dgId).detectables.pluck(:id)
@@ -110,7 +33,7 @@ module Metrics
 		end
 
 
-		def summary_metrics_calculate
+		def calculate_summary_metrics
 			mcsdg = {}
 			mcss = {}
 			@detGroupIds.each do |dgId|

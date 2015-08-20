@@ -48,8 +48,9 @@ Cellroti::Application.routes.draw do
     # kheer APIs
     namespace :stream do
       resources :sports, :event_types, :leagues, :seasons, :sub_seasons, :teams
-      resources :games, :game_teams, :events
-      resources :channels
+      resources :games, :game_teams, :events, :channels
+      resources :json_data, only: [:create]
+      resources :frame_data, only: [:index, :create]
     end
 
   end

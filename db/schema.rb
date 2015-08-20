@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150813204728) do
+ActiveRecord::Schema.define(version: 20150818212106) do
 
   create_table "channels", force: true do |t|
     t.string   "name"
@@ -246,16 +246,10 @@ ActiveRecord::Schema.define(version: 20150813204728) do
 
   create_table "videos", force: true do |t|
     t.text     "title"
-    t.text     "description"
-    t.text     "comment"
     t.string   "source_type"
-    t.string   "source_url"
     t.string   "quality"
-    t.string   "format"
     t.integer  "length"
     t.string   "runstatus"
-    t.datetime "start_time"
-    t.datetime "end_time"
     t.float    "playback_frame_rate"
     t.integer  "game_id"
     t.datetime "created_at"
@@ -264,6 +258,8 @@ ActiveRecord::Schema.define(version: 20150813204728) do
     t.integer  "width"
     t.integer  "height"
     t.integer  "channel_id"
+    t.integer  "start_frame_number"
+    t.integer  "end_frame_number"
   end
 
   add_index "videos", ["channel_id"], name: "index_videos_on_channel_id", using: :btree

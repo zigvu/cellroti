@@ -2,11 +2,17 @@ class VideoDataImportJob < Struct.new(:videoDataImportJobHash)
 	def perform
 		clientId = videoDataImportJobHash[:client_id]
 		videoId = videoDataImportJobHash[:video_id]
-		localizationFile = videoDataImportJobHash[:localization_file]
+
+		video = Video.find(videoId)
 
 		# populate data
-		mvdi = Metrics::VideoDataImport.new()
-		mvdi.populate(Video.find(videoId), localizationFile)
+		mvdi = Metrics::VideoDataImport.new(video)
+		mvdi.populate
+		detGroupIds = mvdi.find_det_group_ids
+
+		# compute all intermediate/final metrics and save
+		cam = Metrics::CalculateAll.new(video)
+		cam.calculate_all(detGroupIds)
 
 		return true
 	end

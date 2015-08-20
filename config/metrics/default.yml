@@ -6,7 +6,6 @@
 general:
   mongo_batch_insert_size:                  500
   video_localization_path:                  '/sftp/sftpuser/uploads'
-  localization_filename:                    'localizations.json'
   localization_image_folder:                'images'
   localization_thumbnail_folder:            'thumbnails'
 
@@ -30,6 +29,10 @@ detectable_metrics:
   quadrants_non_corner_edge_weight:                    0.5
   # detection count
   sliding_window_size_seconds_detection_count:         1
+  # determine number of seconds one sample frame will cover. For example, a 
+  # value of 10 indicates that there will be only 1 sample frame in cellroti 
+  # per 10 seconds worth of video
+  num_seconds_per_sample_frame:                        10
 
 det_group_metrics:
   # sliding window - temporal crowding

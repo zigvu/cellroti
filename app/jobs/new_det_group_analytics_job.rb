@@ -77,7 +77,7 @@ class NewDetGroupAnalyticsJob < Struct.new(:newDetGroupAnalyticsHash)
 
 			# compute all intermediate/final metrics and save
 			cam = Metrics::CalculateAll.new(video)
-			cam.calculate_metrics_only(detGroupIds)
+			cam.calculate_all(detGroupIds)
 		end
 
 end
