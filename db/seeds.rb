@@ -98,7 +98,7 @@ mc.addAllowedSeasonIds(wc2014.id)
 # numOfGames = 64
 # averageLengthMS = 90 * 60 * 1000 # 90 minutes
 numOfGames = 64
-averageLengthMS = 1 * 60 * 1000 # 1 minutes
+averageLengthMS = 1 * 60 * 2000 # 2 minutes
 
 countryList = [
 	"Algeria", "Argentina", "Australia", "Belgium", "Bosnia-Herzegovina", 
@@ -108,13 +108,13 @@ countryList = [
 	"Netherlands", "Nigeria", "Portugal", "Russia", "South Korea", 
 	"Spain", "Switzerland", "Uruguay", "U.S."]
 
-dummyData = SeedHelpers::DummyDataPopulatorService.new(caffeDataFile, wc2014, cocacolaClient)
+dummyData = SeedHelpers::DummyDataPopulatorService.new(wc2014, cocacolaClient)
 dummyData.createTeams(countryList)
 dummyData.createManyGames(numOfGames, averageLengthMS)
 
 # add a last game to expt with mongo data
-lastGame = wc2014.games.create(name: "Italy Vs. Iran", description: "13min video", start_date: "2015-01-01 00:00:00", end_date: "2015-01-01 13:54:00", venue_city: "Somewhere Cool", venue_stadium: "Cooler")
-lastGameVideo = lastGame.videos.create(title: "Italy vs. Iran", description: "13min video", comment: "13 min vid", source_type: "youtube", source_url: "none", runstatus: "run-complete", start_time: lastGame.start_date, end_time: lastGame.end_date)
+# lastGame = wc2014.games.create(name: "Italy Vs. Iran", description: "13min video", start_date: "2015-01-01 00:00:00", venue_city: "Somewhere Cool", venue_stadium: "Cooler")
+# lastGameVideo = lastGame.videos.create(title: "Italy vs. Iran", description: "13min video", comment: "13 min vid", source_type: "youtube", source_url: "none", runstatus: "run-complete", start_time: lastGame.start_date)
 # localizationFile = '/sftp/sftpuser/uploads/3/localizations.json'
 # mvdi = Metrics::VideoDataImport.new()
 # mvdi.populate(lastGameVideo, localizationFile)

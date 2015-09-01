@@ -2,23 +2,17 @@ require 'json'
 
 module SeedHelpers
 	class DummyDataPopulatorService
-		def initialize(caffeDataFile, gameSeason, client)
-			rawData = JSON.parse(File.read(caffeDataFile))
-			@videoAttributes = rawData["video_attributes"]
-
+		def initialize(gameSeason, client)
 			@gameSeason = gameSeason
 			@client = client
 
-			@caffeData = {}
-			@caffeDataKeys = rawData["detections"].keys().map{|i| i.to_i}.sort
-			@caffeDataKeys.each do |k|
-				@caffeData[k] = rawData["detections"][k.to_s]
-			end
+			@detectableIds = [2,3,5,6]
 
 			@event_type_ids = EventType.pluck(:id)
 			@tempFolder = '/mnt/tmp'
-			@frameStep = @videoAttributes["detection_frame_rate"]
-			@avgFrameRate = @videoAttributes["playback_frame_rate"]
+			@frameStep = 5
+			@avgFrameRate = 25
+			@numGamesPerSubSeason = 5
 
 			@rnd = Random.new(1234567890)
 			@structureTypes = [:brokenSine, :random, :sine]
@@ -29,6 +23,7 @@ module SeedHelpers
 			counter = 0
 			allGamesArr = []
 			teamPerumtations = @gameSeason.league.teams.pluck(:id).permutation(2).to_a.shuffle!(random: @rnd)
+			subSeason = nil
 			teamPerumtations.each do |teamPerumtation|
 				break if counter >= numOfGames
 				team1 = Team.find(teamPerumtation[0])
@@ -39,7 +34,11 @@ module SeedHelpers
 					averageLengthMS - @rnd.rand((0.3 * averageLengthMS).to_i)
 				].sample(random: @rnd)
 
+				if (counter % @numGamesPerSubSeason) == 0
+					subSeason = @gameSeason.sub_seasons.create(name: "Auto SubSeason")
+				end
 				allGamesArr << {
+					subSeason: subSeason,
 					team1: team1,
 					team2: team2,
 					startDate: startDate,
@@ -55,66 +54,47 @@ module SeedHelpers
 			# end
 			
 			allGamesArr.each do |gd|
-				createGame(gd[:team1], gd[:team2], gd[:startDate], gd[:lengthMS])
+				createGame(gd[:subSeason], gd[:team1], gd[:team2], gd[:startDate], gd[:lengthMS])
 			end
 		end
 
-		def createGame(team1, team2, startDate, lengthMS)
+		def createGame(subSeason, team1, team2, startDate, lengthMS)
 			puts ""
 			puts "Game: #{team1.name} vs. #{team2.name}; Start: #{startDate} Length: #{lengthMS}"
 			# create game and associate team
-			game = @gameSeason.games.create(
+			game = subSeason.games.create(
 				name: "#{team1.name} vs. #{team2.name}", 
 				description: "Auto-generated - #{team1.name}.#{team2.name}", 
 				start_date: startDate, 
-				end_date: startDate + (lengthMS/1000).to_i.seconds, 
 				venue_city: "Auto-generated - #{team1.name}.#{team2.name}", 
 				venue_stadium: "Auto-generated - #{team1.name}.#{team2.name}")
 			GameTeam.create(game_id: game.id, team_id: team1.id)
 			GameTeam.create(game_id: game.id, team_id: team2.id)
 
-			# attach some events
-			for i in 0..(@rnd.rand(10))
-				team = [team1, team2].sample(random: @rnd)
-				eventTypeId = @event_type_ids.sample(random: @rnd)
-				game.events.create(
-					event_type_id: eventTypeId, 
-					team_id: team.id, 
-					event_time: @rnd.rand(lengthMS - 500) + 500)
-			end
-
-			# create video
-			video = game.videos.create(
-				title: "#{team1.name} vs. #{team2.name}", 
-				description: "Game details",
-				comment: "Auto-generated - #{team1.name}.#{team2.name}", 
-				source_type: "youtube",
-				source_url: "http://none-for-now",
-				runstatus: "run-complete",
-				start_time: game.start_date,
-				end_time: game.end_date)
-
-			@videoAttributes["length"] = lengthMS
-
-			# generate data
 			numOfFrames = (((lengthMS/1000) * @avgFrameRate).to_i / @frameStep).to_i
-			videoData, extractedFrames = generateStructuredVideoData(numOfFrames, @frameStep)
 
-			saveData = {
-				video_id: video.id,
-				video_attributes: @videoAttributes,
-				detections: videoData,
-				extracted_frames: extractedFrames
-			}
-			tempFile = "#{@tempFolder}/videoTempJSON_#{video.id}.json"
-			File.open(tempFile, "w") do |f|
-				f.write(JSON.pretty_generate(saveData))
-			end
+			video = game.videos.create()
+			mVideo = Managers::MVideo.new(video)
+			videoMetaDataFile = mVideo.get_video_meta_data_file
+			detectableIdsFile = mVideo.get_detectable_ids_file
+			eventsFile = mVideo.get_events_file
+			localizationFile = mVideo.get_localization_file
+
+			createVideoMetaData(
+				videoMetaDataFile, "#{team1.name} vs. #{team2.name}", game.id, 1, numOfFrames
+			)
+			createDetectableIds(detectableIdsFile)
+			createEvents(eventsFile, 10, numOfFrames)
+			createLocalizationData(localizationFile, numOfFrames)
 
 			# populate data
-			mvdi = Metrics::VideoDataImport.new()
-			mvdi.populate(video, tempFile)
-			File.delete(tempFile) if File.exist?(tempFile)
+			mvdi = Metrics::VideoDataImport.new(video)
+			mvdi.populate
+			detGroupIds = mvdi.find_det_group_ids
+
+			# compute all intermediate/final metrics and save
+			cam = Metrics::CalculateAll.new(video)
+			cam.calculate_all(detGroupIds)
 		end
 
 		def createTeams(countryList)
@@ -124,14 +104,105 @@ module SeedHelpers
 			end
 		end
 
-		def generateStructuredVideoData(numOfFrames, frameStep)
+
+		# modified from kheer:
+		# app/data_exporters/save_data_for_cellroti_export.rb
+		def createVideoMetaData(outputFile, videoTitle, gameId, channelId, numOfFrames)
+			FileUtils::rm_rf(outputFile)
+
+			startFrameNumber = 1
+			endFrameNumber = numOfFrames * @frameStep
+
+			formattedVideo = {
+				kheer_video_id: 1,
+				title: videoTitle,
+				source_type: 'zigvu',
+				quality: 'high',
+				playback_frame_rate: @avgFrameRate,
+				detection_frame_rate: @frameStep,
+				game_id: gameId,
+				channel_id: channelId,
+				start_frame_number: startFrameNumber,
+				end_frame_number: endFrameNumber,
+				width: 1280,
+				height: 720
+			}
+			File.open(outputFile, 'w') do |f|
+				videoMetaData = {video_meta_data: formattedVideo}
+				f.puts "#{videoMetaData.to_json}"
+			end
+			outputFile
+		end
+
+
+		# modified from kheer:
+		# app/data_exporters/save_data_for_cellroti_export.rb
+		def createDetectableIds(outputFile)
+			FileUtils::rm_rf(outputFile)
+
+			File.open(outputFile, 'w') do |f|
+				detIds = {detectable_ids: @detectableIds}
+				f.puts "#{detIds.to_json}"
+			end
+			outputFile
+		end
+
+
+		# modified from kheer:
+		# app/data_exporters/save_data_for_cellroti_export.rb
+		def createEvents(outputFile, numEvents, numOfFrames)
+			FileUtils::rm_rf(outputFile)
+
+			events = []
+			for i in 0..(@rnd.rand(numEvents))
+				eventTypeId = @event_type_ids.sample(random: @rnd)
+				frameNumber = @rnd.rand(numOfFrames)
+				events << {:"#{frameNumber}" => [eventTypeId]}
+			end
+
+			# { events: [{frame_number: [cellroti_event_type_id:, ]}, ]}
+			File.open(outputFile, 'w') do |f|
+				eventsFormatted = {events: events}
+				f.puts "#{eventsFormatted.to_json}"
+			end
+			outputFile
+		end
+
+
+		# modified from kheer:
+		# app/data_exporters/save_data_for_cellroti_export.rb
+		def createLocalizationData(outputFile, numOfFrames)
+			FileUtils::rm_rf(outputFile)
+
+			# Note: Cellroti ingests this line-by-line assuming each line is valid JSON
+			# Also note that localizations are assumed to be ordered by frame_number
+			# format: 
+			# { localizations: [
+			# 	{frame_number: {cellroti_det_id: [{bbox: {x, y, width, height}, score: float}, ], }, }, 
+			# ]}
+
 			structureType = @structureTypes[@structureTypesIdx % @structureTypes.count]
-			sdg = SeedHelpers::StructuredDataGenerator.new(structureType, numOfFrames, frameStep, @rnd)
+			sdg = SeedHelpers::StructuredDataGenerator.new(structureType, numOfFrames, @frameStep, @rnd)
+			sdg.setDetectableIds(@detectableIds)
 			videoData = sdg.generate()
-			extractedFrames = sdg.getExtractedFrames()
 			@structureTypesIdx += 1
 
-			return videoData, extractedFrames
+			firstLine = true
+			File.open(outputFile, 'w') do |f|
+				f.puts "{\"localizations\": ["
+				videoData.each do |frameNumber, formattedLoc|
+					formattedLine = {:"#{frameNumber}" => formattedLoc}.to_json
+					if firstLine
+						formattedLine = "  #{formattedLine}"
+						firstLine = false
+					else
+						formattedLine = ",\n  #{formattedLine}"
+					end
+					f << formattedLine
+				end
+				f.puts "\n]}"
+			end
+			outputFile
 		end
 
 	end

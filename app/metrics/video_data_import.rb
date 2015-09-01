@@ -11,7 +11,7 @@ module Metrics
 		end
 
 		def populate
-			# These files are produced in kheer by: app/data_exporters/save_for_cellroti_export.rb
+			# These files are produced in kheer by: app/data_exporters/save_data_for_cellroti_export.rb
 
       mVideo = Managers::MVideo.new(@video)
       videoMetaDataFile = mVideo.get_video_meta_data_file
@@ -47,7 +47,7 @@ module Metrics
 				start_frame_number: frameNumberStart,
 				end_frame_number: frameNumberEnd,
 				width: va['width'].to_i,
-				height: va['height'].to_i,				
+				height: va['height'].to_i
 			)
 
 			# if data for this video already exists, purge all old data

@@ -8,14 +8,19 @@ function ChartManager(seasonInfo, seasonData){
   this.numRowsInTableChart = 10;
   this.numOfGamesInSubSeasonChart = 2;
 
+  // access to internal variables
+  this.dataManager = undefined;
+  this.ndxManager = undefined;
+  this.dataParser = undefined;
+
   // draw charts inside object method scope
   // so that charts can be passed the `this` object
   this.drawCharts = function(){
     this.chartHelpers = new ChartHelpers();
 
     timeLogStart("dataManager");
-    var dataParser = new DataParser(seasonInfo, seasonData, this);
-    this.dataManager = new SeasonDataManager(dataParser, this);
+    this.dataParser = new DataParser(seasonInfo, seasonData, this);
+    this.dataManager = new SeasonDataManager(this.dataParser, this);
     this.seasonDataManager = this.dataManager; // keep a second reference around
     timeLogEnd("dataManager", "Data averaging done");
 
@@ -64,8 +69,8 @@ function ChartManager(seasonInfo, seasonData){
     d3.json(gameURL, function(error, gameData) {
       that.isGameDisplaying = true;
   
-      var dataParser = new DataParser(seasonInfo, gameData, that);
-      that.dataManager = new GameDataManager(dataParser, that);
+      this.dataParser = new DataParser(seasonInfo, gameData, that);
+      that.dataManager = new GameDataManager(this.dataParser, that);
       that.gameDataManager = that.dataManager; // keep a second reference around
 
       that.ndxManager = new NDXManager(that.gameDataManager.ndxData, that);
