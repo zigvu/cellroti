@@ -6,17 +6,12 @@ module Jsonifiers
 		end
 
 		def to_json
-			return getDetGroupDetails()
-		end
-
-		def getDetGroupDetails
-			raise 'Need a cache key for JAnalyticsDetGroup class' if @cacheKey == nil
 			retJSON = Rails.cache.fetch(@cacheKey) do 
-				getDetGroupDetails_NonChached()
+				getDetGroupDetails()
 			end
 		end
 
-		def getDetGroupDetails_NonChached
+		def getDetGroupDetails
 			retHash = {}
 			retHash[:id] = @detGroup.id
 			retHash[:name] = @detGroup.name

@@ -1,21 +1,22 @@
 module Jsonifiers
 	class GameEventsPackager < Jsonifiers::JAnalytics
-		def initialize(game, summaryResolution)
+		def initialize(game, summaryResolutions)
 			@game = game
-			@summaryResolution = summaryResolution
+			@summaryResolutions = summaryResolutions
+			@cacheKey = "#{@game.cache_key}/#{summaryResolutions}/GameEventsPackager"
 		end
 
-		def eventsJSON
-			# check for cache
-			retJSON = {game_events: getEvents()}.to_json
-			return retJSON
+		def to_json
+			retJSON = Rails.cache.fetch(@cacheKey) do 
+				{game_events: getEvents()}.to_json
+			end
 		end
 
 		def getEvents
 			gameEvents = {}
 			sortedTimeKeys = SummaryMetric
 					.in(video_id: @game.videos.pluck(:id))
-					.in(resolution_seconds: @summaryResolution)
+					.in(resolution_seconds: @summaryResolutions)
 				.first.single_summary_metrics
 					.pluck(:frame_time).sort
 

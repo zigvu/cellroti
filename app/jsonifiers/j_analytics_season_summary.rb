@@ -6,17 +6,12 @@ module Jsonifiers
 		end
 
 		def to_json
-			return getSeasonSummary()
-		end
-
-		def getSeasonSummary
-			raise 'Need a cache key for JAnalyticsSeasonSummary class' if @cacheKey == nil
 			retJSON = Rails.cache.fetch(@cacheKey) do 
-				getSeasonSummary_NonChached()
+				getSeasonSummary()
 			end
 		end
 
-		def getSeasonSummary_NonChached
+		def getSeasonSummary
 			retHash = {}
 			retHash[:id] = @season.id
 			retHash[:name] = @season.name
@@ -38,25 +33,52 @@ module Jsonifiers
 				retHash[:games] << {
 					id: game.id, name: game.name, teams: game.teams.pluck(:id), 
 					start_date: game.start_date, venue_city: game.venue_city, 
-					venue_stadium: game.venue_stadium
+					venue_stadium: game.venue_stadium,
+					sequence_counters: getGameSequenceCounters(game)
 				}
 			end
 
-			retHash[:sub_season] = getSubSeason()
+			retHash[:sub_seasons] = []
+			@season.sub_seasons.each do |subSeason|
+				retHash[:sub_seasons] << {
+					id: subSeason.id,
+					name: subSeason.name,
+					game_ids: subSeason.games.pluck(:id)
+				}
+			end
 
 			return retHash.to_json
 		end
 
-		def getSubSeason
-			subSeasons = []
-			@season.sub_seasons.each do |subSeason|
-				subSeasons << {
-					subseason_id: subSeason.id,
-					subseason_name: subSeason.name,
-					game_ids: subSeason.games.pluck(:id)
+		def getGameSequenceCounters(game)
+			sequenceCounters = []
+			summaryMetric = SummaryMetric
+				.in(video_id: game.videos.pluck(:id))
+				.where(resolution_seconds: States::SummaryResolutions.finestGameResolution)
+				.first
+
+			# in case when video has been processed
+			if summaryMetric != nil
+				# TODO: update when we have multipe videos in a game
+				firstSingleSummaryMetrics = summaryMetric.single_summary_metrics.first
+				lastSingleSummaryMetrics = summaryMetric.single_summary_metrics.last
+				sequenceCounters << {
+					video_id: summaryMetric.video_id,
+					begin_count: firstSingleSummaryMetrics.sequence_counter,
+					end_count: lastSingleSummaryMetrics.sequence_counter,
+					begin_time: firstSingleSummaryMetrics.frame_time,
+					end_time: lastSingleSummaryMetrics.frame_time
+				}
+			else
+				sequenceCounters << {
+					video_id: 0,
+					begin_count: 0,
+					end_count: 0,
+					begin_time: 0,
+					end_time: 0
 				}
 			end
-			subSeasons
+			sequenceCounters
 		end
 
 	end

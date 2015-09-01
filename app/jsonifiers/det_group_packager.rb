@@ -4,10 +4,9 @@ module Jsonifiers
 			@detGroupIds = detGroupIds
 		end
 
-		def detGroupNameJSON
-			# check for cache
-			retJSON = getDetGroupName().to_json
-			return retJSON
+		def to_json
+			# Note: creating cache key takes visiting all det groups, which won't be any faster
+			getDetGroupName().to_json
 		end
 
 		def getDetGroupName

@@ -3,20 +3,31 @@
   ------------------------------------------------*/
 /*
 // Data Hash structure
-{
-  brand_group_map: {:id => :name, },
+
+seasonInfo: {
+  :id, :name, :league, :sport, 
+  event_types: [{:id, :name, :description}, ],
+  teams: [{:id, :name}, ],
+  games: [
+    { :id, :name, teams: [integer, ], :start_date, :venue_city, :venue_stadium,
+      sequence_counters: [{:video_id, :begin_count, :end_count, :begin_time, :end_time}, ]
+    }, 
+  ],
+  sub_seasons: [{:id, :name, game_ids: [integer, ]}, ]
+}
+
+seasonData: {
   brand_group_data_keys: [
     :averager, :counter, :frame_time, :game_id, :det_group_id,
     :brand_effectiveness, :brand_group_crowding, :visual_saliency,
     :timing_effectiveness, :spatial_effectiveness, :detections_count,
     :view_duration, :q0, :q1, :q2, :q3, :q4, :q5, :q6, :q7, :q8
   ],
-  game_events: {},
+  game_events: {time: :event_type_id, },  // or None if multiple games
+  brand_group_map: {id: :name, },
   ndx_data: [
-    {
-      :game_id,
-      game_data: [array of values according to brand_group_data_keys],
-      game_counters: [{:video_id, :begin_count, :end_count}, ]
+    { game_id: :game_id,
+      game_data: [array of values according to brand_group_data_keys]
     }, 
   ]
 }
@@ -25,6 +36,8 @@
 // TODO: scope variables properly - currently many in global scope
 
 function DataParser(seasonInfo, seasonData, chartManager){
+  var self = this;
+
   // set up
   var chartHelpers = chartManager.chartHelpers;
 
@@ -32,28 +45,27 @@ function DataParser(seasonInfo, seasonData, chartManager){
   this.eventTypesInfo = seasonInfo["event_types"];
   // this.teamsInfo = seasonInfo["teams"];
   this.gamesInfo = seasonInfo["games"];
-  this.subSeasonsInfo = seasonInfo["sub_season"];
+  this.subSeasonsInfo = seasonInfo["sub_seasons"];
 
-  // create game id to name map
-  var gameDataMap = {};
+  // create game id to values map
+  this.gameDataMap = {};
   this.gamesInfo.forEach(function (game) {
-    gameDataMap[+game["id"]] = game["name"];
+    self.gameDataMap[+game["id"]] = game;
   });
-  this.gameDataMap = gameDataMap;
 
   // disaggregate seasonData
   this.brandGroupMap = seasonData["brand_group_map"];
   var dataKeys = seasonData["brand_group_data_keys"];
 
-  var gameDemarcations = [];
-  var ndxData = [];
+  this.gameDemarcations = [];
+  this.ndxData = [];
 
   var lastGameEndCount = 0;
   _.each(seasonData["ndx_data"], function(gData){
     var gameId = gData.game_id;
 
     // assume one and only 1 video in game
-    var gameCounters = gData.game_counters;
+    var gameCounters = self.gameDataMap[gameId]["sequence_counters"];
     if (gameCounters.length === 0) { return; }
 
     var videoId = gameCounters[0].video_id;
@@ -63,7 +75,7 @@ function DataParser(seasonInfo, seasonData, chartManager){
     var endTime = gameCounters[0].end_time;
 
     lastGameEndCount += gameBeginCount;
-    gameDemarcations.push({
+    self.gameDemarcations.push({
       video_id: videoId,
       game_id: gameId,
       begin_count: lastGameEndCount,
@@ -77,14 +89,12 @@ function DataParser(seasonInfo, seasonData, chartManager){
       _.each(gDataBG.data, function(arr){
         coercedD = chartHelpers.coercer(dataKeys, arr);
         coercedD.counter += lastGameEndCount;
-        ndxData.push(coercedD);
+        self.ndxData.push(coercedD);
       });
     });
     // increment to the next counter
     lastGameEndCount += gameEndCount + 1;
   });
-  this.gameDemarcations = gameDemarcations;
-  this.ndxData = ndxData;
 
   // game specific
   var ndxMaxCounter = lastGameEndCount - 1;

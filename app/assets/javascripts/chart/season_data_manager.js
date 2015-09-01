@@ -37,7 +37,7 @@ function SeasonDataManager(dataParser, chartManager){
   var colorBrewer = d3.entries(colorbrewer);
 
   // color domain/range for sub seasons
-  this.subSeasonIds = _.pluck(subSeasonData, 'subseason_id');
+  this.subSeasonIds = _.pluck(subSeasonData, 'id');
   var subSeasonColorsMap = _.map(subSeasonData, function(sd, idx){
     var numOfGames = sd.game_ids.length;
     var maxColorKey = parseInt(_.chain(colorBrewer[idx].value).keys().max().value());
@@ -46,7 +46,7 @@ function SeasonDataManager(dataParser, chartManager){
     numOfGames = numOfGames < minColorKey ? minColorKey : numOfGames;
 
     return {
-      season_id: sd.subseason_id,
+      id: sd.id,
       color: _.last(colorBrewer[idx].value[numOfGames]),
       colorKey: colorBrewer[idx].key,
       game_ids: sd.game_ids,
@@ -55,7 +55,7 @@ function SeasonDataManager(dataParser, chartManager){
   });
 
   var subSeasonColors = d3.scale.ordinal()
-    .domain(_.pluck(subSeasonColorsMap, 'season_id'))
+    .domain(_.pluck(subSeasonColorsMap, 'id'))
     .range(_.pluck(subSeasonColorsMap, 'color'));
   this.getSubSeasonColor = function(subSeasonId){ return subSeasonColors(subSeasonId); };
 
@@ -71,7 +71,7 @@ function SeasonDataManager(dataParser, chartManager){
   var gameColors = d3.scale.ordinal()
     .domain(_.pluck(gameColorsMap, 'game_id'))
     .range(_.pluck(gameColorsMap, 'color'));
-  this.getGameName = function(gameId){ return gameDataMap[gameId]; };
+  this.getGameName = function(gameId){ return gameDataMap[gameId]["name"]; };
   this.getGameColor = function(gameId){ return gameColors(gameId); };
 
   // color domain/range for brand group - sort based on name of brand group
@@ -148,7 +148,7 @@ function SeasonDataManager(dataParser, chartManager){
     });
   };
 
-  // insert place holder data with negative subseason_id
+  // insert place holder data with negative subseason id
   // in the middle of input subseason data
   function insertPlaceHolderInSubSeason(subSeasonInputData, numOfNewGames){
     var splitLeft = _.initial(subSeasonInputData, subSeasonInputData.length/2);
@@ -156,8 +156,8 @@ function SeasonDataManager(dataParser, chartManager){
     var counterMiddle = _.last(splitLeft).end_count;
     var placeHolders = _.times(numOfNewGames, function(i){
       return {
-        subseason_id: -1 * (i+1),
-        subseason_name: '',
+        id: -1 * (i+1),
+        name: '',
         game_ids: [],
         begin_count: counterMiddle,
         end_count: counterMiddle

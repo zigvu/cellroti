@@ -125,7 +125,7 @@ function GameSelectionChart(chartManager){
   //------------------------------------------------
   // draw bars
   var subSeasonRects = gameSelectionSVG.selectAll(".bar")
-      .data(subSeasonData, function(d){ return d.subseason_id; });
+      .data(subSeasonData, function(d){ return d.id; });
 
   subSeasonRects.enter()
       .append("rect")
@@ -142,7 +142,7 @@ function GameSelectionChart(chartManager){
 
   // draw background labels
   var gameLabels = gameSelectionSVG.selectAll(".seasonLabel")
-      .data(subSeasonData, function(d){ return d.subseason_id; });
+      .data(subSeasonData, function(d){ return d.id; });
 
   gameLabels.enter()
       .append("text")
@@ -150,7 +150,7 @@ function GameSelectionChart(chartManager){
       .attr("x", function(d) { return x(d.begin_count) + seasonLabelsAddPosX; })
       .attr("y", height/2 + seasonLabelsAddPosY)
       .text(function (d) { 
-        return getModifiedLabel(d.subseason_name, x(d.end_count) - x(d.begin_count));
+        return getModifiedLabel(d.name, x(d.end_count) - x(d.begin_count));
       });
 
   // draw rect to disable clicking on any labels during game data display
@@ -190,7 +190,7 @@ function GameSelectionChart(chartManager){
 
   // redraw with modified data
   function redrawSeasons(newData){
-    subSeasonRects.data(newData, function(d){ return d.subseason_id; });
+    subSeasonRects.data(newData, function(d){ return d.id; });
     subSeasonRects
       .transition()
         .delay(function(d, i) { return getRedrawDelay(d, i); })
@@ -201,7 +201,7 @@ function GameSelectionChart(chartManager){
 
     subSeasonRects.select("title").text(function (d) { return getModifiedTitle(d); });
 
-    gameLabels.data(newData, function(d){ return d.subseason_id; });
+    gameLabels.data(newData, function(d){ return d.id; });
     gameLabels
       .transition()
         .delay(function(d, i) { return getRedrawDelay(d, i) + 100; })
@@ -209,15 +209,15 @@ function GameSelectionChart(chartManager){
         .attr("x", function(d) { return x(d.begin_count) + seasonLabelsAddPosX; })
         .attr("y", height/2 + seasonLabelsAddPosY)
         .text(function (d) { 
-          return getModifiedLabel(d.subseason_name, x(d.end_count) - x(d.begin_count));
+          return getModifiedLabel(d.name, x(d.end_count) - x(d.begin_count));
         });
   };
 
   // custom delay when easing in/out the rects
   function getRedrawDelay(d, i){
     var delay;
-    if(isGameInfoShowing){ delay = d.subseason_id < 0 ? 500 : 100; }
-    if(!isGameInfoShowing){ delay = d.subseason_id < 0 ? 100 : 500; }
+    if(isGameInfoShowing){ delay = d.id < 0 ? 500 : 100; }
+    if(!isGameInfoShowing){ delay = d.id < 0 ? 100 : 500; }
     return delay;
   }
   //------------------------------------------------
@@ -241,7 +241,7 @@ function GameSelectionChart(chartManager){
   };
 
   function handleClickSubSeason(d){
-    if(d.subseason_id > 0){
+    if(d.id > 0){
       // trigger event on brush chart, which will call repaint
       // which will in turn take care of resetting game info
       if(isGameInfoShowing){
@@ -291,7 +291,7 @@ function GameSelectionChart(chartManager){
     var beginL = x.invert(0),
         endL = beginL + squeezedWidthCounter;
     _.find(clonedSubSeasonData, function(d){
-        if(d.subseason_id < 0){ return true; } // break
+        if(d.id < 0){ return true; } // break
         d.begin_count = beginL;
         d.end_count = endL;
         beginL = endL;
@@ -304,7 +304,7 @@ function GameSelectionChart(chartManager){
     var endR = x.invert(width),
         beginR = endR - squeezedWidthCounter;
     _.find(clonedSubSeasonData, function(d){
-        if(d.subseason_id < 0){ return true; } // break
+        if(d.id < 0){ return true; } // break
         d.begin_count = beginR;
         d.end_count = endR;
         endR = beginR;
@@ -317,7 +317,7 @@ function GameSelectionChart(chartManager){
     var gWidthCounter = (endR - beginL)/_.min([chartManager.numOfGamesInSubSeasonChart, gameIds.length]);
     var gameLabelCount = 0;
     _.each(clonedSubSeasonData, function(d){
-      if(d.subseason_id < 0){
+      if(d.id < 0){
         if(gameLabelCount < gameIds.length){
           d.begin_count = beginL;
           d.end_count = beginL + gWidthCounter;
@@ -332,9 +332,9 @@ function GameSelectionChart(chartManager){
 
     // add names of games
     _.each(gameIds, function(gId, idx, list){
-      var selD = _.find(clonedSubSeasonData, function(d){ return d.subseason_id == (-1 * (idx + 1)); });
+      var selD = _.find(clonedSubSeasonData, function(d){ return d.id == (-1 * (idx + 1)); });
       if(selD !== undefined){
-        selD.subseason_name = chartManager.getGameName(gId);
+        selD.name = chartManager.getGameName(gId);
         selD.game_ids = [gId];
       }
     });
@@ -347,12 +347,12 @@ function GameSelectionChart(chartManager){
   //------------------------------------------------
   // colors, labels and titles
 
-  function getSelectionId(d){ return "sid_" + d.subseason_id; };
+  function getSelectionId(d){ return "sid_" + d.id; };
 
   function getColor(d){
     var color;
-    if(d.subseason_id > 0){
-      color = chartManager.getSubSeasonColor(d.subseason_id);
+    if(d.id > 0){
+      color = chartManager.getSubSeasonColor(d.id);
     } else {
       color = chartManager.getGameColor(d.game_ids[0]);
     }
@@ -362,10 +362,10 @@ function GameSelectionChart(chartManager){
 
   function getModifiedTitle(d){
     var title;
-    if(d.subseason_id > 0){
-      title = isGameInfoShowing ? "Reset to season view" : d.subseason_name;
+    if(d.id > 0){
+      title = isGameInfoShowing ? "Reset to season view" : d.name;
     } else {
-      title = "Click to load game '" + d.subseason_name + "'";
+      title = "Click to load game '" + d.name + "'";
     }
     return title;
   };

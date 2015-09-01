@@ -2,65 +2,18 @@
 module Jsonifiers
 	class GameDetGroupPackager < Jsonifiers::JAnalytics
 
-		def initialize(game, detGroup, summaryResolution)
+		def initialize(game, detGroup, summaryResolutions)
 			@game = game
 			@detGroup = detGroup
-			@summaryResolution = summaryResolution
+			@summaryResolutions = summaryResolutions
+			@cacheKey = "#{@game.cache_key}/#{@detGroup.cache_key}/" + 
+					"#{@summaryResolutions}/GameDetGroupPackager"
 		end
 
-		def self.sequenceJSON(game)
-			# check for cache
-			cacheKey = "#{game.cache_key}/" + 
-					"#{States::SummaryResolutions.finestGameResolution}/GameDetGroupPackager/sequenceJSON"
-			retJSON = Rails.cache.fetch(cacheKey) do 
-				Jsonifiers::GameDetGroupPackager.getSequenceCounters(game).to_json
-			end
-
-			return retJSON
-		end
-
-		def self.getSequenceCounters(game)
-			sequenceCounters = []
-			summaryMetric = SummaryMetric
-				.in(video_id: game.videos.pluck(:id))
-				.in(resolution_seconds: States::SummaryResolutions.finestGameResolution).first
-
-			# in case when video has been processed
-			if summaryMetric != nil
-				firstSingleSummaryMetrics = summaryMetric.single_summary_metrics.first
-				lastSingleSummaryMetrics = summaryMetric.single_summary_metrics.last
-				sequenceCounters << {
-					video_id: summaryMetric.video_id,
-					begin_count: firstSingleSummaryMetrics.sequence_counter,
-					end_count: lastSingleSummaryMetrics.sequence_counter,
-					begin_time: firstSingleSummaryMetrics.frame_time,
-					end_time: lastSingleSummaryMetrics.frame_time
-				}
-				# for when we have multipe videos in a game
-				# summaryMetric.each do |sm|
-				# 	firstSingleSummaryMetrics = summaryMetric.single_summary_metrics.first
-				# 	lastSingleSummaryMetrics = summaryMetric.single_summary_metrics.last
-				# 	sequenceCounters << {
-				# 		video_id: summaryMetric.video_id,
-				# 		begin_count: firstSingleSummaryMetrics.sequence_counter,
-				# 		end_count: lastSingleSummaryMetrics.sequence_counter,
-				# 		begin_time: firstSingleSummaryMetrics.frame_time,
-				# 		end_time: lastSingleSummaryMetrics.frame_time
-				# 	}
-				# end
-			end
-			return sequenceCounters
-		end
-
-		def dataJSON
-			# check for cache
-			cacheKey = "#{@game.cache_key}/#{@detGroup.cache_key}/" + 
-					"#{@summaryResolution}/GameDetGroupPackager/dataJSON"
-			retJSON = Rails.cache.fetch(cacheKey) do 
+		def to_json
+			retJSON = Rails.cache.fetch(@cacheKey) do 
 				getData().to_json
 			end
-
-			return retJSON
 		end
 
 		def getData
@@ -69,8 +22,9 @@ module Jsonifiers
 
 			# create cursor
 			summaryMetric = SummaryMetric
-				.in(video_id: @game.videos.pluck(:id), det_group_id: @detGroup.id)
-				.in(resolution_seconds: @summaryResolution)
+				.in(video_id: @game.videos.pluck(:id))
+				.where(det_group_id: @detGroup.id)
+				.in(resolution_seconds: @summaryResolutions)
 
 			# loop through each data point
 			summaryMetric.each do |sm|

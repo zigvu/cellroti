@@ -1,24 +1,26 @@
 
 module Jsonifiers
 	class MultiPackager < Jsonifiers::JAnalytics
-		def initialize(gameIds, detGroupIds, summaryResolution)
+		def initialize(gameIds, detGroupIds, summaryResolutions)
 			@gameIds = gameIds.sort
 			@detGroupIds = detGroupIds.sort
-			@summaryResolution = summaryResolution
+			@summaryResolutions = summaryResolutions
 		end
 
 		# NOTE: This function uses a LOT of in-place string concatenation
 		# if changing, double check for bugs!
 		def getData
 			# add data keys
-			retJSON = getHashJSON('brand_group_data_keys', Jsonifiers::GameDetGroupPackager.brand_group_data_keys)
+			dataKeys = Jsonifiers::GameDetGroupPackager.brand_group_data_keys
+			retJSON = getHashJSON('brand_group_data_keys', dataKeys)
 			retJSON.chomp!('}')
 			retJSON << ","
 
 			# add game events for a single game case
 			if @gameIds.count == 1
 				gameEvents = Jsonifiers::GameEventsPackager.new(
-					Game.find(@gameIds.first), @summaryResolution).eventsJSON()
+					Game.find(@gameIds.first), @summaryResolutions
+				).to_json()
 				retJSON << gameEvents.reverse!.chomp!('{').reverse!
 			else
 				gameEvents = getHashJSON('game_events', nil)
@@ -26,7 +28,7 @@ module Jsonifiers
 			end
 			retJSON.chomp!('}')
 
-			brandGroupMap = Jsonifiers::DetGroupPackager.new(@detGroupIds).detGroupNameJSON()
+			brandGroupMap = Jsonifiers::DetGroupPackager.new(@detGroupIds).to_json()
 			retJSON << ', "brand_group_map": ' << brandGroupMap << ","
 
 			# concatenate string data for each game
@@ -37,15 +39,14 @@ module Jsonifiers
 					dj = Jsonifiers::GameDetGroupPackager.new(
 							Game.find(gameId), 
 							DetGroup.find(detGroupId), 
-							@summaryResolution
-						).dataJSON()
-					#dj = [1].to_json
+							@summaryResolutions
+						).to_json()
+					# dj = [1].to_json
 					gd << '{"brand_group_id": ' << "#{detGroupId}" << ', "data": ' << dj << '},'
 				end
 				gd.chomp!(',')
-				sj = Jsonifiers::GameDetGroupPackager.sequenceJSON(Game.find(gameId))
 
-				gd << '], "game_counters": ' << sj << "},"
+				gd << "]},"
 				gameData << gd
 			end
 			gameData.chomp!(',')
