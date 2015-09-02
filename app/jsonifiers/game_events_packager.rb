@@ -13,24 +13,34 @@ module Jsonifiers
 		end
 
 		def getEvents
-			gameEvents = {}
-			sortedTimeKeys = SummaryMetric
+			gameEvents = []
+			frameTimeSequenceCounter = SummaryMetric
 					.in(video_id: @game.videos.pluck(:id))
 					.in(resolution_seconds: @summaryResolutions)
-				.first.single_summary_metrics
-					.pluck(:frame_time).sort
+				.first.single_summary_metrics.order_by(frame_time: :asc)
+					.pluck(:frame_time, :sequence_counter)
+
+			sortedTimes = frameTimeSequenceCounter.map{ |t, s| t }
+			sortedSequenceCounters = frameTimeSequenceCounter.map{ |t, s| s }
 
 			# align event times with frame times so that counter calculations are correct
 			timeKeyIdx = 0
 			@game.events.order(:event_time).each do |gameEvent|
-				while ((sortedTimeKeys[timeKeyIdx] < gameEvent.event_time) and 
-					(timeKeyIdx < (sortedTimeKeys.count - 1)))
+				while ((sortedTimes[timeKeyIdx] < gameEvent.event_time) and 
+					(timeKeyIdx < (sortedTimes.count - 1)))
 					timeKeyIdx += 1
 				end
-				gameEvents[sortedTimeKeys[timeKeyIdx]] = gameEvent.event_type_id
+				gameEvents << {
+					counter: sortedSequenceCounters[timeKeyIdx],
+					time: sortedTimes[timeKeyIdx],
+					event_type_id: gameEvent.event_type_id
+				}
 			end
 
-			return gameEvents
+			ge = {}
+			ge[@game.id] = gameEvents
+
+			return ge
 		end
 
 	end

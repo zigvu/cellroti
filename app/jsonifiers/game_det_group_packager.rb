@@ -41,7 +41,7 @@ module Jsonifiers
 					# GameDetGroupPackager.brand_group_data_keys call
 					data = [
 						sdata[:resolution],
-						sdata[:sequence_counter],
+						sdata[:sequence_counter], # note: this is called counter below
 
 						#sdata[:frame_number],
 						sdata[:extracted_frame_number],

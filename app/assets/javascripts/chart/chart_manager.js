@@ -3,85 +3,88 @@
   ------------------------------------------------*/
 
 function ChartManager(seasonInfo, seasonData){
+  var self = this;
+
   // variables for different charts
   this.numOfDataPtsPerBGInSeriesChart = 1000;
   this.numRowsInTableChart = 10;
   this.numOfGamesInSubSeasonChart = 2;
 
   // access to internal variables
+  this.seasonDataParser = undefined;
+  this.gameDataParser = undefined;
   this.dataManager = undefined;
   this.ndxManager = undefined;
-  this.dataParser = undefined;
 
-  // draw charts inside object method scope
-  // so that charts can be passed the `this` object
   this.drawCharts = function(){
     this.chartHelpers = new ChartHelpers();
 
     timeLogStart("dataManager");
-    this.dataParser = new DataParser(seasonInfo, seasonData, this);
-    this.dataManager = new SeasonDataManager(this.dataParser, this);
-    this.seasonDataManager = this.dataManager; // keep a second reference around
+    this.seasonDataParser = new DataParser(seasonInfo, seasonData, self);
+    this.seasonDataManager = new SeasonDataManager(self.seasonDataParser, self);
     timeLogEnd("dataManager", "Data averaging done");
 
     // create ndx
     timeLogStart("ndxManager");
-    this.ndxManager = new NDXManager(this.seasonDataManager.ndxData, this);
-    this.seasonNDXManager = this.ndxManager; // keep a second reference around
+    this.seasonNDXManager = new NDXManager(self.seasonDataManager.ndxData, self);
     timeLogEnd("ndxManager", "Done creating ndx");
+
+    // set to current
+    this.dataManager = self.seasonDataManager;
+    this.ndxManager = self.seasonNDXManager;
     
     timeLogStart("chartDrawing");
-    // this is the normal 100% resolution for all charts
-    this.setCounterBounds(0,Infinity);
+    // the normal 100% resolution for all charts
+    self.setCounterBounds(0,Infinity);
 
-    this.multiLineChart = new MultiLineChart(this);
-    this.brushChart = new BrushChart(this);
-    this.gameSelectionChart = new GameSelectionChart(this);
-    this.multiBarChart = new MultiBarChart(this);
-    this.allDonutCharts = new AllDonutCharts(this);
-    this.heatmapChart = new HeatmapChart(this);
-    this.tableChart = new TableChart(this);
-    this.thumbnailChart = new ThumbnailChart(this);
-    this.chartLegend = new ChartLegend(this);
-    this.summaryPanelChart = new SummaryPanelChart(this);
+    this.multiLineChart = new MultiLineChart(self);
+    this.brushChart = new BrushChart(self);
+    this.gameSelectionChart = new GameSelectionChart(self);
+    this.multiBarChart = new MultiBarChart(self);
+    this.allDonutCharts = new AllDonutCharts(self);
+    this.heatmapChart = new HeatmapChart(self);
+    this.tableChart = new TableChart(self);
+    this.thumbnailChart = new ThumbnailChart(self);
+    this.chartLegend = new ChartLegend(self);
+    this.summaryPanelChart = new SummaryPanelChart(self);
 
     // finalize inits
-    this.allDonutCharts.setDivHeight(this.heatmapChart.getOuterDivHeight());
+    self.allDonutCharts.setDivHeight(self.heatmapChart.getOuterDivHeight());
     timeLogEnd("chartDrawing", "All chart drawing done");
   };
 
   // update data and ndx managers
   this.isGameDisplaying = false;
   this.toggleGameDisplay = function(gameId){
-    this.isGameDisplaying ? this.unloadGame() : this.loadGame(gameId);
+    self.isGameDisplaying ? self.unloadGame() : self.loadGame(gameId);
   }
 
   this.loadGame = function(gameId){
-    var that = this;
-
     // show spinner
     showSpinner();
 
-    // first, just select that one game so we get the right label
-    that.brushChart.brushGame(gameId);
+    // first, just select one game so we get the right label
+    self.brushChart.brushGame(gameId);
 
     var gameURL = window.gameShowPath + gameId;
     d3.json(gameURL, function(error, gameData) {
-      that.isGameDisplaying = true;
+      // note: `this` will give us the d3.json context so avoid and use self instead
+      self.isGameDisplaying = true;
   
-      this.dataParser = new DataParser(seasonInfo, gameData, that);
-      that.dataManager = new GameDataManager(this.dataParser, that);
-      that.gameDataManager = that.dataManager; // keep a second reference around
+      self.gameDataParser = new DataParser(seasonInfo, gameData, self);
+      self.gameDataManager = new GameDataManager(self.gameDataParser, self);
+      self.gameNDXManager = new NDXManager(self.gameDataManager.ndxData, self);
 
-      that.ndxManager = new NDXManager(that.gameDataManager.ndxData, that);
-      that.gameNDXManager = that.ndxManager; // keep a second reference around
+      // set to current
+      self.dataManager = self.gameDataManager;
+      self.ndxManager = self.gameNDXManager;
 
-      that.setCounterBounds(0,Infinity);
+      self.setCounterBounds(0,Infinity);
 
       // set mode in charts
-      that.gameSelectionChart.setGameMode();
-      that.brushChart.repaint();
-      that.brushChart.brushReset();
+      self.gameSelectionChart.setGameMode();
+      self.brushChart.repaint();
+      self.brushChart.brushReset();
 
       // hide spinner
       hideSpinner();
@@ -89,16 +92,16 @@ function ChartManager(seasonInfo, seasonData){
   };
 
   this.unloadGame = function(){
-    this.isGameDisplaying = false;
+    self.isGameDisplaying = false;
 
-    this.dataManager = this.seasonDataManager;
-    this.ndxManager = this.seasonNDXManager;
-    this.setCounterBounds(0,Infinity);
+    self.dataManager = self.seasonDataManager;
+    self.ndxManager = self.seasonNDXManager;
+    self.setCounterBounds(0,Infinity);
 
     // set mode in charts
-    this.brushChart.repaint();
-    this.gameSelectionChart.setSeasonMode();
-    this.brushChart.brushReset();
+    self.brushChart.repaint();
+    self.gameSelectionChart.setSeasonMode();
+    self.brushChart.brushReset();
   };
 
   //------------------------------------------------  
@@ -106,8 +109,8 @@ function ChartManager(seasonInfo, seasonData){
 
   // Common NDXManager
   this.setCounterBounds = function(brushLeft, brushRight){ 
-    var numBrandGroups = this.seasonDataManager.brandGroupIdArr.length;
-    var boundDetails = this.ndxManager.setCounterBounds(brushLeft, brushRight);
+    var numBrandGroups = self.seasonDataManager.brandGroupIdArr.length;
+    var boundDetails = self.ndxManager.setCounterBounds(brushLeft, brushRight);
     
     // max of 100 updates
     var boundariesUpdated = false;
@@ -115,19 +118,19 @@ function ChartManager(seasonInfo, seasonData){
       if(boundDetails.total_data_points/numBrandGroups >= 2){ break; }
       brushLeft = _.max([0, brushLeft - 1]);
       brushRight = brushRight + 1;
-      boundDetails = this.ndxManager.setCounterBounds(brushLeft, brushRight);
+      boundDetails = self.ndxManager.setCounterBounds(brushLeft, brushRight);
       boundariesUpdated = true;
     }
     if(boundariesUpdated){
-      this.brushSet(brushLeft, brushRight);
+      self.brushSet(brushLeft, brushRight);
     } else {
-      this.fire();
+      self.fire();
     }
   };
-  this.getBEData = function(){ return this.ndxManager.getBEData(); };
-  this.getBEComponentData = function(){ return this.ndxManager.getBEComponentData(); };
-  this.getPCData = function(ndxDataAccessMethod){ return this.ndxManager[ndxDataAccessMethod](); };
-  this.getHeatmapData = function(){ return this.ndxManager.getHeatmapData(); };
+  this.getBEData = function(){ return self.ndxManager.getBEData(); };
+  this.getBEComponentData = function(){ return self.ndxManager.getBEComponentData(); };
+  this.getPCData = function(ndxDataAccessMethod){ return self.ndxManager[ndxDataAccessMethod](); };
+  this.getHeatmapData = function(){ return self.ndxManager.getHeatmapData(); };
 
   // GameNDXManager
   // None
@@ -135,43 +138,43 @@ function ChartManager(seasonInfo, seasonData){
   // Common DataManager
   // get brushed time
   this.getBrushedFrameTime = function(){
-    return this.dataManager.getBrushedFrameTime(
-        this.ndxManager.getBeginCounter(), 
-        this.ndxManager.getEndCounter());
+    return self.dataManager.getBrushedFrameTime(
+        self.ndxManager.getBeginCounter(), 
+        self.ndxManager.getEndCounter());
   };
 
   // SeasonDataManager
-  this.getBrandGroupIds = function(){ return this.seasonDataManager.brandGroupIdArr; };
-  this.getBrandGroupName = function(bgId){ return this.seasonDataManager.getBrandGroupName(bgId); };
-  this.getBrandGroupColor = function(bgId){ return this.seasonDataManager.getBrandGroupColor(bgId); };
-  this.getGameName = function(gameId){ return this.seasonDataManager.getGameName(gameId); };
-  this.getGameColor = function(gameId){ return this.seasonDataManager.getGameColor(gameId); };
+  this.getBrandGroupIds = function(){ return self.seasonDataManager.brandGroupIdArr; };
+  this.getBrandGroupName = function(bgId){ return self.seasonDataManager.getBrandGroupName(bgId); };
+  this.getBrandGroupColor = function(bgId){ return self.seasonDataManager.getBrandGroupColor(bgId); };
+  this.getGameName = function(gameId){ return self.seasonDataManager.getGameName(gameId); };
+  this.getGameColor = function(gameId){ return self.seasonDataManager.getGameColor(gameId); };
   this.getBrushedGames = function(){
-    return this.seasonDataManager.getBrushedGames(
-      this.ndxManager.getBeginCounter(), 
-      this.ndxManager.getEndCounter());
+    return self.seasonDataManager.getBrushedGames(
+      self.ndxManager.getBeginCounter(), 
+      self.ndxManager.getEndCounter());
   };
-  this.getCounterForGame = function(gameId){ return this.seasonDataManager.getCounterForGame(gameId); };
-  this.getSubSeasonData = function(){ return this.seasonDataManager.getSubSeasonData(); };
+  this.getCounterForGame = function(gameId){ return self.seasonDataManager.getCounterForGame(gameId); };
+  this.getSubSeasonData = function(){ return self.seasonDataManager.getSubSeasonData(); };
   this.getSubSeasonColor = function(subSeasonId){
-    return this.seasonDataManager.getSubSeasonColor(subSeasonId);
+    return self.seasonDataManager.getSubSeasonColor(subSeasonId);
   };
   this.getTableData = function(){ 
-    return this.seasonDataManager.formatTableChartData(this.ndxManager.getTableData());
+    return self.seasonDataManager.formatTableChartData(self.ndxManager.getTableData());
   };
   this.getThumbnailData = function(){
-    return this.seasonDataManager.formatThumbnailChartData(this.ndxManager.getThumbnailData());
+    return self.seasonDataManager.formatThumbnailChartData(self.ndxManager.getThumbnailData());
   };
-  this.getGameEventName = function(geId){ return this.seasonDataManager.getGameEventName(geId); };
-  this.getGameEventColor = function(geId){ return this.seasonDataManager.getGameEventColor(geId); };
+  this.getGameEventName = function(geId){ return self.seasonDataManager.getGameEventName(geId); };
+  this.getGameEventColor = function(geId){ return self.seasonDataManager.getGameEventColor(geId); };
 
 
   // GameDataManager
   this.getBrushedEvents = function(){
-    if(this.isGameDisplaying){
-      return this.gameDataManager.getBrushedEvents(
-        this.ndxManager.getBeginCounter(), 
-        this.ndxManager.getEndCounter());
+    if(self.isGameDisplaying){
+      return self.gameDataManager.getBrushedEvents(
+        self.ndxManager.getBeginCounter(), 
+        self.ndxManager.getEndCounter());
     } else {
       return [];
     }
@@ -180,11 +183,11 @@ function ChartManager(seasonInfo, seasonData){
 
   // chart manipulation
   this.brushSet = function(beginCounter, endCounter){
-    this.brushChart.brushSet(beginCounter, endCounter);
+    self.brushChart.brushSet(beginCounter, endCounter);
   };
-  this.brushReset = function(){ this.brushChart.brushReset(); };
-  this.getMultiLineXDomain = function(){ return this.multiLineChart.getXDomain(); };
-  this.setMultiLineNewExtent = function(brushExtent){ this.multiLineChart.setNewExtent(brushExtent); };
+  this.brushReset = function(){ self.brushChart.brushReset(); };
+  this.getMultiLineXDomain = function(){ return self.multiLineChart.getXDomain(); };
+  this.setMultiLineNewExtent = function(brushExtent){ self.multiLineChart.setNewExtent(brushExtent); };
 
   //------------------------------------------------  
 

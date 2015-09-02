@@ -73,7 +73,7 @@ module Jsonifiers
 				sequenceCounters << {
 					video_id: 0,
 					begin_count: 0,
-					end_count: 0,
+					end_count: -1,
 					begin_time: 0,
 					end_time: 0
 				}

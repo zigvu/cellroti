@@ -23,7 +23,7 @@ seasonData: {
     :timing_effectiveness, :spatial_effectiveness, :detections_count,
     :view_duration, :q0, :q1, :q2, :q3, :q4, :q5, :q6, :q7, :q8
   ],
-  game_events: {time: :event_type_id, },  // or None if multiple games
+  game_events: {game_id: [{:counter, :time, :event_type_id}, ], },
   brand_group_map: {id: :name, },
   ndx_data: [
     { game_id: :game_id,
@@ -56,6 +56,7 @@ function DataParser(seasonInfo, seasonData, chartManager){
   // disaggregate seasonData
   this.brandGroupMap = seasonData["brand_group_map"];
   var dataKeys = seasonData["brand_group_data_keys"];
+  this.gameEvents = seasonData["game_events"];
 
   this.gameDemarcations = [];
   this.ndxData = [];
@@ -94,25 +95,18 @@ function DataParser(seasonInfo, seasonData, chartManager){
     });
     // increment to the next counter
     lastGameEndCount += gameEndCount + 1;
+
+    // add event bounds
+    if(self.gameEvents[gameId] !== undefined){
+      var allCounters = _.map(self.gameEvents[gameId], function(ge){ return ge.counter; });
+      allCounters.push(lastGameEndCount - 1);
+
+      _.each(self.gameEvents[gameId], function(ge, idx, list){
+        ge['begin_count'] = allCounters[idx];
+        ge['end_count'] = allCounters[idx + 1];
+      });      
+    }
   });
-
-  // game specific
-  var ndxMaxCounter = lastGameEndCount - 1;
-  //ndxMaxCounter = _.max(this.ndxData, function(d){ return d.counter; }).counter;
-
-  this.gameEvents = seasonData["game_events"];
-
-  // add event bounds
-  createBoundsForGameEvents(this.gameEvents);
-  function createBoundsForGameEvents(gameEventsRaw){
-    var allCounters = _.map(gameEventsRaw, function(ge){ return ge.counter; });
-    allCounters.push(ndxMaxCounter);
-
-    _.each(gameEventsRaw, function(ge, idx, list){
-      ge['begin_count'] = allCounters[idx];
-      ge['end_count'] = allCounters[idx + 1];
-    });
-  };
 
   // help GC by marking as null
   seasonData["ndx_data"] = null;

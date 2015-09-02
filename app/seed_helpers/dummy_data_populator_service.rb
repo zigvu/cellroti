@@ -24,6 +24,7 @@ module SeedHelpers
 			allGamesArr = []
 			teamPerumtations = @gameSeason.league.teams.pluck(:id).permutation(2).to_a.shuffle!(random: @rnd)
 			subSeason = nil
+			subSeasonCounter = 0
 			teamPerumtations.each do |teamPerumtation|
 				break if counter >= numOfGames
 				team1 = Team.find(teamPerumtation[0])
@@ -35,7 +36,8 @@ module SeedHelpers
 				].sample(random: @rnd)
 
 				if (counter % @numGamesPerSubSeason) == 0
-					subSeason = @gameSeason.sub_seasons.create(name: "Auto SubSeason")
+					subSeasonCounter += 1
+					subSeason = @gameSeason.sub_seasons.create(name: "Auto SubSeason: #{subSeasonCounter}")
 				end
 				allGamesArr << {
 					subSeason: subSeason,

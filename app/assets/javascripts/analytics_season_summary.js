@@ -16,6 +16,7 @@ $(".analytics_seasons.summary").ready(function() {
 
       try {
         chartManager.drawCharts();
+        // chartManager.loadGame(1);
       } catch(e) {
         console.log(e.message, "from", e.stack);
         throw e;

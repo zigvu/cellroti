@@ -239,11 +239,9 @@ function MultiLineChart(chartManager){
     
     gameLabels.enter().append("text")
         .attr("class", "gameLabel")
-        .attr("x", function(d) { return x(d.begin_count) + gameLabelsAddPosX; })
+        .attr("x", function(d) { return getModifiedXPos(d) + gameLabelsAddPosX; })
         .attr("y", gameLabelsAddPosY)
-        .text(function (d) { 
-          return getModifiedLabel(chartManager.getGameName(d.game_id), x(d.end_count + 1) - x(d.begin_count));
-        });
+        .text(function (d) { return getModifiedGameLabel(d); });
 
     // update
     gameRects
@@ -251,10 +249,8 @@ function MultiLineChart(chartManager){
         .attr("x", function(d) { return x(d.begin_count); });
 
     gameLabels
-        .attr("x", function(d) { return x(d.begin_count) + gameLabelsAddPosX; })
-        .text(function (d) { 
-          return getModifiedLabel(chartManager.getGameName(d.game_id), x(d.end_count + 1) - x(d.begin_count));
-        });
+        .attr("x", function(d) { return getModifiedXPos(d) + gameLabelsAddPosX; })
+        .text(function (d) { return getModifiedGameLabel(d); });
         
     // exit
     gameRects.exit().remove();
@@ -273,31 +269,27 @@ function MultiLineChart(chartManager){
     // enter
     gameEventLineLong.enter()
       .append("line")
-      .attr("class", "gameEventLineLong")
-      .attr("x1", function(d){ return x(d.begin_count); })
-      .attr("x2", function(d){ return x(d.begin_count); })
-      .attr("y1", 0)
-      .attr("y2", height);
-      // .style("stroke", function(d){ return chartManager.getGameEventColor(d.event_id); });
+        .attr("class", "gameEventLineLong")
+        .attr("x1", function(d){ return x(d.begin_count); })
+        .attr("x2", function(d){ return x(d.begin_count); })
+        .attr("y1", 0)
+        .attr("y2", height);
+        // .style("stroke", function(d){ return chartManager.getGameEventColor(d.event_id); });
 
     gameEventLineShort.enter()
       .append("line")
-      .attr("class", "gameEventLineShort")
-      .attr("x1", function(d){ return x(d.begin_count); })
-      .attr("x2", function(d){ return x(d.begin_count); })
-      .attr("y1", height - 5)
-      .attr("y2", height);
+        .attr("class", "gameEventLineShort")
+        .attr("x1", function(d){ return x(d.begin_count); })
+        .attr("x2", function(d){ return x(d.begin_count); })
+        .attr("y1", height - 5)
+        .attr("y2", height);
 
     gameEventLabels.enter()
       .append("text")
-      .attr("class", "gameEventLabel")
-      .attr("x", function(d) { return x(d.begin_count) + gameLabelsAddPosX; })
-      .attr("y", gameLabelsAddPosY * 2)
-      .text(function (d) { 
-        return getModifiedLabel(
-          chartManager.getGameEventName(d.event_id), x(d.end_count) - x(d.begin_count)
-        );
-      });
+        .attr("class", "gameEventLabel")
+        .attr("x", function(d) { return x(d.begin_count) + gameLabelsAddPosX; })
+        .attr("y", gameLabelsAddPosY * 2)
+        .text(function (d) { return getModifiedEventLabel(d); });
 
     // update
     gameEventLineLong
@@ -309,11 +301,7 @@ function MultiLineChart(chartManager){
 
     gameEventLabels
         .attr("x", function(d) { return x(d.begin_count) + gameLabelsAddPosX; })
-      .text(function (d) { 
-        return getModifiedLabel(
-          chartManager.getGameEventName(d.event_id), x(d.end_count) - x(d.begin_count)
-        );
-      });
+        .text(function (d) { return getModifiedEventLabel(d); });
 
     // exit
     gameEventLineLong.exit().remove();
@@ -325,10 +313,24 @@ function MultiLineChart(chartManager){
 
   //------------------------------------------------
   // get modified text for game label based on width
-  function getModifiedLabel(label, pxContainerLength){
+  function getModifiedXPos(d){
+    var xPos = x(d.begin_count) > 0 ? x(d.begin_count) : 0;
+    return xPos;
+  };
+
+  function getModifiedGameLabel(d){
+    return getModifiedLabel(chartManager.getGameName(d.game_id), d);
+  };
+
+  function getModifiedEventLabel(d){
+    return getModifiedLabel(chartManager.getGameEventName(d.event_type_id), d);
+  };
+
+  function getModifiedLabel(label, d){
     if (pxSpaceForOneChar === undefined){
       pxSpaceForOneChar = chartHelpers.getPxSpaceForOneChar(gameBgRect, "game-bg-rect");
     }
+    var pxContainerLength = x(d.end_count + 1) - getModifiedXPos(d);
     return chartHelpers.ellipsis(label, pxContainerLength, pxSpaceForOneChar);
   };
   //------------------------------------------------

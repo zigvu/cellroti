@@ -18,12 +18,19 @@ function GameDataManager(dataParser, chartManager){
 
   //------------------------------------------------
   // game events
+
+  // there is only 1 game in game events
+  var firstGameEvent;
+  for(var key in gameEvents){
+    firstGameEvent = gameEvents[key];
+    break; 
+  }
   
   // brushed game events
   this.getBrushedEvents = function(beginCounter, endCounter){
     var that = this;
     var be = [];
-    _.each(gameEvents, function(ge){
+    _.each(firstGameEvent, function(ge){
       // add events that are inside the range - note the double
       // `counter` in the formula
       if((ge.counter >= beginCounter) && (ge.counter < endCounter)){ be.push(ge); };
