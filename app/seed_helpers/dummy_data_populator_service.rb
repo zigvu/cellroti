@@ -2,11 +2,11 @@ require 'json'
 
 module SeedHelpers
 	class DummyDataPopulatorService
-		def initialize(gameSeason, client)
+		def initialize(gameSeason, client, detectableIds)
 			@gameSeason = gameSeason
 			@client = client
 
-			@detectableIds = [2,3,5,6]
+			@detectableIds = detectableIds
 
 			@event_type_ids = EventType.pluck(:id)
 			@tempFolder = '/mnt/tmp'

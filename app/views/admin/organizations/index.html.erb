@@ -5,6 +5,7 @@
 <table>
   <thead>
     <tr>
+      <th width="50px">Id</th>
       <th>Name</th>
       <th>Industry</th>
       <th>Detectables</th>
@@ -16,6 +17,7 @@
   <tbody>
     <% @organizations.each do |organization| %>
       <tr>
+        <td><%= organization.id %></td>
         <td><%= organization.name %></td>
         <td><%= organization.industry %></td>
         <td>
