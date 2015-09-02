@@ -258,6 +258,10 @@ function GameSelectionChart(chartManager){
     }
   };
 
+  this.loadGameSimulate = function(gameId){
+    showGameLoadButton();
+  };
+
 
   // show/hide load button
   function showGameLoadButton(){

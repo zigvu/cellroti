@@ -23,7 +23,8 @@ Cellroti::Application.routes.draw do
     resources :det_groups, :path => "brands/groups", except: [:show]
     resources :seasons, only: [:index, :show] do
       member do
-        get 'summary'
+        get "summary"
+        get "game/:game_id" => "seasons#game", :as => :game
       end
     end
   end
