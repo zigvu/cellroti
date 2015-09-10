@@ -51,7 +51,7 @@ Cellroti::Application.routes.draw do
       resources :sports, :event_types, :leagues, :seasons, :sub_seasons, :teams
       resources :games, :game_teams, :events, :channels
       resources :json_data, only: [:create]
-      resources :frame_data, only: [:index, :create]
+      resources :frame_data, only: [:index]
     end
 
   end

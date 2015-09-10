@@ -14,13 +14,6 @@ module Managers
 			localizationFolder
 		end
 
-		def get_gzip_extracted_frames_file
-			FileUtils.rm_rf("#{get_localization_folder}/extracted_frames.tar.gz")
-			FileUtils.rm_rf("#{get_localization_folder}/frames")
-			FileUtils.rm_rf("#{get_localization_folder}/thumbnails")
-			"#{get_localization_folder}/extracted_frames.tar.gz"
-		end
-
 		def get_video_meta_data_file
 			"#{get_localization_folder}/video_meta_data.json"
 		end

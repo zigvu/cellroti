@@ -21,26 +21,6 @@ class Api::Stream::FrameDataController < ApplicationController
     render json: frameNumbers.to_json
   end
 
-  # POST /frame_data
-  def create
-    # since it is a hash, params.permit doesn't seem to work
-    gzipFiles = params[:files]
-    gzipFiles.each do |videoId, videoFile|
-      video = ::Video.find(videoId.to_i)
-      mVideo = Managers::MVideo.new(video)
-      outputFolder = mVideo.get_localization_folder
-      gzipFile = mVideo.get_gzip_extracted_frames_file
-
-      # save file, unzip and delete gziped
-      File.open(gzipFile, "wb") { |f| f.write(videoFile.read) }
-      Dir.chdir(outputFolder) do
-        %x{tar -zxvf "#{gzipFile}"}
-      end
-      FileUtils.rm_rf(gzipFile)
-    end
-    head :no_content
-  end
-
   private
     # Never trust parameters from the scary internet, only allow the white list through.
     def frame_data_params
