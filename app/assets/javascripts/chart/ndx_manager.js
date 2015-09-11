@@ -94,19 +94,15 @@ function NDXManager(ndxData, chartManager){
   };
 
   // get filtered data
-  this.getBEData = function(){
+  this.getTimelineChartData = function(timlineChartBgIds){
     // format:
-    // [{bgId: det_group_id, values: [{counter: , brand_effectivesnss: } ,...]} ,... ]
+    // [{bgId: det_group_id, values: [{brand_group_data_keys} ,...]} ,... ]
     var values;
     return _.chain(bgFilterDim.top(Infinity))
       .groupBy(function(d){ return d.det_group_id; })
+      .pick(timlineChartBgIds)
       .map(function(coll, det_group_id, list){
-        values = _.chain(coll)
-          .sortBy(function(d){ return d.counter; })
-          .map(function(d){ 
-            return { counter: +d.counter, brand_effectiveness: +d.brand_effectiveness };
-          })
-          .value();
+        values = _.sortBy(coll, function(d){ return d.counter; });
         return { bgId: det_group_id, values: values };
       }).value();
   };

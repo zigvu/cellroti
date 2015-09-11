@@ -3,6 +3,8 @@
 	------------------------------------------------*/
 
 function BrushChart(chartManager){
+  var self = this;
+
   //------------------------------------------------
   // set up
   var chartHelpers = chartManager.chartHelpers;
@@ -11,7 +13,7 @@ function BrushChart(chartManager){
   var brushChart_div = '#brush-chart';
   var divWidth = $(brushChart_div).parent().width();
 
-  var beData = chartManager.getBEData();
+  var timelineChartType = undefined;
   //------------------------------------------------
 
 
@@ -42,7 +44,7 @@ function BrushChart(chartManager){
   var contextLine = d3.svg.line()
       .interpolate("linear")
       .x(function(d) { return x(d.counter); })
-      .y(function(d) { return y(d.brand_effectiveness); });
+      .y(function(d) { return y(d[timelineChartType]); });
   //------------------------------------------------
 
 
@@ -72,37 +74,39 @@ function BrushChart(chartManager){
 
 
   //------------------------------------------------
-  // define domains
-  x.domain(d3.extent(beData[0].values, function(d) { return d.counter; }));
-  y.domain([chartHelpers.getMinEffectiveness(beData), chartHelpers.getMaxEffectiveness(beData)]);
-  //------------------------------------------------
-
-
-  //------------------------------------------------
-  // draw lines
-  var contextBE = brushSVG.selectAll(".contextBE")
-      .data(beData)
-    .enter().append("g")
-      .attr("class", "contextBE");
-
-  contextBE.append("path")
-      .attr("class", "line")
-      .attr("d", function(d) { return contextLine(d.values); })
-      .style("stroke", function(d) { return chartManager.getBrandGroupColor(d.bgId); }); 
-  //------------------------------------------------
-
-  //------------------------------------------------
   // repainting and loading new data
   this.repaint = function(){
-    beData = chartManager.getBEData();
+    var timelineChartData = chartManager.getTimelineChartData();
+    timelineChartType = chartManager.getTimelineChartType();
 
-    x.domain(d3.extent(beData[0].values, function(d) { return d.counter; }));
-    y.domain([chartHelpers.getMinEffectiveness(beData), chartHelpers.getMaxEffectiveness(beData)]);
+    // define domains
+    x.domain(d3.extent(timelineChartData[0].values, function(d) { return d.counter; }));
+    y.domain([
+      chartHelpers.getMinTimelineChartValue(timelineChartData, timelineChartType), 
+      chartHelpers.getMaxTimelineChartValue(timelineChartData, timelineChartType)
+    ]);
 
 
-    contextBE.data(beData);
-    contextBE.select("path").attr("d", function(d) { return contextLine(d.values); });
+    var contextBE = brushSVG.selectAll(".contextBE").data(timelineChartData);
+      
+    // enter
+    contextBE.enter().append("g")
+        .attr("class", "contextBE")
+      .append("path")
+        .attr("class", "line")
+        .attr("d", function(d) { return contextLine(d.values); })
+        .style("stroke", function(d) { return chartManager.getBrandGroupColor(d.bgId); }); 
+
+    // update
+    contextBE
+        .select("path")
+        .attr("d", function(d) { return contextLine(d.values); })
+        .style("stroke", function(d) { return chartManager.getBrandGroupColor(d.bgId); }); 
+
+    // exit
+    contextBE.exit().remove();
   };
+  self.repaint();
   //------------------------------------------------
 
 
@@ -183,5 +187,12 @@ function BrushChart(chartManager){
     // this triggers repaint of all charts
     chartManager.setCounterBounds(brushLeft, brushRight);
   };
+  //------------------------------------------------
+
+  //------------------------------------------------
+  // finally, add call back to repaint charts
+  // note: we don't want to repaint brush chart after every brush, so instead
+  // call repainting from chart manager
+  // chartManager.addCallback(repaint);
   //------------------------------------------------
 };

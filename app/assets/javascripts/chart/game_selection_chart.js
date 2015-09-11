@@ -177,7 +177,7 @@ function GameSelectionChart(chartManager){
   //------------------------------------------------
   // repaint due to brush update callback
   function repaint(){
-    if(!chartManager.isGameDisplaying){
+    if(!chartManager.getIsGameDisplaying()){
       var gameData = chartManager.getBrushedGames();
       var gameIds = _.pluck(gameData, 'game_id');
       if(gameIds.length > 0 && gameIds.length <= chartManager.numOfGamesInSubSeasonChart){

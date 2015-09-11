@@ -85,25 +85,25 @@ function ChartHelpers(){
   //------------------------------------------------
 
   //------------------------------------------------
-  // Brand effectiveness helper
+  // Timeline chart helper
 
-  // Get min/max of brand effectiveness - adjust
+  // Get min/max of timeline chart data type - adjust
   // slightly so that it doesn't touch the bounds of chart
-  this.getMinEffectiveness = function(beData){
+  this.getMinTimelineChartValue = function(timelineChartData, timelineChartType){
     return _.max(
-      [0, d3.min(beData, function(s) { 
+      [0, d3.min(timelineChartData, function(s) { 
           return d3.min(s.values, function(v) { 
-            return v.brand_effectiveness - (0.1 * v.brand_effectiveness); 
+            return v[timelineChartType] - (0.1 * v[timelineChartType]);
           }); 
         })
       ]);
   };
 
-  this.getMaxEffectiveness = function(beData){
+  this.getMaxTimelineChartValue = function(timelineChartData, timelineChartType){
     return _.min(
-      [1, d3.max(beData, function(s) { 
+      [1, d3.max(timelineChartData, function(s) { 
           return d3.max(s.values, function(v) { 
-            return v.brand_effectiveness + (0.1 * v.brand_effectiveness); 
+            return v[timelineChartType] + (0.1 * v[timelineChartType]); 
           }); 
         })
       ]);

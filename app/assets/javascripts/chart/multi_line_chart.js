@@ -7,15 +7,14 @@ function MultiLineChart(chartManager){
   // set up
   var chartHelpers = chartManager.chartHelpers;
 
-  var pxSpaceForOneChar; // cache px mapper for game background label length computation
+  // caches 
+  var pxSpaceForOneChar; // px mapper for game background label length computation
+  var timelineChartType = undefined;
+  var timelineChartYAxisLabel = undefined;
 
   // div for chart
   var seriesChart_div = '#series-chart';
   var divWidth = $(seriesChart_div).parent().width();
-
-  var beData = chartManager.getBEData();
-  var gameData = chartManager.getBrushedGames();
-  var gameEventData = chartManager.getBrushedEvents();
   //------------------------------------------------
 
 
@@ -42,23 +41,16 @@ function MultiLineChart(chartManager){
   // time formatting for x-axis
   var xAxisMaxDateStatic = new Date(2000,0,0,0,0,0,0); // Jan 1 2000
   var xAxisTimeFormatter, xAxisTimeScale;
-  var xAxisTimeFormatLabel = xAxisTimeFormatXAxis();
 
   var xAxis = d3.svg.axis()
-          .scale(x)
-          .ticks(10)
-          .tickFormat(function(d) {return xAxisTimeTickLabel(d); })
-          .orient("bottom");
+      .scale(x)
+      .ticks(10)
+      .tickFormat(function(d) {return xAxisTimeTickLabel(d); })
+      .orient("bottom");
   var yAxis = d3.svg.axis()
-          .scale(y)
-          .tickFormat(function(d) {return d3.format(',%')(d); })
-          .orient("left");
-
-  //------------------------------------------------
-  // define domains
-  x.domain(d3.extent(beData[0].values, function(d) { return d.counter; }));
-  y.domain([chartHelpers.getMinEffectiveness(beData), chartHelpers.getMaxEffectiveness(beData)]);
-  xAxisTimeFormatLabel = xAxisTimeFormatXAxis();
+      .scale(y)
+      .tickFormat(function(d) {return d3.format(',%')(d); })
+      .orient("left");
   //------------------------------------------------
 
 
@@ -88,12 +80,12 @@ function MultiLineChart(chartManager){
   var focusLine = d3.svg.line()
       .interpolate("linear")
       .x(function(d) { return x(d.counter); })
-      .y(function(d) { return y(d.brand_effectiveness); });
+      .y(function(d) { return y(d[timelineChartType]); });
   //------------------------------------------------
 
 
   //------------------------------------------------
-  // start drawing
+  // svg drawing
   var multiLineSVG = d3.select(seriesChart_div).append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
@@ -112,6 +104,8 @@ function MultiLineChart(chartManager){
 
   var gameEventSVG = multiLineSVG.append("g").attr("class", "game-event-svg");
 
+  var timelineSVG = multiLineSVG.append("g").attr("class", "timeline-svg");
+
   // track mouse movements with dashed lines
   var mouseTrackingSVG = multiLineSVG.append("g")
       .attr("class", "mouse-tracking-svg")
@@ -125,27 +119,7 @@ function MultiLineChart(chartManager){
       .on("mouseover", function() { mouseTrackingSVG.style("display", null); })
       .on("mouseout", function() { mouseTrackingSVG.style("display", "none"); })
       .on("mousemove", mousemove);
-  //------------------------------------------------
 
-
-  //------------------------------------------------
-  // draw bars/lines
-  var focusBE = multiLineSVG.selectAll(".focusBE")
-      .data(beData)
-    .enter().append("g")
-      .attr("class", "focusBE");
-
-  focusBE.append("path")
-      .attr("class", "line")
-      .attr("clip-path", "url(#clip)")
-      .attr("d", function(d) { return focusLine(d.values); })
-      .style("stroke", function(d) { return chartManager.getBrandGroupColor(d.bgId); }); 
-
-  // background decorations
-  drawGameBackground(gameData);
-  drawGameEvents(gameEventData);
-
-  // draw mouse tracking lines
   var mouseTrackingX = mouseTrackingSVG.append("line").attr("y1", 0).attr("y2", height);
   var mouseTrackingY = mouseTrackingSVG.append("line").attr("x1", 0).attr("x2", width);
 
@@ -154,6 +128,8 @@ function MultiLineChart(chartManager){
     mouseTrackingX.attr("transform", "translate(" + d3.mouse(this)[0] + "," + 0 + ")");
     mouseTrackingY.attr("transform", "translate(" + 0 + "," + d3.mouse(this)[1] + ")");
   };
+
+  repaint();
   //------------------------------------------------
 
 
@@ -170,14 +146,14 @@ function MultiLineChart(chartManager){
     .append("text")
       .attr("transform", "translate("+ (yAxisLabelAnchorX) +","+(height/2)+")rotate(-90)")  
       .style("text-anchor", "middle")
-      .text("Brand Effectiveness")
+      .text(timelineChartYAxisLabel)
       .attr("class", "axis-label");
 
   multiLineSVG.append("g")
     .append("text")
       .attr("transform", "translate("+ (width/2 - 30) +","+ (height + xAxisLabelAnchorY) +")")  
       .style("text-anchor", "middle")
-      .text("TIME (" + xAxisTimeFormatLabel + ")")
+      .text("TIME (" + '' + ")")
       .attr("class", "x-axis-time-label");
   //------------------------------------------------
 
@@ -189,8 +165,6 @@ function MultiLineChart(chartManager){
   // on brush 
   this.setNewExtent = function(brushExtent) {
     x.domain(brushExtent);
-
-    focusBE.selectAll("path").attr("d", function(d) { return focusLine(d.values); });
     multiLineSVG.select(".x.axis").call(xAxis);
     multiLineSVG.select(".y.axis").call(yAxis);
   };
@@ -200,18 +174,13 @@ function MultiLineChart(chartManager){
   //------------------------------------------------
   // repainting and loading new data
   function repaint(){
-    beData = chartManager.getBEData();
+    timelineChartType = chartManager.getTimelineChartType();
+    timelineChartYAxisLabel = chartManager.getTimelineChartYAxisLabel();
+    var timelineChartData = chartManager.getTimelineChartData();
+    drawTimelineChart(timelineChartData)
+    
 
-    x.domain(d3.extent(beData[0].values, function(d) { return d.counter; }));
-    y.domain([chartHelpers.getMinEffectiveness(beData), chartHelpers.getMaxEffectiveness(beData)]);
-    xAxisTimeFormatLabel = xAxisTimeFormatXAxis();
-    multiLineSVG.select(".x-axis-time-label").text("TIME (" + xAxisTimeFormatLabel + ")");
-
-
-    focusBE.data(beData);
-    focusBE.select("path").attr("d", function(d) { return focusLine(d.values); });
-
-    if(!chartManager.isGameDisplaying){
+    if(!chartManager.getIsGameDisplaying()){
       gameData = chartManager.getBrushedGames();
       drawGameBackground(gameData);
     }
@@ -221,6 +190,39 @@ function MultiLineChart(chartManager){
 
     multiLineSVG.select(".x.axis").call(xAxis);
     multiLineSVG.select(".y.axis").transition().duration(750).call(yAxis);    
+  };
+
+  // drawing timeline chart
+  function drawTimelineChart(timelineChartData){
+    // define domains
+    x.domain(d3.extent(timelineChartData[0].values, function(d) { return d.counter; }));
+    y.domain([
+      chartHelpers.getMinTimelineChartValue(timelineChartData, timelineChartType), 
+      chartHelpers.getMaxTimelineChartValue(timelineChartData, timelineChartType)
+    ]);
+    var xAxisTimeFormatLabel = xAxisTimeFormatXAxis();
+    multiLineSVG.select(".x-axis-time-label").text("TIME (" + xAxisTimeFormatLabel + ")");
+    multiLineSVG.select(".axis-label").text(timelineChartYAxisLabel);
+
+    var focusLines = timelineSVG.selectAll(".focusLines").data(timelineChartData);
+
+    // enter
+    focusLines.enter().append("g")
+        .attr("class", "focusLines")
+      .append("path")
+        .attr("class", "line")
+        .attr("clip-path", "url(#clip)")
+        .attr("d", function(d) { return focusLine(d.values); })
+        .style("stroke", function(d) { return chartManager.getBrandGroupColor(d.bgId); }); 
+
+    // update
+    focusLines
+        .select("path")
+        .attr("d", function(d) { return focusLine(d.values); })
+        .style("stroke", function(d) { return chartManager.getBrandGroupColor(d.bgId); }); 
+
+    // exit
+    focusLines.exit().remove();
   };
 
   // drawing background rects
