@@ -3,6 +3,8 @@
 	------------------------------------------------*/
 
 function NDXManager(ndxData, chartManager){
+  var self = this;
+
   //------------------------------------------------
   // set up
   var chartHelpers = chartManager.chartHelpers;
@@ -38,15 +40,15 @@ function NDXManager(ndxData, chartManager){
   this.ndx = crossfilter(ndxData);
 
   // needed for multi-series chart
-  var averagerDim = this.ndx.dimension(function (d) { return d.averager; });
+  var averagerDim = self.ndx.dimension(function (d) { return d.averager; });
   var averagerGroup = averagerDim.group();
 
   // needed for table
-  var brandEffectivenessDim = this.ndx.dimension(function (d) { return d.brand_effectiveness; });
+  var brandEffectivenessDim = self.ndx.dimension(function (d) { return d.brand_effectiveness; });
 
   // needed for rest of the charts
-  var counterDim = this.ndx.dimension(function (d) { return d.counter; });
-  var bgFilterDim = this.ndx.dimension(function (d) { return d.det_group_id; });
+  var counterDim = self.ndx.dimension(function (d) { return d.counter; });
+  var bgFilterDim = self.ndx.dimension(function (d) { return d.det_group_id; });
   var bgFilterGroup = bgFilterDim.group().reduce(
     REDUCEAVG.MULTIPLE.reduceAddAvg(compositeAccessors), 
     REDUCEAVG.MULTIPLE.reduceRemoveAvg(compositeAccessors), 
@@ -67,7 +69,7 @@ function NDXManager(ndxData, chartManager){
   // set filters based on counter bounds
   this.setCounterBounds = function(beginCounter, endCounter){
     // reset all filters
-    this.resetAllFilters();
+    self.resetAllFilters();
     bCounter = beginCounter;
     eCounter = endCounter;
 
@@ -107,6 +109,18 @@ function NDXManager(ndxData, chartManager){
       }).value();
   };
 
+  // for brush chart, we don't respect time bound filter, so once cached,
+  // filter from this cached value and serve
+  this.brushChartDataCache = undefined;
+  this.getBrushChartData = function(brushChartBgIds){
+    if(self.brushChartDataCache === undefined){
+      self.brushChartDataCache = self.getTimelineChartData(brushChartBgIds);
+    }
+    return _.filter(self.brushChartDataCache, function(d){ 
+      return _.includes(brushChartBgIds, d.bgId); 
+    });
+  };
+
   this.getBEComponentData = function(){
     var beComponentData = _.map(bgFilterGroupAll, function(d){
       return _.map(d.value.sum, function(sum, component){
@@ -119,8 +133,7 @@ function NDXManager(ndxData, chartManager){
     beComponentData = _.without(beComponentData, undefined);
     beComponentData = _.groupBy(beComponentData, function(d){ return d.component; })
     beComponentData = _.map(beComponentData, function(values, component, list){
-      var bgValues = _.map(values, function(v){ return _.omit(v, 'component'); });
-      return { component: component, bgValues: bgValues };
+      return { component: component, bgValues: values };
     });
 
     return beComponentData;
@@ -180,10 +193,10 @@ function NDXManager(ndxData, chartManager){
     return tableData;
   };
 
-  this.getThumbnailData = function(){
+  this.getThumbnailData = function(bgIds){
     var thumbnailData = [];
     _.find(beTop1K, function(d, idx, list){
-      if(d.extracted_frame_number > 0){ 
+      if(d.extracted_frame_number > 0 && _.includes(bgIds, '' + d.det_group_id)){ 
         thumbnailData.push({game_id: d.game_id, frame_id: d.extracted_frame_number});
       }
       return thumbnailData.length >= 4;

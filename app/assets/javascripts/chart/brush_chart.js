@@ -1,6 +1,6 @@
 /*------------------------------------------------
 	Brush chart
-	------------------------------------------------*/
+------------------------------------------------*/
 
 function BrushChart(chartManager){
   var self = this;
@@ -22,7 +22,6 @@ function BrushChart(chartManager){
   var margin = {top: 1, right: 1, bottom: 1, left: 50},
       width = divWidth - margin.left - margin.right, 
       height = 28 - margin.top - margin.bottom;     // 26
-
   //------------------------------------------------
 
 
@@ -76,18 +75,18 @@ function BrushChart(chartManager){
   //------------------------------------------------
   // repainting and loading new data
   this.repaint = function(){
-    var timelineChartData = chartManager.getTimelineChartData();
+    var brushChartData = chartManager.getBrushChartData();
     timelineChartType = chartManager.getTimelineChartType();
 
     // define domains
-    x.domain(d3.extent(timelineChartData[0].values, function(d) { return d.counter; }));
+    x.domain(d3.extent(brushChartData[0].values, function(d) { return d.counter; }));
     y.domain([
-      chartHelpers.getMinTimelineChartValue(timelineChartData, timelineChartType), 
-      chartHelpers.getMaxTimelineChartValue(timelineChartData, timelineChartType)
+      chartHelpers.getMinTimelineChartValue(brushChartData, timelineChartType), 
+      chartHelpers.getMaxTimelineChartValue(brushChartData, timelineChartType)
     ]);
 
 
-    var contextBE = brushSVG.selectAll(".contextBE").data(timelineChartData);
+    var contextBE = brushSVG.selectAll(".contextBE").data(brushChartData);
       
     // enter
     contextBE.enter().append("g")
@@ -189,10 +188,11 @@ function BrushChart(chartManager){
   };
   //------------------------------------------------
 
+
   //------------------------------------------------
   // finally, add call back to repaint charts
   // note: we don't want to repaint brush chart after every brush, so instead
   // call repainting from chart manager
-  // chartManager.addCallback(repaint);
+  // chartManager.addRepaintCallback(repaint);
   //------------------------------------------------
 };

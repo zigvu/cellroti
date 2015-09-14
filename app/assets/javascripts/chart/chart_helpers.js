@@ -3,6 +3,8 @@
 	------------------------------------------------*/
 
 function ChartHelpers(){
+  var self = this;
+
   // shared data structures
   this.quadMapping = [
     {q: 'q0', name: 'Left Top', row: 0, col: 0, value: 0, count: 0},
@@ -16,13 +18,19 @@ function ChartHelpers(){
     {q: 'q8', name: 'Right Bottom', row: 2, col: 2, value: 0, count: 0}
   ];
 
-  this.componentBarChartLabels = {
+  // format: {data_key: display name}
+  this.chartLabels = {
+    'brand_effectiveness': 'Brand Effectiveness',
+
     'brand_group_crowding': 'Brand Group Crowding',
     'visual_saliency': 'Visual Saliency',
     'timing_effectiveness': 'Timing Effectiveness',
     'spatial_effectiveness': 'Spatial Effectiveness'    
   };
-  this.getComponentBarChartLabel = function(compKey){ return this.componentBarChartLabels[compKey]; };
+  _.each(self.quadMapping, function(qm){
+    self.chartLabels[qm.q] = 'Spatial Position (' + qm.name + ')';
+  });
+  this.getChartLabel = function(dataKey){ return self.chartLabels[dataKey]; };
 
   this.tableHeadLabels = [
     {'game_id': 'Game'},                             // get name from id
@@ -31,8 +39,8 @@ function ChartHelpers(){
     {'view_duration': 'View Duration'},              // get name from id
     {'brand_effectiveness': 'Brand Effectiveness'}   // get name from id
   ];
-  this.tableKeys = _.flatten(_.map(this.tableHeadLabels, function(k){ return _.keys(k); }));
-  this.tableColLabels = _.flatten(_.map(this.tableHeadLabels, function(k){ return _.values(k); }));
+  this.tableKeys = _.flatten(_.map(self.tableHeadLabels, function(k){ return _.keys(k); }));
+  this.tableColLabels = _.flatten(_.map(self.tableHeadLabels, function(k){ return _.values(k); }));
 
 
   // thumbnail viewer ids for modal
@@ -113,7 +121,7 @@ function ChartHelpers(){
     var timeInMS = _.reduce(brushedTimes, function(total, d){ 
       return total + d.end_time - d.begin_time; 
     }, 0);
-    var readableTime = this.getReadableTime(timeInMS);
+    var readableTime = self.getReadableTime(timeInMS);
 
     return { 
       time: Math.round(readableTime.time * 10)/10, 
@@ -140,27 +148,27 @@ function ChartHelpers(){
       time = numyears + (numdays/365);
       unit = "yrs";
       unit_chart = "year:month";
-      formatter = this.timeFormatter_yrs;
+      formatter = self.timeFormatter_yrs;
     } else if (numdays != 0){
       time = numdays + (numhours/24);
       unit = "days";
       unit_chart = "day:hour";
-      formatter = this.timeFormatter_days;
+      formatter = self.timeFormatter_days;
     } else if (numhours != 0){
       time = numhours + (numminutes/60);
       unit = "hrs";
       unit_chart = "hour:min";
-      formatter = this.timeFormatter_hrs;
+      formatter = self.timeFormatter_hrs;
     } else if (numminutes != 0){
       time = numminutes + (numseconds/60);
       unit = "min";
       unit_chart = "min:sec";
-      formatter = this.timeFormatter_min;
+      formatter = self.timeFormatter_min;
     } else {
       time = numseconds;
       unit = "sec";
       unit_chart = "sec.msec";
-      formatter = this.timeFormatter_sec;
+      formatter = self.timeFormatter_sec;
     }
 
     return { 

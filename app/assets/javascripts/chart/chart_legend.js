@@ -17,14 +17,6 @@ function ChartLegend(chartManager){
   //------------------------------------------------
 
 
-  //------------------------------------------------
-	// Reset Chart
-  var resetChartsId = '#reset-charts';
-  $(resetChartsId).click(function(){
-		chartManager.brushReset();
-	});
-  //------------------------------------------------
-
 	//------------------------------------------------
 	// Update Chart
   var updateChartsId = '#brand-legend-update-charts';

@@ -84,6 +84,6 @@ function SummaryPanelChart(chartManager){
 
   //------------------------------------------------
   // finally, add call back to repaint charts
-  chartManager.addCallback(repaint);
+  chartManager.addRepaintCallback(repaint);
   //------------------------------------------------
 };

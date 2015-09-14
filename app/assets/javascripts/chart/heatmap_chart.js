@@ -7,7 +7,7 @@ function HeatmapChart(chartManager){
   // set up
 
   // div for chart
-	var heatmap_div = '#heatmap-chart';
+	var heatmap_div = '#spatial-position-chart';
   var divWidth = $(heatmap_div).parent().width();
 
 	var quadMapping = chartManager.getHeatmapData();
@@ -125,6 +125,6 @@ function HeatmapChart(chartManager){
 
   //------------------------------------------------
   // finally, add call back to repaint charts
-  chartManager.addCallback(repaint);
+  chartManager.addRepaintCallback(repaint);
   //------------------------------------------------
 };

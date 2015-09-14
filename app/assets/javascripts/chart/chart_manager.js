@@ -40,6 +40,8 @@ function ChartManager(seasonInfo, seasonData){
     // the normal 100% resolution for all charts
     self.setCounterBounds(0,Infinity);
 
+    // create chart objects
+    this.multiLineHelper = new MultiLineHelper(self);
     this.multiLineChart = new MultiLineChart(self);
     this.brushChart = new BrushChart(self);
     this.gameSelectionChart = new GameSelectionChart(self);
@@ -56,11 +58,7 @@ function ChartManager(seasonInfo, seasonData){
     timeLogEnd("chartDrawing", "All chart drawing done");
   };
 
-  this.updateTimelineCharts = function(){
-    self.brushChart.repaint();
-    self.fire();
-  };
-
+  // brush
   this.brushSet = function(beginCounter, endCounter){
     self.brushChart.brushSet(beginCounter, endCounter);
   };
@@ -68,6 +66,22 @@ function ChartManager(seasonInfo, seasonData){
   this.getMultiLineXDomain = function(){ return self.multiLineChart.getXDomain(); };
   this.setMultiLineNewExtent = function(brushExtent){
     self.multiLineChart.setNewExtent(brushExtent);
+  };
+
+
+  // timeline chart  
+  this.resetTimelineChart = function(){
+    self.multiLineHelper.resetTimelineChart();
+    self.repaintAll();
+  };
+  this.handleClickOnBgBar = function(chartType, bgIds){
+    self.multiLineHelper.handleClickOnBgBar(chartType, bgIds);
+    self.repaintAll();
+  };
+  this.repaintAll = function(){
+    self.brushChart.repaint();
+    self.fireRepaintCallback();
+    self.fireTimelineChartSelectionCallback();    
   };
   //------------------------------------------------  
 
@@ -107,7 +121,7 @@ function ChartManager(seasonInfo, seasonData){
 
       // set mode in charts
       self.gameSelectionChart.setGameMode();
-      self.brushChart.repaint();
+      self.resetTimelineChart();
       self.brushChart.brushReset();
 
       // hide spinner
@@ -123,8 +137,8 @@ function ChartManager(seasonInfo, seasonData){
     self.setCounterBounds(0,Infinity);
 
     // set mode in charts
-    self.brushChart.repaint();
     self.gameSelectionChart.setSeasonMode();
+    self.resetTimelineChart();
     self.brushChart.brushReset();
   };
   //------------------------------------------------  
@@ -151,29 +165,15 @@ function ChartManager(seasonInfo, seasonData){
     if(boundariesUpdated){
       self.brushSet(brushLeft, brushRight);
     } else {
-      self.fire();
+      self.fireRepaintCallback();
     }
   };
 
-  // BEGIN: TODO: move from here into its own scope
-  this.timelineChartType = 'brand_effectiveness';
-  this.timelineChartYAxisLabel = 'Brand Effectiveness';
-  this.timelineChartBgIds = ["4", "5", "6"];
-
-  this.getTimelineChartType = function(){
-    return self.timelineChartType;
-  };
-  this.getTimelineChartYAxisLabel = function(){
-    return self.timelineChartYAxisLabel;
-  };
-  this.getTimelineChartBgIds = function(){
-    return self.timelineChartBgIds;
-  };
-  // END: TODO
-
-
   this.getTimelineChartData = function(){ 
     return self.ndxManager.getTimelineChartData(self.getTimelineChartBgIds()); 
+  };
+  this.getBrushChartData = function(){
+    return self.ndxManager.getBrushChartData(self.getTimelineChartBgIds()); 
   };
   this.getBEComponentData = function(){ return self.ndxManager.getBEComponentData(); };
   this.getPCData = function(ndxDataAccessMethod){ return self.ndxManager[ndxDataAccessMethod](); };
@@ -210,7 +210,9 @@ function ChartManager(seasonInfo, seasonData){
     return self.seasonDataManager.formatTableChartData(self.ndxManager.getTableData());
   };
   this.getThumbnailData = function(){
-    return self.seasonDataManager.formatThumbnailChartData(self.ndxManager.getThumbnailData());
+    var bgIds = self.getTimelineChartBgIds();
+    var thumbnailData = self.ndxManager.getThumbnailData(bgIds);
+    return self.seasonDataManager.formatThumbnailChartData(thumbnailData);
   };
   this.getGameEventName = function(geId){ return self.seasonDataManager.getGameEventName(geId); };
   this.getGameEventColor = function(geId){ return self.seasonDataManager.getGameEventColor(geId); };
@@ -226,14 +228,24 @@ function ChartManager(seasonInfo, seasonData){
       return [];
     }
   };
+
+  // Timeline chart manipulation
+  this.getTimelineChartType = function(){ return self.multiLineHelper.getTimelineChartType(); };
+  this.getTimelineChartBgIds = function(){ return self.multiLineHelper.getTimelineChartBgIds(); };
   //------------------------------------------------  
 
 
   //------------------------------------------------  
   // let jquery manage call backs to update all charts
-  var callbacks = $.Callbacks("unique");
-  this.addCallback = function(callback){ callbacks.add(callback); };
-  this.fire = function(){ callbacks.fire(); };
+  var repaintCallbacks = $.Callbacks("unique");
+  this.addRepaintCallback = function(callback){ repaintCallbacks.add(callback); };
+  this.fireRepaintCallback = function(){ repaintCallbacks.fire(); };
+
+  var timelineChartSelectionCallback = $.Callbacks("unique");
+  this.addTimelineChartSelectionCallback = function(callback){ timelineChartSelectionCallback.add(callback); };
+  this.fireTimelineChartSelectionCallback = function(){
+    timelineChartSelectionCallback.fire(self.getTimelineChartType(), self.getTimelineChartBgIds());
+  };
   //------------------------------------------------  
 };
 

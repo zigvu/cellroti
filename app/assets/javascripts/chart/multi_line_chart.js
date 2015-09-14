@@ -13,8 +13,8 @@ function MultiLineChart(chartManager){
   var timelineChartYAxisLabel = undefined;
 
   // div for chart
-  var seriesChart_div = '#series-chart';
-  var divWidth = $(seriesChart_div).parent().width();
+  var timelineChart_div = '#timeline-chart';
+  var divWidth = $(timelineChart_div).parent().width();
   //------------------------------------------------
 
 
@@ -86,7 +86,7 @@ function MultiLineChart(chartManager){
 
   //------------------------------------------------
   // svg drawing
-  var multiLineSVG = d3.select(seriesChart_div).append("svg")
+  var multiLineSVG = d3.select(timelineChart_div).append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
     .append("g")
@@ -175,7 +175,7 @@ function MultiLineChart(chartManager){
   // repainting and loading new data
   function repaint(){
     timelineChartType = chartManager.getTimelineChartType();
-    timelineChartYAxisLabel = chartManager.getTimelineChartYAxisLabel();
+    timelineChartYAxisLabel = chartHelpers.getChartLabel(timelineChartType);
     var timelineChartData = chartManager.getTimelineChartData();
     drawTimelineChart(timelineChartData)
     
@@ -340,6 +340,6 @@ function MultiLineChart(chartManager){
 
   //------------------------------------------------
   // finally, add call back to repaint charts
-  chartManager.addCallback(repaint);
+  chartManager.addRepaintCallback(repaint);
   //------------------------------------------------
 };

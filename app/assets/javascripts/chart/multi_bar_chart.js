@@ -45,7 +45,7 @@ function MultiBarChart(chartManager){
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
     .append("g")
-      .attr("class", "bar-chart")
+      .attr("class", "bar-chart-svg")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
   //------------------------------------------------
 
@@ -70,17 +70,27 @@ function MultiBarChart(chartManager){
       .data(function(d) { return d.bgValues; });
 
   var componentRects = componentBars.enter().append("rect")
+      .attr("id", function(d){ return getRectId(d.component, d.bgId); })
       .attr("class", "rect")
       .attr("width", x1.rangeBand() * gapBetweenBarsInGroup)
       .attr("x", function(d) { return x1(d.bgId); })
       .attr("y", function(d) { return y(d.value); })
       .attr("height", function(d) { return height - y(d.value); })
-      .style("fill", function(d) { return chartManager.getBrandGroupColor(d.bgId); });
+      .style("fill", function(d) { return chartManager.getBrandGroupColor(d.bgId); })
+      .on("click", function(d) { handleClickOnBgBar(d.component, d.bgId); });
       
   componentRects.append("svg:title")
       .text(function (d) { 
         return chartManager.getBrandGroupName(d.bgId) + ": " + d3.format(',%')(d.value); 
       });
+
+  function handleClickOnBgBar(chartType, bgId){
+    // need to coerce to string
+    chartManager.handleClickOnBgBar(chartType, ['' + bgId]);
+  };
+  function getRectId(chartType, bgId){
+    return chartType + '_' + bgId;
+  };
   //------------------------------------------------
 
 
@@ -91,7 +101,7 @@ function MultiBarChart(chartManager){
       .attr("transform", "translate(0," + height + ")")
       .call(xAxis)
       .selectAll("text")
-      .text(function(k){ return chartHelpers.getComponentBarChartLabel(k); });
+      .text(function(k){ return chartHelpers.getChartLabel(k); });
 
   bcSVG.append("g")
       .attr("class", "y axis")
@@ -105,6 +115,8 @@ function MultiBarChart(chartManager){
 
 
   //------------------------------------------------
+  // callbacks
+
   // repainting and loading new data
   function repaint(){
     bcData = chartManager.getBEComponentData();
@@ -126,11 +138,23 @@ function MultiBarChart(chartManager){
 
     bcSVG.select(".y.axis").transition().duration(750).call(yAxis);
   };
+
+  function decorateComponentRect(chartType, bgIds){
+    // reset all rects
+    componentSVG
+        .selectAll(".rect")
+        .classed("selected", false);
+    //  add decoration
+    componentSVG
+        .selectAll("#" + getRectId(chartType, bgIds[0]))
+        .classed("selected", true);
+  };
   //------------------------------------------------
 
 
   //------------------------------------------------
   // finally, add call back to repaint charts
-  chartManager.addCallback(repaint);
+  chartManager.addRepaintCallback(repaint);
+  chartManager.addTimelineChartSelectionCallback(decorateComponentRect);
   //------------------------------------------------
 };

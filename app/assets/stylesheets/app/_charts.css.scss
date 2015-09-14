@@ -209,7 +209,7 @@ $chart-table-row-color-hover: #CBC6F7;
 	}
 
 	// multi bar chart
-	.bar-chart {
+	.bar-chart-svg {
 		.x.axis {
 			text {
 				text-transform: uppercase;
@@ -231,6 +231,10 @@ $chart-table-row-color-hover: #CBC6F7;
 
 		rect:hover {
 			stroke: black;
+		}
+
+		.selected {
+			stroke: red;
 		}
 	}
 
