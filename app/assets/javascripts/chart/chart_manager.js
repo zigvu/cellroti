@@ -75,7 +75,12 @@ function ChartManager(seasonInfo, seasonData){
     self.repaintAll();
   };
   this.handleClickOnBgBar = function(chartType, bgIds){
-    self.multiLineHelper.handleClickOnBgBar(chartType, bgIds);
+    self.multiLineHelper.handleClickForTimelineChart(chartType, bgIds);
+    self.repaintAll();
+  };
+  this.handleClickOnQuadrant = function(chartType){
+    var bgIds = self.getBrandGroupIds();
+    self.multiLineHelper.handleClickForTimelineChart(chartType, bgIds);
     self.repaintAll();
   };
   this.repaintAll = function(){

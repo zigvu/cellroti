@@ -29,7 +29,7 @@ function MultiLineHelper(chartManager){
   this.getTimelineChartBgIds = function(){
     return self.timelineChartBgIds;
   };
-  this.handleClickOnBgBar = function(chartType, bgIds){
+  this.handleClickForTimelineChart = function(chartType, bgIds){
     self.timelineChartType = chartType;
     self.timelineChartBgIds = bgIds;
     resetTimelineChartTitle();
@@ -45,6 +45,11 @@ function MultiLineHelper(chartManager){
 
   var resetTimelineChartsId = '#reset-component-charts';
   $(resetTimelineChartsId).click(function(){
+    chartManager.resetTimelineChart();
+  });
+
+  var resetSpatialPositionChartId = '#reset-spatial-position-chart';
+  $(resetSpatialPositionChartId).click(function(){
     chartManager.resetTimelineChart();
   });
 
