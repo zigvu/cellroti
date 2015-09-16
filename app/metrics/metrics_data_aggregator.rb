@@ -31,12 +31,14 @@ module Metrics
 
 			# update data values - use max
 			@data[:brand_effectiveness] = sdgm.brand_effectiveness if sdgm.brand_effectiveness > @data[:brand_effectiveness]
+
 			@data[:det_group_crowding] = sdgm.det_group_crowding if sdgm.det_group_crowding > @data[:det_group_crowding]
 			@data[:visual_saliency] = sdgm.visual_saliency if sdgm.visual_saliency > @data[:visual_saliency]
 			@data[:timing_effectiveness] = sdgm.timing_effectiveness if sdgm.timing_effectiveness > @data[:timing_effectiveness]
 			@data[:spatial_effectiveness] = sdgm.spatial_effectiveness if sdgm.spatial_effectiveness > @data[:spatial_effectiveness]
-			@data[:detections_count] += sdgm.detections_count  #  --> raw count, not max
+
 			@data[:view_duration] += sdgm.view_duration        #  --> raw count, not max
+			@data[:view_persistence] += sdgm.view_persistence  #  --> raw count, not max
 
 			if @frameCounter == 0
 				@data[:quadrants] = {}
@@ -57,8 +59,8 @@ module Metrics
 			# @data[:visual_saliency] += sdgm.visual_saliency
 			# @data[:timing_effectiveness] += sdgm.timing_effectiveness
 			# @data[:spatial_effectiveness] += sdgm.spatial_effectiveness
-			# @data[:detections_count] += sdgm.detections_count
 			# @data[:view_duration] += sdgm.view_duration
+			# @data[:view_persistence] += sdgm.view_persistence
 
 			# if @frameCounter == 0
 			# 	@data[:quadrants] = {}
@@ -85,8 +87,8 @@ module Metrics
 			# @data[:visual_saliency] /= @frameCounter
 			# @data[:timing_effectiveness] /= @frameCounter
 			# @data[:spatial_effectiveness] /= @frameCounter
-			# # @data[:detections_count] = @data[:detections_count] --> raw count, not average
 			# # @data[:view_duration] = @data[:view_duration] --> raw count, not average
+			# # @data[:view_persistence] = @data[:view_persistence] --> raw count, not average
 			# @data[:quadrants].each do |k,v|
 			# 	@data[:quadrants][k] = v/@frameCounter
 			# end
@@ -104,12 +106,15 @@ module Metrics
 				sc: sequenceCounter,
 
 				be: @data[:brand_effectiveness],
+
 				dgc: @data[:det_group_crowding],
 				vs: @data[:visual_saliency],
 				te: @data[:timing_effectiveness],
 				se: @data[:spatial_effectiveness],
-				dc: @data[:detections_count],
+
 				vd: @data[:view_duration],
+				vp: @data[:view_persistence],
+
 				qd: @data[:quadrants],
 
 				summary_metric_id: @summaryMetricId
@@ -156,12 +161,15 @@ module Metrics
 				:sequence_counter,
 
 				:brand_effectiveness,
+
 				:det_group_crowding,
 				:visual_saliency,
 				:timing_effectiveness,
 				:spatial_effectiveness,
-				:detections_count,
+
 				:view_duration,
+				:view_persistence,
+
 				:quadrants
 			]
 		end

@@ -3,8 +3,8 @@ require 'yaml'
 module States
 	class ConfigReader
 		def initialize
-			@default = YAML.load_file("#{Rails.root}/config/metrics/default.yml")
-			#@default = YAML.load_file("#{Rails.root}/config/metrics/first_try.yml")
+			@general = YAML.load_file("#{Rails.root}/config/metrics/general.yml")
+			@default = YAML.load_file("#{Rails.root}/config/metrics/soccer.yml")
 
 			init_general_config()
 			init_detectable_metrics_config()
@@ -16,64 +16,63 @@ module States
 		attr_accessor :g_videoImportLocalizationImages, :g_videoImportLocalizationThumbnails
 
 		def init_general_config
-			g_default = @default["general"]
 			# mongo write size
-			@g_mongoBatchInsertSize = g_default["mongo_batch_insert_size"]
+			@g_mongoBatchInsertSize = @general["mongo_batch_insert_size"]
 
 			# video import saving
-			@g_videoImportLocalizationPath = g_default["video_localization_path"]
-			@g_videoImportLocalizationImages = g_default["localization_image_folder"]
-			@g_videoImportLocalizationThumbnails = g_default["localization_thumbnail_folder"]
+			@g_videoImportLocalizationPath = @general["video_localization_path"]
+			# not currently used:
+			@g_videoImportLocalizationImages = @general["localization_image_folder"]
+			@g_videoImportLocalizationThumbnails = @general["localization_thumbnail_folder"]
 		end
 
-
-		attr_accessor :dm_es_maxTimeSeconds, :dm_es_timeDecayWeights
-		attr_accessor :dm_sw_size_seconds_scores, :dm_sw_decayWeights_scores
+		attr_accessor :dm_dgc_sw_size, :dm_dgc_sw_decayWeights
+		attr_accessor :dm_vs_sw_size, :dm_vs_sw_decayWeights
+		attr_accessor :dm_te_sw_size, :dm_te_sw_decayWeights
+		attr_accessor :dm_se_sw_size, :dm_se_sw_decayWeights
 		attr_accessor :dm_qd_numCols, :dm_qd_numRows
 		attr_accessor :dm_qd_centerWeight, :dm_qd_cornerWeight, :dm_qd_nonCornerEdgeWeight
-		attr_accessor :dm_sw_size_seconds_detectionsCount, :dm_ef_num_of_seconds
+		attr_accessor :dm_ef_num_of_seconds
 
 		def init_detectable_metrics_config
 			dm_default = @default["detectable_metrics"]
 
-			# event score
-			@dm_es_maxTimeSeconds = dm_default["event_score_time_decay_seconds"]
-			@dm_es_timeDecayWeights = dm_default["event_score_time_decay_weights"]
+			# det group crowding
+			dm_dgc = dm_default["det_group_crowding"]
+			@dm_dgc_sw_size = dm_dgc["sliding_window"]["size_in_seconds"]
+			@dm_dgc_sw_decayWeights = dm_dgc["sliding_window"]["decay_weights"]
 
-			# sliding window - scores
-			@dm_sw_size_seconds_scores = dm_default["sliding_window_size_seconds_scores"]
-			@dm_sw_decayWeights_scores = dm_default["sliding_window_decay_weights_scores"]
+			# visual saliency
+			dm_vs = dm_default["visual_saliency"]
+			@dm_vs_sw_size = dm_vs["sliding_window"]["size_in_seconds"]
+			@dm_vs_sw_decayWeights = dm_vs["sliding_window"]["decay_weights"]
+
+			# timing effectiveness
+			dm_te = dm_default["timing_effectiveness"]
+			@dm_te_sw_size = dm_te["sliding_window"]["size_in_seconds"]
+			@dm_te_sw_decayWeights = dm_te["sliding_window"]["decay_weights"]
+
+			# spatial effectiveness
+			dm_se = dm_default["spatial_effectiveness"]
+			@dm_se_sw_size = dm_se["sliding_window"]["size_in_seconds"]
+			@dm_se_sw_decayWeights = dm_se["sliding_window"]["decay_weights"]
 
 			# quadrants in frame
-			@dm_qd_numCols = dm_default["quadrants_num_cols"]
-			@dm_qd_numRows = dm_default["quadrants_num_rows"]
-			@dm_qd_centerWeight  = dm_default["quadrants_center_weight"]
-			@dm_qd_cornerWeight  = dm_default["quadrants_corner_weight"]
-			@dm_qd_nonCornerEdgeWeight  = dm_default["quadrants_non_corner_edge_weight"]
-
-			# detections count
-			@dm_sw_size_seconds_detectionsCount = dm_default["sliding_window_size_seconds_detection_count"]
+			@dm_qd_numCols = dm_se["quadrants_num_cols"]
+			@dm_qd_numRows = dm_se["quadrants_num_rows"]
+			@dm_qd_centerWeight  = dm_se["quadrants_center_weight"]
+			@dm_qd_cornerWeight  = dm_se["quadrants_corner_weight"]
+			@dm_qd_nonCornerEdgeWeight  = dm_se["quadrants_non_corner_edge_weight"]
 
 			# num of second per extracted frame
 			@dm_ef_num_of_seconds = dm_default["num_seconds_per_sample_frame"]
 		end
 
-
-		attr_accessor :dgm_sw_size_seconds_temporalCrowding, :dgm_sw_decayWeights_temporalCrowding
-		attr_accessor :dgm_cw_spatialDetGroupCrowding, :dgm_cw_temporalDetGroupCrowding
 		attr_accessor :dgm_be_detGroupCrowding, :dgm_be_visualSaliency
 		attr_accessor :dgm_be_timingEffectiveness, :dgm_be_spatialEffectiveness
 
 		def init_det_group_metrics_config
 			dgm_default = @default["det_group_metrics"]
-
-			# sliding window - temporal crowding
-			@dgm_sw_size_seconds_temporalCrowding = dgm_default["sliding_window_size_seconds_temporal_crowding"]
-			@dgm_sw_decayWeights_temporalCrowding = dgm_default["sliding_window_decay_weights_temporal_crowding"]
-
-			# crowding weights
-			@dgm_cw_spatialDetGroupCrowding = dgm_default["spatial_crowding_weight"]
-			@dgm_cw_temporalDetGroupCrowding = dgm_default["temporal_crowding_weight"]
 
 			# brand effectiveness weights
 			@dgm_be_detGroupCrowding = dgm_default["be_det_group_crowding"]

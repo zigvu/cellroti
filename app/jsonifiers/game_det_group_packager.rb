@@ -55,8 +55,8 @@ module Jsonifiers
 						sprintf("%.4f", sdata[:visual_saliency]),
 						sprintf("%.4f", sdata[:timing_effectiveness]),
 						sprintf("%.4f", sdata[:spatial_effectiveness]),
-						sdata[:detections_count],
-						sprintf("%.4f", sdata[:view_duration])
+						sprintf("%.4f", sdata[:view_duration]),
+						sprintf("%.4f", sdata[:view_persistence])
 					] + quadrants
 
 					dataArr << data
@@ -78,12 +78,15 @@ module Jsonifiers
 				:det_group_id,
 
 				:brand_effectiveness,
+
 				:brand_group_crowding,
 				:visual_saliency,
 				:timing_effectiveness,
 				:spatial_effectiveness,
-				:detections_count,
+
 				:view_duration,
+				:view_persistence,
+
 				:q0, :q1, :q2, :q3, :q4, :q5, :q6, :q7, :q8
 			]
 		end

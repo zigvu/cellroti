@@ -8,22 +8,27 @@ module Metrics
 			@width = @video.width
 			@height = @video.height
 
-			# event score
-			@eventDistance = Metrics::MetricsEventDistance.new(
+			# sliding windows
+			@dgcSlidingWindow = Metrics::MetricsSlidingWindow.new(
+				@video.detection_frame_rate,
+				@configReader.dm_dgc_sw_size,
+				@configReader.dm_dgc_sw_decayWeights
+			)
+			@vsSlidingWindow = Metrics::MetricsSlidingWindow.new(
+				@video.detection_frame_rate,
+				@configReader.dm_vs_sw_size,
+				@configReader.dm_vs_sw_decayWeights
+			)
+			@teSlidingWindow = Metrics::MetricsEventDistance.new(
 				@video.game.events, 
-				@configReader.dm_es_maxTimeSeconds, 
-				@configReader.dm_es_timeDecayWeights)
-
-			# sliding window
-			@slidingWindowScores = Metrics::MetricsSlidingWindow.new(
+				@configReader.dm_te_sw_size,
+				@configReader.dm_te_sw_decayWeights
+			)
+			@seSlidingWindow = Metrics::MetricsSlidingWindow.new(
 				@video.detection_frame_rate,
-				@configReader.dm_sw_size_seconds_scores,
-				@configReader.dm_sw_decayWeights_scores)
-
-			@slidingWindowDetectionsCount = Metrics::MetricsSlidingWindow.new(
-				@video.detection_frame_rate,
-				@configReader.dm_sw_size_seconds_detectionsCount,
-				nil)
+				@configReader.dm_se_sw_size,
+				@configReader.dm_se_sw_decayWeights
+			)
 
 			# quadrants in frame
 			@metricsQuads = Metrics::MetricsQuadrants.new(@width, @height, configReader)
@@ -36,51 +41,50 @@ module Metrics
 			# frameTime : time of frame
 			# detections : raw scores from localization.json from khajuri
 
+			# det group crowding: area of detections per detectable
+			# as fraction of frame area
+			cumulativeArea = get_cumulative_area(detections)
+			@dgcSlidingWindow.add(cumulativeArea)
+			detGroupCrowding = @dgcSlidingWindow.get_decayed_average()
+
+			# visual saliency: detection scores
+			maxScore = get_score_max(detections)
+			@vsSlidingWindow.add(maxScore)
+			visualSaliency = @vsSlidingWindow.get_decayed_average()
+
+			# timing effectiveness: event score if detectable present in frame
+			timingEffectiveness = visualSaliency > 0 ? @teSlidingWindow.get_event_score(frameTime) : 0
+
 			# spatial position: quadrant information of detections
 			intersectionQuadrants = @metricsQuads.find_intersection_quadrants(detections)
 
 			# spatial effectiveness: derived from spatial position
-			spatialEffectiveness = spatial_effectiveness(intersectionQuadrants)
+			effectiveness = spatial_effectiveness(intersectionQuadrants)
+			@seSlidingWindow.add(effectiveness)
+			spatialEffectiveness = @seSlidingWindow.get_decayed_average()
 
-			# visual saliency: decayed average of detection scores
-			@slidingWindowScores.add(get_score_max(detections))
-			visualSaliency = @slidingWindowScores.get_decayed_average()
+			# view duration: total duration of visibility
+			viewDuration = visualSaliency > 0 ? @timeForSingleFrame : 0
 
-			# detection count: count detections in window and reset to avoid double counting
-			@slidingWindowDetectionsCount.add(detections.count)
-			detectionsCount = @slidingWindowDetectionsCount.get_min()
-			@slidingWindowDetectionsCount.reset() if detectionsCount > 0
-
-			# view duration: count interval time of consecutive detections
-			viewDuration = detections.count > 0 ? @timeForSingleFrame : 0
-
-			# brand group crowding: area of detections per detectable as fraction of frame area
-			cumulativeArea = get_cumulative_area(detections)
-
-			# timing effectiveness: event score if detectable present in frame
-			eventScore = visualSaliency > 0 ? @eventDistance.get_event_score(frameTime) : 0
+			# view persistence: 1 if view persists in this frame
+			viewPersistence = visualSaliency > 0 ? 1 : 0
 
 			# Note: this is tied to schema in SingleDetectableMetric class
 			detectableMetrics = {
 				di: @detectableId,
-				se: spatialEffectiveness,
+
+				dgc: detGroupCrowding,
 				vs: visualSaliency,
-				dc: detectionsCount,
+				te: timingEffectiveness,
+				se: spatialEffectiveness,
+
 				vd: viewDuration,
-				ca: cumulativeArea,
-				es: eventScore,
+				vp: viewPersistence,
+
 				qd: intersectionQuadrants,
 			}
 
 			return detectableMetrics
-		end
-
-		def get_score_max(detections)
-			score = 0.0
-			detections.each do |d|
-				score = d[:score] if d[:score] > score
-			end
-			return score
 		end
 
 		def get_cumulative_area(detections)
@@ -92,6 +96,14 @@ module Metrics
 			return area
 		end
 
+		def get_score_max(detections)
+			score = 0.0
+			detections.each do |d|
+				score = d[:score] if d[:score] > score
+			end
+			return score
+		end
+
 		def spatial_effectiveness(intersectionQuadrants)
 			effectiveness = 0
 			# for now, just add across all quadrants
@@ -99,7 +111,6 @@ module Metrics
 				effectiveness += v
 			end
 			effectiveness = 1 if effectiveness > 1.0
-			#puts "#{effectiveness}"
 			return effectiveness
 		end
 

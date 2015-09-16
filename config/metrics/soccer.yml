@@ -1,0 +1,39 @@
+# This is tied to app/states/config_reader.rb parser
+
+detectable_metrics:
+  det_group_crowding:
+    sliding_window:
+      size_in_seconds:                                 3
+      decay_weights:                                   [0.2, 1.0, 0.2]
+  visual_saliency:
+    sliding_window:
+      size_in_seconds:                                 3
+      decay_weights:                                   [0.2, 1.0, 0.2]
+  timing_effectiveness:
+    sliding_window:
+      size_in_seconds:                                 30
+      # note: decay weights are applied symmetrically in time around events
+      # hence the below array needs to have monotonically increasing values
+      decay_weights:                                   [0,0.2,0.5,0.8,1.0]
+  spatial_effectiveness:
+    sliding_window:
+      size_in_seconds:                                 3
+      decay_weights:                                   [0.2, 1.0, 0.2]
+    # quadrants
+    quadrants_num_cols:                                  3
+    quadrants_num_rows:                                  3
+    # the center weight is always unity - all other quadrant weights are smaller than it
+    quadrants_center_weight:                             1.0
+    quadrants_corner_weight:                             0.8
+    quadrants_non_corner_edge_weight:                    0.85
+  # determine number of seconds one sample frame will cover. For example, a 
+  # value of 10 indicates that there will be only 1 sample frame in cellroti 
+  # per 10 seconds worth of video
+  num_seconds_per_sample_frame:                        10
+
+det_group_metrics:
+  # brand effectiveness weights
+  be_det_group_crowding:                               0.25
+  be_visual_saliency:                                  0.25
+  be_timing_effectiveness:                             0.25
+  be_spatial_effectiveness:                            0.25

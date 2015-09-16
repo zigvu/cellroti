@@ -20,8 +20,8 @@ seasonData: {
   brand_group_data_keys: [
     :averager, :counter, :frame_time, :game_id, :det_group_id,
     :brand_effectiveness, :brand_group_crowding, :visual_saliency,
-    :timing_effectiveness, :spatial_effectiveness, :detections_count,
-    :view_duration, :q0, :q1, :q2, :q3, :q4, :q5, :q6, :q7, :q8
+    :timing_effectiveness, :spatial_effectiveness, :view_duration, 
+    :view_persistence, :q0, :q1, :q2, :q3, :q4, :q5, :q6, :q7, :q8
   ],
   game_events: {game_id: [{:counter, :time, :event_type_id}, ], },
   brand_group_map: {id: :name, },
@@ -89,6 +89,8 @@ function DataParser(seasonInfo, seasonData, chartManager){
       var coercedD;
       _.each(gDataBG.data, function(arr){
         coercedD = chartHelpers.coercer(dataKeys, arr);
+        // TODO: remove
+        coercedD.detections_count = 1
         coercedD.counter += lastGameEndCount;
         self.ndxData.push(coercedD);
       });
