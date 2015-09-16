@@ -58,7 +58,7 @@ module Metrics
 			cumulativeArea = get_cumulative_area(detections)
 
 			# timing effectiveness: event score if detectable present in frame
-			eventScore = get_event_score(detections, frameTime)
+			eventScore = visualSaliency > 0 ? @eventDistance.get_event_score(frameTime) : 0
 
 			# Note: this is tied to schema in SingleDetectableMetric class
 			detectableMetrics = {
@@ -73,14 +73,6 @@ module Metrics
 			}
 
 			return detectableMetrics
-		end
-
-		def get_event_score(detections, frameTime)
-			score = 0.0
-			if detections.count > 0
-				score = @eventDistance.get_event_score(frameTime)
-			end
-			return score
 		end
 
 		def get_score_max(detections)
@@ -100,10 +92,10 @@ module Metrics
 			return area
 		end
 
-		def spatial_effectiveness(intersection_quads)
+		def spatial_effectiveness(intersectionQuadrants)
 			effectiveness = 0
 			# for now, just add across all quadrants
-			intersection_quads.each do |k, v|
+			intersectionQuadrants.each do |k, v|
 				effectiveness += v
 			end
 			effectiveness = 1 if effectiveness > 1.0

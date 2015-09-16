@@ -52,7 +52,7 @@ module Metrics
 
 			# spatial score of det_group in timeline
 			@swTemporalDetGroupCrowding.add(spatialDetGroupCrowding)
-			temporalDetGroupCrowding = @swTemporalDetGroupCrowding.get_decayed_average
+			temporalDetGroupCrowding = @swTemporalDetGroupCrowding.get_decayed_average()
 
 			# combined crowding scores - space and time
 			detGroupCrowding = (

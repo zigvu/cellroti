@@ -80,11 +80,7 @@ function BrushChart(chartManager){
 
     // define domains
     x.domain(d3.extent(brushChartData[0].values, function(d) { return d.counter; }));
-    y.domain([
-      chartHelpers.getMinTimelineChartValue(brushChartData, timelineChartType), 
-      chartHelpers.getMaxTimelineChartValue(brushChartData, timelineChartType)
-    ]);
-
+    y.domain([0, 1]);
 
     var contextBE = brushSVG.selectAll(".contextBE").data(brushChartData);
       

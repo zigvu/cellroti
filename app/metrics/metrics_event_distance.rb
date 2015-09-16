@@ -4,13 +4,20 @@ module Metrics
 
 		def initialize(events, maxTimeSeconds, timeDecayWeight)
 			@events = events
-			@maxTimeSeconds = maxTimeSeconds
-			if timeDecayWeight.size() != @maxTimeSeconds
-				raise "Decay array must be the same size as maxTimeSeconds"
-			end
+			# time decay happens at 1 second interval - i.e., 1 FPS
+			decayArray = Metrics::MetricsSlidingWindow.constructWindow(
+				1, maxTimeSeconds, timeDecayWeight
+			)
+			# while the number of elements in decayArray will be close to maxTimeSeconds,
+			# it is likely that it won't be exact - hence use maxTimeSeconds based on
+			# size of decayArray
+			@maxTimeSeconds = decayArray.count
+
 			@timeWeight = {}
-			(0..(@maxTimeSeconds - 1)).to_a.reverse.each_with_index do |t, idx|
-				@timeWeight[t] = timeDecayWeight[idx]
+			decayArray.each_with_index do |da, idx|
+				# since weights are symmetric in time, timeDecayWeight will have values
+				# in monotonic increasing order
+				@timeWeight[decayArray.count - idx - 1] = da
 			end
 
 			@eventWeights = {}
