@@ -225,7 +225,7 @@ function NDXManager(ndxData, chartManager){
     var thumbnailData = [];
     _.find(beTop1K, function(d, idx, list){
       if(d.extracted_frame_number > 0 && _.contains(bgIds, '' + d.det_group_id)){ 
-        thumbnailData.push({game_id: d.game_id, frame_id: d.extracted_frame_number});
+        thumbnailData.push(d);
       }
       return thumbnailData.length >= 4;
     });

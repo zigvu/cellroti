@@ -125,7 +125,7 @@ function SeasonDataManager(dataParser, chartManager){
   };
 
   this.getCounterForGame = function(gameId){
-    gameD = _.findWhere(gameDemarcations, {game_id: gameId});
+    var gameD = _.findWhere(gameDemarcations, {game_id: gameId});
     return { begin_count: gameD.begin_count, end_count: gameD.end_count };
   };
   //------------------------------------------------
@@ -179,7 +179,13 @@ function SeasonDataManager(dataParser, chartManager){
         thumbnailData[id] = tcData[idx];
         thumbnailData[id]['video_id'] = that.getVideoForGame(tcData[idx].game_id);
       } else {
-        thumbnailData[id] = {game_id: 0, video_id: 0, frame_id: 0};
+        thumbnailData[id] = {
+          game_id: 0,
+          video_id: 0,
+          extracted_frame_number: 0,
+          frame_time: 0,
+          brand_effectiveness: 0
+        };
       }
     });
     return thumbnailData;
@@ -187,7 +193,7 @@ function SeasonDataManager(dataParser, chartManager){
 
   // assume only 1 video per game
   this.getVideoForGame = function(gameId){
-    gameD = _.findWhere(gameDemarcations, {game_id: gameId});
+    var gameD = _.findWhere(gameDemarcations, {game_id: gameId});
     return gameD.video_id;
   };
   //------------------------------------------------
@@ -199,7 +205,6 @@ function SeasonDataManager(dataParser, chartManager){
     //  brushed games also includes time information
     return this.getBrushedGames(beginCounter, endCounter);
   };
-
   //------------------------------------------------
 
 };

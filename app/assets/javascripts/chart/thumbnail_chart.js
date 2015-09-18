@@ -5,7 +5,7 @@
 function ThumbnailChart(chartManager){
   //------------------------------------------------
   // set up
-  //var chartHelpers = chartManager.chartHelpers;
+  var chartHelpers = chartManager.chartHelpers;
 
   // div for chart
   var thumbnailChart_ul = '#thumbnail-chart';
@@ -25,8 +25,8 @@ function ThumbnailChart(chartManager){
     var newThumbnailData = chartManager.getThumbnailData();
 
     // only require to refresh if we get new frame numbers
-    var oldFrameIds = _.chain(thumbnailData).values().pluck('frame_id').value();
-    var newFrameIds = _.chain(newThumbnailData).values().pluck('frame_id').value();
+    var oldFrameIds = _.chain(thumbnailData).values().pluck('extracted_frame_number').value();
+    var newFrameIds = _.chain(newThumbnailData).values().pluck('extracted_frame_number').value();
     if (!(_.isEqual(oldFrameIds, newFrameIds))){
       $(thumbnailChartRefresh_div).css("display", "flex");
       thumbnailData = newThumbnailData;
@@ -40,10 +40,12 @@ function ThumbnailChart(chartManager){
           d3.select(this).select("a").select("img").attr("src", thumbnailURL);
         });
 
-    d3.select(thumbnailChartReveals_div).selectAll("div")
+    d3.select(thumbnailChartReveals_div).selectAll(".reveal-modal")
         .each(function (d,i){
-          var frameURL = getFrameURL(thumbnailData[d3.select(this).attr("id")]); 
-          d3.select(this).select("img").attr("src", frameURL);
+          var frameURL = getFrameURL(thumbnailData[d3.select(this).attr("id")]);
+          var text = getFrameText(thumbnailData[d3.select(this).attr("id")]);
+          d3.select(this).select(".thumbnail-container").select("img").attr("src", frameURL);
+          d3.select(this).select(".thumbnail-container").select(".thumbnail-description").html(text);
         });
 
     $(thumbnailChartRefresh_div).css("display", "none");
@@ -59,7 +61,7 @@ function ThumbnailChart(chartManager){
 
   function getThumbnailURL(d){
     if (d.video_id > 0){
-      return "/uploads/" + d.video_id + "/thumbnails/" + d.frame_id + ".jpg";
+      return "/uploads/" + d.video_id + "/thumbnails/" + d.extracted_frame_number + ".jpg";
     } else {
       return "/uploads/refresh_to_load.jpg";
     }
@@ -67,13 +69,23 @@ function ThumbnailChart(chartManager){
 
   function getFrameURL(d){
     if (d.video_id > 0){
-      return "/uploads/" + d.video_id + "/frames/" + d.frame_id + ".jpg";
+      return "/uploads/" + d.video_id + "/frames/" + d.extracted_frame_number + ".jpg";
     } else {
       return "/uploads/refresh_to_load.jpg";
     }
   };
-  //------------------------------------------------
+  function getFrameText(d){
+    var text = "";
+    if (d.video_id > 0){
+      var formattedTime = chartHelpers.getReadableTime(d.frame_time);
 
+       text += "<b>Game:</b> " + chartManager.getGameName(d.game_id) + "</br>";
+       text += "<b>Time:</b> " + formattedTime.time + " " + formattedTime.unit + "</br>";
+       text += "<b>Brand Effectiveness:</b> " + d3.format(',%')(d.brand_effectiveness) + "</br>";
+    }
+    return text;
+  };
+  //------------------------------------------------
 
 
   //------------------------------------------------
