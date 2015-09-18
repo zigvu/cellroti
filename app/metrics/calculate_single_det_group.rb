@@ -35,11 +35,9 @@ module Metrics
 			spatialEffectiveness = spatial_effectiveness(Hash[
 				singleDetectableMetrics.pluck(:detectable_id, :spatial_effectiveness)])
 
-			viewDuration = view_duration(Hash[
-				singleDetectableMetrics.pluck(:detectable_id, :view_duration)])
+			viewDuration = view_duration(visualSaliency)
 
-			viewPersistence = view_persistence(Hash[
-				singleDetectableMetrics.pluck(:detectable_id, :view_persistence)])
+			viewPersistence = view_persistence(visualSaliency)
 
 			quadrantsCount = quadrants_count(Hash[
 				singleDetectableMetrics.pluck(:detectable_id, :quadrants)])
@@ -93,16 +91,17 @@ module Metrics
 			return operate_det_hash(spatialEffectivenessHash, :max)
 		end
 
-		def view_duration(viewDurationHash)
-			return operate_det_hash(viewDurationHash, :max)
+		def view_duration(visualSaliency)
+			duration = 0
+			if visualSaliency > 0
+				duration = @timeForSingleFrame
+			end
+
+			return duration
 		end
 
-		def view_persistence(viewPersistenceHash)
-			# values from viewPersistenceHash:
-			# 0 - no detectable present this frame
-			# 1 - detectable present this frame
-
-			hasDetection = viewPersistenceHash.collect{|k,v| v}.max > 0
+		def view_persistence(visualSaliency)
+			hasDetection = visualSaliency > 0
 
 			persistence = 0
 			if @vp_numOfDetectedFrames > 0

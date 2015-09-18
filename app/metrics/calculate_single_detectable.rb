@@ -32,9 +32,6 @@ module Metrics
 
 			# quadrants in frame
 			@metricsQuads = Metrics::MetricsQuadrants.new(@width, @height, configReader)
-
-			# view duration
-			@timeForSingleFrame = States::ConfigReader.frameTimeStampResolution / @video.detection_frame_rate
 		end
 
 		def calculate(frameTime, detections)
@@ -63,11 +60,7 @@ module Metrics
 			@seSlidingWindow.add(effectiveness)
 			spatialEffectiveness = @seSlidingWindow.get_decayed_average()
 
-			# view duration: total duration of visibility
-			viewDuration = visualSaliency > 0 ? @timeForSingleFrame : 0
-
-			# view persistence: 1 if view persists in this frame
-			viewPersistence = visualSaliency > 0 ? 1 : 0
+			# view duration & persistence: calculated from visual saliency at det group level
 
 			# Note: this is tied to schema in SingleDetectableMetric class
 			detectableMetrics = {
@@ -77,9 +70,6 @@ module Metrics
 				vs: visualSaliency,
 				te: timingEffectiveness,
 				se: spatialEffectiveness,
-
-				vd: viewDuration,
-				vp: viewPersistence,
 
 				qd: intersectionQuadrants,
 			}

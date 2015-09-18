@@ -2,17 +2,18 @@
 	Multi-bar chart
 	------------------------------------------------*/
 
-function MultiBarChart(chartManager){
+function BeBarChart(chartManager){
   //------------------------------------------------
   // set up
   var chartHelpers = chartManager.chartHelpers;
 
   // div for chart
-  var bc_ComponentBarChart_div = '#component-bar-chart';
-  var divWidth = $(bc_ComponentBarChart_div).parent().width();
+  var be_BarChart_div = '#brand-effectiveness-bar-chart';
+  var divWidth = $(be_BarChart_div).parent().width();
 
-  var bcData = chartManager.getBEComponentData();
-  var bgIds = _.pluck(bcData[0].bgValues, 'bgId');
+  var beData = chartManager.getBeBarChartData();
+  var bgIds = _.pluck(beData, 'bgId');
+  var chartType = 'brand_effectiveness';
   //------------------------------------------------
 
 
@@ -24,17 +25,16 @@ function MultiBarChart(chartManager){
 
   // how far to the left of y-axis we want our labels to be
   var yAxisLabelAnchorX = -35;
-  var gapBetweenBarsInGroup = 0.9; // gap is 10% of bar width
+  var xAxisLabelAnchorY = 20;
   //------------------------------------------------
 
 
   //------------------------------------------------
   // define axis
-  var x0 = d3.scale.ordinal().rangeRoundBands([0, width], .1),
-      x1 = d3.scale.ordinal(),
+  var x = d3.scale.ordinal().rangeRoundBands([0, width], .1),
       y = d3.scale.linear().range([height, 0]);
 
-  var xAxis = d3.svg.axis().scale(x0).orient("bottom"),
+  var xAxis = d3.svg.axis().scale(x).orient("bottom").tickFormat(""),
       yAxis = d3.svg.axis()
           .scale(y)
           .tickFormat(function(d) {return d3.format(',%')(d); })
@@ -44,7 +44,7 @@ function MultiBarChart(chartManager){
 
   //------------------------------------------------
   // start drawing
-  var bcSVG = d3.select(bc_ComponentBarChart_div).append("svg")
+  beSVG = d3.select(be_BarChart_div).append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
     .append("g")
@@ -55,59 +55,57 @@ function MultiBarChart(chartManager){
 
   //------------------------------------------------
   // define domains
-  x0.domain(bcData.map(function(d) { return d.component; }));
-  x1.domain(bgIds).rangeRoundBands([0, x0.rangeBand()]);
-  y.domain([0, d3.max(bcData, function(d) { return d3.max(d.bgValues, function(d) { return d.value; }); })]);
+  x.domain(beData.map(function(d) { return d.bgId; }));
+  y.domain([0, d3.max(beData, function(d) { return d.value; })]);
   //------------------------------------------------
 
 
   //------------------------------------------------
   // draw bars
-  var componentSVG = bcSVG.selectAll(".componentSVG")
-      .data(bcData)
-    .enter().append("g")
-      .attr("class", "componentSVG")
-      .attr("transform", function(d) { return "translate(" + x0(d.component) + ",0)"; });
 
-  var componentBars = componentSVG.selectAll(".rect")
-      .data(function(d) { return d.bgValues; });
-
-  var componentRects = componentBars.enter().append("rect")
-      .attr("id", function(d){ return getRectId(d.component, d.bgId); })
+  var componentRects = beSVG.selectAll(".rect").data(beData)
+      .enter()
+    .append("rect")
+      .attr("id", function(d){ return getRectId(chartType, d.bgId); })
       .attr("class", "rect")
-      .attr("width", x1.rangeBand() * gapBetweenBarsInGroup)
-      .attr("x", function(d) { return x1(d.bgId); })
+      .attr("width", x.rangeBand())
+      .attr("x", function(d) { return x(d.bgId); })
       .attr("y", function(d) { return y(d.value); })
       .attr("height", function(d) { return height - y(d.value); })
       .style("fill", function(d) { return chartManager.getBrandGroupColor(d.bgId); })
-      .on("click", function(d) { handleClickOnBgBar(d.component, d.bgId); });
+      .on("click", function(d) { handleClickOnBgBar(d.bgId); });
       
   componentRects.append("svg:title")
       .text(function (d) { 
         return chartManager.getBrandGroupName(d.bgId) + ": " + d3.format(',%')(d.value); 
       });
 
-  function handleClickOnBgBar(chartType, bgId){
+  function handleClickOnBgBar(bgId){
     // need to coerce to string
     chartManager.handleClickOnBgBar(chartType, ['' + bgId]);
   };
-  function getRectId(chartType, bgId){
-    return chartType + '_' + bgId;
+  function getRectId(chartTypeArg, bgId){
+    return chartTypeArg + '_' + bgId;
   };
   //------------------------------------------------
 
 
   //------------------------------------------------
   // draw axes
-  bcSVG.append("g")
+  beSVG.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
       .call(xAxis)
-      .selectAll("text")
-      .text(function(k){ return chartHelpers.getChartLabel(k); })
-      .attr("class", "axis-label");
+      .selectAll(".tick").remove(); // remove all ticks
 
-  bcSVG.append("g")
+  beSVG.append("text")
+    .attr("class", "axis-label")
+    .attr("text-anchor", "middle")
+    .attr("x", width/2)
+    .attr("y", height + xAxisLabelAnchorY)
+    .text(chartHelpers.getChartLabel(chartType));
+
+  beSVG.append("g")
       .attr("class", "y axis")
       .call(yAxis)
     .append("text")
@@ -123,13 +121,12 @@ function MultiBarChart(chartManager){
 
   // repainting and loading new data
   function repaint(){
-    bcData = chartManager.getBEComponentData();
+    beData = chartManager.getBeBarChartData();
 
-    y.domain([0, d3.max(bcData, function(d) { return d3.max(d.bgValues, function(d) { return d.value; }); })]);
+    y.domain([0, d3.max(beData, function(d) { return d.value; })]);
 
-    componentSVG.data(bcData);
-    componentBars.data(function(d) { return d.bgValues; });
-    componentSVG.selectAll("rect")
+    beSVG.selectAll(".rect")
+        .data(beData)
       .transition()
         .duration(750)
         .attr("y", function(d) { return y(d.value); })
@@ -140,18 +137,22 @@ function MultiBarChart(chartManager){
           return chartManager.getBrandGroupName(d.bgId) + ": " + d3.format(',%')(d.value); 
         });
 
-    bcSVG.select(".y.axis").transition().duration(750).call(yAxis);
+    beSVG.select(".y.axis").transition().duration(750).call(yAxis);
   };
 
   function decorateComponentRect(chartTypeArg, bgIdsArg){
     // reset all rects
-    componentSVG
+    beSVG
         .selectAll(".rect")
         .classed("selected", false);
     //  add decoration
-    componentSVG
-        .selectAll("#" + getRectId(chartTypeArg, bgIdsArg[0]))
-        .classed("selected", true);
+    if(bgIdsArg.length == 1){
+      // since brand effectiveness is the default timeline chart,
+      // only select it when clicked
+      beSVG
+          .selectAll("#" + getRectId(chartTypeArg, bgIdsArg[0]))
+          .classed("selected", true);
+    }
   };
   //------------------------------------------------
 

@@ -46,15 +46,13 @@ function ChartManager(seasonInfo, seasonData){
     this.brushChart = new BrushChart(self);
     this.gameSelectionChart = new GameSelectionChart(self);
     this.multiBarChart = new MultiBarChart(self);
-    this.allDonutCharts = new AllDonutCharts(self);
+    this.beBarChart = new BeBarChart(self);
     this.heatmapChart = new HeatmapChart(self);
     this.tableChart = new TableChart(self);
     this.thumbnailChart = new ThumbnailChart(self);
     this.chartLegend = new ChartLegend(self);
     this.summaryPanelChart = new SummaryPanelChart(self);
 
-    // finalize inits
-    self.allDonutCharts.setDivHeight(self.heatmapChart.getOuterDivHeight());
     timeLogEnd("chartDrawing", "All chart drawing done");
   };
 
@@ -181,7 +179,16 @@ function ChartManager(seasonInfo, seasonData){
     return self.ndxManager.getBrushChartData(self.getTimelineChartBgIds()); 
   };
   this.getBEComponentData = function(){ return self.ndxManager.getBEComponentData(); };
-  this.getPCData = function(ndxDataAccessMethod){ return self.ndxManager[ndxDataAccessMethod](); };
+  this.getBeBarChartData = function(){ return self.ndxManager.getBeBarChartData(); };
+  this.getAverageViewPersistence = function(){
+    return self.ndxManager.getAverageViewPersistence(self.getTimelineChartBgIds());
+  };
+  this.getTotalViewDuration = function(){
+    return self.ndxManager.getTotalViewDuration(self.getTimelineChartBgIds());
+  };
+  this.getTvEquivalentDuration = function(){
+    return self.ndxManager.getTvEquivalentDuration(self.getTimelineChartBgIds());
+  };
   this.getHeatmapData = function(){ return self.ndxManager.getHeatmapData(); };
 
   // GameNDXManager

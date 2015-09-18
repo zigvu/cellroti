@@ -208,16 +208,8 @@ $chart-table-row-color-hover: #CBC6F7;
 		}
 	}
 
-	// multi bar chart
+	// multi bar chart and be bar chart
 	.bar-chart-svg {
-		.x.axis {
-			text {
-				text-transform: uppercase;
-				line-height: 80%;
-				font-size: rem-calc(12);
-			}
-		}
-
 		rect {
 			stroke: white;
 			stroke-width: 1px;

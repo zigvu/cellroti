@@ -17,6 +17,7 @@ function NDXManager(ndxData, chartManager){
   var quadMapping = chartHelpers.quadMapping;
 
   //------------------------------------------------
+  var viewPersitenceAccessor = 'view_persistence';
   var bcComponentAccessors = [
     'brand_group_crowding',
     'visual_saliency',
@@ -24,17 +25,18 @@ function NDXManager(ndxData, chartManager){
     'spatial_effectiveness'
   ];
 
-  var pcComponentAccessors = [
-    'detections_count',
-    'view_duration'
+  var summaryComponentAccessors = [
+    'view_duration',
+    'brand_effectiveness'
   ];
 
   var quadComponentAccessors = _.pluck(quadMapping, 'q');
 
   var compositeAccessors = _.union(
     bcComponentAccessors,
-    pcComponentAccessors,
-    quadComponentAccessors);
+    summaryComponentAccessors,
+    quadComponentAccessors
+  );
 
   // create cross filter
   this.ndx = crossfilter(ndxData);
@@ -54,7 +56,13 @@ function NDXManager(ndxData, chartManager){
     REDUCEAVG.MULTIPLE.reduceRemoveAvg(compositeAccessors), 
     REDUCEAVG.MULTIPLE.reduceInitAvg
   );
-  var bgFilterGroupAll; // structure to hold group all data
+  var viewPersistenceBgFilterGroup = bgFilterDim.group().reduce(
+    REDUCEAVG.NONZERO_SINGLE.reduceAddAvg(viewPersitenceAccessor), 
+    REDUCEAVG.NONZERO_SINGLE.reduceRemoveAvg(viewPersitenceAccessor), 
+    REDUCEAVG.NONZERO_SINGLE.reduceInitAvg
+  );
+  var bgFilterGroupAll; // structure to hold group all data for multiple accessors
+  var viewPersistenceBgFilterGroupAll; // structure to hold group all data for view persistence
   var beTop1K; // structure to hold top 1K highest brand effectiveness values
 
   // TODO: delete
@@ -88,6 +96,7 @@ function NDXManager(ndxData, chartManager){
     // filter to the right averager and update group data
     averagerDim.filterExact(bestAverager);
     bgFilterGroupAll = bgFilterGroup.all();
+    viewPersistenceBgFilterGroupAll = viewPersistenceBgFilterGroup.all();
     beTop1K = brandEffectivenessDim.top(1000);
 
     // return total number of filtered data points and averager used
@@ -96,13 +105,13 @@ function NDXManager(ndxData, chartManager){
   };
 
   // get filtered data
-  this.getTimelineChartData = function(timlineChartBgIds){
+  this.getTimelineChartData = function(bgIds){
     // format:
     // [{bgId: det_group_id, values: [{brand_group_data_keys} ,...]} ,... ]
     var values;
     return _.chain(bgFilterDim.top(Infinity))
-      .groupBy(function(d){ return d.det_group_id; })
-      .pick(timlineChartBgIds)
+      .groupBy(function(d){ return '' + d.det_group_id; })
+      .pick(bgIds)
       .map(function(coll, det_group_id, list){
         values = _.sortBy(coll, function(d){ return d.counter; });
         return { bgId: det_group_id, values: values };
@@ -112,12 +121,21 @@ function NDXManager(ndxData, chartManager){
   // for brush chart, we don't respect time bound filter, so once cached,
   // filter from this cached value and serve
   this.brushChartDataCache = undefined;
-  this.getBrushChartData = function(brushChartBgIds){
+  this.getBrushChartData = function(bgIds){
     if(self.brushChartDataCache === undefined){
-      self.brushChartDataCache = self.getTimelineChartData(brushChartBgIds);
+      self.brushChartDataCache = self.getTimelineChartData(bgIds);
     }
     return _.filter(self.brushChartDataCache, function(d){ 
-      return _.includes(brushChartBgIds, d.bgId); 
+      return _.contains(bgIds, '' + d.bgId); 
+    });
+  };
+
+  this.getBeBarChartData = function(){
+    return _.map(bgFilterGroupAll, function(d){
+      return {
+        bgId: d.key, 
+        value: d.value.sum.brand_effectiveness / d.value.count
+      };
     });
   };
 
@@ -139,28 +157,48 @@ function NDXManager(ndxData, chartManager){
     return beComponentData;
   };
 
-  this.getDetectionsCountData = function(){
-    return getPieChartData(pcComponentAccessors[0]);
+  this.getTvEquivalentDuration = function(bgIds){
+    var tvEquivalentDuration = 0;
+
+    var viewDuration = {};
+    _.each(bgFilterGroupAll, function(bfg, idx, list){
+      viewDuration[bfg.key] = bfg.value.sum[summaryComponentAccessors[0]];
+    });
+
+    _.each(self.getBeBarChartData(), function(be){
+      // if det group is not present, do not use it for averaging      
+      if(_.contains(bgIds, '' + be.bgId) && be.value > 0){
+        tvEquivalentDuration += be.value * viewDuration['' + be.bgId];
+      }
+    });
+
+    return tvEquivalentDuration;
   };
 
-  this.getViewDurationData = function(){
-    return getPieChartData(pcComponentAccessors[1]);
+  this.getAverageViewPersistence = function(bgIds){
+    var avgVPAcrossBgIds = 0, numOfConsideredBgIds = 0;
+    _.each(viewPersistenceBgFilterGroupAll, function(vpg, idx, list){
+      if(_.contains(bgIds, '' + vpg.key)){ 
+        if(vpg.value.count > 0){
+          avgVPAcrossBgIds += vpg.value.sum / vpg.value.count;
+          numOfConsideredBgIds += 1;
+        }
+      }
+    });
+
+    var averageViewPersitence = avgVPAcrossBgIds / numOfConsideredBgIds;
+    return averageViewPersitence;
   };
 
-  var getPieChartData = function(chartDataKey){
-    var allDC = _.map(bgFilterGroupAll, function(bfg){
-      return {bgId: bfg.key, count: bfg.value.count, sum: bfg.value.sum[chartDataKey]};
+  this.getTotalViewDuration = function(bgIds){
+    var totalViewDuration = 0;
+    _.each(bgFilterGroupAll, function(bfg, idx, list){
+      if(_.contains(bgIds, '' + bfg.key)){ 
+        totalViewDuration += bfg.value.sum[summaryComponentAccessors[0]];
+      }
     });
-    var totalSum = _.reduce(allDC, function(total, v){ return total + v.sum; }, 0);
-    allDC = _.map(allDC, function(v){ 
-      var percent = totalSum === 0 ? 0 : v.sum/totalSum;
-      return _.extend(v, {percent: percent}); 
-    });
-    // if all percent are zero, chart will disappear - so put in equal percents
-    if( _.filter(allDC, function(d){ return d.percent !== 0; }).length == 0 ){
-      _.each(allDC, function(d) { d.percent = 1.0/allDC.length; })
-    }
-    return allDC;
+
+    return totalViewDuration;
   };
 
   this.getHeatmapData = function(){
@@ -173,7 +211,8 @@ function NDXManager(ndxData, chartManager){
     _.each(bgFilterGroupAll, function(bfg){
       _.each(quadMapping, function(d){ 
         d.value += bfg.value.sum[d.q];
-        d.count += bfg.value.count;
+        // if det group is not present, do not use it for averaging
+        if(bfg.value.sum[d.q] > 0){ d.count += bfg.value.count; }
       });
     });
     // average using count
@@ -196,7 +235,7 @@ function NDXManager(ndxData, chartManager){
   this.getThumbnailData = function(bgIds){
     var thumbnailData = [];
     _.find(beTop1K, function(d, idx, list){
-      if(d.extracted_frame_number > 0 && _.includes(bgIds, '' + d.det_group_id)){ 
+      if(d.extracted_frame_number > 0 && _.contains(bgIds, '' + d.det_group_id)){ 
         thumbnailData.push({game_id: d.game_id, frame_id: d.extracted_frame_number});
       }
       return thumbnailData.length >= 4;

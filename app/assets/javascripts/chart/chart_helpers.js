@@ -33,11 +33,11 @@ function ChartHelpers(){
   this.getChartLabel = function(dataKey){ return self.chartLabels[dataKey]; };
 
   this.tableHeadLabels = [
-    {'game_id': 'Game'},                             // get name from id
-    {'det_group_id': 'Brand Group'},                 // get name from id
-    {'detections_count': 'Brand Count'},             // get name from id
-    {'view_duration': 'View Duration'},              // get name from id
-    {'brand_effectiveness': 'Brand Effectiveness'}   // get name from id
+    {'game_id': 'Game'},
+    {'det_group_id': 'Brand Group'},
+    {'view_persistence': 'View Persistence'},
+    {'view_duration': 'View Duration'},
+    {'brand_effectiveness': 'Brand Effectiveness'}
   ];
   this.tableKeys = _.flatten(_.map(self.tableHeadLabels, function(k){ return _.keys(k); }));
   this.tableColLabels = _.flatten(_.map(self.tableHeadLabels, function(k){ return _.values(k); }));

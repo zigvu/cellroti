@@ -12,10 +12,15 @@ function HeatmapChart(chartManager){
 
   var quadMapping = chartManager.getHeatmapData();
   
+  // need to skew heatmap red towards middle
   // python command: matplotlib.colors.rgb2hex(pylab.cm.jet(0.1))
+  // var heatmapColors = [
+  //   '#000080', '#0000f1', '#004dff', '#00b1ff', '#29ffce',
+  //   '#7dff7a', '#ceff29', '#ffc400', '#ff6800', '#f10800'
+  // ];
   var heatmapColors = [
-    '#000080', '#0000f1', '#004dff', '#00b1ff', '#29ffce',
-    '#7dff7a', '#ceff29', '#ffc400', '#ff6800', '#f10800'
+    '#000080', '#00b1ff', '#ceff29', '#ffc400','#ff6800',
+    '#ff6e6e', '#ff3e3e', '#ff0000', '#c60000', '#9c0000'
   ];
   var heatmapColorsDomain = $.map(heatmapColors, function(val, i){
     return Math.round(10 * i / (heatmapColors.length))/10;
@@ -28,7 +33,7 @@ function HeatmapChart(chartManager){
   // set gemoetry
   var margin = { top: 0, right: 50, bottom: 0, left: 0 },
       width = divWidth - margin.left - margin.right,
-      height = 200 - margin.top - margin.bottom,
+      height = 250 - margin.top - margin.bottom,
       gridWidth = Math.floor(width / 3),
       gridHeight = Math.floor(height / 3);
 
@@ -143,14 +148,14 @@ function HeatmapChart(chartManager){
 
   //------------------------------------------------
   // callbacks
-  function decorateQuadrant(chartType, bgIds){
+  function decorateQuadrant(chartTypeArg, bgIdsArg){
     // reset all quads
     quadrantSVG
         .selectAll(".quadrant")
         .classed("selected", false);
     //  add decoration
     quadrantSVG
-        .selectAll("#" + chartType)
+        .selectAll("#" + chartTypeArg)
         .classed("selected", true);
   };
   //------------------------------------------------

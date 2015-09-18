@@ -8,8 +8,9 @@ class SingleDetectableMetric
 	field :te, as: :timing_effectiveness, type: Float
 	field :se, as: :spatial_effectiveness, type: Float
 
-	field :vd, as: :view_duration, type: Float
-	field :vp, as: :view_persistence, type: Float
+	# calculated at det group level from visual saliency
+	# field :vd, as: :view_duration, type: Float
+	# field :vp, as: :view_persistence, type: Float
 
 	field :qd, as: :quadrants, type: Hash
 

@@ -48,6 +48,11 @@ function MultiLineHelper(chartManager){
     chartManager.resetTimelineChart();
   });
 
+  var resetBrandEffectivenessChartId = '#reset-brand-effectiveness-bar-chart';
+  $(resetBrandEffectivenessChartId).click(function(){
+    chartManager.resetTimelineChart();
+  });
+
   var resetSpatialPositionChartId = '#reset-spatial-position-chart';
   $(resetSpatialPositionChartId).click(function(){
     chartManager.resetTimelineChart();

@@ -37,8 +37,8 @@ module Metrics
 			@data[:timing_effectiveness] = sdgm.timing_effectiveness if sdgm.timing_effectiveness > @data[:timing_effectiveness]
 			@data[:spatial_effectiveness] = sdgm.spatial_effectiveness if sdgm.spatial_effectiveness > @data[:spatial_effectiveness]
 
-			@data[:view_duration] += sdgm.view_duration        #  --> raw count, not max
-			@data[:view_persistence] += sdgm.view_persistence  #  --> raw count, not max
+			@data[:view_duration] += sdgm.view_duration        #  --> raw addition, not max
+			@data[:view_persistence] = sdgm.view_persistence if sdgm.view_persistence > @data[:view_persistence]
 
 			if @frameCounter == 0
 				@data[:quadrants] = {}

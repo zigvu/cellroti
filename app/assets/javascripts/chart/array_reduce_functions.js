@@ -71,5 +71,36 @@ var REDUCEAVG = REDUCEAVG || {
 		reduceInitAvg: function() {
 			return { count:0, sum:0 };
 		}
+	},
+	NONZERO_SINGLE: {
+		//------------------------------------------------
+		/* Add average */
+		reduceAddAvg: function(attr) {
+			return function(p,v) {
+				if(v[attr] > 0){
+					++p.count;
+					p.sum += v[attr];
+				}
+
+				return p;
+			};
+		},
+		//------------------------------------------------
+		/* Remove average */
+		reduceRemoveAvg: function(attr) {
+			return function(p,v) {
+				if(v[attr] > 0){
+					--p.count;
+					p.sum -= v[attr];
+				}
+
+				return p;
+			};
+		},
+		//------------------------------------------------
+		/* Init */
+		reduceInitAvg: function() {
+			return { count:0, sum:0 };
+		}
 	}
 };

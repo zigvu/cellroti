@@ -150,14 +150,19 @@
 
 
 <div class="row">
-  <!-- BEGIN: Brand Count pie chart whole -->
-  <div class="small-12 medium-6 large-3 columns">
+  <!-- BEGIN: Brand Effectiveness chart whole -->
+  <div class="small-12 medium-5 columns">
     <div class="chart-panel">
       <div class="chart-title clearfix">
-        <div class="text left">Detection Count</div>
+        <div class="text left">Brand Effectiveness</div>
         <div class="help right">
           <ul class="button-group radius">
-            <li data-reveal-id="brand-count-pie-chart-info-reveal" id="brand-count-pie-chart-info">
+            <li>
+              <span id="reset-brand-effectiveness-bar-chart" class="button title-button" title="Reset Chart">
+                <i class="fi-refresh"></i>
+              </span>
+            </li>
+            <li data-reveal-id="brand-effectiveness-bar-chart-info-reveal" id="brand-effectiveness-bar-chart-info">
               <span class="button title-button" title="Help!">
                 <i class="fi-info"></i>
               </span>
@@ -166,36 +171,14 @@
         </div>
       </div>
       <div class="chart-content">
-        <div id="brand-count-pie-chart"></div>
+        <div id="brand-effectiveness-bar-chart"></div>
       </div>
     </div>
   </div>
   <!-- END: Brand Count pie chart whole -->
 
-  <!-- BEGIN: View Duration pie chart whole -->
-  <div class="small-12 medium-6 large-3 large-push-6 columns">
-    <div class="chart-panel">
-      <div class="chart-title clearfix">
-        <div class="text left">View Duration</div>
-        <div class="help right">
-          <ul class="button-group radius">
-            <li data-reveal-id="view-duration-pie-chart-info-reveal" id="view-duration-pie-chart-info">
-              <span class="button title-button" title="Help!">
-                <i class="fi-info"></i>
-              </span>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div class="chart-content">
-        <div id="view-duration-pie-chart"></div>
-      </div>
-    </div>
-  </div>
-  <!-- END: View Duration pie chart whole -->
-
   <!-- BEGIN: Spatial position chart whole -->
-  <div class="small-12 medium-12 large-6 large-pull-3 columns">
+  <div class="small-12 medium-7 columns">
     <div class="chart-panel">
       <div class="chart-title clearfix">
         <div class="text left">Spatial Position</div>
@@ -309,10 +292,7 @@
   <div id="component-bar-chart-info-reveal" class="reveal-modal large" data-reveal>
     <%= render 'summary_info_timeline_chart' %>
   </div>
-  <div id="brand-count-pie-chart-info-reveal" class="reveal-modal large" data-reveal>
-    <%= render 'summary_info_timeline_chart' %>
-  </div>
-  <div id="view-duration-pie-chart-info-reveal" class="reveal-modal large" data-reveal>
+  <div id="brand-effectiveness-bar-chart-info-reveal" class="reveal-modal large" data-reveal>
     <%= render 'summary_info_timeline_chart' %>
   </div>
   <div id="spatial-position-chart-info-reveal" class="reveal-modal large" data-reveal>

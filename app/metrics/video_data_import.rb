@@ -52,10 +52,17 @@ module Metrics
 
 			# if data for this video already exists, purge all old data
 			@video.video_detections.each do |vd|
+				# the callback below is too slow and causes memory leak in mongoid
+				# so delete frame detection directly
+				FrameDetection.where(video_detection_id: vd.id).delete_all
+				# this will cascade and delete related data as well
 				vd.destroy
-				# this will cascade and delete frame data as well
 			end
 			@video.summary_metrics.each do |sm|
+				# the callback below is too slow and causes memory leak in mongoid
+				# so delete single summary metric directly
+				SingleSummaryMetric.where(summary_metric_id: sm.id).delete_all
+				# this will cascade and delete related data as well
 				sm.destroy
 			end
 

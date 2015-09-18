@@ -89,8 +89,6 @@ function DataParser(seasonInfo, seasonData, chartManager){
       var coercedD;
       _.each(gDataBG.data, function(arr){
         coercedD = chartHelpers.coercer(dataKeys, arr);
-        // TODO: remove
-        coercedD.detections_count = 1
         coercedD.counter += lastGameEndCount;
         self.ndxData.push(coercedD);
       });
