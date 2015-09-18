@@ -32,16 +32,6 @@ function ChartHelpers(){
   });
   this.getChartLabel = function(dataKey){ return self.chartLabels[dataKey]; };
 
-  this.tableHeadLabels = [
-    {'game_id': 'Game'},
-    {'det_group_id': 'Brand Group'},
-    {'view_persistence': 'View Persistence'},
-    {'view_duration': 'View Duration'},
-    {'brand_effectiveness': 'Brand Effectiveness'}
-  ];
-  this.tableKeys = _.flatten(_.map(self.tableHeadLabels, function(k){ return _.keys(k); }));
-  this.tableColLabels = _.flatten(_.map(self.tableHeadLabels, function(k){ return _.values(k); }));
-
 
   // thumbnail viewer ids for modal
   this.thumbnailModalIds = [

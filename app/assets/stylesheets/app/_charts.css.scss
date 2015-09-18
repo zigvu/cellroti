@@ -17,8 +17,6 @@ $chart-range-bg-bar-opacity: 0.5;
 $chart-game-selection-bar-opacity: $chart-series-bg-bar-opacity;
 $chart-game-selection-bar-opacity-hover: 0.5;
 
-$chart-table-row-color-hover: #CBC6F7;
-
 .d3-chart {
 	// common elements
 	.axis-label {
@@ -286,12 +284,6 @@ $chart-table-row-color-hover: #CBC6F7;
 		}		
 	}
 
-	// table chart
-	.table-chart{
-		tbody {
-			tr:hover { background: $chart-table-row-color-hover; } 
-		}
-	}
 
 	// thumbnail chart
 	// note : thumbnail-image-reveal : needs to exist in body name space

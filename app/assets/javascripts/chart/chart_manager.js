@@ -7,7 +7,6 @@ function ChartManager(seasonInfo, seasonData){
 
   // variables for different charts
   this.numOfDataPtsPerBGInSeriesChart = 1000;
-  this.numRowsInTableChart = 10;
   this.numOfGamesInSubSeasonChart = 2;
 
   // access to internal variables
@@ -48,7 +47,6 @@ function ChartManager(seasonInfo, seasonData){
     this.multiBarChart = new MultiBarChart(self);
     this.beBarChart = new BeBarChart(self);
     this.heatmapChart = new HeatmapChart(self);
-    this.tableChart = new TableChart(self);
     this.thumbnailChart = new ThumbnailChart(self);
     this.chartLegend = new ChartLegend(self);
     this.summaryPanelChart = new SummaryPanelChart(self);
@@ -217,9 +215,6 @@ function ChartManager(seasonInfo, seasonData){
   this.getSubSeasonData = function(){ return self.seasonDataManager.getSubSeasonData(); };
   this.getSubSeasonColor = function(subSeasonId){
     return self.seasonDataManager.getSubSeasonColor(subSeasonId);
-  };
-  this.getTableData = function(){ 
-    return self.seasonDataManager.formatTableChartData(self.ndxManager.getTableData());
   };
   this.getThumbnailData = function(){
     var bgIds = self.getTimelineChartBgIds();

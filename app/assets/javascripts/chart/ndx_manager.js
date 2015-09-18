@@ -10,7 +10,6 @@ function NDXManager(ndxData, chartManager){
   var chartHelpers = chartManager.chartHelpers;
 
   var maxDataPoints = chartManager.numOfDataPtsPerBGInSeriesChart;
-  var numRowsInTableChart = chartManager.numRowsInTableChart;
   var bCounter, eCounter;
 
   //------------------------------------------------
@@ -45,7 +44,7 @@ function NDXManager(ndxData, chartManager){
   var averagerDim = self.ndx.dimension(function (d) { return d.averager; });
   var averagerGroup = averagerDim.group();
 
-  // needed for table
+  // needed for thumbnails
   var brandEffectivenessDim = self.ndx.dimension(function (d) { return d.brand_effectiveness; });
 
   // needed for rest of the charts
@@ -220,16 +219,6 @@ function NDXManager(ndxData, chartManager){
       d.value = d.count === 0 ? 0 : d.value/d.count;
     });
     return quadMapping;
-  };
-
-  // we need array of array numbers in format as specified in tableKeys
-  this.getTableData = function(){
-    var tableData = [];
-    _.find(beTop1K, function(d, idx, list){
-      tableData.push(_.map(chartHelpers.tableKeys, function(tk){ return d[tk]; }));
-      return idx >= (numRowsInTableChart - 1);
-    });
-    return tableData;
   };
 
   this.getThumbnailData = function(bgIds){

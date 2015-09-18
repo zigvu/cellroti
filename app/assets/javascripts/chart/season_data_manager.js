@@ -194,29 +194,6 @@ function SeasonDataManager(dataParser, chartManager){
 
 
   //------------------------------------------------
-  // table chart data
-  this.formatTableChartData = function(tcData){
-    var that = this;
-    var tableData = _.map(tcData, function(tr){
-      // note: this maps to chartHelpers.tableHeadLabels array
-      return [
-        chartHelpers.ellipsis(that.getGameName(tr[0]), 20, 1),
-        chartHelpers.ellipsis(that.getBrandGroupName(tr[1]), 20, 1),
-        tr[2],
-        tr[3],
-        d3.format(',%')(tr[4])
-      ];
-    });
-    // fill in empty spaces if not enough data
-    _.times(chartManager.numRowsInTableChart - tableData.length, function(i){
-      tableData.push(_.map(chartHelpers.tableKeys, function(k){ return ""; }));
-    });
-    return tableData;
-  };
-  //------------------------------------------------
-
-
-  //------------------------------------------------
   // time calculations
   this.getBrushedFrameTime = function(beginCounter, endCounter){
     //  brushed games also includes time information
