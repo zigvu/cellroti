@@ -16,24 +16,25 @@ function NDXManager(ndxData, chartManager){
   var quadMapping = chartHelpers.quadMapping;
 
   //------------------------------------------------
-  var viewPersitenceAccessor = 'view_persistence';
   var bcComponentAccessors = [
     'brand_group_crowding',
     'visual_saliency',
     'timing_effectiveness',
     'spatial_effectiveness'
   ];
-
-  var summaryComponentAccessors = [
-    'view_duration',
-    'brand_effectiveness'
-  ];
+  var brandEffectivenessAccessor = 'brand_effectiveness';
+  var viewDurationAccessor = 'view_duration';
+  var viewPersitenceAccessor = 'view_persistence';
 
   var quadComponentAccessors = _.pluck(quadMapping, 'q');
 
-  var compositeAccessors = _.union(
+  var compositeAccessorsIncZero = _.union(
     bcComponentAccessors,
-    summaryComponentAccessors,
+    [brandEffectivenessAccessor],
+    [viewDurationAccessor]
+  );
+
+  var compositeAccessorsExcZero = _.union(
     quadComponentAccessors
   );
 
@@ -50,24 +51,38 @@ function NDXManager(ndxData, chartManager){
   // needed for rest of the charts
   var counterDim = self.ndx.dimension(function (d) { return d.counter; });
   var bgFilterDim = self.ndx.dimension(function (d) { return d.det_group_id; });
-  var bgFilterGroup = bgFilterDim.group().reduce(
-    REDUCEAVG.MULTIPLE.reduceAddAvg(compositeAccessors), 
-    REDUCEAVG.MULTIPLE.reduceRemoveAvg(compositeAccessors), 
+
+  // brand filter group to include zero values during averaging
+  var bgFGincZero = bgFilterDim.group().reduce(
+    REDUCEAVG.MULTIPLE.reduceAddAvg(compositeAccessorsIncZero), 
+    REDUCEAVG.MULTIPLE.reduceRemoveAvg(compositeAccessorsIncZero), 
     REDUCEAVG.MULTIPLE.reduceInitAvg
   );
+
+  // brand filter group to exclude zero values during averaging
+  var bgFGexcZero = bgFilterDim.group().reduce(
+    REDUCEAVG.NONZERO_MULTIPLE.reduceAddAvg(compositeAccessorsExcZero, brandEffectivenessAccessor), 
+    REDUCEAVG.NONZERO_MULTIPLE.reduceRemoveAvg(compositeAccessorsExcZero, brandEffectivenessAccessor), 
+    REDUCEAVG.NONZERO_MULTIPLE.reduceInitAvg
+  );
+
+  // brand filter group for view persistence - excludes zero values during averaging
   var viewPersistenceBgFilterGroup = bgFilterDim.group().reduce(
-    REDUCEAVG.NONZERO_SINGLE.reduceAddAvg(viewPersitenceAccessor), 
-    REDUCEAVG.NONZERO_SINGLE.reduceRemoveAvg(viewPersitenceAccessor), 
+    REDUCEAVG.NONZERO_SINGLE.reduceAddAvg(viewPersitenceAccessor, viewPersitenceAccessor), 
+    REDUCEAVG.NONZERO_SINGLE.reduceRemoveAvg(viewPersitenceAccessor, viewPersitenceAccessor), 
     REDUCEAVG.NONZERO_SINGLE.reduceInitAvg
   );
-  var bgFilterGroupAll; // structure to hold group all data for multiple accessors
-  var viewPersistenceBgFilterGroupAll; // structure to hold group all data for view persistence
+
+  var bgFGincZeroAll; // structure to hold grouped data - multiple
+  var bgFGexcZeroAll; // structure to hold grouped data - multiple
+  var viewPersistenceBgFilterGroupAll; // structure to hold grouped data - view persistence
   var beTop1K; // structure to hold top 1K highest brand effectiveness values
 
   // TODO: delete
   this.avd = averagerDim
   this.avg = averagerGroup
-  this.bfga = bgFilterGroup;
+  this.bfgi = bgFGincZero;
+  this.bfge = bgFGexcZero;
 
   // get currently set counters
   this.getBeginCounter = function(){ return bCounter; };
@@ -94,7 +109,8 @@ function NDXManager(ndxData, chartManager){
 
     // filter to the right averager and update group data
     averagerDim.filterExact(bestAverager);
-    bgFilterGroupAll = bgFilterGroup.all();
+    bgFGincZeroAll = bgFGincZero.all();
+    bgFGexcZeroAll = bgFGexcZero.all();
     viewPersistenceBgFilterGroupAll = viewPersistenceBgFilterGroup.all();
     beTop1K = brandEffectivenessDim.top(1000);
 
@@ -130,7 +146,7 @@ function NDXManager(ndxData, chartManager){
   };
 
   this.getBeBarChartData = function(){
-    return _.map(bgFilterGroupAll, function(d){
+    return _.map(bgFGincZeroAll, function(d){
       return {
         bgId: d.key, 
         value: d.value.sum.brand_effectiveness / d.value.count
@@ -139,7 +155,7 @@ function NDXManager(ndxData, chartManager){
   };
 
   this.getBEComponentData = function(){
-    var beComponentData = _.map(bgFilterGroupAll, function(d){
+    var beComponentData = _.map(bgFGincZeroAll, function(d){
       return _.map(d.value.sum, function(sum, component){
         if (_.contains(bcComponentAccessors, component)){
           return {bgId: d.key, component: component, value: sum/d.value.count};
@@ -160,8 +176,8 @@ function NDXManager(ndxData, chartManager){
     var tvEquivalentDuration = 0;
 
     var viewDuration = {};
-    _.each(bgFilterGroupAll, function(bfg, idx, list){
-      viewDuration[bfg.key] = bfg.value.sum[summaryComponentAccessors[0]];
+    _.each(bgFGincZeroAll, function(d, idx, list){
+      viewDuration[d.key] = d.value.sum[viewDurationAccessor];
     });
 
     _.each(self.getBeBarChartData(), function(be){
@@ -176,10 +192,10 @@ function NDXManager(ndxData, chartManager){
 
   this.getAverageViewPersistence = function(bgIds){
     var avgVPAcrossBgIds = 0, numOfConsideredBgIds = 0;
-    _.each(viewPersistenceBgFilterGroupAll, function(vpg, idx, list){
-      if(_.contains(bgIds, '' + vpg.key)){ 
-        if(vpg.value.count > 0){
-          avgVPAcrossBgIds += vpg.value.sum / vpg.value.count;
+    _.each(viewPersistenceBgFilterGroupAll, function(d, idx, list){
+      if(_.contains(bgIds, '' + d.key)){ 
+        if(d.value.count > 0){
+          avgVPAcrossBgIds += d.value.sum / d.value.count;
           numOfConsideredBgIds += 1;
         }
       }
@@ -191,9 +207,9 @@ function NDXManager(ndxData, chartManager){
 
   this.getTotalViewDuration = function(bgIds){
     var totalViewDuration = 0;
-    _.each(bgFilterGroupAll, function(bfg, idx, list){
-      if(_.contains(bgIds, '' + bfg.key)){ 
-        totalViewDuration += bfg.value.sum[summaryComponentAccessors[0]];
+    _.each(bgFGincZeroAll, function(d, idx, list){
+      if(_.contains(bgIds, '' + d.key)){ 
+        totalViewDuration += d.value.sum[viewDurationAccessor];
       }
     });
 
@@ -202,21 +218,21 @@ function NDXManager(ndxData, chartManager){
 
   this.getHeatmapData = function(){
     // reset quadmapping
-    _.each(quadMapping, function(d){ 
-      d.value = 0;
-      d.count = 0;
+    _.each(quadMapping, function(qm){ 
+      qm.value = 0;
+      qm.count = 0;
     });
     // add q values for all bgIds
-    _.each(bgFilterGroupAll, function(bfg){
-      _.each(quadMapping, function(d){ 
-        d.value += bfg.value.sum[d.q];
+    _.each(bgFGexcZeroAll, function(d){
+      _.each(quadMapping, function(qm){ 
+        qm.value += d.value.sum[qm.q];
         // if det group is not present, do not use it for averaging
-        if(bfg.value.sum[d.q] > 0){ d.count += bfg.value.count; }
+        if(d.value.sum[qm.q] > 0){ qm.count += d.value.count; }
       });
     });
     // average using count
-    _.each(quadMapping, function(d){ 
-      d.value = d.count === 0 ? 0 : d.value/d.count;
+    _.each(quadMapping, function(qm){ 
+      qm.value = qm.count === 0 ? 0 : qm.value/qm.count;
     });
     return quadMapping;
   };

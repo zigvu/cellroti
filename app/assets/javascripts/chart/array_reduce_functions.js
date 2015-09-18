@@ -15,7 +15,8 @@ var REDUCEAVG = REDUCEAVG || {
 		reduceAddAvg: function(attrArr) {
 			return function(p,v) {
 				// initialize
-				if(p.count === 0){ 
+				if(p.count === undefined){ 
+					p.count = 0;
 					for(var i = 0; i < attrArr.length; i++){
 						p.sum[attrArr[i]] = 0;
 					}
@@ -42,7 +43,7 @@ var REDUCEAVG = REDUCEAVG || {
 		//------------------------------------------------
 		/* Init */
 		reduceInitAvg: function() {
-			return { count:0, sum:{} };
+			return { count: undefined, sum:{} };
 		}
 	},
 	SINGLE: {
@@ -73,13 +74,14 @@ var REDUCEAVG = REDUCEAVG || {
 		}
 	},
 	NONZERO_SINGLE: {
+		// Operate ONLY if testAttr is non-zero
 		//------------------------------------------------
 		/* Add average */
-		reduceAddAvg: function(attr) {
+		reduceAddAvg: function(avgAttr, testAttr) {
 			return function(p,v) {
-				if(v[attr] > 0){
+				if(v[testAttr] > 0){
 					++p.count;
-					p.sum += v[attr];
+					p.sum += v[avgAttr];
 				}
 
 				return p;
@@ -87,11 +89,11 @@ var REDUCEAVG = REDUCEAVG || {
 		},
 		//------------------------------------------------
 		/* Remove average */
-		reduceRemoveAvg: function(attr) {
+		reduceRemoveAvg: function(avgAttr, testAttr) {
 			return function(p,v) {
-				if(v[attr] > 0){
+				if(v[testAttr] > 0){
 					--p.count;
-					p.sum -= v[attr];
+					p.sum -= v[avgAttr];
 				}
 
 				return p;
@@ -101,6 +103,48 @@ var REDUCEAVG = REDUCEAVG || {
 		/* Init */
 		reduceInitAvg: function() {
 			return { count:0, sum:0 };
+		}
+	},
+	NONZERO_MULTIPLE: {
+		// Operate ONLY if testAttr is non-zero
+		//------------------------------------------------
+		/* Add average */
+		reduceAddAvg: function(avgAttrArr, testAttr) {
+			return function(p,v) {
+				// initialize
+				if(p.count === undefined){ 
+					p.count = 0;
+					for(var i = 0; i < avgAttrArr.length; i++){
+						p.sum[avgAttrArr[i]] = 0;
+					}
+				}
+				
+				if(v[testAttr] > 0){
+					p.count += 1;
+					for(var i = 0; i < avgAttrArr.length; i++){
+						p.sum[avgAttrArr[i]] += v[avgAttrArr[i]];
+					}
+				}
+				return p;
+			};
+		},
+		//------------------------------------------------
+		/* Remove average */
+		reduceRemoveAvg: function(avgAttrArr, testAttr) {
+			return function(p,v) {
+				if(v[testAttr] > 0){
+					p.count -= 1;
+					for(var i = 0; i < avgAttrArr.length; i++){
+						p.sum[avgAttrArr[i]] -= v[avgAttrArr[i]];
+					}
+				}
+				return p;
+			};
+		},
+		//------------------------------------------------
+		/* Init */
+		reduceInitAvg: function() {
+			return { count: undefined, sum:{} };
 		}
 	}
 };
