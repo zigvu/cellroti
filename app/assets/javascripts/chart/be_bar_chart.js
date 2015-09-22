@@ -173,7 +173,7 @@ function BeBarChart(chartManager){
         .attr("mask", function(d) {
           if(chartType == chartTypeArg && bgIdsArg.length == 1 && d.bgId == bgIdsArg[0]){ 
             return 'url(#mask)';
-          } else { return ""; }
+          } else { return null; }
         });
   };
   //------------------------------------------------

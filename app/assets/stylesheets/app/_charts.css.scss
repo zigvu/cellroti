@@ -57,6 +57,13 @@ $chart-game-selection-bar-opacity-hover: 0.5;
 		stroke-linejoin: miter;
 		stroke-width: 13px;
 	}
+	#pattern-mask line {
+		fill: white;
+		stroke: white;
+		stroke-linecap: square;
+		stroke-linejoin: miter;
+		stroke-width: 2px;
+	}
 
 	// multi-series chart
 	.multi-line-chart {

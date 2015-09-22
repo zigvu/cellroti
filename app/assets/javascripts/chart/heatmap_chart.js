@@ -58,7 +58,7 @@ function HeatmapChart(chartManager){
   var defs = svg.append('defs');
 
   var pattern = defs.append("pattern")
-      .attr("id", "pattern")
+      .attr("id", "pattern-mask")
       .attr("width", 40)
       .attr("height", 20)
       .attr("x", 0).attr("y", 0)
@@ -68,16 +68,9 @@ function HeatmapChart(chartManager){
   pattern.append("line").attr("x1", -10).attr("y1", 0).attr("x2", 10).attr("y2", 20);
   pattern.append("line").attr("x1", 30).attr("y1", 0).attr("x2", 50).attr("y2", 20);
 
-  var mask = defs.append("mask")
-      .attr("id","mask")
-      .attr("x", 0)
-      .attr("y", 0)
-      .attr("width", width)
-      .attr("height", height)
-    .append("rect")
-      .attr("width", width)
-      .attr("height", height)
-      .attr("style", 'fill:url(#pattern);');
+  // we define mask as a rectangle with pattern overlaid on top of quadrant
+  // since creating mask for the whole SVG created cropped overlays for the
+  // bottom layer quadrants
   //------------------------------------------------
 
 
@@ -99,7 +92,11 @@ function HeatmapChart(chartManager){
       .on("click", function(d) { handleClickOnQuadrant(d.q); });
 
   heatmap.append("title")
-    .text(function(d) { return "Quadrant: " + d.name + "\nValue: " + d3.format(',%')(d.value); });
+    .text(function(d) { return getQuadrantTitle(d); });
+
+  function getQuadrantTitle(d){
+    return "Quadrant: " + d.name + "\nValue: " + d3.format(',%')(d.value);
+  };
 
   heatmap
     .transition()
@@ -110,6 +107,15 @@ function HeatmapChart(chartManager){
     chartManager.handleClickOnQuadrant(chartType);
   };
 
+  // mask for selected quadrant
+  var quadrantMask = heatmapSVG.append("rect")
+      .attr("class", "quadrant-mask")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("width", gridWidth - 2)
+      .attr("height", gridHeight - 2)
+      .style("display", "none");
+  var quadrantMaskTitle = quadrantMask.append("title").text("");
 
   // legends
   var legendSVG = heatmapSVG
@@ -177,10 +183,22 @@ function HeatmapChart(chartManager){
   //------------------------------------------------
   // callbacks
   function decorateQuadrant(chartTypeArg, bgIdsArg){
+    // remove existing overlay
+    quadrantMask.attr("x", 0).attr("y", 0).style("display", "none");
+    quadrantMaskTitle.text("");
+
+    // cycle through each quadrant - use dummy attr for now
     heatmap.attr("mask", function(d) {
       if(d.q == chartTypeArg){ 
-        return 'url(#mask)';
-      } else { return ""; }
+        quadrantMask
+            .attr("x", d.col * gridWidth + 1)
+            .attr("y", d.row * gridHeight + 1)
+            .attr("style", 'fill:url(#pattern-mask);');
+
+        quadrantMaskTitle.text(getQuadrantTitle(d));
+      }
+
+      return null;
     });
   };
   //------------------------------------------------

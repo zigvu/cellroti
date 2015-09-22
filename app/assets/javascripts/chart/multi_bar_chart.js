@@ -177,7 +177,7 @@ function MultiBarChart(chartManager){
         .attr("mask", function(d) {
           if(d.component == chartTypeArg && d.bgId == bgIdsArg[0]){ 
             return 'url(#mask)';
-          } else { return ""; }
+          } else { return null; }
         });
   };
   //------------------------------------------------
