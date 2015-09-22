@@ -27,7 +27,7 @@ module Managers
 		end
 
 		def get_localization_file
-			"#{get_localization_folder}/localization.json"
+			"#{get_localization_folder}/localizations.json"
 		end
 
 		def delete_localization_folder

@@ -49,6 +49,15 @@ $chart-game-selection-bar-opacity-hover: 0.5;
 		stroke-width: 1.5px;
 	}
 
+	// pattern for selected
+	#pattern line {
+		fill: white;
+		stroke: white;
+		stroke-linecap: square;
+		stroke-linejoin: miter;
+		stroke-width: 13px;
+	}
+
 	// multi-series chart
 	.multi-line-chart {
 		path {
@@ -208,7 +217,7 @@ $chart-game-selection-bar-opacity-hover: 0.5;
 
 	// multi bar chart and be bar chart
 	.bar-chart-svg {
-		rect {
+		.component-rects {
 			stroke: white;
 			stroke-width: 1px;
 			shape-rendering: crispedges;
@@ -219,12 +228,8 @@ $chart-game-selection-bar-opacity-hover: 0.5;
 			transition: all 0.3s;
 		}
 
-		rect:hover {
+		.component-rects:hover {
 			stroke: black;
-		}
-
-		rect.selected {
-			stroke: red;
 		}
 	}
 

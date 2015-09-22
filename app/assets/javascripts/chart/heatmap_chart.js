@@ -46,28 +46,55 @@ function HeatmapChart(chartManager){
 
   //------------------------------------------------
   // start drawing
-  var heatmapSVG = d3.select(heatmap_div).append("svg")
+  var svg = d3.select(heatmap_div).append("svg")
       .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
-    .append("g")
+      .attr("height", height + margin.top + margin.bottom);
+
+  var heatmapSVG = svg.append("g")
       .attr("class", "heatmap-chart")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  // quadrants
-  var quadrantSVG = heatmapSVG
-    .append("g")
-      .attr("class", "quadrant-svg");
+  // pattern for marking selected boxes
+  var defs = svg.append('defs');
 
-  var heatmap = quadrantSVG.selectAll(".quadrant")
-      .data(quadMapping, function(d){ return d.q; })
-    .enter().append("rect")
+  var pattern = defs.append("pattern")
+      .attr("id", "pattern")
+      .attr("width", 40)
+      .attr("height", 20)
+      .attr("x", 0).attr("y", 0)
+      .attr("patternUnits","userSpaceOnUse");
+
+  pattern.append("line").attr("x1", 10).attr("y1", 0).attr("x2", 30).attr("y2", 20);
+  pattern.append("line").attr("x1", -10).attr("y1", 0).attr("x2", 10).attr("y2", 20);
+  pattern.append("line").attr("x1", 30).attr("y1", 0).attr("x2", 50).attr("y2", 20);
+
+  var mask = defs.append("mask")
+      .attr("id","mask")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("width", width)
+      .attr("height", height)
+    .append("rect")
+      .attr("width", width)
+      .attr("height", height)
+      .attr("style", 'fill:url(#pattern);');
+  //------------------------------------------------
+
+
+  //------------------------------------------------
+  // quadrants
+  var quadrantSVG = heatmapSVG.append("g")
+      .attr("class", "quadrant-svg")
+      .selectAll(".quadrant")
+      .data(quadMapping, function(d){ return d.q; });
+
+  var heatmap = quadrantSVG.enter().append("rect")
       .attr("id", function(d){ return d.q; })
       .attr("class", "quadrant")
       .attr("x", function(d) { return d.col * gridWidth + 1; })
       .attr("y", function(d) { return d.row * gridHeight + 1; })
       .attr("width", gridWidth - 2)
       .attr("height", gridHeight - 2)
-      // .attr("rx", 5).attr("ry", 5)
       .style("fill", "blue")
       .on("click", function(d) { handleClickOnQuadrant(d.q); });
 
@@ -120,13 +147,14 @@ function HeatmapChart(chartManager){
       .attr("x", legendStartX + legendWidth + 2)
       .attr("y", legendTotalHeight - legendHeight * heatmapColors.length + 10);
   //------------------------------------------------
-  
+
+
   //------------------------------------------------
   // repainting and loading new data
   function repaint(){
     quadMapping = chartManager.getHeatmapData();
 
-    heatmap.data(quadMapping, function(d){ return d.q; });
+    quadrantSVG.data(quadMapping, function(d){ return d.q; });
     heatmap.select("title")
       .text(function(d) { return "Quadrant: " + d.name + "\nValue: " + d3.format(',%')(d.value); });
 
@@ -149,14 +177,11 @@ function HeatmapChart(chartManager){
   //------------------------------------------------
   // callbacks
   function decorateQuadrant(chartTypeArg, bgIdsArg){
-    // reset all quads
-    quadrantSVG
-        .selectAll(".quadrant")
-        .classed("selected", false);
-    //  add decoration
-    quadrantSVG
-        .selectAll("#" + chartTypeArg)
-        .classed("selected", true);
+    heatmap.attr("mask", function(d) {
+      if(d.q == chartTypeArg){ 
+        return 'url(#mask)';
+      } else { return ""; }
+    });
   };
   //------------------------------------------------
 
