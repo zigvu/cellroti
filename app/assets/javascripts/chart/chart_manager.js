@@ -40,6 +40,7 @@ function ChartManager(seasonInfo, seasonData){
     self.setCounterBounds(0,Infinity);
 
     // create chart objects
+    this.responsiveWidthCalculator = new ResponsiveWidthCalculator(self);
     this.multiLineHelper = new MultiLineHelper(self);
     this.multiLineChart = new MultiLineChart(self);
     this.brushChart = new BrushChart(self);
@@ -51,6 +52,10 @@ function ChartManager(seasonInfo, seasonData){
     this.chartLegend = new ChartLegend(self);
     this.summaryPanelChart = new SummaryPanelChart(self);
 
+    self.responsiveWidthCalculator.reflowHeights();
+    $(window).resize(function() {
+      self.responsiveWidthCalculator.debouncedReflowHeights();
+    });
     timeLogEnd("chartDrawing", "All chart drawing done");
   };
 
@@ -83,6 +88,26 @@ function ChartManager(seasonInfo, seasonData){
     self.brushChart.repaint();
     self.fireRepaintCallback();
     self.fireTimelineChartSelectionCallback();    
+  };
+
+  // dimensions for charts
+  this.getTimelineChartDims = function(){
+    return self.responsiveWidthCalculator.getTimelineChartDims();
+  };
+  this.getBrushChartDims = function(){
+    return self.responsiveWidthCalculator.getBrushChartDims();
+  };
+  this.getGameSelectionChartDims = function(){
+    return self.responsiveWidthCalculator.getGameSelectionChartDims();
+  };
+  this.getBEComponentChartDims = function(){
+    return self.responsiveWidthCalculator.getBEComponentChartDims();
+  };
+  this.getSpatialPositionChartDims = function(){
+    return self.responsiveWidthCalculator.getSpatialPositionChartDims();
+  };
+  this.getBrandEffectivenessChartDims = function(){
+    return self.responsiveWidthCalculator.getBrandEffectivenessChartDims();
   };
   //------------------------------------------------  
 

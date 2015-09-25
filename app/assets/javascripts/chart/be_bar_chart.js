@@ -8,8 +8,10 @@ function BeBarChart(chartManager){
   var chartHelpers = chartManager.chartHelpers;
 
   // div for chart
-  var be_BarChart_div = '#brand-effectiveness-bar-chart';
+  var brandEffectivenessChartDim = chartManager.getBrandEffectivenessChartDims();
+  var be_BarChart_div = brandEffectivenessChartDim['div'];
   var divWidth = $(be_BarChart_div).parent().width();
+  var divHeight = brandEffectivenessChartDim['height'];
 
   var beData = chartManager.getBeBarChartData();
   var bgIds = _.pluck(beData, 'bgId');
@@ -19,9 +21,9 @@ function BeBarChart(chartManager){
 
   //------------------------------------------------
   // set up gemoetry
-  var margin = {top: 10, right: 20, bottom: 40, left: 50},
+  var margin = {top: 10, right: 10, bottom: 25, left: 50},
       width = divWidth - margin.left - margin.right, 
-      height = 250 - margin.top - margin.bottom;     // 200
+      height = divHeight - margin.top - margin.bottom;
 
   // how far to the left of y-axis we want our labels to be
   var yAxisLabelAnchorX = -35;
@@ -45,8 +47,8 @@ function BeBarChart(chartManager){
   //------------------------------------------------
   // start drawing
   var svg = d3.select(be_BarChart_div).append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom);
+      .attr("viewBox", "0 0 " + divWidth + " " + divHeight)
+      .attr("preserveAspectRatio", "xMidYMid");
 
   var beSVG = svg.append("g")
       .attr("class", "bar-chart-svg")

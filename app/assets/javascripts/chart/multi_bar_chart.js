@@ -8,8 +8,10 @@ function MultiBarChart(chartManager){
   var chartHelpers = chartManager.chartHelpers;
 
   // div for chart
-  var bc_ComponentBarChart_div = '#component-bar-chart';
+  var componentBarChartDim = chartManager.getBEComponentChartDims();
+  var bc_ComponentBarChart_div = componentBarChartDim['div'];
   var divWidth = $(bc_ComponentBarChart_div).parent().width();
+  var divHeight = componentBarChartDim['height'];
 
   var bcData = chartManager.getBEComponentData();
   var bgIds = _.pluck(bcData[0].bgValues, 'bgId');
@@ -18,9 +20,9 @@ function MultiBarChart(chartManager){
 
   //------------------------------------------------
   // set up gemoetry
-  var margin = {top: 10, right: 20, bottom: 40, left: 50},
+  var margin = {top: 10, right: 10, bottom: 25, left: 50},
       width = divWidth - margin.left - margin.right, 
-      height = 250 - margin.top - margin.bottom;     // 200
+      height = divHeight - margin.top - margin.bottom;
 
   // how far to the left of y-axis we want our labels to be
   var yAxisLabelAnchorX = -35;
@@ -45,8 +47,8 @@ function MultiBarChart(chartManager){
   //------------------------------------------------
   // start drawing
   var svg = d3.select(bc_ComponentBarChart_div).append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom);
+      .attr("viewBox", "0 0 " + divWidth + " " + divHeight)
+      .attr("preserveAspectRatio", "xMidYMid");
   
   var bcSVG = svg.append("g")
       .attr("class", "bar-chart-svg")

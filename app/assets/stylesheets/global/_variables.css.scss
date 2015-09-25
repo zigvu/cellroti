@@ -80,9 +80,10 @@ $include-html-global-classes: $include-html-classes;
 // $include-xl-html-grid-classes: false;
 
 // $row-width: rem-calc(1000);
+$row-width: rem-calc(1280);
 // $total-columns: 12;
 // $column-gutter: rem-calc(30);
-$column-gutter: rem-calc(30);
+$column-gutter: rem-calc(10);
 
 // c. Global
 // - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -167,6 +168,9 @@ $zigvu-footer-link-hover-color: $white;
 // $small-range: (0em, 40em);
 // $medium-range: (40.063em, 64em);
 // $large-range: (64.063em, 90em);
+$small-range: (0em, 47.938em); // 0 to 767 px
+$medium-range: (48em, 79.938em); // 769 to 1279 px
+$large-range: (80em, 99999999em); // 1280 to inifinity px
 // $xlarge-range: (90.063em, 120em);
 // $xxlarge-range: (120.063em, 99999999em);
 

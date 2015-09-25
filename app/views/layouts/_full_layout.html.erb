@@ -1,9 +1,4 @@
 <!-- BEGIN: Overall body grid  -->
-<div class="row mobile-zero-pad-rows">
-  <div class="small-12 columns mobile-zero-pad-columns">
-    <div class="contain-to-grid">
-
-
 <!-- BEGIN: Navigation Menu  -->
 <nav class="top-bar" data-topbar role="navigation">
   <ul class="title-area">
@@ -21,26 +16,11 @@
 
 
 <!-- BEGIN: Content body -->
-<div class="row">
+<%= render partial: 'layouts/error_notices' %>
+<div class="row row-top-spacer">
   <div class="small-12 columns">
-    <div class="content-border-container">
-      <% if user_signed_in? %>
-        <div class="row">
-          <div class="small-12 columns">
-            <%= breadcrumbs autoroot: false, style: :foundation5 %>
-          </div>
-        </div>
-      <% end %>
-      <%= render partial: 'layouts/error_notices' %>
-      <!-- Yield for different pages -->
-      <div class="row">
-        <div class="small-12 columns">
-          <div class="main-content">
-            <%= yield %>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Yield for different pages -->
+    <%= yield %>
   </div>
 </div>
 <!-- END: Content body -->
@@ -53,7 +33,4 @@
 <!-- END: Footer -->
 
 
-    </div>
-  </div>
-</div>
 <!-- END: Overall body grid  -->

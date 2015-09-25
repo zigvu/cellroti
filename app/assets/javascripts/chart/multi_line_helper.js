@@ -1,5 +1,5 @@
 /*------------------------------------------------
-	Brush chart
+	Helper for multine chart
 	------------------------------------------------*/
 
 function MultiLineHelper(chartManager){

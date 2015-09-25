@@ -10,8 +10,10 @@ function BrushChart(chartManager){
   var chartHelpers = chartManager.chartHelpers;
 
   // div for chart
-  var brushChart_div = '#brush-chart';
+  var brushChartDim = chartManager.getBrushChartDims();
+  var brushChart_div = brushChartDim['div'];
   var divWidth = $(brushChart_div).parent().width();
+  var divHeight = brushChartDim['height'];
 
   var timelineChartType = undefined;
   //------------------------------------------------
@@ -21,7 +23,7 @@ function BrushChart(chartManager){
   // set up gemoetry
   var margin = {top: 1, right: 1, bottom: 1, left: 50},
       width = divWidth - margin.left - margin.right, 
-      height = 28 - margin.top - margin.bottom;     // 26
+      height = divHeight - margin.top - margin.bottom;
   //------------------------------------------------
 
 
@@ -50,8 +52,8 @@ function BrushChart(chartManager){
   //------------------------------------------------
   // start drawing
   var brushSVG = d3.select(brushChart_div).append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
+      .attr("viewBox", "0 0 " + divWidth + " " + divHeight)
+      .attr("preserveAspectRatio", "xMidYMid")
     .append("g")
       .attr("class", "brush-chart")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");

@@ -18,22 +18,34 @@ $chart-game-selection-bar-opacity: $chart-series-bg-bar-opacity;
 $chart-game-selection-bar-opacity-hover: 0.5;
 
 .d3-chart {
+	@media #{$small-only} {
+		font-size: rem-calc(10);
+	}
+	@media #{$medium-up} {
+		font-size: rem-calc(12);
+	}
+
 	// common elements
 	.axis-label {
-		text-transform: uppercase;
 		line-height: 80%;
-		font-size: rem-calc(12);
+		text-transform: uppercase;
+
+		@media #{$small-only} {
+			font-size: rem-calc(10);
+		}
+		@media #{$medium-up} {
+			font-size: rem-calc(12);
+		}
 	}
 
 	.x-axis-time-label {
 		line-height: 80%;
-		font-size: rem-calc(12);
 	}
 
 	.axis {
 		-moz-user-select: none;
 		pointer-events: none;
-		font: 10px sans-serif;
+		font-size: rem-calc(10);
 		fill: black;
 
 		path, line {
@@ -79,7 +91,6 @@ $chart-game-selection-bar-opacity-hover: 0.5;
 				opacity: $chart-series-bg-bar-opacity;
 			}
 			text {
-				font-size: rem-calc(12);
 				fill: black;
 				opacity: 0.9;
 				pointer-events: none;
@@ -214,7 +225,6 @@ $chart-game-selection-bar-opacity-hover: 0.5;
 		}
 
 		text {
-			// text-transform: uppercase;
 			font-size: rem-calc(12);
 			fill: black;
 			opacity: 0.9;
@@ -245,7 +255,6 @@ $chart-game-selection-bar-opacity-hover: 0.5;
 		.arc {
 			text {
 				line-height: 80%;
-				font-size: rem-calc(12);
 				pointer-events: none;
 			}
 			path {
@@ -408,47 +417,49 @@ $chart-game-selection-bar-opacity-hover: 0.5;
 	}
 }
 
-.chart-panel {
-	border: 1px solid $chart-panel-border-color;
-	margin-bottom: 1.25rem;
 
-	-webkit-border-radius: $chart-panel-rounded-corner-radius;
-	-moz-border-radius: $chart-panel-rounded-corner-radius;
-	border-radius: $chart-panel-rounded-corner-radius;
+.card {
+	background: $white;
+	border: 0px none;
+	box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+  margin-bottom: $column-gutter;
+  min-height: 200px;
 
-	.chart-title {
-		padding: 1px 3px 1px 1px;
+	.title {
+		// padding: 1px 3px 1px 1px;
 		border-bottom: 4px solid $chart-panel-border-color-light;
-		-webkit-border-top-left-radius: $chart-panel-rounded-corner-radius;
-		-webkit-border-top-right-radius: $chart-panel-rounded-corner-radius;
-		-moz-border-radius-topleft: $chart-panel-rounded-corner-radius;
-		-moz-border-radius-topright: $chart-panel-rounded-corner-radius;
-		border-top-left-radius: $chart-panel-rounded-corner-radius;
-		border-top-right-radius: $chart-panel-rounded-corner-radius;
 
 		.text {
-			padding: 0.25rem;
+			font-size: 1rem;
 			font-weight: 600;
 			font-variant: small-caps;
+
+			padding: 0.25rem;
 		}
 
-		.help {
-			font-size: rem-calc(16);
+		.title-button {
+			font-size: 1.5rem;
 			font-weight: 600;
 
-			.title-button {
-				margin: 0;
-				padding: 0.4rem 1rem 0.4rem 1rem;
-			}
+			color: $chart-panel-border-color-light;
+			background: $white;
+
+			margin: 0;
+			padding: 0.1rem 1rem;
+		}
+
+		.title-button:hover, .title-button:focus {
+			color: $black;
+			background: $chart-panel-border-color-light;
+
+			-moz-transition: all 0.3s;
+			-o-transition: all 0.3s;
+			-webkit-transition: all 0.3s;
+			transition: all 0.3s;
 		}
 	}
 
-	.chart-content {
-		padding: 1.25rem 1.25rem 0 1.25rem;
-	}
-
-	.dc-chart {
-		width: 100%;
-		text-align: center;
+	.content {
+		padding: 1rem;
 	}
 }

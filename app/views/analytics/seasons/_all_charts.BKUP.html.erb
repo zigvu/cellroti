@@ -1,0 +1,318 @@
+<%= render 'summary_panel' %>
+
+<!-- BEGIN: All charts -->
+<div class="d3-chart">
+
+<!-- BEGIN: Timeline chart whole -->
+<div class="row">
+  <div class="small-12 columns">
+    <div class="chart-panel">
+      
+      <!-- BEGIN: Timeline chart title bar row -->
+      <div class="row">
+        <div class="small-12 columns">
+          <div class="chart-title clearfix">
+            <div id="timeline-chart-title" class="text left">Brand Effectiveness</div>
+            <div class="help right">
+              <ul class="button-group radius">
+                <li>
+                  <span id="reset-timeline-charts" class="button title-button" title="Reset Chart">
+                    <i class="fi-refresh"></i>
+                  </span>
+                </li>
+                <li data-reveal-id="timeline-chart-info-reveal">
+                  <span id="timeline-chart-info" class="button title-button" title="Help!">
+                    <i class="fi-info"></i>
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END: Timeline chart title bar row -->
+      
+      <!-- BEGIN: Timeline chart row -->
+      <div class="row">
+        <div class="small-12 columns">
+          <div class="chart-content">
+            <div class="row">
+              <div class="small-12 columns">
+                <div id="timeline-chart"></div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="small-12 columns">
+                <div id="brush-chart"></div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="small-12 columns">
+                <div id="game-selection-chart"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- END: Timeline chart row -->
+
+      <!-- BEGIN: Legend row -->
+      <div class="row">
+        <div class="small-12 columns" id="brand-legend-container-column">
+          <div id="brand-legend">
+
+            <!-- BEGIN: Legend normal -->
+            <div id="brand-legend-normal">
+              <div class="row">                
+                <div class="small-7 medium-10 columns">
+                    <div class="brand-label-titles">Brand Groups</div>
+                    <div id="brand-legend-content">
+                      <ul id="brand-legend-content-ul"></ul>
+                    </div>
+                </div>
+                <div class="small-5 medium-2 columns">
+                    <div class="brand-label-titles">Chart Tools</div>
+                    <ul class="button-group radius stack" id="brand-legend-buttons">
+                      <li>
+                        <div class="button small expand success" id="brand-legend-update-charts">
+                          Update Charts
+                        </div>
+                      </li>
+                      <li>
+                        <div class="button small expand secondary" id="brand-legend-generate-report">
+                          Generate Report
+                        </div>
+                      </li>
+                      <li>
+                        <div class="button small expand" id="brand-legend-normal-hide">
+                          Hide Legend
+                        </div>
+                      </li>
+                    </ul>
+                </div>
+              </div>
+            </div>
+            <!-- END: Legend normal -->
+
+            <!-- BEGIN: Legend hidden -->
+            <div id="brand-legend-hidden">
+              <div class="row">                
+                <div class="small-7 medium-10 columns">
+                  <div class="brand-legend-hidden-text">Click to show legend</div>
+                </div>
+                <div class="small-5 medium-2 columns">
+                  <div class="button small radius expand" id="brand-legend-hidden-show">
+                    Show Legend
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- END: Legend hidden -->
+
+          </div>
+        </div>
+      </div>
+      <!-- END: Legend row -->
+
+    </div>
+  </div>
+</div>
+<!-- END: Timeline chart whole -->
+
+<!-- BEGIN: Bar chart component whole -->
+<div class="row">
+  <div class="small-12 columns">
+    <div class="chart-panel">
+      <div class="chart-title clearfix">
+        <div class="text left">Brand Effectiveness Components</div>
+        <div class="help right">
+          <ul class="button-group radius">
+            <li>
+              <span id="reset-component-charts" class="button title-button" title="Reset Chart">
+                <i class="fi-refresh"></i>
+              </span>
+            </li>
+            <li data-reveal-id="component-bar-chart-info-reveal">
+              <span id="component-bar-chart-info" class="button title-button" title="Help!">
+                <i class="fi-info"></i>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="chart-content">
+        <div id="component-bar-chart"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END: Bar chart component whole -->
+
+
+<div class="row">
+  <!-- BEGIN: Brand Effectiveness chart whole -->
+  <div class="small-12 medium-5 columns">
+    <div class="chart-panel">
+      <div class="chart-title clearfix">
+        <div class="text left">Brand Effectiveness</div>
+        <div class="help right">
+          <ul class="button-group radius">
+            <li>
+              <span id="reset-brand-effectiveness-bar-chart" class="button title-button" title="Reset Chart">
+                <i class="fi-refresh"></i>
+              </span>
+            </li>
+            <li data-reveal-id="brand-effectiveness-bar-chart-info-reveal" id="brand-effectiveness-bar-chart-info">
+              <span class="button title-button" title="Help!">
+                <i class="fi-info"></i>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="chart-content">
+        <div id="brand-effectiveness-bar-chart"></div>
+      </div>
+    </div>
+  </div>
+  <!-- END: Brand Count pie chart whole -->
+
+  <!-- BEGIN: Spatial position chart whole -->
+  <div class="small-12 medium-7 columns">
+    <div class="chart-panel">
+      <div class="chart-title clearfix">
+        <div class="text left">Spatial Position</div>
+        <div class="help right">
+          <ul class="button-group radius">
+            <li>
+              <span id="reset-spatial-position-chart" class="button title-button" title="Reset Chart">
+                <i class="fi-refresh"></i>
+              </span>
+            </li>
+            <li data-reveal-id="spatial-position-chart-info-reveal">
+              <span id="spatial-position-chart-info" class="button title-button" title="Help!">
+                <i class="fi-info"></i>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="chart-content">
+        <div id="spatial-position-chart"></div>
+      </div>
+    </div>
+  </div>
+  <!-- END: Spatial position chart whole -->
+</div>
+
+
+
+<!-- BEGIN: Thumbnail Viewer whole -->
+<div class="row">
+  <div class="small-12 columns">
+    <div class="chart-panel">
+      <div class="chart-title clearfix">
+        <div class="text left">Highest Brand Effectiveness Frames</div>
+        <div class="help right">
+          <ul class="button-group radius">
+            <li data-reveal-id="thumbnail-viewer-info-reveal" id="thumbnail-viewer-info">
+              <span class="button title-button" title="Help!">
+                <i class="fi-info"></i>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- BEGIN: Thumbnail Row -->
+      <div class="chart-content">
+        <div class="row">
+          <div class="small-12 columns">
+            <div id="thumbnail-chart-refresh">Click to refresh</div>
+            <ul id="thumbnail-chart" class="small-block-grid-2 medium-block-grid-4">
+              <li data-reveal-id="thumbnail_li_0_reveal">
+                <a class="th" href="#">
+                  <img src="/uploads/refresh_to_load.jpg">
+                </a>
+              </li>
+              <li data-reveal-id="thumbnail_li_1_reveal">
+                <a class="th" href="#">
+                  <img src="/uploads/refresh_to_load.jpg">
+                </a>
+              </li>
+              <li data-reveal-id="thumbnail_li_2_reveal">
+                <a class="th" href="#">
+                  <img src="/uploads/refresh_to_load.jpg">
+                </a>
+              </li>
+              <li data-reveal-id="thumbnail_li_3_reveal">
+                <a class="th" href="#">
+                  <img src="/uploads/refresh_to_load.jpg">
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- END: Thumbnail Row -->
+
+    </div>
+  </div>
+</div>
+<!-- END: Thumbnail Viewer whole -->
+
+
+<!-- BEGIN: Help Sections -->
+  <div id="timeline-chart-info-reveal" class="reveal-modal large" data-reveal>
+    <%= render 'summary_info_timeline_chart' %>
+  </div>
+  <div id="component-bar-chart-info-reveal" class="reveal-modal large" data-reveal>
+    <%= render 'summary_info_timeline_chart' %>
+  </div>
+  <div id="brand-effectiveness-bar-chart-info-reveal" class="reveal-modal large" data-reveal>
+    <%= render 'summary_info_timeline_chart' %>
+  </div>
+  <div id="spatial-position-chart-info-reveal" class="reveal-modal large" data-reveal>
+    <%= render 'summary_info_timeline_chart' %>
+  </div>
+  <div id="thumbnail-viewer-info-reveal" class="reveal-modal large" data-reveal>
+    <%= render 'summary_info_timeline_chart' %>
+  </div>
+<!-- END: Help Sections -->
+
+<!-- BEGIN: Thumbnail pop-ups -->
+  <div id="thumbnail-chart-reveals">
+    <div id="thumbnail_li_0_reveal" class="reveal-modal large" data-reveal>
+      <div class="thumbnail-container">
+        <img class="thumbnail-image-reveal" src="/uploads/refresh_to_load.jpg">
+        <h6 class="thumbnail-description"></h6>
+      </div>
+      <a class="close-reveal-modal">&#215;</a>
+    </div>
+    <div id="thumbnail_li_1_reveal" class="reveal-modal large" data-reveal>
+      <div class="thumbnail-container">
+        <img class="thumbnail-image-reveal" src="/uploads/refresh_to_load.jpg">
+        <h6 class="thumbnail-description"></h6>
+      </div>
+      <a class="close-reveal-modal">&#215;</a>
+    </div>
+    <div id="thumbnail_li_2_reveal" class="reveal-modal large" data-reveal>
+      <div class="thumbnail-container">
+        <img class="thumbnail-image-reveal" src="/uploads/refresh_to_load.jpg">
+        <h6 class="thumbnail-description"></h6>
+      </div>
+      <a class="close-reveal-modal">&#215;</a>
+    </div>
+    <div id="thumbnail_li_3_reveal" class="reveal-modal large" data-reveal>
+      <div class="thumbnail-container">
+        <img class="thumbnail-image-reveal" src="/uploads/refresh_to_load.jpg">
+        <h6 class="thumbnail-description"></h6>
+      </div>
+      <a class="close-reveal-modal">&#215;</a>
+    </div>
+  </div>
+<!-- END: Thumbnail pop-ups -->
+
+
+</div>
+<!-- END: All charts -->

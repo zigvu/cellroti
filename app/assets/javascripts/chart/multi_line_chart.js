@@ -13,8 +13,10 @@ function MultiLineChart(chartManager){
   var timelineChartYAxisLabel = undefined;
 
   // div for chart
-  var timelineChart_div = '#timeline-chart';
+  var timelineChartDim = chartManager.getTimelineChartDims();
+  var timelineChart_div = timelineChartDim['div'];
   var divWidth = $(timelineChart_div).parent().width();
+  var divHeight = timelineChartDim['height'];
   //------------------------------------------------
 
 
@@ -22,7 +24,7 @@ function MultiLineChart(chartManager){
   // set up gemoetry
   var margin = {top: 5, right: 1, bottom: 35, left: 50},
       width = divWidth - margin.left - margin.right, 
-      height = 340 - margin.top - margin.bottom;     // 300
+      height = divHeight - margin.top - margin.bottom;
 
   // how far to the left of y-axis we want our labels to be
   var yAxisLabelAnchorX = -35;
@@ -87,8 +89,8 @@ function MultiLineChart(chartManager){
   //------------------------------------------------
   // svg drawing
   var multiLineSVG = d3.select(timelineChart_div).append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
+      .attr("viewBox", "0 0 " + divWidth + " " + divHeight)
+      .attr("preserveAspectRatio", "xMidYMid")
     .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
       .attr("class", "multi-line-chart");

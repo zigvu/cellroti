@@ -7,8 +7,10 @@ function HeatmapChart(chartManager){
   // set up
 
   // div for chart
-  var heatmap_div = '#spatial-position-chart';
+  var spatialPositionChartDim = chartManager.getSpatialPositionChartDims();
+  var heatmap_div = spatialPositionChartDim['div'];
   var divWidth = $(heatmap_div).parent().width();
+  var divHeight = spatialPositionChartDim['height'];
 
   var quadMapping = chartManager.getHeatmapData();
   
@@ -33,7 +35,7 @@ function HeatmapChart(chartManager){
   // set gemoetry
   var margin = { top: 0, right: 50, bottom: 0, left: 0 },
       width = divWidth - margin.left - margin.right,
-      height = 250 - margin.top - margin.bottom,
+      height = divHeight - margin.top - margin.bottom,
       gridWidth = Math.floor(width / 3),
       gridHeight = Math.floor(height / 3);
 
@@ -47,8 +49,8 @@ function HeatmapChart(chartManager){
   //------------------------------------------------
   // start drawing
   var svg = d3.select(heatmap_div).append("svg")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom);
+      .attr("viewBox", "0 0 " + divWidth + " " + divHeight)
+      .attr("preserveAspectRatio", "xMidYMid");
 
   var heatmapSVG = svg.append("g")
       .attr("class", "heatmap-chart")
