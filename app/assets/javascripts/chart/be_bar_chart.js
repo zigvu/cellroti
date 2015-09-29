@@ -8,10 +8,14 @@ function BeBarChart(chartManager){
   var chartHelpers = chartManager.chartHelpers;
 
   // div for chart
-  var brandEffectivenessChartDim = chartManager.getBrandEffectivenessChartDims();
-  var be_BarChart_div = brandEffectivenessChartDim['div'];
-  var divWidth = $(be_BarChart_div).parent().width();
-  var divHeight = brandEffectivenessChartDim['height'];
+  var brandEffectivenessChartDim, be_BarChart_div, divWidth, divHeight;
+  function setDimensions(){
+    brandEffectivenessChartDim = chartManager.getBrandEffectivenessChartDims();
+    be_BarChart_div = brandEffectivenessChartDim['div'];
+    divWidth = $(be_BarChart_div).parent().width();
+    divHeight = brandEffectivenessChartDim['height'];
+  };
+  setDimensions();
 
   var beData = chartManager.getBeBarChartData();
   var bgIds = _.pluck(beData, 'bgId');
@@ -21,9 +25,13 @@ function BeBarChart(chartManager){
 
   //------------------------------------------------
   // set up gemoetry
-  var margin = {top: 10, right: 10, bottom: 25, left: 50},
-      width = divWidth - margin.left - margin.right, 
-      height = divHeight - margin.top - margin.bottom;
+  var margin = {top: 10, right: 10, bottom: 25, left: 50};
+  var width, height;
+  function setGeometry(){
+    width = divWidth - margin.left - margin.right;
+    height = divHeight - margin.top - margin.bottom;
+  };
+  setGeometry();
 
   // how far to the left of y-axis we want our labels to be
   var yAxisLabelAnchorX = -35;
@@ -35,6 +43,10 @@ function BeBarChart(chartManager){
   // define axis
   var x = d3.scale.ordinal().rangeRoundBands([0, width], .1),
       y = d3.scale.linear().range([height, 0]);
+  function setRange(){
+    x.rangeRoundBands([0, width], .1);
+    y.range([height, 0]);
+  };
 
   var xAxis = d3.svg.axis().scale(x).orient("bottom").tickFormat(""),
       yAxis = d3.svg.axis()
@@ -47,8 +59,8 @@ function BeBarChart(chartManager){
   //------------------------------------------------
   // start drawing
   var svg = d3.select(be_BarChart_div).append("svg")
-      .attr("viewBox", "0 0 " + divWidth + " " + divHeight)
-      .attr("preserveAspectRatio", "xMidYMid");
+      .attr("width", divWidth)
+      .attr("height", divHeight);
 
   var beSVG = svg.append("g")
       .attr("class", "bar-chart-svg")
@@ -73,8 +85,9 @@ function BeBarChart(chartManager){
       .attr("x", 0)
       .attr("y", 0)
       .attr("width", width)
-      .attr("height", height)
-    .append("rect")
+      .attr("height", height);
+
+  var maskRect = mask.append("rect")
       .attr("width", width)
       .attr("height", height)
       .attr("style", 'fill:url(#pattern);');
@@ -83,32 +96,17 @@ function BeBarChart(chartManager){
 
   //------------------------------------------------
   // define domains
-  x.domain(beData.map(function(d) { return d.bgId; }));
-  y.domain([0, d3.max(beData, function(d) { return d.value; })]);
+  function setDomains(){
+    x.domain(beData.map(function(d) { return d.bgId; }));
+    y.domain([0, d3.max(beData, function(d) { return d.value; })]);
+  };
+  setDomains();
   //------------------------------------------------
 
 
   //------------------------------------------------
   // draw bars
-  var componentBars = beSVG.selectAll(".component-rects").data(beData);
-
-  var componentRects = componentBars.enter().append("g")
-      .attr("class", "component-rects")
-      .attr("id", function(d){ return getRectId(chartType, d.bgId); })
-      .on("click", function(d) { handleClickOnBgBar(d.bgId); });
-
-  componentRects.append("rect")
-      .attr("class", "rect")
-      .attr("x", function(d) { return x(d.bgId); })
-      .attr("y", function(d) { return y(d.value); })
-      .attr("width", x.rangeBand())
-      .attr("height", function(d) { return height - y(d.value); })
-      .style("fill", function(d) { return chartManager.getBrandGroupColor(d.bgId); });
-      
-  componentRects.append("svg:title")
-      .text(function (d) { 
-        return chartManager.getBrandGroupName(d.bgId) + ": " + d3.format(',%')(d.value); 
-      });
+  var barChartSVG = beSVG.append("g").attr("class", "game-bg-rect");
 
   function handleClickOnBgBar(bgId){
     // need to coerce to string
@@ -122,27 +120,42 @@ function BeBarChart(chartManager){
 
   //------------------------------------------------
   // draw axes
-  beSVG.append("g")
+  var xAxisSVG = beSVG.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
-      .call(xAxis)
-      .selectAll(".tick").remove(); // remove all ticks
+      .call(xAxis);
+  xAxisSVG.selectAll(".tick").remove(); // remove all ticks
 
-  beSVG.append("text")
+  var xAxisLabelSVG = beSVG.append("text")
     .attr("class", "axis-label")
     .attr("text-anchor", "middle")
     .attr("x", width/2)
     .attr("y", height + xAxisLabelAnchorY)
     .text(chartHelpers.getChartLabel(chartType));
 
-  beSVG.append("g")
+  var yAxisSVG = beSVG.append("g")
       .attr("class", "y axis")
-      .call(yAxis)
-    .append("text")
-      .attr("transform", "translate("+ (yAxisLabelAnchorX) +","+(height/2)+")rotate(-90)")  
+      .call(yAxis);
+
+  var yAxisLabelSVG = beSVG.append("text")
+      .attr("transform", "translate("+ (yAxisLabelAnchorX) +","+(height/2)+")rotate(-90)")
       .style("text-anchor", "middle")
       .text("Score")
       .attr("class", "axis-label");
+
+  function resizeSVG(){
+    svg.attr("width", divWidth).attr("height", divHeight);
+    beSVG.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    mask.attr("width", width).attr("height", height);
+    maskRect
+        .attr("width", width)
+        .attr("height", height)
+        .attr("style", 'fill:url(#pattern);');
+
+    xAxisSVG.attr("transform", "translate(0," + height + ")");
+    xAxisLabelSVG.attr("x", width/2).attr("y", height + xAxisLabelAnchorY);
+    yAxisLabelSVG.attr("transform", "translate("+ (yAxisLabelAnchorX) +","+(height/2)+")rotate(-90)");
+  };
   //------------------------------------------------
 
 
@@ -153,30 +166,59 @@ function BeBarChart(chartManager){
   function repaint(){
     beData = chartManager.getBeBarChartData();
 
-    y.domain([0, d3.max(beData, function(d) { return d.value; })]);
+    setDomains();
+    
+    var componentBars = barChartSVG.selectAll(".component-rects").data(beData);
 
-    componentBars.data(beData);
-    componentRects.select(".rect")
+    // enter
+    var componentRects = componentBars.enter().append("g")
+        .attr("class", "component-rects")
+        .attr("id", function(d){ return getRectId(chartType, d.bgId); })
+        .on("click", function(d) { handleClickOnBgBar(d.bgId); });
+
+    componentRects.append("rect")
+        .attr("class", "rect")
+        .style("fill", function(d) { return chartManager.getBrandGroupColor(d.bgId); });
+        
+    componentRects.append("svg:title");
+
+    // update + enter
+    componentBars.select("rect")
+        .attr("width", x.rangeBand())
       .transition()
         .duration(750)
+        .attr("x", function(d) { return x(d.bgId); })
         .attr("y", function(d) { return y(d.value); })
         .attr("height", function(d) { return height - y(d.value); });
 
-    componentRects.select("title")
+    componentBars.select("title")
         .text(function (d) { 
           return chartManager.getBrandGroupName(d.bgId) + ": " + d3.format(',%')(d.value); 
         });
 
+    // exit
+    componentBars.exit().remove();
+
+    beSVG.select(".x.axis").call(xAxis);
     beSVG.select(".y.axis").transition().duration(750).call(yAxis);
   };
 
   function decorateComponentRect(chartTypeArg, bgIdsArg){
-    componentRects.select(".rect")
+    barChartSVG.selectAll(".component-rects").select(".rect")
         .attr("mask", function(d) {
           if(chartType == chartTypeArg && bgIdsArg.length == 1 && d.bgId == bgIdsArg[0]){ 
             return 'url(#mask)';
           } else { return null; }
         });
+  };
+
+  function resize(){
+    setDimensions();
+    setGeometry();
+    setRange();
+    resizeSVG();
+
+    repaint();
   };
   //------------------------------------------------
 
@@ -184,6 +226,7 @@ function BeBarChart(chartManager){
   //------------------------------------------------
   // finally, add call back to repaint charts
   chartManager.addRepaintCallback(repaint);
+  chartManager.addResizeCallback(resize);
   chartManager.addTimelineChartSelectionCallback(decorateComponentRect);
   //------------------------------------------------
 };

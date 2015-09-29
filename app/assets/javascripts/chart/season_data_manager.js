@@ -99,7 +99,8 @@ function SeasonDataManager(dataParser, chartManager){
       // NOTE: need to return after each push in array to avoid double counting
       // add games that are inside the range
       if((gd.begin_count >= beginCounter) && (gd.end_count <= endCounter)){ 
-        bg.push(gd);
+        // only consider non-empty games
+        if(gd.begin_count < gd.end_count){ bg.push(gd); }
         return;
       };
       

@@ -10,10 +10,14 @@ function BrushChart(chartManager){
   var chartHelpers = chartManager.chartHelpers;
 
   // div for chart
-  var brushChartDim = chartManager.getBrushChartDims();
-  var brushChart_div = brushChartDim['div'];
-  var divWidth = $(brushChart_div).parent().width();
-  var divHeight = brushChartDim['height'];
+  var brushChartDim, brushChart_div, divWidth, divHeight;
+  function setDimensions(){
+    brushChartDim = chartManager.getBrushChartDims();
+    brushChart_div = brushChartDim['div'];
+    divWidth = $(brushChart_div).parent().width();
+    divHeight = brushChartDim['height'];
+  };
+  setDimensions();
 
   var timelineChartType = undefined;
   //------------------------------------------------
@@ -21,9 +25,14 @@ function BrushChart(chartManager){
 
   //------------------------------------------------
   // set up gemoetry
-  var margin = {top: 1, right: 1, bottom: 1, left: 50},
-      width = divWidth - margin.left - margin.right, 
-      height = divHeight - margin.top - margin.bottom;
+  var margin = {top: 1, right: 1, bottom: 1, left: 50};
+
+  var width, height;
+  function setGeometry(){
+    width = divWidth - margin.left - margin.right;
+    height = divHeight - margin.top - margin.bottom;
+  };
+  setGeometry();
   //------------------------------------------------
 
 
@@ -31,12 +40,17 @@ function BrushChart(chartManager){
   // define axis and brush
   var x = d3.scale.linear().range([0, width]),
       y = d3.scale.linear().range([height, 0]);
+  function setRange(){
+    x.range([0, width]);
+    y.range([height, 0]);
+  };
 
   var brush = d3.svg.brush()
       .x(x)
       .on("brushstart", brushStart)
       .on("brush", brushed)
       .on("brushend", brushEnd);
+  this.brush = brush;
   //------------------------------------------------
 
 
@@ -51,15 +65,16 @@ function BrushChart(chartManager){
 
   //------------------------------------------------
   // start drawing
-  var brushSVG = d3.select(brushChart_div).append("svg")
-      .attr("viewBox", "0 0 " + divWidth + " " + divHeight)
-      .attr("preserveAspectRatio", "xMidYMid")
-    .append("g")
+  var svg = d3.select(brushChart_div).append("svg")
+      .attr("width", divWidth)
+      .attr("height", divHeight);
+
+  var brushSVG = svg.append("g")
       .attr("class", "brush-chart")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
   // provide some background fill to range chart
-  brushSVG.append("rect")
+  var brushBackgroundSVG = brushSVG.append("rect")
       .attr("width", width)
       .attr("height", height)
       .attr("class", "bg-rect");
@@ -71,6 +86,13 @@ function BrushChart(chartManager){
     .selectAll("rect")
       .attr("y", -6)
       .attr("height", height + 7);
+
+  function resizeSVG(){
+    svg.attr("width", divWidth).attr("height", divHeight);
+    brushSVG.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    brushBackgroundSVG.attr("width", width).attr("height", height);
+  };
   //------------------------------------------------
 
 
@@ -90,9 +112,7 @@ function BrushChart(chartManager){
     contextBE.enter().append("g")
         .attr("class", "contextBE")
       .append("path")
-        .attr("class", "line")
-        .attr("d", function(d) { return contextLine(d.values); })
-        .style("stroke", function(d) { return chartManager.getBrandGroupColor(d.bgId); }); 
+        .attr("class", "line");
 
     // update
     contextBE
@@ -103,7 +123,19 @@ function BrushChart(chartManager){
     // exit
     contextBE.exit().remove();
   };
-  self.repaint();
+
+  function resize(){
+    var brushLeft = brush.extent()[0];
+    var brushRight = brush.extent()[1];
+
+    setDimensions();
+    setGeometry();
+    setRange();
+    resizeSVG();
+
+    self.repaint();
+    self.brushSet(brushLeft, brushRight);
+  };
   //------------------------------------------------
 
 
@@ -192,5 +224,6 @@ function BrushChart(chartManager){
   // note: we don't want to repaint brush chart after every brush, so instead
   // call repainting from chart manager
   // chartManager.addRepaintCallback(repaint);
+  chartManager.addResizeCallback(resize);
   //------------------------------------------------
 };

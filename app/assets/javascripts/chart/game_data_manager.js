@@ -38,24 +38,32 @@ function GameDataManager(dataParser, chartManager){
     return be;
   };
 
-  //------------------------------------------------
-
-
-  //------------------------------------------------
-  // time calculations
-
   // there is only 1 game in game demarcations
   var gd = gameDemarcations[0];
   var timeRatio = (gd.end_time - gd.begin_time)/(gd.end_count - gd.begin_count);
 
-  this.getBrushedFrameTime = function(beginCounter, endCounter){
-    var newGd = _.clone(gd);
-    newGd.begin_count = beginCounter; 
-    newGd.end_count = endCounter;
-    newGd.begin_time = gd.begin_time + (newGd.begin_count - gd.begin_count) * timeRatio;
-    newGd.end_time = gd.end_time - (gd.end_count - newGd.end_count) * timeRatio;
+  this.getBrushedGames = function(beginCounter, endCounter){
+    var bg = [];
+    if((gd.begin_count >= beginCounter) && (gd.end_count <= endCounter)){ 
+      bg.push(gd);
+    } else {
+      var newGd = _.clone(gd);
+      newGd.begin_count = beginCounter; 
+      newGd.end_count = endCounter;
+      newGd.begin_time = gd.begin_time + (newGd.begin_count - gd.begin_count) * timeRatio;
+      newGd.end_time = gd.end_time - (gd.end_count - newGd.end_count) * timeRatio;
 
-    return [newGd];
+      bg.push(newGd);
+    }
+    return bg;
+  };
+  //------------------------------------------------
+
+  //------------------------------------------------
+  // time calculations
+  this.getBrushedFrameTime = function(beginCounter, endCounter){
+    //  brushed games also includes time information
+    return this.getBrushedGames(beginCounter, endCounter);
   };
   //------------------------------------------------
 

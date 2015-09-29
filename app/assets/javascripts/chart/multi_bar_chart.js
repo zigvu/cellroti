@@ -8,10 +8,14 @@ function MultiBarChart(chartManager){
   var chartHelpers = chartManager.chartHelpers;
 
   // div for chart
-  var componentBarChartDim = chartManager.getBEComponentChartDims();
-  var bc_ComponentBarChart_div = componentBarChartDim['div'];
-  var divWidth = $(bc_ComponentBarChart_div).parent().width();
-  var divHeight = componentBarChartDim['height'];
+  var componentBarChartDim, bc_ComponentBarChart_div, divWidth, divHeight;
+  function setDimensions(){
+    componentBarChartDim = chartManager.getBEComponentChartDims();
+    bc_ComponentBarChart_div = componentBarChartDim['div'];
+    divWidth = $(bc_ComponentBarChart_div).parent().width();
+    divHeight = componentBarChartDim['height'];
+  };
+  setDimensions();
 
   var bcData = chartManager.getBEComponentData();
   var bgIds = _.pluck(bcData[0].bgValues, 'bgId');
@@ -20,9 +24,13 @@ function MultiBarChart(chartManager){
 
   //------------------------------------------------
   // set up gemoetry
-  var margin = {top: 10, right: 10, bottom: 25, left: 50},
-      width = divWidth - margin.left - margin.right, 
-      height = divHeight - margin.top - margin.bottom;
+  var margin = {top: 10, right: 10, bottom: 25, left: 50};
+  var width, height;
+  function setGeometry(){
+    width = divWidth - margin.left - margin.right;
+    height = divHeight - margin.top - margin.bottom;
+  };
+  setGeometry();
 
   // how far to the left of y-axis we want our labels to be
   var yAxisLabelAnchorX = -35;
@@ -35,6 +43,10 @@ function MultiBarChart(chartManager){
   var x0 = d3.scale.ordinal().rangeRoundBands([0, width], .1),
       x1 = d3.scale.ordinal(),
       y = d3.scale.linear().range([height, 0]);
+  function setRange(){
+    x0.rangeRoundBands([0, width], .1);
+    y.range([height, 0]);
+  };
 
   var xAxis = d3.svg.axis().scale(x0).orient("bottom"),
       yAxis = d3.svg.axis()
@@ -47,8 +59,8 @@ function MultiBarChart(chartManager){
   //------------------------------------------------
   // start drawing
   var svg = d3.select(bc_ComponentBarChart_div).append("svg")
-      .attr("viewBox", "0 0 " + divWidth + " " + divHeight)
-      .attr("preserveAspectRatio", "xMidYMid");
+      .attr("width", divWidth)
+      .attr("height", divHeight);
   
   var bcSVG = svg.append("g")
       .attr("class", "bar-chart-svg")
@@ -73,8 +85,8 @@ function MultiBarChart(chartManager){
       .attr("x", 0)
       .attr("y", 0)
       .attr("width", width)
-      .attr("height", height)
-    .append("rect")
+      .attr("height", height);
+  var maskRect = mask.append("rect")
       .attr("width", width)
       .attr("height", height)
       .attr("style", 'fill:url(#pattern);');
@@ -83,40 +95,18 @@ function MultiBarChart(chartManager){
 
   //------------------------------------------------
   // define domains
-  x0.domain(bcData.map(function(d) { return d.component; }));
-  x1.domain(bgIds).rangeRoundBands([0, x0.rangeBand()]);
-  y.domain([0, d3.max(bcData, function(d) { return d3.max(d.bgValues, function(d) { return d.value; }); })]);
+  function setDomains(){
+    x0.domain(bcData.map(function(d) { return d.component; }));
+    x1.domain(bgIds).rangeRoundBands([0, x0.rangeBand()]);
+    y.domain([0, d3.max(bcData, function(d) { return d3.max(d.bgValues, function(d) { return d.value; }); })]);
+  };
+  setDomains();
   //------------------------------------------------
 
 
   //------------------------------------------------
   // draw bars
-  var componentSVG = bcSVG.selectAll(".componentSVG")
-      .data(bcData)
-    .enter().append("g")
-      .attr("class", "componentSVG")
-      .attr("transform", function(d) { return "translate(" + x0(d.component) + ",0)"; });
-
-  var componentBars = componentSVG.selectAll(".component-rects")
-      .data(function(d) { return d.bgValues; });
-
-  var componentRects = componentBars.enter().append("g")
-      .attr("class", "component-rects")
-      .attr("id", function(d){ return getRectId(d.component, d.bgId); })
-      .on("click", function(d) { handleClickOnBgBar(d.component, d.bgId); });
-
-  componentRects.append("rect")
-      .attr("class", "rect")
-      .attr("x", function(d) { return x1(d.bgId); })
-      .attr("y", function(d) { return y(d.value); })
-      .attr("width", x1.rangeBand() * gapBetweenBarsInGroup)
-      .attr("height", function(d) { return height - y(d.value); })
-      .style("fill", function(d) { return chartManager.getBrandGroupColor(d.bgId); });
-      
-  componentRects.append("svg:title")
-      .text(function (d) { 
-        return chartManager.getBrandGroupName(d.bgId) + ": " + d3.format(',%')(d.value); 
-      });
+  var allComponentSVG = bcSVG.append("g");
 
   function handleClickOnBgBar(chartType, bgId){
     // need to coerce to string
@@ -130,22 +120,37 @@ function MultiBarChart(chartManager){
 
   //------------------------------------------------
   // draw axes
-  bcSVG.append("g")
+  var xAxisSVG = bcSVG.append("g")
       .attr("class", "x axis")
       .attr("transform", "translate(0," + height + ")")
-      .call(xAxis)
-      .selectAll("text")
+      .call(xAxis);
+
+  var xAxisLabelSVG = bcSVG.selectAll("text")
       .text(function(k){ return chartHelpers.getChartLabel(k); })
       .attr("class", "axis-label");
 
-  bcSVG.append("g")
+  var yAxisSVG = bcSVG.append("g")
       .attr("class", "y axis")
-      .call(yAxis)
-    .append("text")
-      .attr("transform", "translate("+ (yAxisLabelAnchorX) +","+(height/2)+")rotate(-90)")  
+      .call(yAxis);
+
+  var yAxisLabelSVG = bcSVG.append("text")
+      .attr("transform", "translate("+ (yAxisLabelAnchorX) +","+(height/2)+")rotate(-90)")
       .style("text-anchor", "middle")
       .text("Score")
       .attr("class", "axis-label");
+
+  function resizeSVG(){
+    svg.attr("width", divWidth).attr("height", divHeight);
+    bcSVG.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    mask.attr("width", width).attr("height", height);
+    maskRect
+        .attr("width", width)
+        .attr("height", height)
+        .attr("style", 'fill:url(#pattern);');
+
+    xAxisSVG.attr("transform", "translate(0," + height + ")");
+    yAxisLabelSVG.attr("transform", "translate("+ (yAxisLabelAnchorX) +","+(height/2)+")rotate(-90)");
+  };
   //------------------------------------------------
 
 
@@ -156,31 +161,68 @@ function MultiBarChart(chartManager){
   function repaint(){
     bcData = chartManager.getBEComponentData();
 
-    y.domain([0, d3.max(bcData, function(d) { return d3.max(d.bgValues, function(d) { return d.value; }); })]);
+    setDomains();
+    
+    // enter
+    var componentSVG = allComponentSVG.selectAll(".componentSVG").data(bcData);
+    
+    componentSVG.enter().append("g").attr("class", "componentSVG");
 
-    componentSVG.data(bcData);
-    componentBars.data(function(d) { return d.bgValues; });
-    componentRects.select(".rect")
+    var componentBars = componentSVG.selectAll(".component-rects")
+        .data(function(d) { return d.bgValues; });
+
+    var componentRects = componentBars.enter().append("g")
+        .attr("class", "component-rects")
+        .attr("id", function(d){ return getRectId(d.component, d.bgId); })
+        .on("click", function(d) { handleClickOnBgBar(d.component, d.bgId); });
+
+    componentRects.append("rect")
+        .attr("class", "rect")
+        .style("fill", function(d) { return chartManager.getBrandGroupColor(d.bgId); });
+        
+    componentRects.append("svg:title");
+
+    // update + enter
+    componentSVG
+        .attr("transform", function(d) { return "translate(" + x0(d.component) + ",0)"; });
+
+    componentSVG.selectAll(".component-rects").select("rect")
+        .attr("x", function(d) { return x1(d.bgId); })
+        .attr("width", x1.rangeBand() * gapBetweenBarsInGroup)
       .transition()
         .duration(750)
         .attr("y", function(d) { return y(d.value); })
         .attr("height", function(d) { return height - y(d.value); });
 
-    componentRects.select("title")
+    componentSVG.selectAll(".component-rects").select("title")
         .text(function (d) { 
           return chartManager.getBrandGroupName(d.bgId) + ": " + d3.format(',%')(d.value); 
         });
 
+    // exit
+    componentBars.exit().remove();
+    componentSVG.exit().remove();
+
+    bcSVG.select(".x.axis").call(xAxis);
     bcSVG.select(".y.axis").transition().duration(750).call(yAxis);
   };
 
   function decorateComponentRect(chartTypeArg, bgIdsArg){
-    componentRects.select(".rect")
+    allComponentSVG.selectAll(".componentSVG").selectAll(".component-rects").select("rect")
         .attr("mask", function(d) {
           if(d.component == chartTypeArg && d.bgId == bgIdsArg[0]){ 
             return 'url(#mask)';
           } else { return null; }
         });
+  };
+
+  function resize(){
+    setDimensions();
+    setGeometry();
+    setRange();
+    resizeSVG();
+
+    repaint();
   };
   //------------------------------------------------
 
@@ -188,6 +230,7 @@ function MultiBarChart(chartManager){
   //------------------------------------------------
   // finally, add call back to repaint charts
   chartManager.addRepaintCallback(repaint);
+  chartManager.addResizeCallback(resize);
   chartManager.addTimelineChartSelectionCallback(decorateComponentRect);
   //------------------------------------------------
 };

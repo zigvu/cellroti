@@ -7,10 +7,14 @@ function HeatmapChart(chartManager){
   // set up
 
   // div for chart
-  var spatialPositionChartDim = chartManager.getSpatialPositionChartDims();
-  var heatmap_div = spatialPositionChartDim['div'];
-  var divWidth = $(heatmap_div).parent().width();
-  var divHeight = spatialPositionChartDim['height'];
+  var spatialPositionChartDim, heatmap_div, divWidth, divHeight;
+  function setDimensions(){
+    spatialPositionChartDim = chartManager.getSpatialPositionChartDims();
+    heatmap_div = spatialPositionChartDim['div'];
+    divWidth = $(heatmap_div).parent().width();
+    divHeight = spatialPositionChartDim['height'];
+  };
+  setDimensions();
 
   var quadMapping = chartManager.getHeatmapData();
   
@@ -33,24 +37,31 @@ function HeatmapChart(chartManager){
 
   //------------------------------------------------
   // set gemoetry
-  var margin = { top: 0, right: 50, bottom: 0, left: 0 },
-      width = divWidth - margin.left - margin.right,
-      height = divHeight - margin.top - margin.bottom,
-      gridWidth = Math.floor(width / 3),
-      gridHeight = Math.floor(height / 3);
+  var margin = { top: 0, right: 50, bottom: 0, left: 0 };
 
-  var legendStartX = width + 5,
-      legendTotalHeight = height,
-      legendWidth = 15,
-      legendHeight = Math.round(height/(heatmapColors.length));
+  var width, height, gridWidth, gridHeight;
+  var legendStartX, legendTotalHeight, legendWidth, legendHeight;
+
+  function setGeometry(){
+    width = divWidth - margin.left - margin.right;
+    height = divHeight - margin.top - margin.bottom;
+    gridWidth = Math.floor(width / 3);
+    gridHeight = Math.floor(height / 3);
+
+    legendStartX = width + 5;
+    legendTotalHeight = height;
+    legendWidth = 15;
+    legendHeight = Math.round(height/(heatmapColors.length));
+  };
+  setGeometry();
   //------------------------------------------------
 
 
   //------------------------------------------------
   // start drawing
   var svg = d3.select(heatmap_div).append("svg")
-      .attr("viewBox", "0 0 " + divWidth + " " + divHeight)
-      .attr("preserveAspectRatio", "xMidYMid");
+      .attr("width", divWidth)
+      .attr("height", divHeight);
 
   var heatmapSVG = svg.append("g")
       .attr("class", "heatmap-chart")
@@ -78,32 +89,11 @@ function HeatmapChart(chartManager){
 
   //------------------------------------------------
   // quadrants
-  var quadrantSVG = heatmapSVG.append("g")
-      .attr("class", "quadrant-svg")
-      .selectAll(".quadrant")
-      .data(quadMapping, function(d){ return d.q; });
-
-  var heatmap = quadrantSVG.enter().append("rect")
-      .attr("id", function(d){ return d.q; })
-      .attr("class", "quadrant")
-      .attr("x", function(d) { return d.col * gridWidth + 1; })
-      .attr("y", function(d) { return d.row * gridHeight + 1; })
-      .attr("width", gridWidth - 2)
-      .attr("height", gridHeight - 2)
-      .style("fill", "blue")
-      .on("click", function(d) { handleClickOnQuadrant(d.q); });
-
-  heatmap.append("title")
-    .text(function(d) { return getQuadrantTitle(d); });
+  var allQuadrantsSVG = heatmapSVG.append("g");
 
   function getQuadrantTitle(d){
     return "Quadrant: " + d.name + "\nValue: " + d3.format(',%')(d.value);
   };
-
-  heatmap
-    .transition()
-      .duration(750)
-      .style("fill", function(d) { return heatmapColorScale(d.value); });
 
   function handleClickOnQuadrant(chartType){
     chartManager.handleClickOnQuadrant(chartType);
@@ -112,48 +102,53 @@ function HeatmapChart(chartManager){
   // mask for selected quadrant
   var quadrantMask = heatmapSVG.append("rect")
       .attr("class", "quadrant-mask")
-      .attr("x", 0)
-      .attr("y", 0)
-      .attr("width", gridWidth - 2)
-      .attr("height", gridHeight - 2)
       .style("display", "none");
   var quadrantMaskTitle = quadrantMask.append("title").text("");
 
   // legends
-  var legendSVG = heatmapSVG
-    .append("g")
-      .attr("class", "legend-svg");
+  var legendSVG = heatmapSVG.append("g").attr("class", "legend-svg");
 
   var legend = legendSVG.selectAll(".legend")
       .data([].concat(heatmapColorScale.domain()), function(d) { return d; })
     .enter().append("g")
       .attr("class", "legend");
 
-  legend.append("rect")
+  var legendRect = legend.append("rect")
       .attr("class", "legend")
-      .attr("x", legendStartX)
-      .attr("y", function(d, i) { return legendTotalHeight - legendHeight * (i+1); })
-      .attr("width", legendWidth)
-      .attr("height", legendHeight)
       .style("fill", function(d, i) { return heatmapColors[i]; });
 
-  legend.append("text")
+  var legendLabel = legend.append("text")
       .attr("class", "legend")
       .text(function(d) { 
         if ((d * 10) % 2 == 0){ return d3.format(',%')(d); } 
         else { return ""; }
-      })
-      .attr("x", legendStartX + legendWidth + 2)
-      .attr("y", function(d, i) { 
-        return legendTotalHeight - legendHeight * i; 
       });
 
   // manually push 100% label
-  legend.append("text")
+  var legend100pcLabel = legend.append("text")
       .attr("class", "legend")
-      .text(d3.format(',%')(1))
-      .attr("x", legendStartX + legendWidth + 2)
-      .attr("y", legendTotalHeight - legendHeight * heatmapColors.length + 10);
+      .text(d3.format(',%')(1));
+
+  function resizeLegends(){
+    legendRect
+        .attr("x", legendStartX)
+        .attr("y", function(d, i) { return legendTotalHeight - legendHeight * (i+1); })
+        .attr("width", legendWidth)
+        .attr("height", legendHeight);
+    legendLabel
+        .attr("x", legendStartX + legendWidth + 2)
+        .attr("y", function(d, i) { return legendTotalHeight - legendHeight * i; });
+    legend100pcLabel
+        .attr("x", legendStartX + legendWidth + 2)
+        .attr("y", legendTotalHeight - legendHeight * heatmapColors.length + 10);
+  };
+  resizeLegends();
+
+  function resizeSVG(){
+    svg.attr("width", divWidth).attr("height", divHeight);
+    heatmapSVG.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    resizeLegends();
+  };
   //------------------------------------------------
 
 
@@ -162,39 +157,65 @@ function HeatmapChart(chartManager){
   function repaint(){
     quadMapping = chartManager.getHeatmapData();
 
-    quadrantSVG.data(quadMapping, function(d){ return d.q; });
-    heatmap.select("title")
-      .text(function(d) { return "Quadrant: " + d.name + "\nValue: " + d3.format(',%')(d.value); });
+    var quadrantSVG = allQuadrantsSVG.selectAll(".quadrant-svg")
+        .data(quadMapping, function(d){ return d.q; });
+ 
+    // enter
+    var heatmapQuadrant = quadrantSVG.enter().append("g").attr("class", "quadrant-svg");
 
-    heatmap
+    heatmapQuadrant.append("rect")
+        .attr("id", function(d){ return d.q; })
+        .on("click", function(d) { handleClickOnQuadrant(d.q); });
+
+    heatmapQuadrant.append("svg:title");
+
+    // update + enter
+    quadrantSVG.select("rect")
+        .attr("x", function(d) { return d.col * gridWidth + 1; })
+        .attr("y", function(d) { return d.row * gridHeight + 1; })
+        .attr("width", gridWidth - 2)
+        .attr("height", gridHeight - 2)
       .transition()
         .duration(750)
         .style("fill", function(d) { return heatmapColorScale(d.value); });
+
+    quadrantSVG.select("title")
+      .text(function(d) { return "Quadrant: " + d.name + "\nValue: " + d3.format(',%')(d.value); });
+
+    // exit
+    quadrantSVG.exit().remove();
   };
-  //------------------------------------------------
 
+  function resize(){
+    setDimensions();
+    setGeometry();
+    resizeSVG();
 
-  //------------------------------------------------
-  // Get div height
-  this.getOuterDivHeight = function(){ 
-    return $(heatmap_div).outerHeight();
+    repaint();
+    decorateQuadrant(selectedChartType, []);
   };
   //------------------------------------------------
 
 
   //------------------------------------------------
   // callbacks
+  var selectedChartType = undefined;
   function decorateQuadrant(chartTypeArg, bgIdsArg){
+    selectedChartType = undefined;
+
     // remove existing overlay
     quadrantMask.attr("x", 0).attr("y", 0).style("display", "none");
     quadrantMaskTitle.text("");
 
     // cycle through each quadrant - use dummy attr for now
-    heatmap.attr("mask", function(d) {
+    allQuadrantsSVG.selectAll(".quadrant-svg").select("rect").attr("mask", function(d) {
       if(d.q == chartTypeArg){ 
+        selectedChartType = chartTypeArg;
         quadrantMask
             .attr("x", d.col * gridWidth + 1)
             .attr("y", d.row * gridHeight + 1)
+            .attr("width", gridWidth - 2)
+            .attr("height", gridHeight - 2)
             .attr("style", 'fill:url(#pattern-mask);');
 
         quadrantMaskTitle.text(getQuadrantTitle(d));
@@ -209,6 +230,7 @@ function HeatmapChart(chartManager){
   //------------------------------------------------
   // finally, add call back to repaint charts
   chartManager.addRepaintCallback(repaint);
+  chartManager.addResizeCallback(resize);
   chartManager.addTimelineChartSelectionCallback(decorateQuadrant);
   //------------------------------------------------
 };

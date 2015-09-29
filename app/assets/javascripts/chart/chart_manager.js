@@ -52,10 +52,10 @@ function ChartManager(seasonInfo, seasonData){
     this.chartLegend = new ChartLegend(self);
     this.summaryPanelChart = new SummaryPanelChart(self);
 
+    self.repaintAll();
     self.responsiveWidthCalculator.reflowHeights();
-    $(window).resize(function() {
-      self.responsiveWidthCalculator.debouncedReflowHeights();
-    });
+
+    $(window).resize(function() { self.debouncedResize(); });
     timeLogEnd("chartDrawing", "All chart drawing done");
   };
 
@@ -218,7 +218,12 @@ function ChartManager(seasonInfo, seasonData){
   // None
 
   // Common DataManager
-  // get brushed time
+  // get brushed game/time
+  this.getBrushedGames = function(){
+    return self.dataManager.getBrushedGames(
+      self.ndxManager.getBeginCounter(), 
+      self.ndxManager.getEndCounter());
+  };
   this.getBrushedFrameTime = function(){
     return self.dataManager.getBrushedFrameTime(
         self.ndxManager.getBeginCounter(), 
@@ -231,11 +236,6 @@ function ChartManager(seasonInfo, seasonData){
   this.getBrandGroupColor = function(bgId){ return self.seasonDataManager.getBrandGroupColor(bgId); };
   this.getGameName = function(gameId){ return self.seasonDataManager.getGameName(gameId); };
   this.getGameColor = function(gameId){ return self.seasonDataManager.getGameColor(gameId); };
-  this.getBrushedGames = function(){
-    return self.seasonDataManager.getBrushedGames(
-      self.ndxManager.getBeginCounter(), 
-      self.ndxManager.getEndCounter());
-  };
   this.getCounterForGame = function(gameId){ return self.seasonDataManager.getCounterForGame(gameId); };
   this.getSubSeasonData = function(){ return self.seasonDataManager.getSubSeasonData(); };
   this.getSubSeasonColor = function(subSeasonId){
@@ -266,12 +266,26 @@ function ChartManager(seasonInfo, seasonData){
   this.getTimelineChartBgIds = function(){ return self.multiLineHelper.getTimelineChartBgIds(); };
   //------------------------------------------------  
 
+  //------------------------------------------------  
+  // handle browser resize
+  this.resize = function(){
+    self.fireResizeCallback();
+    // reflow div heights
+    self.responsiveWidthCalculator.reflowHeights();
+  };
+  this.debouncedResize = _.debounce(self.resize, 2000); // 2 seconds
+  //------------------------------------------------  
+
 
   //------------------------------------------------  
   // let jquery manage call backs to update all charts
   var repaintCallbacks = $.Callbacks("unique");
   this.addRepaintCallback = function(callback){ repaintCallbacks.add(callback); };
   this.fireRepaintCallback = function(){ repaintCallbacks.fire(); };
+
+  var resizeCallbacks = $.Callbacks("unique");
+  this.addResizeCallback = function(callback){ resizeCallbacks.add(callback); };
+  this.fireResizeCallback = function(){ resizeCallbacks.fire(); };
 
   var timelineChartSelectionCallback = $.Callbacks("unique");
   this.addTimelineChartSelectionCallback = function(callback){ timelineChartSelectionCallback.add(callback); };

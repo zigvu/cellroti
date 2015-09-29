@@ -12,10 +12,14 @@ function GameSelectionChart(chartManager){
   var selectedGameId;
 
   // div for chart
-  var gameSelectionChartDim = chartManager.getGameSelectionChartDims();
-  var bc_gameSelection_div = gameSelectionChartDim['div'];
-  var divWidth = $(bc_gameSelection_div).parent().width();
-  var divHeight = gameSelectionChartDim['height'];
+  var gameSelectionChartDim, bc_gameSelection_div, divWidth, divHeight;
+  function setDimensions(){
+    gameSelectionChartDim = chartManager.getGameSelectionChartDims();
+    bc_gameSelection_div = gameSelectionChartDim['div'];
+    divWidth = $(bc_gameSelection_div).parent().width();
+    divHeight = gameSelectionChartDim['height'];
+  };
+  setDimensions();
 
   var subSeasonData = chartManager.getSubSeasonData();
   //------------------------------------------------
@@ -23,16 +27,23 @@ function GameSelectionChart(chartManager){
 
   //------------------------------------------------
   // set up gemoetry
-  var margin = {top: 1, right: 1, bottom: 1, left: 50},
-      width = divWidth - margin.left - margin.right, 
-      height = divHeight - margin.top - margin.bottom;
+  var margin = {top: 1, right: 1, bottom: 1, left: 50};
+  var width, height;
 
   var seasonLabelsAddPosX = 5;
   var seasonLabelsAddPosY = 5;
   var lulButtonWidthSmallerBy = 12;
   var lulButtonWidth = 60;
   var lulButtonHeightSmallerBy = 6;
-  var lulButtonHeight = height - lulButtonHeightSmallerBy;
+  var lulButtonHeight;
+
+  function setGeometry(){
+    width = divWidth - margin.left - margin.right;
+    height = divHeight - margin.top - margin.bottom;
+
+    lulButtonHeight = height - lulButtonHeightSmallerBy;
+  };
+  setGeometry();
   //------------------------------------------------
 
 
@@ -40,6 +51,10 @@ function GameSelectionChart(chartManager){
   // define axis and brush
   var x = d3.scale.linear().range([0, width]),
       y = d3.scale.linear().range([height, 0]);
+  function setRange(){
+    x.range([0, width]);
+    y.range([height, 0]);
+  };
   //------------------------------------------------
 
 
@@ -71,10 +86,11 @@ function GameSelectionChart(chartManager){
 
   //------------------------------------------------
   // start drawing
-  var gameSelectionSVG = d3.select(bc_gameSelection_div).append("svg")
-      .attr("viewBox", "0 0 " + divWidth + " " + divHeight)
-      .attr("preserveAspectRatio", "xMidYMid")
-    .append("g")
+  var svg = d3.select(bc_gameSelection_div).append("svg")
+      .attr("width", divWidth)
+      .attr("height", divHeight);
+
+  var gameSelectionSVG = svg.append("g")
       .attr("class", "game-selection-chart")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -227,8 +243,6 @@ function GameSelectionChart(chartManager){
 
   //------------------------------------------------
   // handle click events
-  var selectedGameId;
-
   function addGameInfo(gameIds){
     isGameInfoShowing = true;
     redrawSeasons(getClonedSubSeasonData(gameIds));

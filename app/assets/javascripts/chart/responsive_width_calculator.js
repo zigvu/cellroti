@@ -68,8 +68,6 @@ function ResponsiveWidthCalculator(chartManager){
     $("#row-2").find(".card").css('min-height', (maxHeight + 1) + 'px');
     // var maxHeight = $('#component-bar-chart').parents('.card').height();
   };
-  this.debouncedReflowHeights = _.debounce(self.reflowHeights, 2000); // 2 seconds
-
 
 
   // detect current state
@@ -101,12 +99,19 @@ function ResponsiveWidthCalculator(chartManager){
     if(self.isMedium()){ return heightHash['medium']; }
     if(self.isLarge()){ return heightHash['large']; }
   };
-
   //------------------------------------------------
 
+  //------------------------------------------------
+  // resize triggered
+  function resize(){
+    // since order is important, this needs to be done manually from chartManager
+    // self.reflowHeights();
+  };
+
+  //------------------------------------------------
 
   //------------------------------------------------
   // finally, add call back to repaint charts
-  //chartManager.addRepaintCallback(repaint);
+  chartManager.addResizeCallback(resize);
   //------------------------------------------------
 };
