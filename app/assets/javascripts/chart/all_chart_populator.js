@@ -25,8 +25,6 @@ function AllChartPopulator(){
         chartManager.drawCharts();
 
         if(window.selectedGameId !== undefined){
-          // TODO: replace
-          chartManager.toggleGameDisplay(window.selectedGameId);
           chartManager.gameSelectionChart.loadGameSimulate(window.selectedGameId);
         }
       } catch(e) {

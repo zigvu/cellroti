@@ -21,7 +21,7 @@ function ResponsiveWidthCalculator(chartManager){
   var heights = {
     'timeline_chart': {'small': 220, 'medium': 220, 'large': 250},
     'brush_chart': {'small': 28, 'medium': 30, 'large': 30},
-    'game_selection_chart': {'small': 28, 'medium': 30, 'large': 30},
+    'game_selection_chart': {'small': 32, 'medium': 34, 'large': 34},
     'be_component_chart': {'small': 200, 'medium': 220, 'large': 230},
     'spatial_position_chart': {'small': 200, 'medium': 220, 'large': 230},
     'brand_effectiveness_chart': {'small': 200, 'medium': 220, 'large': 230},

@@ -146,7 +146,6 @@ function ChartManager(seasonInfo, seasonData){
       self.setCounterBounds(0,Infinity);
 
       // set mode in charts
-      self.gameSelectionChart.setGameMode();
       self.resetTimelineChart();
       self.brushChart.brushReset();
 
@@ -163,7 +162,6 @@ function ChartManager(seasonInfo, seasonData){
     self.setCounterBounds(0,Infinity);
 
     // set mode in charts
-    self.gameSelectionChart.setSeasonMode();
     self.resetTimelineChart();
     self.brushChart.brushReset();
   };

@@ -5,6 +5,8 @@
 // TODO: scope variables properly - currently many in global scope
 
 function SeasonDataManager(dataParser, chartManager){
+  var self = this;
+
   //------------------------------------------------
   // set up
   var chartHelpers = chartManager.chartHelpers;
@@ -26,9 +28,10 @@ function SeasonDataManager(dataParser, chartManager){
 
   //------------------------------------------------
   // add subseason information
-  this.numOfGamesInSubSeasonChart = chartManager.numOfGamesInSubSeasonChart;
-  addCountersToSubSeason(subSeasonsInfo);
-  var subSeasonData = insertPlaceHolderInSubSeason(subSeasonsInfo, this.numOfGamesInSubSeasonChart);
+
+  // add counters to game
+  var subSeasonData = addCountersToSubSeason(subSeasonsInfo)
+  subSeasonData = addGameHeirarchy(subSeasonsInfo);
   //------------------------------------------------
 
 
@@ -133,8 +136,41 @@ function SeasonDataManager(dataParser, chartManager){
 
 
   //------------------------------------------------
-  // sub season chart data  
-  this.getSubSeasonData = function(){ return subSeasonData; };
+  // game selection chart data  
+  this.getSubSeasonData = function(){ 
+    return getNonEmptySubSeasonData(subSeasonData);
+  };
+
+  function getNonEmptySubSeasonData(subSeasonInputData){
+    var nonEmptySubSeasons = [];
+    _.each(subSeasonInputData, function(sd){
+      if(sd.nonempty_games.length > 0){
+        // clone data
+        var clonedSd = {};
+        clonedSd.begin_count = sd.begin_count;
+        clonedSd.end_count = sd.end_count;
+        clonedSd.id = sd.id;
+        clonedSd.name = sd.name;
+        clonedSd.games = _.clone(sd.nonempty_games);
+        nonEmptySubSeasons.push(clonedSd);
+      }
+    });
+    // add reset boxes
+    if(nonEmptySubSeasons.length > 0){
+      var sd = { begin_count: 0, end_count: 0, name: "Reset" };
+
+      var clonedSd = _.clone(sd);
+      clonedSd.id = -1;
+      clonedSd.games = [];
+      nonEmptySubSeasons.push(clonedSd);
+
+      clonedSd = _.clone(sd);
+      clonedSd.id = -2;
+      clonedSd.games = [];
+      nonEmptySubSeasons.push(clonedSd);
+    }
+    return nonEmptySubSeasons;
+  };
 
   function addCountersToSubSeason(subSeasonInputData){
     _.each(subSeasonInputData, function(d){
@@ -147,25 +183,32 @@ function SeasonDataManager(dataParser, chartManager){
       d.begin_count = _.min(beginCounters);
       d.end_count = _.max(endCounters);
     });
+
+    return subSeasonInputData;
   };
 
-  // insert place holder data with negative subseason id
-  // in the middle of input subseason data
-  function insertPlaceHolderInSubSeason(subSeasonInputData, numOfNewGames){
-    var splitLeft = _.initial(subSeasonInputData, subSeasonInputData.length/2);
-    var splitRight = _.last(subSeasonInputData, subSeasonInputData.length - splitLeft.length);
-    var counterMiddle = _.last(splitLeft).end_count;
-    var placeHolders = _.times(numOfNewGames, function(i){
-      return {
-        id: -1 * (i+1),
-        name: '',
-        game_ids: [],
-        begin_count: counterMiddle,
-        end_count: counterMiddle
-      };
+  function addGameHeirarchy(subSeasonInputData){
+    // consider only non empty games
+    var nonEmptyGames = [];
+    _.each(gameDemarcations, function(gd){
+      if(gd.begin_count < gd.end_count){ nonEmptyGames.push(gd); }
     });
-    return _.union(splitLeft, placeHolders, splitRight);
-  }
+
+    // consider only sub-seasons that have games
+    var nonEmptySubSeasons = [];
+    _.each(subSeasonInputData, function(sd){
+      var games = [];
+      _.each(nonEmptyGames, function(gd){
+        if(_.contains(sd.game_ids, gd.game_id)){
+          gd.season_id = sd.id;
+          games.push(gd);
+        }
+      });
+      sd.nonempty_games = games;
+    });
+
+    return subSeasonInputData;
+  };
   //------------------------------------------------
 
 
