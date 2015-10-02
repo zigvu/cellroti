@@ -75,10 +75,7 @@ function MultiLineChart(chartManager){
   //------------------------------------------------
   // X axis time formatting
   function xAxisTimeFormatXAxis(){
-    var brushedTime = chartManager.getBrushedFrameTime();
-    var totalTime = _.reduce(brushedTime, function(total, d){ 
-      return total + d.end_time - d.begin_time; }, 
-    0);
+    var totalTime = chartManager.getBrushedFrameTime();
     var readableTime = chartHelpers.getReadableTime(totalTime);
     xAxisTimeFormatter = readableTime.formatter;
     xAxisTimeScale = d3.time.scale()

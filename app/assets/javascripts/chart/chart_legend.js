@@ -24,41 +24,6 @@ function ChartLegend(chartManager){
 		// TODO
 	});
   //------------------------------------------------
-
-
-  //------------------------------------------------
-	// Legend Show Hide
-	var explicitLogoHide = true;
-	$('#brand-legend').sticky({ 
-		topSpacing: 0,
-		getWidthFrom: "#brand-legend-container-column"
-	});
-
-	$('#brand-legend-normal-hide').click(function(){
-		$('#brand-legend-normal').hide();
-		$('#brand-legend-hidden').show();
-		explicitLogoHide = true;
-	});
-
-	$('#brand-legend-hidden-show').click(function(){
-		$('#brand-legend-normal').show();
-		$('#brand-legend-hidden').hide();
-		explicitLogoHide = false;
-	});
-
-	$('#brand-legend').on('sticky-start', function() { 
-		if(explicitLogoHide) {
-			$('#brand-legend-normal').hide();
-			$('#brand-legend-hidden').show();
-		}
-	});
-
-	$('#brand-legend').on('sticky-end', function() { 
-		$('#brand-legend-normal').show();
-		$('#brand-legend-hidden').hide();
-	});
-  //------------------------------------------------
-
 };
 
 //------------------------------------------------  

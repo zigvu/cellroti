@@ -17,6 +17,10 @@ $chart-range-bg-bar-opacity: 0.5;
 $chart-game-selection-bar-opacity: 0.1;
 $chart-game-selection-bar-opacity-hover: 0.3;
 
+$pc-text-color: $steel;
+$pc-unit-color: $warning-color;
+$pc-label-color: $steel;
+
 .d3-chart {
 	@media #{$small-only} {
 		font-size: rem-calc(10);
@@ -224,27 +228,33 @@ $chart-game-selection-bar-opacity-hover: 0.3;
 	}
 
 	// pie chart
-	.pie-chart {
-		.arc {
-			text {
-				line-height: 80%;
-				pointer-events: none;
-			}
-			path {
-				stroke: white;
-				//stroke-width: 1px;
-				//shape-rendering: crispedges; // does not render well
-
-				-moz-transition: all 0.3s;
-				-o-transition: all 0.3s;
-				-webkit-transition: all 0.3s;
-				transition: all 0.3s;
-			}
-			path:hover {
-				stroke: black;
-			}
+	.pie-chart-texts{
+		.pc-text {
+			font-weight: bold;
+			fill: $pc-text-color;
+			@media #{$small-only} and (orientation: portrait) { font-size: rem-calc(25); }
+			@media #{$small-only} and (orientation: landscape) { font-size: rem-calc(35); }
+			@media #{$medium-only} { font-size: rem-calc(25); }
+			@media #{$large-up} { font-size: rem-calc(35); }
+		}
+		.pc-unit {
+			fill: $pc-unit-color;
+			@media #{$small-only} and (orientation: portrait) { font-size: rem-calc(10); }
+			@media #{$small-only} and (orientation: landscape) { font-size: rem-calc(14); }
+			@media #{$medium-only} { font-size: rem-calc(12); }
+			@media #{$large-up} { font-size: rem-calc(14); }
+		}
+		.pc-label {
+			font-weight: bold;
+			text-transform: uppercase;
+			fill: $pc-label-color;
+			@media #{$small-only} and (orientation: portrait) { font-size: rem-calc(10); }
+			@media #{$small-only} and (orientation: landscape) { font-size: rem-calc(14); }
+			@media #{$medium-only} { font-size: rem-calc(11); }
+			@media #{$large-up} { font-size: rem-calc(14); }
 		}
 	}
+
 
 	// heatmap chart
 	.heatmap-chart{
@@ -326,7 +336,7 @@ $chart-game-selection-bar-opacity-hover: 0.3;
 		font-weight: bold;
 		color: $chart-panel-label-title-color;
 		padding: 0 0.5rem 0 0.5rem;
-		margin-bottom: 0.25rem;
+		margin-bottom: 0.15rem;
 		border-bottom: 2px solid $chart-panel-label-title-color;
 	}
 
@@ -344,35 +354,13 @@ $chart-game-selection-bar-opacity-hover: 0.3;
 	}
 
 	#brand-legend-content {
-		@media #{$medium-up} {
-			-webkit-column-count:3;   
-			-moz-column-count:3;
-			-ms-column-count:3;
-			-o-column-count:3;
-			column-count:3;
-			-webkit-column-gap:15px;   
-			-moz-column-gap:15px;
-			-ms-column-gap:15px;
-			-o-column-gap:15px;
-			column-gap:15px;
-			columns:3;
-		}
-		@media #{$medium-only} and (orientation: portrait) {
-			-webkit-column-count:2;   
-			-moz-column-count:2;
-			-ms-column-count:2;
-			-o-column-count:2;
-			column-count:2;
-			-webkit-column-gap:10px;   
-			-moz-column-gap:10px;
-			-ms-column-gap:10px;
-			-o-column-gap:10px;
-			column-gap:10px;
-			columns:2;
-		}
+		padding: 0px 10px 0px 10px;
 
 		li {
 			list-style-type: none;
+			padding-bottom: 0px;
+			line-height: 1.2;
+
 			.square {
 				display: inline-block;
 				width: rem-calc(14);

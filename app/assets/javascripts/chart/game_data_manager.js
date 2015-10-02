@@ -3,6 +3,8 @@
 	------------------------------------------------*/
   
 function GameDataManager(dataParser, chartManager){
+  var self = this;
+
   //------------------------------------------------
   // set up
   var chartHelpers = chartManager.chartHelpers;
@@ -63,7 +65,11 @@ function GameDataManager(dataParser, chartManager){
   // time calculations
   this.getBrushedFrameTime = function(beginCounter, endCounter){
     //  brushed games also includes time information
-    return this.getBrushedGames(beginCounter, endCounter);
+    var brushedGames = self.getBrushedGames(beginCounter, endCounter);
+    var totalTime = _.reduce(brushedGames, function(total, d){ 
+      return total + d.end_time - d.begin_time; }, 
+    0);
+    return totalTime;
   };
   //------------------------------------------------
 

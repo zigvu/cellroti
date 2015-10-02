@@ -107,18 +107,20 @@ function SeasonDataManager(dataParser, chartManager){
         return;
       };
       
+      var newGd = _.clone(gd);
       var timeRatio = (gd.end_time - gd.begin_time)/(gd.end_count - gd.begin_count);
       // if some part of the game is before the beginCounter
       if((gd.begin_count < beginCounter) && (gd.end_count > beginCounter)){
-        var newGd = _.clone(gd);
-        newGd.begin_count = beginCounter; 
-        newGd.begin_time = gd.end_time - (gd.end_count - newGd.begin_count) * timeRatio;
+        newGd.begin_count = beginCounter;
+        // if some part of the game is at or after the endCounter
+        if(gd.end_count >= endCounter){ newGd.end_count = endCounter; }
+        newGd.begin_time = gd.begin_time + (newGd.begin_count - gd.begin_count) * timeRatio;
+        newGd.end_time = gd.end_time - (gd.end_count - newGd.end_count) * timeRatio;
         bg.push(newGd);
         return;
       }
       // if some part of the game is after the endCounter
       if((gd.begin_count < endCounter) && (gd.end_count > endCounter)){
-        var newGd = _.clone(gd);
         newGd.end_count = endCounter;
         newGd.end_time = gd.begin_time + (newGd.end_count - gd.begin_count) * timeRatio;
         bg.push(newGd);
@@ -247,7 +249,11 @@ function SeasonDataManager(dataParser, chartManager){
   // time calculations
   this.getBrushedFrameTime = function(beginCounter, endCounter){
     //  brushed games also includes time information
-    return this.getBrushedGames(beginCounter, endCounter);
+    var brushedGames = self.getBrushedGames(beginCounter, endCounter);
+    var totalTime = _.reduce(brushedGames, function(total, d){ 
+      return total + d.end_time - d.begin_time; }, 
+    0);
+    return totalTime;
   };
   //------------------------------------------------
 

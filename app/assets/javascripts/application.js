@@ -19,7 +19,6 @@
 //= require crossfilter
 //= require jquery-readyselector
 //= require jquery-spinner
-//= require jquery.sticky
 //= require underscore
 //= require_tree ./chart
 //= require_tree .

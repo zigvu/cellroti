@@ -172,48 +172,38 @@ function NDXManager(ndxData, chartManager){
     return beComponentData;
   };
 
-  this.getTvEquivalentDuration = function(bgIds){
-    var tvEquivalentDuration = 0;
-
-    var viewDuration = {};
+  this.getViewDuration = function(bgIds){
+    var viewDuration = [];
     _.each(bgFGincZeroAll, function(d, idx, list){
-      viewDuration[d.key] = d.value.sum[viewDurationAccessor];
-    });
-
-    _.each(self.getBeBarChartData(), function(be){
-      // if det group is not present, do not use it for averaging      
-      if(_.contains(bgIds, '' + be.bgId) && be.value > 0){
-        tvEquivalentDuration += be.value * viewDuration['' + be.bgId];
+      if(_.contains(bgIds, '' + d.key)){ 
+        viewDuration.push({ id: d.key, sum: d.value.sum[viewDurationAccessor] });
       }
     });
+    return viewDuration;
+  };
+  this.getTvEquivalentDuration = function(bgIds){
+    var viewDuration = self.getViewDuration(bgIds);
+    var beBarChartData = self.getBeBarChartData();
 
-    return tvEquivalentDuration;
+    _.each(viewDuration, function(d){
+      var beValue = _.find(beBarChartData, function(b){ return d.id == b.bgId; }).value;
+      d.sum = beValue * d.sum;
+    });
+    return viewDuration;
   };
 
-  this.getAverageViewPersistence = function(bgIds){
-    var avgVPAcrossBgIds = 0, numOfConsideredBgIds = 0;
+  this.getViewPersistence = function(bgIds){
+    var viewPersistence = [];
     _.each(viewPersistenceBgFilterGroupAll, function(d, idx, list){
       if(_.contains(bgIds, '' + d.key)){ 
         if(d.value.count > 0){
-          avgVPAcrossBgIds += d.value.sum / d.value.count;
-          numOfConsideredBgIds += 1;
+          viewPersistence.push({ id: d.key, sum: d.value.sum / d.value.count })
+        } else {
+          viewPersistence.push({ id: d.key, sum: 0 })
         }
       }
     });
-
-    var averageViewPersitence = avgVPAcrossBgIds / numOfConsideredBgIds;
-    return averageViewPersitence;
-  };
-
-  this.getTotalViewDuration = function(bgIds){
-    var totalViewDuration = 0;
-    _.each(bgFGincZeroAll, function(d, idx, list){
-      if(_.contains(bgIds, '' + d.key)){ 
-        totalViewDuration += d.value.sum[viewDurationAccessor];
-      }
-    });
-
-    return totalViewDuration;
+    return viewPersistence;
   };
 
   this.getHeatmapData = function(){

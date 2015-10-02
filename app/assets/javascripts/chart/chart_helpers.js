@@ -107,19 +107,6 @@ function ChartHelpers(){
       ]);
   };
 
-  this.getReadableBrushedTime = function(brushedTimes){
-    var timeInMS = _.reduce(brushedTimes, function(total, d){ 
-      return total + d.end_time - d.begin_time; 
-    }, 0);
-    var readableTime = self.getReadableTime(timeInMS);
-
-    return { 
-      time: Math.round(readableTime.time * 10)/10, 
-      unit: readableTime.unit,
-      num_games: brushedTimes.length 
-    };
-  };
-
   this.timeFormatter_yrs = d3.time.format("%B:%Y");        // 2011:Feb
   this.timeFormatter_days = d3.time.format("%d:%H");       // 06:3
   this.timeFormatter_hrs = d3.time.format("%H:%M");        // 4:03
