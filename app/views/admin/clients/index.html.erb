@@ -23,7 +23,7 @@
         <td><%= client.users.count %></td>
         <td><%= client.det_groups.count %></td>
         <td><%= client.detectables.count %></td>
-        <td><%= Managers::MClient.new(client).getAllowedSeasonIds.count %></td>
+        <td><%= client.settings.getSeasonsAllowed.count %></td>
         <td><%= link_to 'Edit Settings', [:admin, client] %></td>
         <td><%= link_to 'Edit Details', edit_admin_client_path(client) %></td>
         <td><%= link_to 'Destroy', [:admin, client], method: :delete, data: { confirm: 'Are you sure?' } %></td>

@@ -16,14 +16,6 @@ function ChartLegend(chartManager){
 	});
   //------------------------------------------------
 
-
-	//------------------------------------------------
-	// Update Chart
-  var updateChartsId = '#brand-legend-update-charts';
-  $(updateChartsId).click(function(){
-		// TODO
-	});
-  //------------------------------------------------
 };
 
 //------------------------------------------------  

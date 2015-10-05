@@ -82,10 +82,8 @@ end
 # soccer.leagues.create(name: "MLS", description: "American, happens every year")
 
 # wc2014 = worldCup.seasons.create(name: "World Cup 2014", description: "2014 World Cup")
-# mc = Managers::MClient.new(zigvuClient)
-# mc.addAllowedSeasonIds(wc2014.id)
-# mc = Managers::MClient.new(cocacolaClient)
-# mc.addAllowedSeasonIds(wc2014.id)
+# zigvuClient.settings.addAllowedSeasonIds(wc2014.id)
+# cocacolaClient.settings.addAllowedSeasonIds(wc2014.id)
 
 # ######  BEGIN - AUTO DUMMY DATA POPULATE ######
 

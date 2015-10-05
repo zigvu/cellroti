@@ -4,6 +4,10 @@
   window.seasonLabelPath = "/api/v1/analytics/seasons/" + <%= @season.id %>;
   window.seasonShowPath = "/api/v1/analytics/seasons/" + <%= @season.id %> + "/summary";
   window.gameShowPath = "/api/v1/analytics/seasons/" + <%= @season.id %> + "/game/";
+  window.filterPath = "/api/v1/analytics/seasons/" + <%= @season.id %> + "/filter";
+  <% if @gameId != nil %>
+    window.selectedGameId = <%= @gameId %>;
+  <% end %>
 </script>
 
 <%= render 'all_charts' %>

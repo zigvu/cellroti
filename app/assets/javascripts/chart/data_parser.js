@@ -41,7 +41,8 @@ function DataParser(seasonInfo, seasonData, chartManager){
   // set up
   var chartHelpers = chartManager.chartHelpers;
 
-  // disaggregate seasonInfo - convert to hashes like below
+  // disaggregate seasonInfo
+  this.seasonId = seasonInfo["id"];
   this.eventTypesInfo = seasonInfo["event_types"];
   // this.teamsInfo = seasonInfo["teams"];
   this.gamesInfo = seasonInfo["games"];

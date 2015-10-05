@@ -7,7 +7,7 @@ class DetGroup < ActiveRecord::Base
 
   # simulate released det groups
   def self.released_det_groups
-    cs = Serializers::ClientSettingsSerializer.new(Client.zigvu_client.client_setting)
+    cs = Client.zigvu_client.settings
     nonReleasedDGId = [
       [cs.getJobsDgQueue] + 
       [cs.getJobsDgWorking] + 

@@ -9,9 +9,7 @@ module Serializers
 		def getX(columnName, hashKeyName)
 			column = @tableObject.send(columnName)
 			hashValue = column[hashKeyName]
-			getValue = hashValue.to_a
-			# if the array is of length 1, then just return the value
-			getValue.count == 1 ? getValue[0] : getValue
+			hashValue.to_a
 		end
 
 		def addX(columnName, hashKeyName, hashValueArray)

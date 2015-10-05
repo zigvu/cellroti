@@ -10,9 +10,6 @@
     <div class="title clearfix">
       <div class="text left">Summary</div>
       <div class="right">
-        <span id="reset-summary-panels" class="button radius title-button" title="Reset Chart">
-          <i class="fi-refresh"></i>
-        </span>
       </div>
     </div>
     <div class="content">
@@ -42,7 +39,16 @@
     <div  id="brand-legend">
       <div class="row">
         <div class="small-12 columns">
-          <div class="brand-label-titles">Brand Groups</div>
+
+          <div class="brand-label-titles clearfix">
+            <div class="left">Brand Groups</div>
+            <div class="right">
+              <span id="brand-legend-update-charts" class="settings-button" title="Change Brand Groups" data-reveal-id="brand-legend-update-reveal">
+                <i class="fi-widget"></i>
+              </span>
+            </div>
+          </div>
+
         </div>
         <div class="small-12 columns">
           <div id="brand-legend-content">
@@ -239,3 +245,9 @@
   </div>
 </div>
 <!-- END: Thumbnail pop-ups -->
+
+<!-- BEGIN: Update charts -->
+  <div id="brand-legend-update-reveal" class="reveal-modal large" data-reveal>
+    <%= render 'update_brand_groups' %>
+  </div>
+<!-- END: Update charts -->

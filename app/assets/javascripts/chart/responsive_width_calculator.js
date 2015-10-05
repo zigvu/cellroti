@@ -27,7 +27,7 @@ function ResponsiveWidthCalculator(chartManager){
     'summary_chart_2': {'small': 130, 'medium': 100, 'large': 130},
     'summary_chart_3': {'small': 130, 'medium': 100, 'large': 130},
     'summary_chart_4': {'small': 130, 'medium': 100, 'large': 130},
-    'timeline_chart': {'small': 220, 'medium': 220, 'large': 250},
+    'timeline_chart': {'small': 220, 'medium': 250, 'large': 280},
     'brush_chart': {'small': 28, 'medium': 30, 'large': 30},
     'game_selection_chart': {'small': 32, 'medium': 34, 'large': 34},
     'be_component_chart': {'small': 200, 'medium': 220, 'large': 230},

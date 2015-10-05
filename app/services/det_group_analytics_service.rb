@@ -42,7 +42,7 @@ module Services
 			end
 
 			# remove the det group from all queues
-			cs = Serializers::ClientSettingsSerializer.new(@client.client_setting)
+			cs = @client.settings
 			cs.removeJobsDgQueue(@detGroup.id)
 			cs.removeJobsDgWorking(@detGroup.id)
 			cs.removeJobsDgFail(@detGroup.id)
@@ -51,13 +51,13 @@ module Services
 
 		def release
 			# simply remove from review queue
-			cs = Serializers::ClientSettingsSerializer.new(@client.client_setting)
+			cs = @client.settings
 			cs.removeJobsDgReview(@detGroup.id)
 		end
 
 		def requeue
 			# remove from internal queue and enqueue again
-			cs = Serializers::ClientSettingsSerializer.new(@client.client_setting)
+			cs = @client.settings
 			cs.removeJobsDgFail(@detGroup.id)
 			enqueue()
 		end

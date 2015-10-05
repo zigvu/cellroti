@@ -1,10 +1,10 @@
 
 module Jsonifiers
 	class JAnalyticsGameData < Jsonifiers::JAnalytics
-		def initialize(game, client)
+		def initialize(game, user)
 			@game = game
 
-			@detGroupIds = client.det_groups.pluck(:id)
+			@detGroupIds = user.settings.getSeasonAnalysisDetGroupIds()
 			@summaryResolutions = States::SummaryResolutions.resolutionsGame
 		end
 

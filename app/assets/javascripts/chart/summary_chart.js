@@ -168,11 +168,11 @@ function SummaryChartSingle(chartDim){
 
     radius = chartWH / 2;
     outerRadius = radius - 1;
-    innerRadius = outerRadius - 5;
+    innerRadius = outerRadius - 8;
 
     pcCenterX = width/2; pcCenterY = chartWH/2;
     textCenterY = pcCenterY;
-    unitCenterY = chartWH - parseInt(chartWH * 0.1);
+    unitCenterY = textCenterY + parseInt(pcCenterY/2);
     labelCenterY = chartWH + parseInt(chartWH * 0.2);
   };
   setGeometry();

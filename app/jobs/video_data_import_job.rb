@@ -30,17 +30,15 @@ class VideoDataImportJob < Struct.new(:videoDataImportJobHash)
 		# change state for admin interface
 		client = Client.find(videoDataImportJobHash[:client_id])
 		videoId = videoDataImportJobHash[:video_id]
-		cs = Serializers::ClientSettingsSerializer.new(client.client_setting)
-		cs.addJobsViQueue(videoId)
+		client.settings.addJobsViQueue(videoId)
 	end
 
 	def before
 		# change state for admin interface
 		client = Client.find(videoDataImportJobHash[:client_id])
 		videoId = videoDataImportJobHash[:video_id]
-		cs = Serializers::ClientSettingsSerializer.new(client.client_setting)
-		cs.addJobsViWorking(videoId)
-		cs.removeJobsViQueue(videoId)
+		client.settings.addJobsViWorking(videoId)
+		client.settings.removeJobsViQueue(videoId)
 	end
 
 	def after
@@ -50,9 +48,8 @@ class VideoDataImportJob < Struct.new(:videoDataImportJobHash)
 		# change state for admin interface
 		client = Client.find(videoDataImportJobHash[:client_id])
 		videoId = videoDataImportJobHash[:video_id]
-		cs = Serializers::ClientSettingsSerializer.new(client.client_setting)
-		cs.removeJobsViWorking(videoId)
-		cs.addJobsViReview(videoId)
+		client.settings.removeJobsViWorking(videoId)
+		client.settings.addJobsViReview(videoId)
 	end
 
 	def error(job, exception)
@@ -63,9 +60,8 @@ class VideoDataImportJob < Struct.new(:videoDataImportJobHash)
 		# change state for admin interface
 		client = Client.find(videoDataImportJobHash[:client_id])
 		videoId = videoDataImportJobHash[:video_id]
-		cs = Serializers::ClientSettingsSerializer.new(client.client_setting)
-		cs.removeJobsViWorking(videoId)
-		cs.addJobsViFail(videoId)
+		client.settings.removeJobsViWorking(videoId)
+		client.settings.addJobsViFail(videoId)
 	end
 
 end

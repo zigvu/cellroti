@@ -23,13 +23,14 @@ module Admin
     # GET /clients/1/seasons
     def seasons
       @seasons = ::Season.all
-      @allowedSeasonIds = Managers::MClient.new(@client).getAllowedSeasonIds
+      @allowedSeasonIds = @client.settings.getSeasonsAllowed
     end
 
     # POST /clients/1/updateSeasons
     def updateSeasons
       seasonIds = (params["client"].map{|k, v| k if v == "1"}.flatten.uniq - [nil]).map{|k| k.to_i}
-      Managers::MClient.new(@client).resetAllowedSeasonIds(seasonIds)
+      @client.settings.replaceSeasonsAllowed(seasonIds)
+
       redirect_to [:admin, @client], notice: 'Client was successfully updated.'
     end
 
@@ -50,7 +51,8 @@ module Admin
 
     # GET /clients/1
     def show
-      @seasons = ::Season.where(id: Managers::MClient.new(@client).getAllowedSeasonIds)
+      allowedSeasons = @client.settings.getSeasonsAllowed
+      @seasons = ::Season.where(id: allowedSeasons)
     end
 
     # GET /clients/new

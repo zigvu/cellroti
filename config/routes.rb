@@ -25,6 +25,7 @@ Cellroti::Application.routes.draw do
       member do
         get "summary"
         get "game/:game_id" => "seasons#game", :as => :game
+        post "updateDetGroups"
       end
     end
   end
@@ -42,6 +43,7 @@ Cellroti::Application.routes.draw do
         member do
           get 'summary'
           get "game/:game_id" => "seasons#game", :as => :game
+          get 'filter'
         end
       end
     end

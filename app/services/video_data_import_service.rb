@@ -22,7 +22,7 @@ module Services
 			end
 
 			# remove the video from all queues
-			cs = Serializers::ClientSettingsSerializer.new(@client.client_setting)
+			cs = @client.settings
 			cs.removeJobsViQueue(@video.id)
 			cs.removeJobsViWorking(@video.id)
 			cs.removeJobsViFail(@video.id)
@@ -31,13 +31,13 @@ module Services
 
 		def release
 			# simply remove from review queue
-			cs = Serializers::ClientSettingsSerializer.new(@client.client_setting)
+			cs = @client.settings
 			cs.removeJobsViReview(@video.id)
 		end
 
 		def requeue
 			# remove from internal queue and enqueue again
-			cs = Serializers::ClientSettingsSerializer.new(@client.client_setting)
+			cs = @client.settings
 			cs.removeJobsViFail(@video.id)
 			enqueue()
 		end

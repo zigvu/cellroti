@@ -9,7 +9,7 @@ module Admin
 		# GET /metrics
 		def index
 			@mps = States::MetricsProgressStates # no new required since accessing static vars
-			cs = Serializers::ClientSettingsSerializer.new(::Client.zigvu_client.client_setting)
+			cs = ::Client.zigvu_client.settings
 			@viQueue = ::Video.where(id: cs.getJobsViQueue)
 			@viWorking = ::Video.where(id: cs.getJobsViWorking)
 			@viFail = ::Video.where(id: cs.getJobsViFail)

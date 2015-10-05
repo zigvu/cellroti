@@ -3,11 +3,15 @@ class Client < ActiveRecord::Base
 	include Authority::Abilities
 
   validates :name, presence: true, uniqueness: true
-	after_create :auto_create_client_setting
+	after_create :auto_create_client_settings
 
-  def auto_create_client_setting
-    cs = create_client_setting
-    Serializers::ClientSettingsSerializer.new(cs).resetAllSettings
+  def auto_create_client_settings
+    create_client_setting
+    settings.resetAllSettings
+  end
+
+  def settings
+    Serializers::ClientSettingsSerializer.new(client_setting)
   end
 
   def self.zigvu_client

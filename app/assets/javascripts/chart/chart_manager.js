@@ -40,6 +40,7 @@ function ChartManager(seasonInfo, seasonData){
     self.setCounterBounds(0,Infinity);
 
     // create chart objects
+    this.filterManager = new FilterManager(self);
     this.respCalc = new ResponsiveWidthCalculator(self);
     this.multiLineHelper = new MultiLineHelper(self);
     this.multiLineChart = new MultiLineChart(self);
@@ -54,8 +55,9 @@ function ChartManager(seasonInfo, seasonData){
 
     self.repaintAll();
     self.respCalc.reflowHeights();
-
     $(window).resize(function() { self.debouncedResize(); });
+
+    self.filterManager.setSeasonId(self.seasonDataParser.seasonId);
     timeLogEnd("chartDrawing", "All chart drawing done");
   };
 
@@ -141,6 +143,10 @@ function ChartManager(seasonInfo, seasonData){
       self.resetTimelineChart();
       self.brushChart.brushReset();
 
+      // synch filter
+      self.filterManager.setGameId(gameId);
+      self.filterManager.synch();
+
       // hide spinner
       hideSpinner();
     });
@@ -156,6 +162,10 @@ function ChartManager(seasonInfo, seasonData){
     // set mode in charts
     self.resetTimelineChart();
     self.brushChart.brushReset();
+
+    // synch filter
+    self.filterManager.unsetGameId();
+    self.filterManager.synch();
   };
   //------------------------------------------------  
 

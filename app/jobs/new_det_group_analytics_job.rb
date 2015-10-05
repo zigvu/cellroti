@@ -27,17 +27,15 @@ class NewDetGroupAnalyticsJob < Struct.new(:newDetGroupAnalyticsHash)
 		# change state for admin interface
 		client = Client.find(newDetGroupAnalyticsHash[:client_id])
 		detGroupId = newDetGroupAnalyticsHash[:det_group_id]
-		cs = Serializers::ClientSettingsSerializer.new(client.client_setting)
-		cs.addJobsDgQueue(detGroupId)
+		client.settings.addJobsDgQueue(detGroupId)
 	end
 
 	def before
 		# change state for admin interface
 		client = Client.find(newDetGroupAnalyticsHash[:client_id])
 		detGroupId = newDetGroupAnalyticsHash[:det_group_id]
-		cs = Serializers::ClientSettingsSerializer.new(client.client_setting)
-		cs.addJobsDgWorking(detGroupId)
-		cs.removeJobsDgQueue(detGroupId)
+		client.settings.addJobsDgWorking(detGroupId)
+		client.settings.removeJobsDgQueue(detGroupId)
 	end
 
 	def after
@@ -47,9 +45,8 @@ class NewDetGroupAnalyticsJob < Struct.new(:newDetGroupAnalyticsHash)
 		# change state for admin interface
 		client = Client.find(newDetGroupAnalyticsHash[:client_id])
 		detGroupId = newDetGroupAnalyticsHash[:det_group_id]
-		cs = Serializers::ClientSettingsSerializer.new(client.client_setting)
-		cs.removeJobsDgWorking(detGroupId)
-		cs.addJobsDgReview(detGroupId)
+		client.settings.removeJobsDgWorking(detGroupId)
+		client.settings.addJobsDgReview(detGroupId)
 
 		# after successfully creating metrics, link this det_group to client
 		client.det_group_clients.create(det_group: DetGroup.find(detGroupId))
@@ -63,9 +60,8 @@ class NewDetGroupAnalyticsJob < Struct.new(:newDetGroupAnalyticsHash)
 		# change state for admin interface
 		client = Client.find(newDetGroupAnalyticsHash[:client_id])
 		detGroupId = newDetGroupAnalyticsHash[:det_group_id]
-		cs = Serializers::ClientSettingsSerializer.new(client.client_setting)
-		cs.removeJobsDgWorking(detGroupId)
-		cs.addJobsDgFail(detGroupId)
+		client.settings.removeJobsDgWorking(detGroupId)
+		client.settings.addJobsDgFail(detGroupId)
 	end
 
 	private

@@ -22,6 +22,11 @@ $pc-unit-color: $warning-color;
 $pc-label-color: $steel;
 
 .d3-chart {
+
+	svg {
+		display: block;
+	}
+
 	@media #{$small-only} {
 		font-size: rem-calc(10);
 	}
@@ -232,10 +237,10 @@ $pc-label-color: $steel;
 		.pc-text {
 			font-weight: bold;
 			fill: $pc-text-color;
-			@media #{$small-only} and (orientation: portrait) { font-size: rem-calc(25); }
-			@media #{$small-only} and (orientation: landscape) { font-size: rem-calc(35); }
-			@media #{$medium-only} { font-size: rem-calc(25); }
-			@media #{$large-up} { font-size: rem-calc(35); }
+			@media #{$small-only} and (orientation: portrait) { font-size: rem-calc(20); }
+			@media #{$small-only} and (orientation: landscape) { font-size: rem-calc(25); }
+			@media #{$medium-only} { font-size: rem-calc(20); }
+			@media #{$large-up} { font-size: rem-calc(25); }
 		}
 		.pc-unit {
 			fill: $pc-unit-color;
@@ -329,6 +334,8 @@ $pc-label-color: $steel;
 
 	background: none repeat scroll 0 0 $chart-panel-legend-box-color;
 	padding: 0.25rem;
+	margin-top: 0.5rem;
+	height: 100%;
 	z-index: 9999;
 
 	.brand-label-titles {
@@ -340,19 +347,23 @@ $pc-label-color: $steel;
 		border-bottom: 2px solid $chart-panel-label-title-color;
 	}
 
-	#brand-legend-hidden {
-		display: none;
-		.brand-legend-hidden-text {
-			font-size: rem-calc(14);
-			font-style: oblique;
-		}
-	}
-
-	.button {
+	.settings-button {
 		margin: 0;
-		padding: 0.4rem;
-	}
+		padding: 0 10px 0 10px;
+		cursor: pointer;
 
+		color: #2daebf;
+		font-size: 1.5rem;
+		text-shadow: 1px 4px 6px #fff, 0 0 0 #000, 1px 4px 6px #fff;
+	}
+	.settings-button:hover, .settings-button:focus {
+		color: #e33100;
+
+		-moz-transition: all 0.3s;
+		-o-transition: all 0.3s;
+		-webkit-transition: all 0.3s;
+		transition: all 0.3s;
+	}
 	#brand-legend-content {
 		padding: 0px 10px 0px 10px;
 
@@ -383,8 +394,8 @@ $pc-label-color: $steel;
 	background: $white;
 	border: 0px none;
 	box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
-  margin-bottom: $column-gutter;
-  min-height: 200px;
+	margin-bottom: $column-gutter;
+	min-height: 200px;
 
 	.title {
 		// padding: 1px 3px 1px 1px;
@@ -422,5 +433,14 @@ $pc-label-color: $steel;
 
 	.content {
 		padding: 1rem;
+	}
+}
+
+.brand-group-update {
+	ul {
+		margin-bottom: 0;
+	}
+	.button {
+		margin-bottom: 0;
 	}
 }

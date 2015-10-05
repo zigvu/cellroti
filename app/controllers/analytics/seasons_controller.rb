@@ -4,15 +4,16 @@ module Analytics
 
     authority_actions :summary => :read
     authority_actions :game => :read
+    authority_actions :updateDetGroups => :read
 
     before_filter :ensure_html_format
-    before_action :set_season, only: [:show, :summary, :game]
+    before_action :set_season, only: [:show, :summary, :game, :updateDetGroups]
     before_action :set_client
 
     # GET /seasons
     def index
-      mc = Managers::MClient.new(@client)
-      @seasons = Season.where(id: mc.getAllowedSeasonIds)
+      allowedSeasons = @client.settings.getSeasonsAllowed
+      @seasons = Season.where(id: allowedSeasons)
     end
 
     # GET /seasons/1
@@ -24,17 +25,32 @@ module Analytics
 
     # GET /seasons/1/summary
     def summary
+      current_user.settings.replaceSeasonAnalysisSeasonId(@season.id)
+      @gameId = current_user.settings.getSeasonAnalysisGameId.first
     end
 
     # GET /seasons/1/game/1
     def game
       @game = ::Game.find(season_params[:game_id])
+      authorize_action_for @game.sub_season.season
+
+      current_user.settings.replaceSeasonAnalysisGameId(@game.id)
+      redirect_to summary_analytics_season_path
+    end
+
+    # POST /seasons/1/updateDetGroups
+    def updateDetGroups
+      detGroupIds = season_params[:det_group_ids].map{ |s| s.to_i }
+      clientDgIds = @client.det_groups.pluck(:id).select{ |d| d if detGroupIds.include?(d) }
+
+      current_user.settings.replaceSeasonAnalysisDetGroupIds(clientDgIds)
+      redirect_to summary_analytics_season_path
     end
 
     private
       # Use callbacks to share common setup or constraints between actions.
       def set_season
-        @season = ::Season.find(params[:id])
+        @season = ::Season.find(season_params[:id])
         authorize_action_for @season
       end
 
@@ -44,7 +60,7 @@ module Analytics
 
       # Only allow a trusted parameter "white list" through.
       def season_params
-        params.permit(:id, :game_id)
+        params.permit(:utf8, :authenticity_token, :commit, :id, :game_id, :det_group_ids => [])
       end
   end
 end

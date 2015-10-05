@@ -5,8 +5,8 @@ class  SeasonAuthorizer < ApplicationAuthorizer
   end
 
   def readable_by?(user)
-  	mc = Managers::MClient.new(user.client)
-    States::Roles.client_user_and_above(user) && mc.getAllowedSeasonIds.include?(resource.id)
+    allowedSeasons = user.client.settings.getSeasonsAllowed
+    States::Roles.client_user_and_above(user) && allowedSeasons.include?(resource.id)
   end
 
 end
