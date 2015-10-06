@@ -73,7 +73,7 @@
     <div class="title clearfix">
       <div id="timeline-chart-title" class="text left">Brand Effectiveness</div>
       <div class="right">
-        <span id="reset-timeline-charts" class="button radius title-button" title="Reset Chart">
+        <span id="reset-timeline-charts" class="button radius title-button title-button-unselected" title="Reset Chart">
           <i class="fi-refresh"></i>
         </span>
       </div>
@@ -111,7 +111,7 @@
     <div class="title clearfix">
       <div class="text left">Brand Effectiveness Components</div>
       <div class="right">
-        <span id="reset-component-charts" class="button radius title-button" title="Reset Chart">
+        <span id="reset-component-charts" class="button radius title-button title-button-unselected" title="Reset Chart">
           <i class="fi-refresh"></i>
         </span>
       </div>
@@ -130,7 +130,7 @@
     <div class="title clearfix">
       <div class="text left">Spatial Position</div>
       <div class="right">
-        <span id="reset-spatial-position-chart" class="button radius title-button" title="Reset Chart">
+        <span id="reset-spatial-position-chart" class="button radius title-button title-button-unselected" title="Reset Chart">
           <i class="fi-refresh"></i>
         </span>
       </div>
@@ -149,7 +149,7 @@
     <div class="title clearfix">
       <div class="text left">Brand Effectiveness</div>
       <div class="right">
-        <span id="reset-brand-effectiveness-bar-chart" class="button radius title-button" title="Reset Chart">
+        <span id="reset-brand-effectiveness-bar-chart" class="button radius title-button title-button-unselected" title="Reset Chart">
           <i class="fi-refresh"></i>
         </span>
       </div>
@@ -167,39 +167,34 @@
   <div class="card">
     <div class="title clearfix">
       <div class="text left">Highest Brand Effectiveness Frames</div>
-      <div class="right">
-        <span id="reset-thumbnail-viewer" class="button radius title-button" title="Reset Chart">
-          <i class="fi-refresh"></i>
-        </span>
-      </div>
     </div>
     <div class="content">
       <div class="row">
         <div class="small-12 columns">
-          <div id="thumbnail-chart-refresh">Click to refresh</div>
-          <ul id="thumbnail-chart" class="small-block-grid-2 medium-block-grid-4">
-            <li data-reveal-id="thumbnail_li_0_reveal">
-              <a class="th" href="#">
-                <img src="/uploads/refresh_to_load.jpg">
-              </a>
-            </li>
-            <li data-reveal-id="thumbnail_li_1_reveal">
-              <a class="th" href="#">
-                <img src="/uploads/refresh_to_load.jpg">
-              </a>
-            </li>
-            <li data-reveal-id="thumbnail_li_2_reveal">
-              <a class="th" href="#">
-                <img src="/uploads/refresh_to_load.jpg">
-              </a>
-            </li>
-            <li data-reveal-id="thumbnail_li_3_reveal">
-              <a class="th" href="#">
-                <img src="/uploads/refresh_to_load.jpg">
-              </a>
-            </li>
-          </ul>
+          <div id="thumbnail-chart">
+            <div id="thumbnail-chart-refresh">Click to refresh</div>
+            <ul class="small-block-grid-2 medium-block-grid-4">
+
+              <% (0..3).each do |i| %>
+                <li data-reveal-id=<%= "thumbnail_li_#{i}_reveal" %> >
+                  <a class="th" href="#">
+                    <img src="/uploads/refresh_to_load.jpg">
+                  </a>
+                  <div class="thumbnail-description">
+                    <div class="row">
+                      <div class="small-12 columns"><b>Game:</b><div class="game"></div></div>
+                      <div class="small-12 columns"><b>Time:</b><div class="time"></div></div>
+                      <div class="small-12 columns"><b>Brand Group:</b><div class="bg"></div></div>
+                      <div class="small-12 columns"><b>Brand Effectiveness:</b><div class="be"></div></div>
+                    </div>
+                  </div>
+                </li>
+              <% end %>
+
+            </ul>
+          </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -215,39 +210,27 @@
 
 <!-- BEGIN: Thumbnail pop-ups -->
 <div id="thumbnail-chart-reveals">
-  <div id="thumbnail_li_0_reveal" class="reveal-modal large" data-reveal>
-    <div class="thumbnail-container">
-      <img class="thumbnail-image-reveal" src="/uploads/refresh_to_load.jpg">
-      <h6 class="thumbnail-description"></h6>
+
+  <% (0..3).each do |i| %>
+    <div id=<%= "thumbnail_li_#{i}_reveal" %> class="reveal-modal large" data-reveal>
+      <div class="thumbnail-container">
+        <img class="thumbnail-image-reveal" src="/uploads/refresh_to_load.jpg">
+        <div class="row">
+          <div class="medium-6 large-4 columns"><b>Game:</b><div class="game"></div></div>
+          <div class="medium-6 large-2 columns"><b>Time:</b><div class="time"></div></div>
+          <div class="medium-6 large-4 columns"><b>Brand Group:</b><div class="bg"></div></div>
+          <div class="medium-6 large-2 columns"><b>Score:</b><div class="be"></div></div>
+        </div>
+      </div>
+      <a class="close-reveal-modal">&#215;</a>
     </div>
-    <a class="close-reveal-modal">&#215;</a>
-  </div>
-  <div id="thumbnail_li_1_reveal" class="reveal-modal large" data-reveal>
-    <div class="thumbnail-container">
-      <img class="thumbnail-image-reveal" src="/uploads/refresh_to_load.jpg">
-      <h6 class="thumbnail-description"></h6>
-    </div>
-    <a class="close-reveal-modal">&#215;</a>
-  </div>
-  <div id="thumbnail_li_2_reveal" class="reveal-modal large" data-reveal>
-    <div class="thumbnail-container">
-      <img class="thumbnail-image-reveal" src="/uploads/refresh_to_load.jpg">
-      <h6 class="thumbnail-description"></h6>
-    </div>
-    <a class="close-reveal-modal">&#215;</a>
-  </div>
-  <div id="thumbnail_li_3_reveal" class="reveal-modal large" data-reveal>
-    <div class="thumbnail-container">
-      <img class="thumbnail-image-reveal" src="/uploads/refresh_to_load.jpg">
-      <h6 class="thumbnail-description"></h6>
-    </div>
-    <a class="close-reveal-modal">&#215;</a>
-  </div>
+  <% end %>
+
 </div>
 <!-- END: Thumbnail pop-ups -->
 
-<!-- BEGIN: Update charts -->
-  <div id="brand-legend-update-reveal" class="reveal-modal large" data-reveal>
-    <%= render 'update_brand_groups' %>
-  </div>
-<!-- END: Update charts -->
+<!-- BEGIN: Update legend pop-up -->
+<div id="brand-legend-update-reveal" class="reveal-modal large" data-reveal>
+  <%= render 'update_brand_groups' %>
+</div>
+<!-- END: Update legend pop-up -->

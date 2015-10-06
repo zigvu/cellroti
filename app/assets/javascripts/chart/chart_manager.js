@@ -65,7 +65,8 @@ function ChartManager(seasonInfo, seasonData){
   this.brushSet = function(beginCounter, endCounter){
     self.brushChart.brushSet(beginCounter, endCounter);
   };
-  this.brushReset = function(){ self.brushChart.brushReset(); };
+  this.brushReset = function(){ return self.brushChart.brushReset(); };
+  this.isBrushSet = function(){ return self.brushChart.isBrushSet(); };
   this.getMultiLineXDomain = function(){ return self.multiLineChart.getXDomain(); };
   this.setMultiLineNewExtent = function(brushExtent){
     self.multiLineChart.setNewExtent(brushExtent);
@@ -78,12 +79,14 @@ function ChartManager(seasonInfo, seasonData){
     self.repaintAll();
   };
   this.handleClickOnBgBar = function(chartType, bgIds){
-    self.multiLineHelper.handleClickForTimelineChart(chartType, bgIds);
+    self.multiLineHelper.setTimelineChartType(chartType);
+    self.multiLineHelper.setTimelineChartBgIds(bgIds);
     self.repaintAll();
   };
   this.handleClickOnQuadrant = function(chartType){
     var bgIds = self.getBrandGroupIds();
-    self.multiLineHelper.handleClickForTimelineChart(chartType, bgIds);
+    self.multiLineHelper.setTimelineChartType(chartType);
+    self.multiLineHelper.setTimelineChartBgIds(bgIds);
     self.repaintAll();
   };
   this.repaintAll = function(){

@@ -42,6 +42,7 @@ module Analytics
     def updateDetGroups
       detGroupIds = season_params[:det_group_ids].map{ |s| s.to_i }
       clientDgIds = @client.det_groups.pluck(:id).select{ |d| d if detGroupIds.include?(d) }
+      clientDgIds = clientDgIds[0..5]
 
       current_user.settings.replaceSeasonAnalysisDetGroupIds(clientDgIds)
       redirect_to summary_analytics_season_path

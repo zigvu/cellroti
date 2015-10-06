@@ -205,7 +205,7 @@ $pc-label-color: $steel;
 		}
 
 		.game-overlay {
-			fill: red;
+			fill: blue;
 			opacity: 0.05;
 		}
 		.game-overlay:hover {
@@ -295,36 +295,118 @@ $pc-label-color: $steel;
 
 
 	// thumbnail chart
-	// note : thumbnail-image-reveal : needs to exist in body name space
+	#thumbnail-chart {
+		.thumbnail-description {
+			margin-left: 2px;
+			margin-top: 10px;
 
-	// gray out thumbnail
-	#thumbnail-chart-refresh {
-		position: absolute;
-		cursor: pointer;
+			font-size: rem-calc(12);
+			color: $chart-panel-footer-color;
 
-		top: 0px;
-		left: 0px;
-		width: 100%;
-		height: 100%;
+			b {
+				float: left;
+				margin-right: 5px;
+			}
+		}
 
-		color: black;
-		font-size: rem-calc(32);
-		font-weight: bold;
+		// gray out thumbnail
+		#thumbnail-chart-refresh {
+			position: absolute;
+			cursor: pointer;
+			z-index: 1;
 
-		display: flex;
-		justify-content: center;
-		align-items: center;
+			top: 0px;
+			left: 0px;
+			width: 100%;
+			height: 100%;
 
-		background-color: white;
-		opacity: 0.7;
-		background-repeat: no-repeat;
-		background-position: center;
+			color: black;
+			font-size: rem-calc(32);
+			font-weight: bold;
+
+			display: flex;
+			justify-content: center;
+			align-items: center;
+
+			background-color: white;
+			opacity: 0.8;
+			background-repeat: no-repeat;
+			background-position: center;
+		}
+	}
+}
+// end: .d3-chart
+
+// pop-up: needs to exist in body namespace
+.thumbnail-container{
+	font-size: rem-calc(12);
+	color: $chart-panel-footer-color;
+	line-height: 120%;
+	padding: 10px;
+
+	b {
+		float: left;
+		margin-right: 5px;
+	}
+	.thumbnail-image-reveal {
+		padding-bottom: 5px;
+	}
+}
+	
+
+.card {
+	background: $white;
+	border: 0px none;
+	box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+	margin-bottom: $column-gutter;
+	min-height: 200px;
+
+	.title {
+		// padding: 1px 3px 1px 1px;
+		border-bottom: 4px solid $chart-panel-border-color-light;
+
+		.text {
+			font-size: 1rem;
+			font-weight: 600;
+			font-variant: small-caps;
+
+			padding: 0.25rem;
+		}
+
+		.title-button {
+			font-size: 1.5rem;
+			font-weight: 600;
+			margin: 0;
+			padding: 0.1rem 1rem;
+			background: $white;
+		}
+		.title-button:hover, .title-button:focus {
+			-moz-transition: all 0.3s;
+			-o-transition: all 0.3s;
+			-webkit-transition: all 0.3s;
+			transition: all 0.3s;
+			background: $chart-panel-border-color-light;
+		}
+		.title-button-unselected {
+			color: $chart-panel-border-color-light;
+		}
+		.title-button-unselected:hover, .title-button-unselected:focus {
+			color: $black;
+		}
+		.title-button-selected {
+			color: #2daebf;
+		}
+		.title-button-selected:hover, .title-button-selected:focus {
+			color: #e33100;
+		}
+
+	}
+
+	.content {
+		padding: 1rem;
 	}
 }
 
-.thumbnail-image-reveal {
-	padding: 10px;
-}
 
 #brand-legend {
 	border: 1px solid $chart-panel-border-color-light;
@@ -364,6 +446,7 @@ $pc-label-color: $steel;
 		-webkit-transition: all 0.3s;
 		transition: all 0.3s;
 	}
+
 	#brand-legend-content {
 		padding: 0px 10px 0px 10px;
 
@@ -389,58 +472,20 @@ $pc-label-color: $steel;
 	}
 }
 
-
-.card {
-	background: $white;
-	border: 0px none;
-	box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
-	margin-bottom: $column-gutter;
-	min-height: 200px;
-
-	.title {
-		// padding: 1px 3px 1px 1px;
-		border-bottom: 4px solid $chart-panel-border-color-light;
-
-		.text {
-			font-size: 1rem;
-			font-weight: 600;
-			font-variant: small-caps;
-
-			padding: 0.25rem;
-		}
-
-		.title-button {
-			font-size: 1.5rem;
-			font-weight: 600;
-
-			color: $chart-panel-border-color-light;
-			background: $white;
-
-			margin: 0;
-			padding: 0.1rem 1rem;
-		}
-
-		.title-button:hover, .title-button:focus {
-			color: $black;
-			background: $chart-panel-border-color-light;
-
-			-moz-transition: all 0.3s;
-			-o-transition: all 0.3s;
-			-webkit-transition: all 0.3s;
-			transition: all 0.3s;
-		}
-	}
-
-	.content {
-		padding: 1rem;
-	}
-}
-
-.brand-group-update {
+// pop-up: needs to exist in body namespace
+#brand-group-update {
 	ul {
 		margin-bottom: 0;
 	}
+	td {
+		padding-top: 2px;
+		padding-bottom: 2px;
+	}
 	.button {
 		margin-bottom: 0;
+	}
+
+	.alert-brand-group-max {
+		color: red;
 	}
 }

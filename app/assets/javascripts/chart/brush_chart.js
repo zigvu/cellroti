@@ -175,14 +175,14 @@ function BrushChart(chartManager){
   };
 
   // convenience function that calls burshSet
-  this.brushReset = function(){
-    this.brushSet(0, Infinity);
-  };
+  this.brushReset = function(){ this.brushSet(0, Infinity); };
 
   this.brushGame = function(gameId){
     gameCounter = chartManager.getCounterForGame(gameId);
     this.brushSet(gameCounter.begin_count, gameCounter.end_count);
   }
+
+  this.isBrushSet = function(){ return !brush.empty(); };
   //------------------------------------------------
 
 

@@ -90,6 +90,7 @@ function GameSelectionChart(chartManager){
   //------------------------------------------------
   // repaint due to brush update callback
   function repaint(){
+    if(!chartManager.isBrushSet()){ setSeasonSelected(); }
     subSeasonData = getClonedSubSeasonData(chartManager.getSubSeasonData());
 
     // enter

@@ -6,6 +6,17 @@ function ChartHelpers(){
   var self = this;
 
   // shared data structures
+  this.beLabels = {
+    'brand_effectiveness': 'Brand Effectiveness',
+  };
+
+  this.bgCrowdingLabels = {
+    'brand_group_crowding': 'Brand Group Crowding',
+    'visual_saliency': 'Visual Saliency',
+    'timing_effectiveness': 'Timing Effectiveness',
+    'spatial_effectiveness': 'Spatial Effectiveness'    
+  };
+
   this.quadMapping = [
     {q: 'q0', name: 'Left Top', row: 0, col: 0, value: 0, count: 0},
     {q: 'q1', name: 'Center Top', row: 0, col: 1, value: 0, count: 0},
@@ -19,14 +30,9 @@ function ChartHelpers(){
   ];
 
   // format: {data_key: display name}
-  this.chartLabels = {
-    'brand_effectiveness': 'Brand Effectiveness',
-
-    'brand_group_crowding': 'Brand Group Crowding',
-    'visual_saliency': 'Visual Saliency',
-    'timing_effectiveness': 'Timing Effectiveness',
-    'spatial_effectiveness': 'Spatial Effectiveness'    
-  };
+  this.chartLabels = {};
+  _.each(self.beLabels, function(v, k, list){ self.chartLabels[k] = v; });
+  _.each(self.bgCrowdingLabels, function(v, k, list){ self.chartLabels[k] = v; });
   _.each(self.quadMapping, function(qm){
     self.chartLabels[qm.q] = 'Spatial Position (' + qm.name + ')';
   });
@@ -155,6 +161,15 @@ function ChartHelpers(){
       formatter: formatter
     };
   };
+
+  this.getHHmmSS = function(timeInMS){
+    var seconds = timeInMS/1000;
+    var numhours = Math.floor(((seconds % 31536000) % 86400) / 3600);
+    var numminutes = Math.floor((((seconds % 31536000) % 86400) % 3600) / 60);
+    var numseconds = Math.floor((((seconds % 31536000) % 86400) % 3600) % 60);
+    return numhours + "h:" + numminutes + "m:" + numseconds + "s";
+  };
+
 
   this.getReadableCount = function(count){
     var millions = Math.floor(count/1000000);

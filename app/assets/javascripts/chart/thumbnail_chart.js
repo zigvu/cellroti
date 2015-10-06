@@ -36,16 +36,24 @@ function ThumbnailChart(chartManager){
   function redrawThumbnails(){
     d3.select(thumbnailChart_ul).selectAll("li")
         .each(function (d, i){
-          var thumbnailURL = getThumbnailURL(thumbnailData[d3.select(this).attr("data-reveal-id")]);
-          d3.select(this).select("a").select("img").attr("src", thumbnailURL);
+          var thisD = thumbnailData[d3.select(this).attr("data-reveal-id")];
+
+          d3.select(this).select("a").select("img").attr("src", getThumbnailURL(thisD));
+          d3.select(this).select(".game").text(getGameName(thisD));
+          d3.select(this).select(".time").text(getGameTime(thisD));
+          d3.select(this).select(".bg").text(getBrandGroupName(thisD));
+          d3.select(this).select(".be").text(getBrandEffectiveness(thisD));
         });
 
     d3.select(thumbnailChartReveals_div).selectAll(".reveal-modal")
         .each(function (d,i){
-          var frameURL = getFrameURL(thumbnailData[d3.select(this).attr("id")]);
-          var text = getFrameText(thumbnailData[d3.select(this).attr("id")]);
-          d3.select(this).select(".thumbnail-container").select("img").attr("src", frameURL);
-          d3.select(this).select(".thumbnail-container").select(".thumbnail-description").html(text);
+          var thisD = thumbnailData[d3.select(this).attr("id")];
+
+          d3.select(this).select(".thumbnail-container").select("img").attr("src", getFrameURL(thisD));
+          d3.select(this).select(".game").text(getGameName(thisD));
+          d3.select(this).select(".time").text(getGameTime(thisD));
+          d3.select(this).select(".bg").text(getBrandGroupName(thisD));
+          d3.select(this).select(".be").text(getBrandEffectiveness(thisD));
         });
 
     $(thumbnailChartRefresh_div).css("display", "none");
@@ -55,10 +63,6 @@ function ThumbnailChart(chartManager){
 
   //------------------------------------------------
   // Get strings for URL/ids
-  function getRevealModelId(d, i){
-    return "thumbnail_li_" + i + "_reveal";
-  };
-
   function getThumbnailURL(d){
     if (d.video_id > 0){
       return "/uploads/" + d.video_id + "/thumbnails/" + d.extracted_frame_number + ".jpg";
@@ -66,7 +70,6 @@ function ThumbnailChart(chartManager){
       return "/uploads/refresh_to_load.jpg";
     }
   };
-
   function getFrameURL(d){
     if (d.video_id > 0){
       return "/uploads/" + d.video_id + "/frames/" + d.extracted_frame_number + ".jpg";
@@ -74,17 +77,25 @@ function ThumbnailChart(chartManager){
       return "/uploads/refresh_to_load.jpg";
     }
   };
-  function getFrameText(d){
-    var text = "";
-    if (d.video_id > 0){
-      var formattedTime = chartHelpers.getReadableTime(d.frame_time);
 
-       text += "<b>Game:</b> " + chartManager.getGameName(d.game_id) + "</br>";
-       text += "<b>Time:</b> " + formattedTime.time + " " + formattedTime.unit + "</br>";
-       text += "<b>Brand Effectiveness:</b> " + d3.format(',%')(d.brand_effectiveness) + "</br>";
-    }
-    return text;
-  };
+  function getGameName(d){
+    var label = chartManager.getGameName(d.game_id);
+    if(d.video_id > 0){ return chartHelpers.ellipsis(label, 22, 1); }
+    else { return ""; }
+  }
+  function getGameTime(d){
+    if(d.video_id > 0){ return chartHelpers.getHHmmSS(d.frame_time); }
+    else { return ""; }
+  }
+  function getBrandGroupName(d){
+    var label = chartManager.getBrandGroupName(d.det_group_id);
+    if(d.video_id > 0){ return chartHelpers.ellipsis(label, 22, 1); }
+    else { return ""; }
+  }
+  function getBrandEffectiveness(d){
+    if(d.video_id > 0){ return d3.format(',%')(d.brand_effectiveness); }
+    else { return ""; }
+  }
   //------------------------------------------------
 
 
