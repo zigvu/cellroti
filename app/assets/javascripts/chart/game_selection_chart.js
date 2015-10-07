@@ -94,7 +94,7 @@ function GameSelectionChart(chartManager){
     subSeasonData = getClonedSubSeasonData(chartManager.getSubSeasonData());
 
     // enter
-    subSeasonSVG = seasonSVG.selectAll(".sub-season").data(subSeasonData, function(d){ return '' + d.id; });
+    var subSeasonSVG = seasonSVG.selectAll(".sub-season").data(subSeasonData, function(d){ return '' + d.id; });
     
     var subSeasonG = subSeasonSVG.enter().append("g").attr("class", "sub-season");
 

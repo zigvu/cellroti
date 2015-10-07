@@ -3,6 +3,14 @@
 	------------------------------------------------*/
 
 //------------------------------------------------
+/* zconsole */
+// print to console only if not in production mode
+function zconsole(msg){
+  if(environment !== undefined){ console.log(msg); };
+};
+
+
+//------------------------------------------------
 /* Chart elements debounce time */
 // do not call the functions (those decorated by underscore.js)
 // more than once in the time below
@@ -50,7 +58,8 @@ function sortById(a, b){
 
 //------------------------------------------------
 /* Log time */
-var timeLogEnabled = true;
+var timeLogEnabled = false;
+if(environment !== undefined){ timeLogEnabled = true; };
 var timeLogs = {};
 function timeLogStart(logId){
 	if (timeLogEnabled){

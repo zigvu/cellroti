@@ -1,0 +1,7 @@
+//------------------------------------------------
+/* Get environment */
+
+environment = undefined;
+<% if Rails.env != 'production' %>
+  environment = 'development';
+<% end %>

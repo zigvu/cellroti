@@ -205,10 +205,10 @@ function MultiLineChart(chartManager){
     var timelineChartData = chartManager.getTimelineChartData();
     drawTimelineChart(timelineChartData)
     
-    gameData = chartManager.getBrushedGames();
+    var gameData = chartManager.getBrushedGames();
     drawGameBackground(gameData);
 
-    gameEventData = chartManager.getBrushedEvents();
+    var gameEventData = chartManager.getBrushedEvents();
     drawGameEvents(gameEventData);
 
     multiLineSVG.select(".x.axis").call(xAxis);

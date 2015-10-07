@@ -41,7 +41,7 @@ function FilterManager(chartManager){
       data: params,
       type: "GET",
       success: function(json){ /* no content expected */ },
-      error: function( xhr, status, errorThrown ) { console.log(errorThrown); }
+      error: function( xhr, status, errorThrown ) { zconsole(errorThrown); }
     });
   };
 };

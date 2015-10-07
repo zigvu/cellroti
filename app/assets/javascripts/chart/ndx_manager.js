@@ -78,7 +78,7 @@ function NDXManager(ndxData, chartManager){
   var viewPersistenceBgFilterGroupAll; // structure to hold grouped data - view persistence
   var beTop1K; // structure to hold top 1K highest brand effectiveness values
 
-  // TODO: delete
+  // debugging helpers
   this.avd = averagerDim
   this.avg = averagerGroup
   this.bfgi = bgFGincZero;

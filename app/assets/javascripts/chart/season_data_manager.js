@@ -2,8 +2,6 @@
   Season Data Manager
   ------------------------------------------------*/
 
-// TODO: scope variables properly - currently many in global scope
-
 function SeasonDataManager(dataParser, chartManager){
   var self = this;
 
@@ -21,8 +19,8 @@ function SeasonDataManager(dataParser, chartManager){
   var brandGroupMap = dataParser.brandGroupMap;
 
   var gameDemarcations = dataParser.gameDemarcations;
+  // accessed from outside
   this.ndxData = dataParser.ndxData;
-
   //------------------------------------------------
 
 
@@ -64,10 +62,10 @@ function SeasonDataManager(dataParser, chartManager){
 
   // color domain/range for game
   var gameIds = _.pluck(gameDemarcations, 'game_id');
-  gameColorsMap = [];
+  var gameColorsMap = [];
   _.each(subSeasonColorsMap, function(sc){
     _.each(sc.game_ids, function(gId, idx){
-      gColor = colorbrewer[sc.colorKey][sc.colorNum][idx];
+      var gColor = colorbrewer[sc.colorKey][sc.colorNum][idx];
       gameColorsMap.push({ game_id: gId, color: gColor });
     });
   });

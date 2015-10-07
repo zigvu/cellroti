@@ -18,7 +18,6 @@ function AllChartPopulator(){
     d3.json(window.seasonShowPath, function(error, seasonData) {
       timeLogEnd("downloadData", "Data download done");
 
-      seasonInfos = seasonInfo;
       chartManager = new ChartManager(seasonInfo, seasonData);
 
       try {
@@ -28,7 +27,7 @@ function AllChartPopulator(){
           chartManager.gameSelectionChart.loadGameSimulate(window.selectedGameId);
         }
       } catch(e) {
-        console.log(e.message, "from", e.stack);
+        zconsole(e.message, "from", e.stack);
         throw e;
       }
 

@@ -13,8 +13,8 @@ function GameDataManager(dataParser, chartManager){
   // ingest data
   var gameEvents = dataParser.gameEvents;
   var gameDemarcations = dataParser.gameDemarcations;
+  // accessed from outside
   this.ndxData = dataParser.ndxData;
-
   //------------------------------------------------
 
 

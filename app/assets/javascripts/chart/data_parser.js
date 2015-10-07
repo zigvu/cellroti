@@ -33,8 +33,6 @@ seasonData: {
 }
 */
 
-// TODO: scope variables properly - currently many in global scope
-
 function DataParser(seasonInfo, seasonData, chartManager){
   var self = this;
 

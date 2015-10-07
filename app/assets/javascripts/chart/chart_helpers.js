@@ -126,7 +126,7 @@ function ChartHelpers(){
     var numminutes = Math.floor((((seconds % 31536000) % 86400) % 3600) / 60);
     var numseconds = (((seconds % 31536000) % 86400) % 3600) % 60;
 
-    var time, unit, formatter;
+    var time, unit, unit_chart, formatter;
     if(numyears != 0){
       time = numyears + (numdays/365);
       unit = "yrs";
