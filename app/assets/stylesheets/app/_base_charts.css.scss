@@ -85,6 +85,9 @@
 				@include responsive-chart-label-size();
 			}
 		}
+		.label-text {
+			text-transform: uppercase;
+		}
 	}
 
 	//---------------------------------------------------

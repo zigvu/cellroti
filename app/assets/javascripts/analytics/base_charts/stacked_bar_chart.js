@@ -125,6 +125,8 @@ ZIGVU.Analytics.BaseCharts.StackedBarChart = function(chartImpl){
   setGeometry();
 
   var yAxisLabelAnchorX = -35; // margin left of y-axis for label
+  var xAxisLabelAnchorX = -20; // margin left of x-axis for label
+  var xAxisLabelAnchorY = 15; // margin bottom of x-axis for label
   var gapBetweenGroups = 0.1; // gap between groups is 10%
   var widthOfItemsInGroup = 0.9; // items use only 90% width within group
   //------------------------------------------------
@@ -216,6 +218,16 @@ ZIGVU.Analytics.BaseCharts.StackedBarChart = function(chartImpl){
       .call(xAxis);
   xAxisSVG.selectAll(".tick").remove(); // remove all ticks
 
+  var xAxisLabelSVG = bcSVG.append("g")
+      .attr("class", "x-axis-label")
+      .attr("transform", "translate(" + (width/2 + xAxisLabelAnchorX) +
+        "," + (height + xAxisLabelAnchorY)+ ")"
+      );
+  xAxisLabelSVG.append("text")
+      .style("text-anchor", "middle")
+      .text("Brand Groups")
+      .attr("class", "label-text");
+
   var yAxisSVG = bcSVG.append("g")
       .attr("class", "y axis")
       .call(yAxis);
@@ -226,7 +238,7 @@ ZIGVU.Analytics.BaseCharts.StackedBarChart = function(chartImpl){
   yAxisLabelSVG.append("text")
       .style("text-anchor", "middle")
       .text("TIME ( )")
-      .attr("class", "y-axis-label-text");
+      .attr("id", "y-axis-label-text");
 
   function resizeSVG(){
     svg.attr("width", divWidth).attr("height", divHeight);
@@ -238,6 +250,10 @@ ZIGVU.Analytics.BaseCharts.StackedBarChart = function(chartImpl){
         .attr("style", 'fill:url(#pattern);');
 
     xAxisSVG.attr("transform", "translate(0," + height + ")");
+    xAxisLabelSVG
+        .attr("transform", "translate(" + (width/2 + xAxisLabelAnchorX) +
+          "," + (height + xAxisLabelAnchorY)+ ")"
+        );
     yAxisLabelSVG.attr("transform", "translate("+ (yAxisLabelAnchorX) +","+(height/2)+")rotate(-90)");
   };
   //------------------------------------------------
@@ -320,7 +336,7 @@ ZIGVU.Analytics.BaseCharts.StackedBarChart = function(chartImpl){
     bcSVG.select(".y.axis")
         .selectAll("text")
         .text(function(t){ return chartHelpers.getTimeInUnits(t, yAxisLabelUnit);});
-    bcSVG.select(".y-axis-label-text").text("TIME (" + yAxisLabelUnit + ")");
+    bcSVG.select("#y-axis-label-text").text("TIME (" + yAxisLabelUnit + ")");
   };
 
   function wrapText(svgText, width){

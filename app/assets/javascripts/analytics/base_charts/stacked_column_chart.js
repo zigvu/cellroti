@@ -95,7 +95,7 @@ ZIGVU.Analytics.BaseCharts.StackedColumnChart = function(chartImpl){
 
   //------------------------------------------------
   // set up gemoetry
-  var margin = {top: 10, right: 15, bottom: 25, left: 100};
+  var margin = {top: 10, right: 15, bottom: 35, left: 100};
   var width, height;
 
   function setGeometry(){
@@ -104,6 +104,8 @@ ZIGVU.Analytics.BaseCharts.StackedColumnChart = function(chartImpl){
   };
   setGeometry();
 
+  var xAxisLabelAnchorX = 0; // margin left of x-axis for label
+  var xAxisLabelAnchorY = 30; // margin bottom of x-axis for label
   var gapBetweenGroups = 0.1; // gap between groups is 10%
   var hieghtOfItemsInGroup = 0.9; // items use only 90% height within group
   //------------------------------------------------
@@ -180,6 +182,16 @@ ZIGVU.Analytics.BaseCharts.StackedColumnChart = function(chartImpl){
       .attr("transform", "translate(0," + height + ")")
       .call(xAxis);
 
+  var xAxisLabelSVG = bcSVG.append("g")
+      .attr("class", "x-axis-label")
+      .attr("transform", "translate(" + (width/2 + xAxisLabelAnchorX) +
+        "," + (height + xAxisLabelAnchorY)+ ")"
+      );
+  xAxisLabelSVG.append("text")
+      .style("text-anchor", "middle")
+      .text("Share Percentage")
+      .attr("class", "label-text");
+
   var yAxisSVG = bcSVG.append("g")
       .attr("class", "y axis")
       .call(yAxis);
@@ -194,6 +206,10 @@ ZIGVU.Analytics.BaseCharts.StackedColumnChart = function(chartImpl){
         .attr("style", 'fill:url(#pattern);');
 
     xAxisSVG.attr("transform", "translate(0," + height + ")");
+    xAxisLabelSVG
+        .attr("transform", "translate(" + (width/2 + xAxisLabelAnchorX) +
+          "," + (height + xAxisLabelAnchorY)+ ")"
+        );
   };
   //------------------------------------------------
 

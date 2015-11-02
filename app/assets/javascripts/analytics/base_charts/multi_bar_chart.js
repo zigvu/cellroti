@@ -151,7 +151,8 @@ ZIGVU.Analytics.BaseCharts.MultiBarChart = function(chartImpl){
   yAxisLabelSVG.append("text")
       .style("text-anchor", "middle")
       .text("Score")
-      .attr("class", "y-axis-label-text axis-label");
+      .attr("class", "axis-label")
+      .attr("id", "y-axis-label-text");
 
   function resizeSVG(){
     svg.attr("width", divWidth).attr("height", divHeight);
