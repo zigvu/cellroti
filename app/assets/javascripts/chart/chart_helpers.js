@@ -162,6 +162,22 @@ function ChartHelpers(){
     };
   };
 
+  this.getTimeInUnits = function(timeInMS, unit){
+    var seconds = timeInMS/1000;
+    var numyears = (seconds / 31536000);
+    var numdays = (seconds / 86400); 
+    var numhours = (seconds / 3600);
+    var numminutes = (seconds / 60);
+
+    time = 0;
+    if(unit == "yrs"){ time = numyears; }
+    else if(unit == "days"){ time = numdays; }
+    else if(unit == "hrs"){ time = numhours; }
+    else if(unit == "min"){ time = numminutes; }
+    else if(unit == "sec"){ time = seconds; }
+    return Math.round(time * 100)/100;
+  };
+
   this.getHHmmSS = function(timeInMS){
     var seconds = timeInMS/1000;
     var numhours = Math.floor(((seconds % 31536000) % 86400) / 3600);

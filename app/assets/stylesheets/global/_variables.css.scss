@@ -148,7 +148,8 @@ $oil         : #333333;
 // $jet         : #222222;
 // $black       : #000000;
 
-$body-bg: scale-color($secondary-color, $lightness: 55%);
+$zigvu-content-background-color: scale-color($secondary-color, $lightness: 55%);
+$body-bg: $oil;
 $zigvu-footer-background-color: $oil;
 $zigvu-footer-link-color: $steel;
 $zigvu-footer-link-hover-color: $white;

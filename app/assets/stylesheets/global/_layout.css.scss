@@ -1,7 +1,10 @@
 // ------------------------------------
 // Content helpers
+.content-body {
+  background: $zigvu-content-background-color;
+}
 .row-top-spacer {
-  margin-top: $column-gutter;  
+  padding-top: $column-gutter;
 }
 
 td {

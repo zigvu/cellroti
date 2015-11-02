@@ -1,0 +1,128 @@
+
+@mixin responsive-chart-label-size(){
+	// line-height: 100%;
+	@media #{$small-only} {
+		font-size: rem-calc(10);
+	}
+	@media #{$medium-up} {
+		font-size: rem-calc(12);
+	}
+}
+
+
+.analysis-charts {
+	//---------------------------------------------------
+	// general
+	svg {
+		display: block;
+	}
+
+	path, line {
+		fill:none;
+		stroke: black;
+		stroke-width: 1px;
+	}
+
+	@include responsive-chart-label-size();
+
+	// common elements
+	.axis {
+		-moz-user-select: none;
+		pointer-events: none;
+		font-size: rem-calc(10);
+		fill: black;
+
+		path, line {
+			shape-rendering: crispedges;
+		}
+	}
+
+	.axis-label {
+		text-transform: uppercase;
+		@include responsive-chart-label-size();
+	}
+
+
+	// pattern for selected
+	#pattern line {
+		fill: white;
+		stroke: white;
+		stroke-linecap: square;
+		stroke-linejoin: miter;
+		stroke-width: 13px;
+	}
+	#pattern-mask line {
+		fill: white;
+		stroke: white;
+		stroke-linecap: square;
+		stroke-linejoin: miter;
+		stroke-width: 2px;
+	}
+
+	//---------------------------------------------------
+	// stacked bar chart
+	.stacked-bar-chart {
+		.axis.x {
+			.tick{
+				display: none;
+			}
+		}
+		.line {
+			opacity: 0.5;
+			pointer-events: none;
+		}
+		.label-text {
+			text-transform: uppercase;
+		}
+	}
+
+	//---------------------------------------------------
+	// stacked column chart
+	.stacked-column-chart {
+		.axis.y {
+			text{
+				text-transform: uppercase;
+				@include responsive-chart-label-size();
+			}
+		}
+	}
+
+	//---------------------------------------------------
+	// multi-bar-chart
+	.multi-bar-chart {
+	}
+
+	//---------------------------------------------------
+	// summary pie chart
+	.pie-chart {
+		path, line {
+			stroke: none;
+		}
+	}
+	.pie-chart-texts{
+		.pc-text {
+			font-weight: bold;
+			fill: $summary-pc-text-color;
+			@media #{$small-only} and (orientation: portrait) { font-size: rem-calc(20); }
+			@media #{$small-only} and (orientation: landscape) { font-size: rem-calc(25); }
+			@media #{$medium-only} { font-size: rem-calc(20); }
+			@media #{$large-up} { font-size: rem-calc(25); }
+		}
+		.pc-unit {
+			fill: $summary-pc-unit-color;
+			@media #{$small-only} and (orientation: portrait) { font-size: rem-calc(10); }
+			@media #{$small-only} and (orientation: landscape) { font-size: rem-calc(14); }
+			@media #{$medium-only} { font-size: rem-calc(12); }
+			@media #{$large-up} { font-size: rem-calc(14); }
+		}
+		.pc-label {
+			font-weight: bold;
+			text-transform: uppercase;
+			fill: $summary-pc-label-color;
+			@media #{$small-only} and (orientation: portrait) { font-size: rem-calc(10); }
+			@media #{$small-only} and (orientation: landscape) { font-size: rem-calc(14); }
+			@media #{$medium-only} { font-size: rem-calc(11); }
+			@media #{$large-up} { font-size: rem-calc(14); }
+		}
+	}
+}

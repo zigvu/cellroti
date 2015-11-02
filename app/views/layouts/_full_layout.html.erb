@@ -17,17 +17,19 @@
 
 <!-- BEGIN: Content body -->
 <%= render partial: 'layouts/error_notices' %>
-<div class="row row-top-spacer">
-  <div class="small-12 columns">
-    <div class="row">
-      <div class="small-12 columns">
-        <%= breadcrumbs autoroot: false, style: :foundation5 %>
+<div class="content-body">
+  <div class="row row-top-spacer">
+    <div class="small-12 columns">
+      <div class="row">
+        <div class="small-12 columns">
+          <%= breadcrumbs autoroot: false, style: :foundation5 %>
+        </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="small-12 columns">
-        <!-- Yield for different pages -->
-        <%= yield %>
+      <div class="row">
+        <div class="small-12 columns">
+          <!-- Yield for different pages -->
+          <%= yield %>
+        </div>
       </div>
     </div>
   </div>
