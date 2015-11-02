@@ -21,6 +21,7 @@ ZIGVU.Analytics.CrossChannel.Controller = function(){
   this.summaryCharts = undefined;
   this.tvSpotByChannelChart = undefined;
   this.tvSpotBySportChart = undefined;
+  this.filter = undefined;
 
   //------------------------------------------------  
   // Initialize and update of charts
@@ -61,6 +62,13 @@ ZIGVU.Analytics.CrossChannel.Controller = function(){
         .setResponsiveCalculator(self.responsiveCalculator)
         .setChartHelpers(self.chartHelpers);
 
+    self.filter = new CrossChannel.Charts.Filter();
+    self.filter
+        .setEventManager(self.eventManager)
+        .setDataManager(self.dataManager)
+        .setResponsiveCalculator(self.responsiveCalculator)
+        .setChartHelpers(self.chartHelpers);
+
 
     $(window).resize(function() { self.debouncedResize(); });
   };
@@ -70,6 +78,7 @@ ZIGVU.Analytics.CrossChannel.Controller = function(){
     self.averageBEChart.draw();
     self.tvSpotByChannelChart.draw();
     self.tvSpotBySportChart.draw();
+    self.filter.draw();
 
     self.responsiveCalculator.reflowHeights();
   };
