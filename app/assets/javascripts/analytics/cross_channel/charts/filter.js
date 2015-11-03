@@ -39,7 +39,7 @@ ZIGVU.Analytics.CrossChannel.Charts.Filter = function(){
   function draw_li(func_array, func_name, func_color, ul_div_id){
     _.each(func_array(), function(item){
       var legendText = func_name(item);
-      var legendTextTrunc = self.chartHelpers.ellipsis(legendText, 15, 1);
+      var legendTextTrunc = self.chartHelpers.ellipsis(legendText, 18, 1);
 
       var square = $("<div/>", { class: "square" });
       if(func_color){ square.css("background-color", func_color(item)); }

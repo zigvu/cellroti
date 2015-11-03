@@ -14,7 +14,7 @@ ZIGVU.Analytics.CrossChannel.DataManager = function(){
   this.chartHelpers = undefined;
 
   // general brand group
-  var brandGroupMap = {4: "CocaCola Main Brand",  5: "Powerade Logo",  6: "Continental Logo"};
+  var brandGroupMap = {1: "Other Sports Drink", 2: "Powerade", 3: "Gatorade"};
   var brandGroupSorter = _.chain(brandGroupMap).pairs().sortBy(function(k){return k[1];}).value();
   var brandGroupIds = _.map(brandGroupSorter, function(k){ return k[0];});
   var brandGroupColors = d3.scale.category10().domain(brandGroupIds);
@@ -22,20 +22,19 @@ ZIGVU.Analytics.CrossChannel.DataManager = function(){
   this.getBrandGroupName = function(bgId){ return brandGroupMap[bgId]; };
   this.getBrandGroupColor = function(bgId){ return brandGroupColors(bgId); };
 
-  var sportMap = {1: "Soccer", 2: "Hockey", 3: "Baseball", 4: "Golf", 5: "Other"};
+  var sportMap = {1: "Soccer", 2: "Baseball", 3: "Golf", 4: "Nascar"};
   var sportSorter = _.chain(sportMap).pairs().sortBy(function(k){return k[1];}).value();
   var sportIds = _.map(sportSorter, function(k){ return k[0];});
   this.getSportIds = function(){ return sportIds; };
   this.getSportName = function(sportId){ return sportMap[sportId]; };
   
-  var channelMap = {1: "ESPN", 2: "Fox Sports 1", 3: "Youtube Top 1%", 4: "Fifa World Cup"};
+  var channelMap = {1: "ESPN", 2: "Fox Sports 1", 3: "MLB.com", 4: "Youtube Sport 1K"};
   var channelSorter = _.chain(channelMap).pairs().sortBy(function(k){return k[1];}).value();
   var channelIds = _.map(channelSorter, function(k){ return k[0];});
   this.getChannelIds = function(){ return channelIds; };
   this.getChannelName = function(channelId){ return channelMap[channelId]; };
   
-  // TODO: add var
-  brandGroupChannelColors = {};
+  var brandGroupChannelColors = {};
   var brightnessStep = 0.2;
   _.each(brandGroupIds, function(bgId){
     var brandColor = self.getBrandGroupColor(bgId);
@@ -50,63 +49,186 @@ ZIGVU.Analytics.CrossChannel.DataManager = function(){
     return brandGroupChannelColors[bgId][channelId];
   };
 
-  // shortcut
-  var bgs = brandGroupIds;
-  var sprt = sportIds;
-  var chnls = channelIds;
+  var dummyData;
+  this.getDummyData = function(){
+    var durationOfAnalysis = 24 * 60 * 60 * 1000; // 24 hours
+
+    dummyData = [];
+    var channelIds = self.getChannelIds();
+    _.each(channelIds, function(channelId){
+      var channelData = [];
+      var sportIds = self.getSportIds();
+      _.each(sportIds, function(sportId){
+        var sportData = [];
+        var bgIds = self.getBrandGroupIds();
+        _.each(bgIds, function(bgId){
+          var mediaLength = rand(0.8, 1.1) * durationOfAnalysis / (sportIds.length * bgIds.length);
+          var viewDuration = mediaLength * rand(0.005, 0.1);
+          var viewPersistence = rand(0.8, 1.1) * 10 * 1000; // around 10 seconds
+          var avgBE = rand(0.01, 0.99);
+          var tvSpot = viewDuration * avgBE;
+
+          sportData.push({
+            bgId: bgId,
+            mediaLength: mediaLength,
+            viewDuration: viewDuration,
+            viewPersistence: viewPersistence,
+            avgBE: avgBE,
+            tvSpot: tvSpot
+          });
+        });
+        channelData.push({sportId: sportId, sportData: sportData});
+      });
+      dummyData.push({channelId: channelId, channelData: channelData});
+    });
+    return dummyData;
+  };
+  this.updateDummyData = function(){
+    var perChange = 0.1;
+    _.each(dummyData, function(channelD){
+      _.each(channelD.channelData, function(sportD){
+        _.each(sportD.sportData, function(bgD){
+          bgD.mediaLength += bgD.mediaLength * randSign() * rand(0.0, perChange);
+          bgD.viewDuration += bgD.viewDuration * randSign() * rand(0.0, perChange);
+          bgD.viewPersistence += bgD.viewPersistence * randSign() * rand(0.0, perChange);
+          bgD.avgBE += bgD.avgBE * randSign() * rand(0.0, perChange);
+          bgD.tvSpot = bgD.viewDuration * bgD.avgBE;
+
+          bgD.avgBE = bgD.avgBE > 1.0 ? 1.0 : bgD.avgBE;
+        });
+      });
+    });
+  };
 
 
+
+  self.getDummyData();
   // summary charts
-  this.getTotalFrameTime = function(){ return 22.2 * 60 * 60 * 1000; } // 22.2 hours
+  this.getTotalFrameTime = function(){
+    var totalFrameTime = 0;
+    _.each(dummyData, function(channelD){
+      _.each(channelD.channelData, function(sportD){
+        _.each(sportD.sportData, function(bgD){
+          totalFrameTime += bgD.mediaLength;
+        });
+      });
+    });
+    return totalFrameTime;
+  };
   this.getBrushedFrameTime = function(){ return self.getTotalFrameTime(); }
+
+  function sumOnBgId(dummyDataArr, dataKey){
+    var agg = {};
+    _.each(dummyDataArr, function(channelD){
+      _.each(channelD.channelData, function(sportD){
+        _.each(sportD.sportData, function(bgD){
+          if(!agg[bgD.bgId]){ agg[bgD.bgId] = bgD[dataKey]; }
+          else { agg[bgD.bgId] += bgD[dataKey]; }
+        });
+      });
+    });
+    return agg;
+  };
+
   this.getViewDuration = function(){
-    var vd = self.getTotalFrameTime() * 0.05; // 5%
-    return [
-      {id: bgs[0], sum: vd * 0.3}, {id: bgs[1], sum: vd * 0.2}, {id: bgs[2], sum: vd * 0.5},
-    ];
+    return _.map(sumOnBgId(dummyData, 'viewDuration'), function(sum, bgId, list){
+      return {id: bgId, sum: sum};
+    });
   };
   this.getTvEquivalentDuration = function(){
-    var vd = self.getTotalFrameTime() * 0.05 * 0.25; // 5% * 25%
-    return [
-      {id: bgs[0], sum: vd * 0.5}, {id: bgs[1], sum: vd * 0.2}, {id: bgs[2], sum: vd * 0.3},
-    ];
-  }
+    return _.map(sumOnBgId(dummyData, 'tvSpot'), function(sum, bgId, list){
+      return {id: bgId, sum: sum};
+    });
+  };
   this.getViewPersistence = function(){
-    return [
-      {id: bgs[0], sum: 5556.2}, {id: bgs[1], sum: 7375.9}, {id: bgs[2], sum: 13763.4},
-    ];
-  }
-
+    var averager = self.getChannelIds().length * self.getSportIds().length;
+    return _.map(sumOnBgId(dummyData, 'viewPersistence'), function(sum, bgId, list){
+      return {id: bgId, sum: sum/averager};
+    });
+  };
 
   // average be chart
   this.getABEChartData = function(){
-    return [
-      {groupId: chnls[0], items: [{itemId: bgs[0], value: 0.02},{itemId: bgs[1], value: 0.05},{itemId: bgs[2], value: 0.03}]},
-      {groupId: chnls[1], items: [{itemId: bgs[0], value: 0.01},{itemId: bgs[1], value: 0.13},{itemId: bgs[2], value: 0.06}]},
-      {groupId: chnls[2], items: [{itemId: bgs[0], value: 0.05},{itemId: bgs[1], value: 0.01},{itemId: bgs[2], value: 0.01}]},
-      {groupId: chnls[3], items: [{itemId: bgs[0], value: 0.05},{itemId: bgs[1], value: 0.09},{itemId: bgs[2], value: 0.04}]},
-    ];
+    var numOfSports = self.getSportIds().length;
+    var itemsH = {};
+
+    _.each(dummyData, function(channelD){
+      _.each(channelD.channelData, function(sportD){
+        _.each(sportD.sportData, function(bgD){
+          if(!itemsH[channelD.channelId]){ itemsH[channelD.channelId] = {}; }
+          if(!itemsH[channelD.channelId][bgD.bgId]){
+            itemsH[channelD.channelId][bgD.bgId] = 0;
+          }
+          itemsH[channelD.channelId][bgD.bgId] += bgD.avgBE;
+        });
+      });
+    });
+
+    // format:
+    // [{groupId:, items: [{itemId:, value:}, ]}, ]
+    return _.map(itemsH, function(channelD, channelId, list){
+      var items = _.map(channelD, function(sum, bgId, llist){
+        return {itemId: bgId, value: sum/numOfSports};
+      });
+      return {groupId: channelId, items: items};
+    });
   };
 
   // tv spot chart
   this.getTVSpotChartData = function(){
-    return [
-      {groupId: bgs[0], items: [{itemId: chnls[0], value: 22000}, {itemId: chnls[1], value: 2000}, {itemId: chnls[2], value: 3000}, {itemId: chnls[3], value: 3000}, ]},
-      {groupId: bgs[1], items: [{itemId: chnls[0], value: 1000}, {itemId: chnls[1], value: 2000}, {itemId: chnls[2], value: 5000}, {itemId: chnls[3], value: 2000}, ]},
-      {groupId: bgs[2], items: [{itemId: chnls[0], value: 1000}, {itemId: chnls[1], value: 1000}, {itemId: chnls[2], value: 2000}, {itemId: chnls[3], value: 1000}, ]},
-    ];
+    var itemsH = {};
+
+    _.each(dummyData, function(channelD){
+      _.each(channelD.channelData, function(sportD){
+        _.each(sportD.sportData, function(bgD){
+          if(!itemsH[bgD.bgId]){ itemsH[bgD.bgId] = {}; }
+          if(!itemsH[bgD.bgId][channelD.channelId]){
+            itemsH[bgD.bgId][channelD.channelId] = 0;
+          }
+          itemsH[bgD.bgId][channelD.channelId] += bgD.tvSpot;
+        });
+      });
+    });
+
+    // format:
+    // [{groupId:, items: [{itemId:, value:}, ]}, ]
+    return _.map(itemsH, function(bgD, bgId, list){
+      var items = _.map(bgD, function(sum, channelId, llist){
+        return {itemId: channelId, value: sum};
+      });
+      return {groupId: bgId, items: items};
+    });
   };
 
   // view duration chart
   this.getViewDurationChartData = function(){
-    return [
-      {groupId: sprt[0], items: [{itemId: bgs[0], value: 15000}, {itemId: bgs[1], value: 15000}, {itemId: bgs[2], value: 13000}, ]},
-      {groupId: sprt[1], items: [{itemId: bgs[0], value: 4600}, {itemId: bgs[1], value: 2200}, {itemId: bgs[2], value: 12000}, ]},
-      {groupId: sprt[2], items: [{itemId: bgs[0], value: 12000}, {itemId: bgs[1], value: 200}, {itemId: bgs[2], value: 3000}, ]},
-      {groupId: sprt[3], items: [{itemId: bgs[0], value: 2000}, {itemId: bgs[1], value: 2400}, {itemId: bgs[2], value: 13000}, ]},
-      {groupId: sprt[4], items: [{itemId: bgs[0], value: 7000}, {itemId: bgs[1], value: 2400}, {itemId: bgs[2], value: 14000}, ]},
-    ];
+    var numOfChannels = self.getChannelIds().length;
+    var itemsH = {};
+
+    _.each(dummyData, function(channelD){
+      _.each(channelD.channelData, function(sportD){
+        _.each(sportD.sportData, function(bgD){
+          if(!itemsH[sportD.sportId]){ itemsH[sportD.sportId] = {}; }
+          if(!itemsH[sportD.sportId][bgD.bgId]){
+            itemsH[sportD.sportId][bgD.bgId] = 0;
+          }
+          itemsH[sportD.sportId][bgD.bgId] += bgD.avgBE;
+        });
+      });
+    });
+
+    // format:
+    // [{groupId:, items: [{itemId:, value:}, ]}, ]
+    return _.map(itemsH, function(sportD, sportId, list){
+      var items = _.map(sportD, function(sum, bgId, llist){
+        return {itemId: bgId, value: sum/numOfChannels};
+      });
+      return {groupId: sportId, items: items};
+    });
   };
+
+  function rand(min, max){ return Math.random() * (max - min) + min; };
+  function randSign(){ return Math.random() > 0.5 ? -1 : 1; }
 
   //------------------------------------------------
   // set relations

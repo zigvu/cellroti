@@ -175,7 +175,7 @@ function ChartHelpers(){
     else if(unit == "hrs"){ time = numhours; }
     else if(unit == "min"){ time = numminutes; }
     else if(unit == "sec"){ time = seconds; }
-    return Math.round(time * 100)/100;
+    return Math.round(time * 10)/10;
   };
 
   this.getHHmmSS = function(timeInMS){
