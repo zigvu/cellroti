@@ -25,6 +25,50 @@ td {
 }
 
 // ------------------------------------
+// Header
+nav {
+  #logo-svg {
+    display: inline-block;
+    margin: 6px 0 0 20px;
+
+    #z-stylized {
+      fill-opacity:1;
+      fill-rule:evenodd;
+      stroke:none;
+      stroke-width:1px;
+      stroke-linecap:butt;
+      stroke-linejoin:miter;
+      stroke-opacity:1;
+
+      #z-stylized-1 {
+        fill:#ffcc00;
+      }
+      #z-stylized-1:hover {
+        fill:#ffffff;
+      }
+      
+      #z-stylized-2 {
+        fill:#d45500;
+      }
+      #z-stylized-2:hover {
+        fill:#ffffff;
+      }
+      
+      #z-stylized-3 {
+        fill:#008080;
+      }
+      #z-stylized-3:hover {
+        fill:#ffffff;
+      }
+    }
+
+    #text-objects {
+      fill:#d45500;
+    }
+  }
+}
+
+// ------------------------------------
 // Footer
 @mixin vertical-align {
   position: relative;
