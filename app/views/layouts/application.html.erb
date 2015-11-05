@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title><%= content_for?(:title) ? yield(:title) : "Zigvu" %></title>
+    <title><%= content_for?(:title) ? "Zigvu | #{yield(:title)}" : "Zigvu" %></title>
     <link rel="shortcut icon" href="/zigvu_icon.ico"/>
 
     <%= stylesheet_link_tag    "application" %>
@@ -12,7 +12,7 @@
     <%= csrf_meta_tags %>
   </head>
 
-  <body class="<%= controller_path.gsub('/','_') -%> <%= action_name -%>">
+  <body class="<%= controller_path.gsub('/','_') -%>_<%= action_name -%>">
     <%= render :layout => 'layouts/full_layout' do %>
       <%= yield %>
     <% end %>

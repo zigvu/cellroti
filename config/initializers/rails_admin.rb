@@ -28,7 +28,7 @@ RailsAdmin.config do |config|
     index                         # mandatory
     new
     export
-    bulk_delete
+    # bulk_delete                 # disabled by evan
     show
     edit
     delete

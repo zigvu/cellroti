@@ -27,6 +27,13 @@ td {
 // ------------------------------------
 // Header
 nav {
+
+  i {
+    font-size: 1rem;
+    line-height: 100%;
+    margin-right: rem-calc(5);
+  }
+
   #logo-svg {
     display: inline-block;
     margin: 6px 0 0 20px;
@@ -66,6 +73,10 @@ nav {
       fill:#d45500;
     }
   }
+}
+
+.breadcrumbs {
+  margin-bottom: 0;
 }
 
 // ------------------------------------

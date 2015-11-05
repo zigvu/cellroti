@@ -3,7 +3,9 @@
 <nav class="top-bar" data-topbar role="navigation">
   <ul class="title-area">
     <li class="name">
-      <a href="#"><%= render partial: 'layouts/logo' %></a>
+      <%= link_to root_path do %>
+        <%= render partial: 'layouts/logo' %>
+      <% end %>
     </li>
     <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
   </ul>
@@ -17,20 +19,12 @@
 
 <!-- BEGIN: Content body -->
 <%= render partial: 'layouts/error_notices' %>
+<%= breadcrumbs autoroot: false, style: :foundation5 %>
 <div class="content-body">
   <div class="row row-top-spacer">
     <div class="small-12 columns">
-      <div class="row">
-        <div class="small-12 columns">
-          <%= breadcrumbs autoroot: false, style: :foundation5 %>
-        </div>
-      </div>
-      <div class="row">
-        <div class="small-12 columns">
-          <!-- Yield for different pages -->
-          <%= yield %>
-        </div>
-      </div>
+      <!-- Yield for different pages -->
+      <%= yield %>
     </div>
   </div>
 </div>

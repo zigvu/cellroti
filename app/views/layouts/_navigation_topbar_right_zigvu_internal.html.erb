@@ -1,5 +1,6 @@
 <!-- BEGIN: Internal navigation tool for zigvu users -->
 <% if current_user.can_read?(Organization) %>
+  <li class="divider"></li>
   <li class="has-dropdown">
     <a href="#">Setup</a>
     <ul class="dropdown">
@@ -7,6 +8,9 @@
       <li id="admin_det_groups"><%= link_to "Brand Groups", admin_det_groups_path %></li>
       <li id="admin_organizations"><%= link_to "Detectables", admin_organizations_path %></li>
       <li id="admin_metrics"><%= link_to "Metrics", admin_metrics_path %></li>
+      <% if States::Roles.zigvu_admin_and_above(current_user) %>
+        <li id="rails_admin"><%= link_to "Rails Admin", rails_admin_path %></li>
+      <% end %>
     </ul>
   </li>
 <% end %>

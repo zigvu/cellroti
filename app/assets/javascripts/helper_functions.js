@@ -36,7 +36,7 @@ hideSpinner = function() {
 //------------------------------------------------
 /* Decorate top-bar navigation li items with "active" class */
 function decorateNavigationList(){
-	// for each page, we set class to controller name
+	// for each page, we set class to controller_page name
 	var bodyClass = $('body').attr('class').split(" ");
 	for (var i = 0, l = bodyClass.length; i < l; ++i) {
 		// get the right element - assume id is set for each li

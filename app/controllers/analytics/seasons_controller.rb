@@ -13,7 +13,7 @@ module Analytics
     # GET /seasons
     def index
       allowedSeasons = @client.settings.getSeasonsAllowed
-      @seasons = Season.where(id: allowedSeasons)
+      @seasons = ::Season.where(id: allowedSeasons)
     end
 
     # GET /seasons/1

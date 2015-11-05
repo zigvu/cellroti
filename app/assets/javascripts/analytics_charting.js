@@ -2,12 +2,16 @@
 	Begin: Analytics Season Show Javascript
 	------------------------------------------------*/
 
-$(".analytics_seasons.summary").ready(function() {
+$(".analytics_seasons_summary").ready(function() {
   allChartPopulator = new AllChartPopulator();
 });
 
 
-$(".high_voltage_pages.show").ready(function() {
+$(".analytics_charting_analysis").ready(function() {
+  allChartPopulator = new AllChartPopulator();
+});
+
+$(".analytics_charting_dashboard").ready(function() {
   controller = new ZIGVU.Analytics.CrossChannel.Controller();
   controller.setup();
   controller.draw();

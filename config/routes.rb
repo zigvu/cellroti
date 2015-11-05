@@ -3,6 +3,7 @@ Cellroti::Application.routes.draw do
   mount RailsAdmin::Engine => '/rails_admin', as: 'rails_admin'
   
   namespace :admin do
+    resources :organizations, :det_groups
     resources :clients do
       member do
         get 'seasons'
@@ -13,36 +14,34 @@ Cellroti::Application.routes.draw do
       end
     end
 
-    resources :organizations, :det_groups
-
     get 'metrics' => 'metrics#index'
     get 'metrics/change'
   end
 
   namespace :analytics do
-    resources :det_groups, :path => "brands/groups", except: [:show]
     resources :seasons, only: [:index, :show] do
       member do
-        get "summary"
-        get "game/:game_id" => "seasons#game", :as => :game
-        post "updateDetGroups"
+        get 'summary'
+        get 'game/:game_id' => 'seasons#game', :as => :game
+        post 'updateDetGroups'
       end
     end
+
+    get 'dashboard' => 'charting#dashboard'
+    get 'analysis' => 'charting#analysis'
   end
 
   #namespace :api, :path => "", :constraints => {:subdomain => "api"} do
   namespace :api, :defaults => {:format => :json} do
     # client facing API
     namespace :v1 do
-      resources :det_groups, :path => "brands/groups", only: [:index, :show]
-      
-      get 'data/detectables' => 'data#detectables'
-      post 'data/videos' => 'data#videos'
-      
-      resources :seasons, :path => "analytics/seasons", only: [:index, :show] do
+      # det_groups resource is NOT currently used - future API endpoints
+      resources :det_groups, :path => 'brands/groups', only: [:index, :show]
+            
+      resources :seasons, :path => 'analytics/seasons', only: [:index, :show] do
         member do
           get 'summary'
-          get "game/:game_id" => "seasons#game", :as => :game
+          get 'game/:game_id' => 'seasons#game', :as => :game
           get 'filter'
         end
       end
@@ -55,13 +54,12 @@ Cellroti::Application.routes.draw do
       resources :json_data, only: [:create]
       resources :frame_data, only: [:index]
     end
-
   end
 
   devise_for :users
 
   authenticated :user, -> user { States::Roles.zigvu_user_and_above(user) } do
-    match "/delayed_job" => DelayedJobWeb, :anchor => false, via: [:get, :post]
+    match '/delayed_job' => DelayedJobWeb, :anchor => false, via: [:get, :post]
   end
   
   # The priority is based upon order of creation: first created -> highest priority.

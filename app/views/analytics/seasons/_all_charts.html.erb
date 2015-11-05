@@ -1,3 +1,13 @@
+<script type="text/javascript">
+  window.seasonLabelPath = "/api/v1/analytics/seasons/" + <%= @season.id %>;
+  window.seasonShowPath = "/api/v1/analytics/seasons/" + <%= @season.id %> + "/summary";
+  window.gameShowPath = "/api/v1/analytics/seasons/" + <%= @season.id %> + "/game/";
+  window.filterPath = "/api/v1/analytics/seasons/" + <%= @season.id %> + "/filter";
+  <% if @gameId != nil %>
+    window.selectedGameId = <%= @gameId %>;
+  <% end %>
+</script>
+
 <!-- BEGIN: All charts -->
 <div class="d3-chart">
 
@@ -231,6 +241,6 @@
 
 <!-- BEGIN: Update legend pop-up -->
 <div id="brand-legend-update-reveal" class="reveal-modal large" data-reveal>
-  <%= render 'update_brand_groups' %>
+  <%= render '/analytics/seasons/update_brand_groups' %>
 </div>
 <!-- END: Update legend pop-up -->
