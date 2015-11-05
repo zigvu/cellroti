@@ -1,0 +1,62 @@
+--------------------------------------------------------------------------------
+Hierarchy:
+--------------------------------------------------------------------------------
+Roles:
+ zigvu admin
+ zigvu user
+ client admin
+ client user
+
+Acitivity:
+ change (create, update, delete) - also includes ability to read
+ read only
+
+--------------------------------------------------------------------------------
+Class level roles and authority:
+--------------------------------------------------------------------------------
+
+
+1. Change by zigvu admin
+--------------------------------------------------------------------------------
+authorize_actions_for ::Organization
+
+Note: All models that do NOT have a corresponding authorizer falls back to
+application_authorizer, which is the case for ::Client.
+
+
+2. Change by zigvu user
+--------------------------------------------------------------------------------
+authorize_actions_for ::Game
+
+
+3. Read only by zigvu user
+--------------------------------------------------------------------------------
+authorize_actions_for ::Organization
+
+
+4. Change by client admin
+--------------------------------------------------------------------------------
+None
+
+4. Read only by client admin
+--------------------------------------------------------------------------------
+None
+
+
+4. Change by client user
+--------------------------------------------------------------------------------
+None
+
+
+4. Read only by client user
+--------------------------------------------------------------------------------
+authorize_actions_for ::Season
+
+
+
+--------------------------------------------------------------------------------
+Instance level roles and authority:
+--------------------------------------------------------------------------------
+
+authorize_action_for @season
+authorize_action_for @det_group

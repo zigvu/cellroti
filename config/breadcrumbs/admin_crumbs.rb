@@ -21,12 +21,12 @@ end
 
 # Brand Groups
 crumb :det_groups do
-  link "Brand Groups", analytics_det_groups_path
+  link "Brand Groups", admin_det_groups_path
   parent :admin_root
 end
 
 crumb :det_group_edit do |det_group|
-  link det_group.name, analytics_det_group_path(det_group)
+  link det_group.name, admin_det_group_path(det_group)
   parent :det_groups
 end
 

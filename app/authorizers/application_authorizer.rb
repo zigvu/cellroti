@@ -13,7 +13,7 @@ class ApplicationAuthorizer < Authority::Authorizer
   end
 
   def self.readable_by?(user)
-    # Zigvu user has read authority
+    # Zigvu user has read authority of all resources
     States::Roles.zigvu_user_and_above(user)
   end
 

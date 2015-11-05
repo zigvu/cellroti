@@ -5,13 +5,13 @@ class Api::V1::DetGroupsController < ApplicationController
   before_action :set_det_group, only: [:show]
   before_action :set_client
 
-  # GET /det_groups
+  # GET /brands/groups
   def index
     @det_groups = @client.det_groups
     render json: @det_groups.to_json(:only => [:id, :name])
   end
 
-  # GET /det_groups/1
+  # GET /brands/groups/1
   def show
     jadg = Jsonifiers::JAnalyticsDetGroup.new(@det_group)
     render json: jadg.to_json

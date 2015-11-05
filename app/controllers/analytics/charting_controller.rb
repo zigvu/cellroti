@@ -1,7 +1,6 @@
 module Analytics
   class ChartingController < ApplicationController
     authorize_actions_for ::Season
-
     authority_actions :dashboard => :read
     authority_actions :analysis => :read
 

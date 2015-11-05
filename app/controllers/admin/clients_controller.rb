@@ -1,6 +1,6 @@
 module Admin
   class ClientsController < ApplicationController
-    authorize_actions_for ::Client
+    authorize_actions_for ::Organization
     authority_actions :users => :update
     authority_actions :seasons => :update
     authority_actions :updateSeasons => :update

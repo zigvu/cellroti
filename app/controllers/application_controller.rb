@@ -8,6 +8,9 @@ class ApplicationController < ActionController::Base
   acts_as_token_authentication_handler_for User
   #before_action :authenticate_user!
 
+  # ensure that all controller actions have authorization defined
+  # ensure_authorization_performed --> currently this fails due to high_voltage gem
+
   # ensure HTML format
   def ensure_html_format
     if request.format != Mime::HTML

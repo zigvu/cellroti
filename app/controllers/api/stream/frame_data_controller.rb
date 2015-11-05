@@ -2,7 +2,7 @@ require 'fileutils'
 
 class Api::Stream::FrameDataController < ApplicationController
   # devise still requires to be logged in
-  authorize_actions_for ::Sport
+  authorize_actions_for ::Game
 
   before_filter :ensure_json_format
   skip_before_filter :verify_authenticity_token

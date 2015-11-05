@@ -1,7 +1,6 @@
 module Analytics
   class SeasonsController < ApplicationController
     authorize_actions_for ::Season
-
     authority_actions :summary => :read
     authority_actions :game => :read
     authority_actions :updateDetGroups => :read

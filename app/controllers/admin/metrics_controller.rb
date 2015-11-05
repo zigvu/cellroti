@@ -1,6 +1,6 @@
 module Admin
 	class MetricsController < ApplicationController
-    authorize_actions_for ::Organization # same access control as Organization
+    authorize_actions_for ::Organization
 		authority_actions :change => :update
 
 		before_filter :ensure_html_format

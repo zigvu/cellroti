@@ -1,6 +1,6 @@
 module Admin
   class DetGroupsController < ApplicationController
-    authorize_actions_for ::DetGroup
+    authorize_actions_for ::Organization
 
     before_filter :ensure_html_format
     before_action :set_det_group, only: [:edit, :update, :destroy]
@@ -122,7 +122,6 @@ module Admin
       # Use callbacks to share common setup or constraints between actions.
       def set_det_group
         @det_group = ::DetGroup.find(params[:id])
-        authorize_action_for @det_group
       end
 
       # Only allow a trusted parameter "white list" through.

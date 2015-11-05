@@ -1,7 +1,6 @@
 class Organization < ActiveRecord::Base
 	# For authority
 	include Authority::Abilities
-	#self.authorizer_name = 'PopulateAuthorizer'
 
   validates :name, presence: true, uniqueness: true
 
