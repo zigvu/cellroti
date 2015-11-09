@@ -23,12 +23,14 @@
 
 <p>
 	<strong>Users:</strong>
-	<%= link_to 'Edit', users_admin_client_path(@client) %>
+	<%= link_to 'Edit', admin_client_users_path(@client) %>
 	<table>
 		<thead>
 			<tr>
 				<th>Id</th>
 				<th>Email</th>
+				<th>Name</th>
+				<th>Role</th>
 				<th>Last Accessed</th>
 			</tr>
 		</thead>
@@ -37,6 +39,8 @@
 				<tr>
 					<td><%= user.id %></td>
 					<td><%= user.email %></td>
+					<td><%= "#{user.first_name} #{user.last_name}" %></td>
+					<td><%= user.roles.first.name %></td>
 					<td><%= user.last_sign_in_at %></td>
 				</tr>
 			<% end %>

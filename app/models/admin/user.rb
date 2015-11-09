@@ -7,14 +7,21 @@ class User < ActiveRecord::Base
   # Devise token authentication for API
   acts_as_token_authenticatable
   # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :validatable
+  # :confirmable, and :omniauthable
+  devise :database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :timeoutable, :validatable, :lockable, :invitable
 
   after_create :assign_default_role
   after_create :auto_create_user_setting
 
   def assign_default_role
-    add_role(States::Roles.guest_user)
+    add_role(States::Roles.guest_user) if self.roles.empty?
+  end
+  def update_role(newRole)
+    if self.roles.first != newRole
+      self.roles.destroy_all and self.add_role(newRole.name)
+    else
+      true
+    end
   end
 
   def auto_create_user_setting
@@ -26,6 +33,11 @@ class User < ActiveRecord::Base
     Serializers::UserSettingsSerializer.new(user_setting)
   end
 
+  def name
+    "#{self.first_name} #{self.last_name}"
+  end
+
+  has_many :invitations, :class_name => self.to_s, :as => :invited_by
   has_one :user_setting, dependent: :destroy
   belongs_to :client
 end

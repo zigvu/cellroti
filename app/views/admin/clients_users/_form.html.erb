@@ -1,0 +1,34 @@
+<%= form_for([:admin, @client, @user]) do |f| %>
+
+  <% if @user.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
+
+      <ul>
+      <% @user.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.text_field :first_name %>
+  </div>
+  <div class="field">
+    <%= f.text_field :last_name %>
+  </div>
+  <div class="field">
+    <%= f.text_field :email %>
+  </div>
+  <div class="field">
+    <%= f.label :role %>
+    <%= simple_fields_for :role do |ff| %>
+      <%= ff.select :role_id, @roles.map{ |r| [States::Roles.getPrettyName(r), r.id] }, :selected => @selectedRoleId, include_blank: false %>
+    <% end %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+
+<% end %>

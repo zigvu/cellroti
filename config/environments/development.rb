@@ -21,6 +21,20 @@ Cellroti::Application.configure do
 
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
+  # EVAN: BEGIN: Mailer config
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.default_url_options = { :host => 'localhost' }
+
+  mailerSetting = YAML.load_file(Rails.root.join('config','mailer.yml'))[Rails.env]
+  config.action_mailer.smtp_settings = {
+    :address              => mailerSetting["address"],
+    :port                 => mailerSetting["port"],
+    :user_name            => mailerSetting["user_name"],
+    :password             => mailerSetting["password"],
+    :authentication       => :login,
+    :enable_starttls_auto => true
+  }
+  # EVAN: END: Mailer config
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log

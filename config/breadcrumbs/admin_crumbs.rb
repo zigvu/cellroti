@@ -57,6 +57,22 @@ crumb :client_new do
   parent :clients
 end
 
+crumb :client_users do |client|
+  link client.pretty_name, admin_client_path(client)
+  parent :clients
+end
+
+crumb :client_users_edit do |client, user|
+  link user.name
+  parent :client_users, client
+end
+
+crumb :client_users_new do |client, user|
+  link "Invite New User"
+  parent :client_users, client
+end
+
+
 # Metrics
 crumb :metrics do
   link "Metrics", admin_metrics_path

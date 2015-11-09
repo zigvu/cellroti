@@ -1,0 +1,7 @@
+<% breadcrumb :client_users_edit, @client, @user %>
+
+<h3>Edit User Details</h3>
+
+<%= render 'form' %>
+
+<%= link_to 'Cancel', admin_client_users_path(@client), class: "button alert" %>

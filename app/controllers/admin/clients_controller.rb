@@ -1,23 +1,18 @@
 module Admin
   class ClientsController < ApplicationController
     authorize_actions_for ::Organization
-    authority_actions :users => :update
     authority_actions :seasons => :update
     authority_actions :updateSeasons => :update
     authority_actions :groups => :update
     authority_actions :detectables => :update
 
     before_filter :ensure_html_format
-    before_action :set_client, only: [:users, :seasons, :updateSeasons, :groups, :detectables, 
-      :show, :edit, :update, :destroy]
+    before_action :set_client, only: [:seasons, :updateSeasons, :groups,
+      :detectables, :show, :edit, :update, :destroy]
 
     # GET /clients
     def index
       @clients = ::Client.all
-    end
-
-    # GET /clients/1/users
-    def users
     end
 
     # GET /clients/1/seasons

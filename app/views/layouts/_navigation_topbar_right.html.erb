@@ -23,8 +23,17 @@
     <li class="has-dropdown">
       <a href="#"><i class="fi-wrench"></i>Settings</a>
       <ul class="dropdown">
-        <li><%= link_to "Sign out", destroy_user_session_path, :method => :delete %></li>
-        <li id="devise_registrations_edit"><%= link_to "Account Settings", edit_user_registration_path %></li>
+        <li>
+          <%= link_to "Sign out", destroy_user_session_path, :method => :delete %>
+        </li>
+        <% if States::Roles.client_admin_and_above(current_user) and false %>
+          <li id="">
+            <%= link_to "Manage Users", admin_client_users_path(current_user.client) %>
+          </li>
+        <% end %>
+        <li id="devise_registrations_edit">
+          <%= link_to "Account Settings", edit_user_registration_path %>
+        </li>
       </ul>
     </li>
 

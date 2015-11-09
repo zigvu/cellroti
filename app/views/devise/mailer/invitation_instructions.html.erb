@@ -1,0 +1,10 @@
+<!-- EVAN: Modified -->
+
+<p><%= t("devise.mailer.invitation_instructions.hello", first_name: @resource.first_name) %></p>
+
+<p><%= t("devise.mailer.invitation_instructions.someone_invited_you", url: root_url) %></p>
+
+<p><%= link_to t("devise.mailer.invitation_instructions.accept"), accept_invitation_url(@resource, :invitation_token => @token) %></p>
+
+<p><%= t("devise.mailer.invitation_instructions.ignore").html_safe %></p>
+<p><%= t("devise.mailer.invitation_instructions.thank_you").html_safe %></p>

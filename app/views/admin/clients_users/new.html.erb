@@ -1,0 +1,7 @@
+<% breadcrumb :client_users_new, @client, @user %>
+
+<h3>Invite new user</h3>
+
+<%= render 'form' %>
+
+<%= link_to 'Cancel', admin_client_users_path(@client), class: "button alert" %>

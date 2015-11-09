@@ -10,8 +10,8 @@ Cellroti::Application.routes.draw do
         post 'updateSeasons'
         get 'groups'
         get 'detectables'
-        get 'users'
       end
+      resources :users, controller: 'clients_users', except: [:show]
     end
 
     get 'metrics' => 'metrics#index'
@@ -56,7 +56,24 @@ Cellroti::Application.routes.draw do
     end
   end
 
-  devise_for :users
+  # devise_for :users
+  devise_for :users, skip: [:invitation, :registrations]
+  devise_scope :user do
+    resource :invitation,
+      only: [],
+      path: 'users',
+      controller: 'devise/invitations',
+      as: :user_invitation do
+        get :edit, :as => :accept, path: 'invitation/accept'
+        put :update, path: 'invitation'
+      end
+
+    resource :registrations,
+      except: [:new, :show],
+      path: 'users',
+      controller: 'devise_invitable/registrations',
+      as: :user_registration
+  end
 
   authenticated :user, -> user { States::Roles.zigvu_user_and_above(user) } do
     match '/delayed_job' => DelayedJobWeb, :anchor => false, via: [:get, :post]

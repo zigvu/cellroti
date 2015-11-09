@@ -21,22 +21,22 @@ idl.saveToDb
 zigvuClient = zigvuOrganization.create_client(name: "Zigvu", pretty_name: "Zigvu", description: "Base Client to associate internal users with")
 
 # Create users
-zigvuAdmin = User.create(email: "zigvu_admin@zigvu.com", password: "abcdefgh", password_confirmation: 'abcdefgh')
+zigvuAdmin = User.create(email: "zigvu_admin@zigvu.com", password: "abcdefgh", password_confirmation: 'abcdefgh', first_name: zigvu, last_name: admin)
 zigvuAdmin.add_role(States::Roles.zigvu_admin)
 zigvuAdmin.update(client: zigvuClient)
 
-zigvuUser = User.create(email: "zigvu_user@zigvu.com", password: "abcdefgh", password_confirmation: 'abcdefgh')
+zigvuUser = User.create(email: "zigvu_user@zigvu.com", password: "abcdefgh", password_confirmation: 'abcdefgh', first_name: zigvu, last_name: user)
 zigvuUser.add_role(States::Roles.zigvu_user)
 zigvuUser.update(client: zigvuClient)
 
 cocacolaOrganization = Organization.find(5)
 cocacolaClient = cocacolaOrganization.create_client(name: "CocaCola", pretty_name: cocacolaOrganization.name, description: "Signed up on 9/8/2015")
 
-cokeAdmin = User.create(email: "coke_admin@zigvu.com", password: "abcdefgh", password_confirmation: 'abcdefgh')
+cokeAdmin = User.create(email: "coke_admin@zigvu.com", password: "abcdefgh", password_confirmation: 'abcdefgh', first_name: Samir, last_name: Nattan)
 cokeAdmin.add_role(States::Roles.client_admin)
 cokeAdmin.update(client: cocacolaClient)
 
-cokeUser = User.create(email: "coke_user@zigvu.com", password: "abcdefgh", password_confirmation: 'abcdefgh')
+cokeUser = User.create(email: "coke_user@zigvu.com", password: "abcdefgh", password_confirmation: 'abcdefgh', first_name: Micheal, last_name: Bolton)
 cokeUser.add_role(States::Roles.client_user)
 cokeUser.update(client: cocacolaClient)
 

@@ -29,6 +29,7 @@ gem 'simple_form' # simple form with foundations configuration
 gem 'draper', '~> 1.3' # decorator
 # authentication and roles
 gem 'devise', '~> 3.2.0' # for authentication
+gem 'devise_invitable', '~> 1.5.2' # for inviting new users
 gem 'simple_token_authentication' # for API authentication using devise
 gem 'authority' # for authorization
 gem 'rolify' # for role management

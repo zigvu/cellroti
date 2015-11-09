@@ -66,6 +66,23 @@ Cellroti::Application.configure do
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false
 
+  # EVAN: BEGIN: Mailer config
+  # Don't care if the mailer can't send.
+  config.action_mailer.raise_delivery_errors = false
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.default_url_options = { :host => 'localhost' }
+
+  mailerSetting = YAML.load_file(Rails.root.join('config','mailer.yml'))[Rails.env]
+  config.action_mailer.smtp_settings = {
+    :address              => mailerSetting["address"],
+    :port                 => mailerSetting["port"],
+    :user_name            => mailerSetting["user_name"],
+    :password             => mailerSetting["password"],
+    :authentication       => :login,
+    :enable_starttls_auto => true
+  }
+  # EVAN: END: Mailer config
+
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation can not be found).
   config.i18n.fallbacks = true

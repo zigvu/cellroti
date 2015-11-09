@@ -36,7 +36,7 @@ authorize_actions_for ::Organization
 
 4. Change by client admin
 --------------------------------------------------------------------------------
-None
+authorize_actions_for ::Client
 
 4. Read only by client admin
 --------------------------------------------------------------------------------

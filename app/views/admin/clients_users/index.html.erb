@@ -1,0 +1,42 @@
+<% breadcrumb :client_users, @client %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Email</th>
+      <th>Name</th>
+      <th>Role</th>
+      <th>Edit</th>
+      <th>Delete</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @users.each do |user| %>
+      <tr>
+        <td><%= user.id %></td>
+        <td><%= user.email %></td>
+        <td><%= user.name %></td>
+        <td><%= States::Roles.getPrettyName(user.roles.first) %></td>
+        <td>
+          <% if @invitedButNotAcceptedUserIds.include?(user.id) %>
+            Pending Invitation
+          <% else %>
+            <%= link_to 'Edit', edit_admin_client_user_path(@client, user) %>
+          <% end %>
+        </td>
+        <td>
+          <%= link_to 'Delete', [:admin, @client, user], method: :delete, data: { confirm: 'Are you sure?' } %>
+        </td>
+      </tr>
+    <% end %>
+    <tr>
+      <td colspan="4"></td>
+      <td colspan="2">
+        <%= link_to 'Invite New User', new_admin_client_user_path(@client), class: "button success" %>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<%= link_to 'Cancel', admin_clients_path, class: "button alert" %>
