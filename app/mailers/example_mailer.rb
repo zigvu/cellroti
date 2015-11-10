@@ -3,8 +3,7 @@ class ExampleMailer < ActionMailer::Base
 
   def sample_email(user)
     @user = user
-    mailerSetting = YAML.load_file(Rails.root.join('config','mailer.yml'))[Rails.env]
-    emailFrom = mailerSetting["user_name"]
+    emailFrom = Rails.application.config.action_mailer.smtp_settings[:user_name]
     mail(from: emailFrom, to: @user.email, subject: 'Sample Email')
   end
 end

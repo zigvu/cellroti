@@ -6,7 +6,7 @@
 /* zconsole */
 // print to console only if not in production mode
 function zconsole(msg){
-  if(environment !== undefined){ console.log(msg); };
+  if(window.RUBY_ENV !== 'production'){ console.log(msg); };
 };
 
 
@@ -59,7 +59,7 @@ function sortById(a, b){
 //------------------------------------------------
 /* Log time */
 var timeLogEnabled = false;
-if(environment !== undefined){ timeLogEnabled = true; };
+if(window.RUBY_ENV !== 'production'){ timeLogEnabled = true; };
 var timeLogs = {};
 function timeLogStart(logId){
 	if (timeLogEnabled){
