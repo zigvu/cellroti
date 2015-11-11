@@ -17,4 +17,5 @@
 
 # evan added:
 /config/passwords.yml
+/config/mailer.yml
 /public/uploads
