@@ -1,4 +1,4 @@
 
 HighVoltage.configure do |config|
-  config.home_page = 'index'
+  # config.home_page = 'index'
 end

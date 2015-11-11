@@ -1,7 +1,6 @@
 Cellroti::Application.routes.draw do
+  root 'analytics/charting#dashboard'
 
-  mount RailsAdmin::Engine => '/rails_admin', as: 'rails_admin'
-  
   namespace :admin do
     resources :organizations, :det_groups
     resources :clients do
@@ -73,6 +72,10 @@ Cellroti::Application.routes.draw do
       path: 'users',
       controller: 'devise_invitable/registrations',
       as: :user_registration
+  end
+
+  authenticated :user, -> user { States::Roles.zigvu_admin_and_above(user) } do
+    mount RailsAdmin::Engine => '/rails_admin', as: 'rails_admin'
   end
 
   authenticated :user, -> user { States::Roles.zigvu_user_and_above(user) } do
