@@ -19,3 +19,4 @@
 /config/passwords.yml
 /config/mailer.yml
 /public/uploads
+/public/assets

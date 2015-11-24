@@ -3,6 +3,7 @@ require 'csv'
 
 module SeedHelpers
 	class IntakeDetectableList
+		attr_accessor :csvData
 
 		def initialize(intakeListCSVFile)
 			@csvData = {}
@@ -46,7 +47,8 @@ module SeedHelpers
 
 				# create detectables
 				orgData[:detectables].each do |d|
-					organization.detectables.create(name: d[:name], pretty_name: d[:pretty_name], description: d[:description])
+					organization.detectables.create(
+						name: d[:name], pretty_name: d[:pretty_name], description: d[:description])
 				end
 			end
 			true

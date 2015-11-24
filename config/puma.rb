@@ -81,17 +81,13 @@ threads Integer(ENV['PUMA_MIN_THREADS']  || 1), Integer(ENV['PUMA_MAX_THREADS'] 
 # bind 'unix:///var/run/puma.sock?umask=0111'
 # bind 'ssl://127.0.0.1:9292?key=path_to_key&cert=path_to_cert'
 
+socketFile = File.expand_path("../../tmp/sockets/puma.sock", __FILE__)
+bind "unix://#{socketFile}"
+
 # Instead of "bind 'ssl://127.0.0.1:9292?key=path_to_key&cert=path_to_cert'" you
 # can also use the "ssl_bind" option.
 #
 # ssl_bind '127.0.0.1', '9292', { key: path_to_key, cert: path_to_cert }
-if ENV['RAILS_ENV'] == 'production' || ENV['USE_SSL'] == 'true'
-  path_to_key = ENV['PUMA_SSL_KEY'] || "#{Dir.home}/.config/cellroti/cellroti.key"
-  path_to_cert = ENV['PUMA_SSL_CERT'] || "#{Dir.home}/.config/cellroti/cellroti.crt"
-  ssl_bind '0.0.0.0', '443', { key: path_to_key, cert: path_to_cert }
-else
-  bind 'tcp://0.0.0.0:3001'
-end
 
 # Code to run before doing a restart. This code should
 # close log files, database connections, etc.
@@ -128,7 +124,6 @@ workers Integer(ENV['PUMA_WORKERS'] || 3)
 
 on_worker_boot do
   require "active_record"
-  cwd = File.dirname(__FILE__) + "/.."
   ActiveRecord::Base.connection.disconnect! rescue ActiveRecord::ConnectionNotEstablished
   ActiveRecord::Base.establish_connection
 end
