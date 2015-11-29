@@ -111,7 +111,7 @@ module Metrics
 					@configReader, @video, detectableId)
 			end
 			@calculateFramesToExtract = Metrics::CalculateFramesToExtract.new(
-				@configReader, @allDetectableIds, detectionFrameRate)
+				@configReader, detectionFrameRate)
 			@frameRateToMSFactor = States::ConfigReader.frameTimeStampResolution / playbackFR
 
 			# Note: the \n placement is important since cellroti ingests line by line
@@ -155,10 +155,9 @@ module Metrics
 				# STORE: detectables
 				singleDetectableMetric = @mcsd[detectableId].calculate(frameTime, dets)
 				singleDetectableMetrics << singleDetectableMetric
-
-				@calculateFramesToExtract.addDetectableMetric(
-					frameNumber, detectableId, singleDetectableMetric)
 			end
+
+			@calculateFramesToExtract.addDetectableMetrics(frameNumber, singleDetectableMetrics)
 
 			# STORE: frame detection
 			# Note: this is tied to schema in FrameDetection class

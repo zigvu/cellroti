@@ -32,7 +32,7 @@ module States
 		attr_accessor :dm_se_sw_size, :dm_se_sw_decayWeights
 		attr_accessor :dm_qd_numCols, :dm_qd_numRows
 		attr_accessor :dm_qd_centerWeight, :dm_qd_cornerWeight, :dm_qd_nonCornerEdgeWeight
-		attr_accessor :dm_ef_num_of_seconds
+		attr_accessor :dm_fe_smallest_time_window, :dm_fe_largest_time_window
 
 		def init_detectable_metrics_config
 			dm_default = @default["detectable_metrics"]
@@ -64,8 +64,10 @@ module States
 			@dm_qd_cornerWeight  = dm_se["quadrants_corner_weight"]
 			@dm_qd_nonCornerEdgeWeight  = dm_se["quadrants_non_corner_edge_weight"]
 
-			# num of second per extracted frame
-			@dm_ef_num_of_seconds = dm_default["num_seconds_per_sample_frame"]
+			# frame extraction
+			dm_fe = dm_default["frame_extraction"]
+			@dm_fe_smallest_time_window = dm_fe["smallest_time_window"]
+			@dm_fe_largest_time_window = dm_fe["largest_time_window"]
 		end
 
 		attr_accessor :dgm_be_detGroupCrowding, :dgm_be_visualSaliency

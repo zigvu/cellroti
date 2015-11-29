@@ -1,16 +1,19 @@
 module Metrics
 	class CalculateFramesToExtract
-		def initialize(configReader, detectableIds, detectionFrameRate)
+		def initialize(configReader, detectionFrameRate)
 			@configReader = configReader
-			@detectableIds = detectableIds
-			@numFrameIntervalPerFrameSaved = @configReader.dm_ef_num_of_seconds * detectionFrameRate
+
+			@numFramesSmallestTimeWindow = @configReader.dm_fe_smallest_time_window * detectionFrameRate
+			@numFramesLargestTimeWindow = @configReader.dm_fe_largest_time_window * detectionFrameRate
+
 			@extractVisualSaliencyThresh = 0
 
 			@framesToExtract = []
-			@frameTrackers = {}
-			@detectableIds.each do |detectableId|
-				reset(detectableId)
-			end
+
+			# format:
+			# [{fn: , score: }, ]
+			@smallestTimeWindowFrames = []
+			@largestTimeWindowFrames = []
 		end
 
 		def getFramesToExtract
@@ -18,28 +21,38 @@ module Metrics
 			@framesToExtract.sort!
 		end
 
-		def addDetectableMetric(frameNumber, detectableId, singleDetectableMetric)
-			if @frameTrackers[detectableId][:counter] < @numFrameIntervalPerFrameSaved
-				# get max visual saliency score
-				score = singleDetectableMetric[:vs]
-				if score > @frameTrackers[detectableId][:maxScore]
-					@frameTrackers[detectableId][:maxScore] = score
-					@frameTrackers[detectableId][:maxScoreFn] = frameNumber
+		def addDetectableMetrics(frameNumber, singleDetectableMetrics)
+			# get largest score detectble metrics
+			largestDetMet = singleDetectableMetrics.sort{ |s| s[:vs] }.last
+			# if singleDetectableMetrics has no detections
+			score = largestDetMet == nil ? 0 : largestDetMet[:vs]
+
+			@smallestTimeWindowFrames << { fn: frameNumber, score: score }
+			@largestTimeWindowFrames << { fn: frameNumber, score: score }
+
+			# if smallest time window is full, add to frames to extract and reset
+			if @smallestTimeWindowFrames.count >= @numFramesSmallestTimeWindow
+				frameToExtract = @smallestTimeWindowFrames.sort{ |v| v[:score] }.last
+				if frameToExtract[:score] > @extractVisualSaliencyThresh
+					@framesToExtract << frameToExtract[:fn]
+					# since a frame has gone in in this small window, we don't need to put
+					# it in large window, so need to reset that
+					reset(@largestTimeWindowFrames)
 				end
-			else
-				# if present, add to extraction list
-				if @frameTrackers[detectableId][:maxScore] > @extractVisualSaliencyThresh
-					@framesToExtract << @frameTrackers[detectableId][:maxScoreFn]
-				end
-				# and reset
-				reset(detectableId)
+				reset(@smallestTimeWindowFrames)
 			end
-			# increase counter
-			@frameTrackers[detectableId][:counter] += 1
+			# if largest time window is full, reset
+			if @largestTimeWindowFrames.count >= @numFramesLargestTimeWindow
+				frameToExtract = @largestTimeWindowFrames.sort{ |v| v[:score] }.last
+				# even if the score is less than extractVisualSaliencyThresh, we want to
+				# get at least one frame
+				@framesToExtract << frameToExtract[:fn]
+				reset(@largestTimeWindowFrames)
+			end
 		end
 
-		def reset(detectableId)
-			@frameTrackers[detectableId] = { counter: 0, maxScore: -1.0, maxScoreFn: -1 }
+		def reset(arr)
+			arr = []
 		end
 
 	end

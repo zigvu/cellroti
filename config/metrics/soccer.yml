@@ -26,10 +26,13 @@ detectable_metrics:
     quadrants_center_weight:                             1.0
     quadrants_corner_weight:                             0.8
     quadrants_non_corner_edge_weight:                    0.85
-  # determine number of seconds one sample frame will cover. For example, a 
-  # value of 10 indicates that there will be only 1 sample frame in cellroti 
-  # per 10 seconds worth of video
-  num_seconds_per_sample_frame:                        10
+  frame_extraction:
+    # smallest time window in seconds for maximum of 1 frame extraction
+    # e.g.: 1 indicates that no more than 1 frame is extracted per 1 second video
+    smallest_time_window:                                1
+    # largest time window in seconds for minimum of 1 frame extraction
+    # e.g.: 10 indicates that at least 1 frame is extracted per 10 seconds video
+    largest_time_window:                                 10
 
 det_group_metrics:
   # brand effectiveness weights
