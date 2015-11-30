@@ -23,7 +23,7 @@ module Metrics
 		# add singleDetGroupMetric (abbr. sdgm)
 		def addData(sdgm)
 			@data[:frame_number] = sdgm.frame_number
-			@data[:extracted_frame_number][sdgm.frame_number] = sdgm.brand_effectiveness
+			@data[:extracted_frame_number][sdgm.frame_number] = sdgm.highest_prob_score
 			@data[:frame_time] = sdgm.frame_time
 
 			@data[:resolution] = @resolution
@@ -99,7 +99,7 @@ module Metrics
 			# Note: this is tied to schema in SingleSummaryMetric class
 			return {
 				fn: @data[:frame_number],
-				efn: getHighestBEFrameNumber(),
+				efn: getHighestProbScoreFrameNumber(),
 				ft: @data[:frame_time],
 
 				re: @data[:resolution],
@@ -121,13 +121,15 @@ module Metrics
 			}
 		end
 
-		def getHighestBEFrameNumber
+		def getHighestProbScoreFrameNumber
 			presentEfn = {}
 			# one pass through all extracted frames
 			@extractedFrames.each do |efn|
+				probScore = @data[:extracted_frame_number][efn]
 				# collect all frames that are in both data structures
-				if @data[:extracted_frame_number][efn] != nil
-					presentEfn[efn] = @data[:extracted_frame_number][efn]
+				# and have at least one detectable in det group present
+				if (probScore != nil) and (probScore > 0)
+					presentEfn[efn] = probScore
 				end
 			end
 			# if no frames were extracted, then handle in UI
@@ -145,7 +147,7 @@ module Metrics
 			Metrics::MetricsDataAggregator.dataKeys().each do |k|
 				@data[k] = 0
 			end
-			# this is a hash of {fn: be}
+			# this is a hash of {fn: prob_score}
 			@data[:extracted_frame_number] = {}
 			@frameCounter = 0
 		end

@@ -38,14 +38,16 @@ module Metrics
 			# frameTime : time of frame
 			# detections : raw scores from localization.json from khajuri
 
+			# prob score: max of detection scores
+			maxScore = get_score_max(detections)
+
 			# det group crowding: area of detections per detectable
 			# as fraction of frame area
 			cumulativeArea = get_cumulative_area(detections)
 			@dgcSlidingWindow.add(cumulativeArea)
 			detGroupCrowding = @dgcSlidingWindow.get_decayed_average()
 
-			# visual saliency: detection scores
-			maxScore = get_score_max(detections)
+			# visual saliency: decay average of prob score
 			@vsSlidingWindow.add(maxScore)
 			visualSaliency = @vsSlidingWindow.get_decayed_average()
 
@@ -65,6 +67,7 @@ module Metrics
 			# Note: this is tied to schema in SingleDetectableMetric class
 			detectableMetrics = {
 				di: @detectableId,
+				ps: maxScore,
 
 				dgc: detGroupCrowding,
 				vs: visualSaliency,

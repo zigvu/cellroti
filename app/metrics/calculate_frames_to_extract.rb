@@ -23,9 +23,9 @@ module Metrics
 
 		def addDetectableMetrics(frameNumber, singleDetectableMetrics)
 			# get largest score detectble metrics
-			largestDetMet = singleDetectableMetrics.sort{ |s| s[:vs] }.last
+			highestDetMet = singleDetectableMetrics.sort{ |s| s[:ps] }.last
 			# if singleDetectableMetrics has no detections
-			score = largestDetMet == nil ? 0 : largestDetMet[:vs]
+			score = highestDetMet == nil ? 0 : highestDetMet[:ps]
 
 			@smallestTimeWindowFrames << { fn: frameNumber, score: score }
 			@largestTimeWindowFrames << { fn: frameNumber, score: score }
@@ -37,9 +37,9 @@ module Metrics
 					@framesToExtract << frameToExtract[:fn]
 					# since a frame has gone in in this small window, we don't need to put
 					# it in large window, so need to reset that
-					reset(@largestTimeWindowFrames)
+					@largestTimeWindowFrames = []
 				end
-				reset(@smallestTimeWindowFrames)
+				@smallestTimeWindowFrames = []
 			end
 			# if largest time window is full, reset
 			if @largestTimeWindowFrames.count >= @numFramesLargestTimeWindow
@@ -47,12 +47,8 @@ module Metrics
 				# even if the score is less than extractVisualSaliencyThresh, we want to
 				# get at least one frame
 				@framesToExtract << frameToExtract[:fn]
-				reset(@largestTimeWindowFrames)
+				@largestTimeWindowFrames = []
 			end
-		end
-
-		def reset(arr)
-			arr = []
 		end
 
 	end

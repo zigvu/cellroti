@@ -23,6 +23,9 @@ module Metrics
 			# when doing arithmetic operations - thus simplifying data passing
 
 			# calculate individual metrics
+			highestProbScore = highest_prob_score(Hash[
+				singleDetectableMetrics.pluck(:detectable_id, :prob_score)])
+
 			detGroupCrowding = det_group_crowding(Hash[
 				singleDetectableMetrics.pluck(:detectable_id, :det_group_crowding)])
 
@@ -53,6 +56,7 @@ module Metrics
 			# Note: this is tied to schema in SingleDetGroupMetric class
 			sdgm = ::SingleDetGroupMetric.new
 			sdgm.det_group_id = @detGroupId
+			sdgm.highest_prob_score = highestProbScore
 			sdgm.brand_effectiveness = brandEffectiveness
 			sdgm.det_group_crowding = detGroupCrowding
 			sdgm.visual_saliency = visualSaliency
@@ -63,6 +67,10 @@ module Metrics
 			sdgm.quadrants = quadrantsCount
 
 			return sdgm
+		end
+
+		def highest_prob_score(probScoreHash)
+			return operate_det_hash(probScoreHash, :max)
 		end
 
 		# for det_group_crowding

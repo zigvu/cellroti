@@ -10,6 +10,7 @@ class SingleDetGroupMetric
 	attr_accessor :frame_number
 	attr_accessor :frame_time
 	attr_accessor :det_group_id
+	attr_accessor :highest_prob_score
 
 	attr_accessor :brand_effectiveness
 

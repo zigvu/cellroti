@@ -2,6 +2,7 @@ class SingleDetectableMetric
 	include Mongoid::Document
 
 	field :di, as: :detectable_id, type: Integer
+	field :ps, as: :prob_score, type: Float
 
 	field :dgc, as: :det_group_crowding, type: Float
 	field :vs, as: :visual_saliency, type: Float
