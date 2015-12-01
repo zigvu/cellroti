@@ -1,6 +1,6 @@
 /*------------------------------------------------
-	Multi-bar chart
-	------------------------------------------------*/
+  Multi-bar chart
+  ------------------------------------------------*/
 
 function MultiBarChart(chartManager){
   //------------------------------------------------
@@ -48,8 +48,11 @@ function MultiBarChart(chartManager){
     y.range([height, 0]);
   };
 
-  var xAxis = d3.svg.axis().scale(x0).orient("bottom"),
-      yAxis = d3.svg.axis()
+  var xAxis = d3.svg.axis()
+          .scale(x0)
+          .tickFormat(function(d) { return chartHelpers.getChartLabel(d); })
+          .orient("bottom");
+  var yAxis = d3.svg.axis()
           .scale(y)
           .tickFormat(function(d) {return d3.format(',%')(d); })
           .orient("left");
@@ -125,8 +128,7 @@ function MultiBarChart(chartManager){
       .attr("transform", "translate(0," + height + ")")
       .call(xAxis);
 
-  var xAxisLabelSVG = bcSVG.selectAll("text")
-      .text(function(k){ return chartHelpers.getChartLabel(k); })
+  var xAxisLabelSVG = xAxisSVG.selectAll("text")
       .attr("class", "axis-label");
 
   var yAxisSVG = bcSVG.append("g")

@@ -113,7 +113,7 @@
 				<td><%= item.id %></td>
 				<td><%= item.pretty_name %></td>
 				<td>
-					<%= link_to 'Cancel', admin_metrics_change_url(type: @mps.detGroup, process: @mps.cancelQueue, changeId: item.id), class: "button alert", data: {confirm: "Are you sure? This will also delete the associated brand group"} %>
+					<%= link_to 'Cancel', admin_metrics_change_url(type: @mps.detGroup, process: @mps.cancelQueue, changeId: item.id), class: "button alert", data: {confirm: "Are you sure?"} %>
 				</td>
 			</tr>
 		<% end %>

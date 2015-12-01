@@ -3,6 +3,7 @@ class SingleSummaryMetric
 
 	field :fn, as: :frame_number, type: Integer
 	field :efn, as: :extracted_frame_number, type: Integer
+	field :efs, as: :extracted_frame_score, type: Float
 	field :ft, as: :frame_time, type: Integer
 
 	field :re, as: :resolution, type: Integer

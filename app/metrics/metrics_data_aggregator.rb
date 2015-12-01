@@ -24,10 +24,11 @@ module Metrics
 		def addData(sdgm)
 			@data[:frame_number] = sdgm.frame_number
 			@data[:extracted_frame_number][sdgm.frame_number] = sdgm.highest_prob_score
+			# @data[:extracted_frame_score] <- called in `getHighestProbScoreFrameNumber` function
 			@data[:frame_time] = sdgm.frame_time
 
 			@data[:resolution] = @resolution
-			#@data[:sequence_counter] = sequenceCounter <- called in `getCurrentData` function
+			#@data[:sequence_counter] <- called in `getCurrentData` function
 
 			# update data values - use max
 			@data[:brand_effectiveness] = sdgm.brand_effectiveness if sdgm.brand_effectiveness > @data[:brand_effectiveness]
@@ -96,10 +97,12 @@ module Metrics
 
 		# get current snapshot of data in data structure
 		def getCurrentData(sequenceCounter)
+			efn, efs = getHighestProbScoreFrameNumber()
 			# Note: this is tied to schema in SingleSummaryMetric class
 			return {
 				fn: @data[:frame_number],
-				efn: getHighestProbScoreFrameNumber(),
+				efn: efn,
+				efs: efs,
 				ft: @data[:frame_time],
 
 				re: @data[:resolution],
@@ -122,24 +125,28 @@ module Metrics
 		end
 
 		def getHighestProbScoreFrameNumber
+			# returns:
+			# extracted_frame_number, extracted_frame_score
+
+			# format:
+			# {fn: prob_score}
 			presentEfn = {}
 			# one pass through all extracted frames
 			@extractedFrames.each do |efn|
 				probScore = @data[:extracted_frame_number][efn]
 				# collect all frames that are in both data structures
-				# and have at least one detectable in det group present
-				if (probScore != nil) and (probScore > 0)
+				if probScore != nil
 					presentEfn[efn] = probScore
 				end
 			end
 			# if no frames were extracted, then handle in UI
 			if presentEfn.length() == 0
-				return -1
+				return -1, 0
 			end
 
 			# sort and return the highest value
-			sortedEfn = presentEfn.sort_by {|k,v| v}.reverse()
-			return sortedEfn[0][0]
+			highestEfn = presentEfn.sort_by{ |k, v| v }.last
+			return highestEfn[0], highestEfn[1]
 		end
 
 		def reset
@@ -157,6 +164,7 @@ module Metrics
 			return [
 				:frame_number,
 				:extracted_frame_number,
+				:extracted_frame_score,
 				:frame_time,
 
 				:resolution,

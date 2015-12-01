@@ -37,8 +37,6 @@ module Admin
 				if process == @mps.cancelQueue
 					# destroy associated jobs
 					dgas.destroy()
-					# and destroy the det group itself
-		      detGroup.destroy
 				elsif process == @mps.cancelWorking
 					# do nothing for now
 				elsif process == @mps.requeueFail

@@ -1,6 +1,6 @@
 /*------------------------------------------------
-	NDX Manager
-	------------------------------------------------*/
+  NDX Manager
+  ------------------------------------------------*/
 
 function NDXManager(ndxData, chartManager){
   var self = this;
@@ -229,13 +229,34 @@ function NDXManager(ndxData, chartManager){
 
   this.getThumbnailData = function(bgIds){
     var thumbnailData = [];
+    var numOfThumbnails = chartHelpers.thumbnailModalIds.length;
+
+    // make two pass through top 1K BE values
+    // in the first pass, consider only those frames with raw scores greater
+    // than 0 - that is presence of det
     _.find(beTop1K, function(d, idx, list){
-      if(d.extracted_frame_number > 0 && _.contains(bgIds, '' + d.det_group_id)){ 
+      if(d.extracted_frame_number > 0 
+          && _.contains(bgIds, '' + d.det_group_id)
+          && d.extracted_frame_score > 0){ 
         thumbnailData.push(d);
       }
-      return thumbnailData.length >= 4;
+      return thumbnailData.length >= numOfThumbnails;
     });
-
+    // in the second pass, consider all extracted frames
+    _.find(beTop1K, function(d, idx, list){
+      if(d.extracted_frame_number > 0 
+          && _.contains(bgIds, '' + d.det_group_id)
+          && thumbnailData.length < numOfThumbnails){ 
+        // do not put in frames which have BE value but no presence of det
+        if(d.brand_effectiveness > 0 && d.extracted_frame_score <= 0){
+        } else {
+          // put in only if not already included
+          if (!_.includes(thumbnailData, d)){ thumbnailData.push(d); }
+        }
+      }
+      return thumbnailData.length >= numOfThumbnails;
+    });
+    // if thumbnailData is insufficient for all modals, handle in season data manager
     return thumbnailData;
   };
 

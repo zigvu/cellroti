@@ -79,22 +79,30 @@ function ThumbnailChart(chartManager){
   };
 
   function getGameName(d){
-    var label = chartManager.getGameName(d.game_id);
-    if(d.video_id > 0){ return chartHelpers.ellipsis(label, 22, 1); }
-    else { return ""; }
+    if(d.video_id > 0){
+      var label = chartManager.getGameName(d.game_id);
+      return chartHelpers.ellipsis(label, 22, 1);
+    } else {
+      return "";
+    }
   }
   function getGameTime(d){
     if(d.video_id > 0){ return chartHelpers.getHHmmSS(d.frame_time); }
     else { return ""; }
   }
   function getBrandGroupName(d){
-    var label = chartManager.getBrandGroupName(d.det_group_id);
-    if(d.video_id > 0){ return chartHelpers.ellipsis(label, 22, 1); }
-    else { return ""; }
+    if(d.video_id > 0 && d.brand_effectiveness > 0.01){
+      var label = chartManager.getBrandGroupName(d.det_group_id);
+      return chartHelpers.ellipsis(label, 22, 1);
+    } else {
+      return "None";
+    }
   }
   function getBrandEffectiveness(d){
-    if(d.video_id > 0){ return d3.format(',%')(d.brand_effectiveness); }
-    else { return ""; }
+    if(d.video_id > 0 && d.brand_effectiveness > 0.01){
+      return d3.format(',%')(d.brand_effectiveness);
+    }
+    else { return "0%"; }
   }
   //------------------------------------------------
 

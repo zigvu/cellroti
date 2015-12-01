@@ -1,0 +1,50 @@
+<%= form_tag(updateDetGroups_analytics_season_path(@season), method: 'post') do %>
+  <div id="brand-group-update">
+    <div class="row">
+      <div class="small-12 columns">
+        <p class="lead">Update Brand Groups</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="small-12 columns">
+        <div id="brand-group-max">Please select at least 2 and up to 6 brand groups.</div>
+<table>
+  <thead>
+    <tr>
+      <td>Brand Group</td>
+      <td>Brands</td>
+      <td>Select</td>
+    </tr>
+  </thead>
+  <tbody>
+    <% @clientAllowedDetGroupIds.each do |dgId| %>
+      <% dg = ::DetGroup.find(dgId) %>
+      <tr>
+        <td><%= dg.pretty_name %></td>
+        <td>
+          <ul>
+            <% dg.detectables.each do |detectable| %>
+              <li><%= detectable.pretty_name %></li>
+            <% end %>
+          </ul>
+        </td>
+        <td>
+          <% isButChecked = @detGroupIds.include?(dg.id) %>
+          <%= check_box_tag 'det_group_ids[]', dg.id, checked = isButChecked  %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+      </div>
+    </div>
+    <div class="row">
+      <div class="small-12 right columns">
+        <%= submit_tag 'Submit', class: "button small right", id: "brand-group-submit" %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<a class="close-reveal-modal">&#215;</a>

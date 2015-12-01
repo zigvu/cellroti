@@ -25,7 +25,8 @@ module Analytics
     # GET /seasons/1/summary
     def summary
       current_user.settings.replaceSeasonAnalysisSeasonId(@season.id)
-      @gameId = current_user.settings.getSeasonAnalysisGameId.first
+      current_user.settings.resetSeasonAnalysisGameId
+      redirect_to analytics_analysis_path
     end
 
     # GET /seasons/1/game/1
@@ -34,7 +35,7 @@ module Analytics
       authorize_action_for @game.sub_season.season
 
       current_user.settings.replaceSeasonAnalysisGameId(@game.id)
-      redirect_to summary_analytics_season_path
+      redirect_to analytics_analysis_path
     end
 
     # POST /seasons/1/updateDetGroups
@@ -44,7 +45,7 @@ module Analytics
       clientDgIds = clientDgIds[0..5]
 
       current_user.settings.replaceSeasonAnalysisDetGroupIds(clientDgIds)
-      redirect_to summary_analytics_season_path
+      redirect_to analytics_analysis_path
     end
 
     private

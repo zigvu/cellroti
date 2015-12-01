@@ -20,13 +20,20 @@ function HeatmapChart(chartManager){
   
   // need to skew heatmap red towards middle
   // python command: matplotlib.colors.rgb2hex(pylab.cm.jet(0.1))
+  // // normal heat colors
   // var heatmapColors = [
   //   '#000080', '#0000f1', '#004dff', '#00b1ff', '#29ffce',
   //   '#7dff7a', '#ceff29', '#ffc400', '#ff6800', '#f10800'
   // ];
+  // // extreme low heat colors
+  // var heatmapColors = [
+  //   '#000080', '#00b1ff', '#ceff29', '#ffc400','#ff6800',
+  //   '#ff6e6e', '#ff3e3e', '#ff0000', '#c60000', '#9c0000'
+  // ];
+  // medium heat colors
   var heatmapColors = [
-    '#000080', '#00b1ff', '#ceff29', '#ffc400','#ff6800',
-    '#ff6e6e', '#ff3e3e', '#ff0000', '#c60000', '#9c0000'
+    '#000080', '#0000f1', '#00b1ff', '#7dff7a','#ceff29',
+    '#ffc400', '#ff6800', '#ff6e6e', '#ff0000', '#9c0000'
   ];
   var heatmapColorsDomain = $.map(heatmapColors, function(val, i){
     return Math.round(10 * i / (heatmapColors.length))/10;
