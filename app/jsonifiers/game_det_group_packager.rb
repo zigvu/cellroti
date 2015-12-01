@@ -40,11 +40,12 @@ module Jsonifiers
 					# Note: the array ordering has to match with what we get from
 					# GameDetGroupPackager.brand_group_data_keys call
 					data = [
-						sdata[:resolution],
+						sdata[:resolution], # note: this is called averager below
 						sdata[:sequence_counter], # note: this is called counter below
 
 						#sdata[:frame_number],
 						sdata[:extracted_frame_number],
+						sdata[:extracted_frame_score],
 						sdata[:frame_time],
 
 						@game.id,
@@ -72,18 +73,17 @@ module Jsonifiers
 
 				#:frame_number,
 				:extracted_frame_number,
+				:extracted_frame_score,
 				:frame_time,
 
 				:game_id,
 				:det_group_id,
 
 				:brand_effectiveness,
-
 				:brand_group_crowding,
 				:visual_saliency,
 				:timing_effectiveness,
 				:spatial_effectiveness,
-
 				:view_duration,
 				:view_persistence,
 

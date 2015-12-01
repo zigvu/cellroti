@@ -18,7 +18,8 @@ seasonInfo: {
 
 seasonData: {
   brand_group_data_keys: [
-    :averager, :counter, :frame_time, :game_id, :det_group_id,
+    :averager, :counter, :extracted_frame_number, :extracted_frame_score, 
+    :frame_time, :game_id, :det_group_id,
     :brand_effectiveness, :brand_group_crowding, :visual_saliency,
     :timing_effectiveness, :spatial_effectiveness, :view_duration, 
     :view_persistence, :q0, :q1, :q2, :q3, :q4, :q5, :q6, :q7, :q8
