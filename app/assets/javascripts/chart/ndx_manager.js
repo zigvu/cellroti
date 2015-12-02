@@ -1,6 +1,6 @@
 /*------------------------------------------------
-  NDX Manager
-  ------------------------------------------------*/
+	NDX Manager
+	------------------------------------------------*/
 
 function NDXManager(ndxData, chartManager){
   var self = this;
@@ -242,6 +242,7 @@ function NDXManager(ndxData, chartManager){
       }
       return thumbnailData.length >= numOfThumbnails;
     });
+
     // in the second pass, consider all extracted frames
     _.find(beTop1K, function(d, idx, list){
       if(d.extracted_frame_number > 0 

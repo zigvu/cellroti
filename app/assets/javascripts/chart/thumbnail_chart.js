@@ -80,7 +80,7 @@ function ThumbnailChart(chartManager){
 
   function getGameName(d){
     if(d.video_id > 0){
-      var label = chartManager.getGameName(d.game_id);
+    var label = chartManager.getGameName(d.game_id);
       return chartHelpers.ellipsis(label, 22, 1);
     } else {
       return "";
@@ -92,7 +92,7 @@ function ThumbnailChart(chartManager){
   }
   function getBrandGroupName(d){
     if(d.video_id > 0 && d.brand_effectiveness > 0.01){
-      var label = chartManager.getBrandGroupName(d.det_group_id);
+    var label = chartManager.getBrandGroupName(d.det_group_id);
       return chartHelpers.ellipsis(label, 22, 1);
     } else {
       return "None";
