@@ -7,7 +7,7 @@ function MultiLineChart(chartManager){
   // set up
   var chartHelpers = chartManager.chartHelpers;
 
-  // caches 
+  // caches
   var pxSpaceForOneChar; // px mapper for game background label length computation
   var timelineChartType = undefined;
   var timelineChartYAxisLabel = undefined;
@@ -111,8 +111,10 @@ function MultiLineChart(chartManager){
 
   // clip prevents out-of-bounds flow of data points from chart when brushing
   var clipRect = multiLineSVG.append("defs").append("clipPath")
-      .attr("id", "clip")
+      .attr("id", "milti-line-clip")
     .append("rect")
+      .attr("x", 0)
+      .attr("y", 0)
       .attr("width", width)
       .attr("height", height);
 
@@ -185,10 +187,10 @@ function MultiLineChart(chartManager){
 
 
   //------------------------------------------------
-  // brush event handling 
+  // brush event handling
   this.getXDomain = function() { return x.domain(); };
 
-  // on brush 
+  // on brush
   this.setNewExtent = function(brushExtent) {
     x.domain(brushExtent);
     multiLineSVG.select(".x.axis").call(xAxis);
@@ -204,7 +206,7 @@ function MultiLineChart(chartManager){
     timelineChartYAxisLabel = chartHelpers.getChartLabel(timelineChartType);
     var timelineChartData = chartManager.getTimelineChartData();
     drawTimelineChart(timelineChartData)
-    
+
     var gameData = chartManager.getBrushedGames();
     drawGameBackground(gameData);
 
@@ -212,7 +214,7 @@ function MultiLineChart(chartManager){
     drawGameEvents(gameEventData);
 
     multiLineSVG.select(".x.axis").call(xAxis);
-    multiLineSVG.select(".y.axis").transition().duration(750).call(yAxis);    
+    multiLineSVG.select(".y.axis").transition().duration(750).call(yAxis);
   };
 
   // drawing timeline chart
@@ -220,7 +222,7 @@ function MultiLineChart(chartManager){
     // define domains
     x.domain(d3.extent(timelineChartData[0].values, function(d) { return d.counter; }));
     y.domain([
-      chartHelpers.getMinTimelineChartValue(timelineChartData, timelineChartType), 
+      chartHelpers.getMinTimelineChartValue(timelineChartData, timelineChartType),
       chartHelpers.getMaxTimelineChartValue(timelineChartData, timelineChartType)
     ]);
     var xAxisTimeFormatLabel = xAxisTimeFormatXAxis();
@@ -234,13 +236,13 @@ function MultiLineChart(chartManager){
         .attr("class", "focusLines")
       .append("path")
         .attr("class", "line")
-        .attr("clip-path", "url(#clip)");
+        .attr("clip-path", "url(#milti-line-clip)");
 
     // update + enter
     focusLines
         .select("path")
         .attr("d", function(d) { return focusLine(d.values); })
-        .style("stroke", function(d) { return chartManager.getBrandGroupColor(d.bgId); }); 
+        .style("stroke", function(d) { return chartManager.getBrandGroupColor(d.bgId); });
 
     // exit
     focusLines.exit().remove();
@@ -253,9 +255,9 @@ function MultiLineChart(chartManager){
 
     // enter
     gameRects.enter().append("rect")
-        .attr("clip-path", "url(#clip)")
+        .attr("clip-path", "url(#milti-line-clip)")
         .style("fill", function(d) { return chartManager.getGameColor(d.game_id); });
-    
+
     gameLabels.enter().append("text")
         .attr("class", "gameLabel");
 
@@ -270,7 +272,7 @@ function MultiLineChart(chartManager){
         .attr("x", function(d) { return getModifiedXPos(d) + gameLabelsAddPosX; })
         .attr("y", gameLabelsAddPosY)
         .text(function (d) { return getModifiedGameLabel(d); });
-        
+
     // exit
     gameRects.exit().remove();
     gameLabels.exit().remove();
