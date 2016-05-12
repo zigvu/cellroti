@@ -26,16 +26,26 @@ gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
 
 # Use ActiveModel has_secure_password
-# gem 'bcrypt-ruby', '~> 3.0.0'
+# gem 'bcrypt', '~> 3.1.7'
 
-# Use unicorn as the app server
+# Use Unicorn as the app server
 # gem 'unicorn'
 
 # Use Capistrano for deployment
-# gem 'capistrano', group: :development
+# gem 'capistrano-rails', group: :development
 
-# Use debugger
-# gem 'debugger', group: [:development, :test]
+group :development, :test do
+  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
+  gem 'byebug'
+end
+
+group :development do
+  # Access an IRB console on exception pages or by using <%= console %> in views
+  gem 'web-console', '~> 2.0'
+
+  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
+  #gem 'spring'
+end
 
 # ZIGVU END: Original gems from rails new
 # ------------------------------------------------------------------------------
@@ -76,7 +86,6 @@ gem 'daemons', '1.2.3' # dependency for delayed job
 
 # memcached
 gem 'dalli', '2.7.6' # gem for memcached
-gem 'cache_digests', '0.3.1'    # to expire view partials
 gem 'kgio', '2.10.0' # makes dalli 20-30% faster as per dalli github page
 
 # document store
