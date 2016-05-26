@@ -23,15 +23,15 @@ ZIGVU.Analytics.CrossChannel.Charts.Filter = function(){
   this.draw = function(){
     var d = self.dataManager;
     draw_li(
-      d.getBrandGroupIds, d.getBrandGroupName, 
+      d.getBrandGroupIds, d.getBrandGroupName,
       d.getBrandGroupColor, '#brand-groups-ul'
     );
     draw_li(
-      d.getChannelIds, d.getChannelName, 
+      d.getChannelIds, d.getChannelName,
       undefined, '#channels-ul'
     );
     draw_li(
-      d.getSportIds, d.getSportName, 
+      d.getSportIds, d.getSportName,
       undefined, '#sports-ul'
     );
   };
@@ -51,7 +51,7 @@ ZIGVU.Analytics.CrossChannel.Charts.Filter = function(){
 
       $(ul_div_id).append(li);
     });
-  };
+  }
 
 
 

@@ -27,13 +27,13 @@ ZIGVU.Analytics.CrossChannel.DataManager = function(){
   var sportIds = _.map(sportSorter, function(k){ return k[0];});
   this.getSportIds = function(){ return sportIds; };
   this.getSportName = function(sportId){ return sportMap[sportId]; };
-  
+
   var channelMap = {1: "ESPN", 2: "Fox Sports 1", 3: "MLB.com", 4: "Youtube Sport 1K"};
   var channelSorter = _.chain(channelMap).pairs().sortBy(function(k){return k[1];}).value();
   var channelIds = _.map(channelSorter, function(k){ return k[0];});
   this.getChannelIds = function(){ return channelIds; };
   this.getChannelName = function(channelId){ return channelMap[channelId]; };
-  
+
   var brandGroupChannelColors = {};
   var brightnessStep = 0.2;
   _.each(brandGroupIds, function(bgId){
@@ -115,7 +115,7 @@ ZIGVU.Analytics.CrossChannel.DataManager = function(){
     });
     return totalFrameTime;
   };
-  this.getBrushedFrameTime = function(){ return self.getTotalFrameTime(); }
+  this.getBrushedFrameTime = function(){ return self.getTotalFrameTime(); };
 
   function sumOnBgId(dummyDataArr, dataKey){
     var agg = {};
@@ -128,7 +128,7 @@ ZIGVU.Analytics.CrossChannel.DataManager = function(){
       });
     });
     return agg;
-  };
+  }
 
   this.getViewDuration = function(){
     return _.map(sumOnBgId(dummyData, 'viewDuration'), function(sum, bgId, list){
@@ -227,11 +227,11 @@ ZIGVU.Analytics.CrossChannel.DataManager = function(){
     });
   };
 
-  function rand(min, max){ return Math.random() * (max - min) + min; };
+  function rand(min, max){ return Math.random() * (max - min) + min; }
   function randSign(){ return Math.random() > 0.5 ? -1 : 1; }
 
   //------------------------------------------------
   // set relations
   this.setChartHelpers = function(ddd){ self.chartHelpers = ddd; return self; };
 };
-//------------------------------------------------  
+//------------------------------------------------

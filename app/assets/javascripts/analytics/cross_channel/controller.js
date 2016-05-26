@@ -23,7 +23,7 @@ ZIGVU.Analytics.CrossChannel.Controller = function(){
   this.tvSpotBySportChart = undefined;
   this.filter = undefined;
 
-  //------------------------------------------------  
+  //------------------------------------------------
   // Initialize and update of charts
   this.setup = function(){
     self.chartHelpers = new ChartHelpers(); // TODO - replace with namespaced
@@ -83,13 +83,13 @@ ZIGVU.Analytics.CrossChannel.Controller = function(){
     self.responsiveCalculator.reflowHeights();
   };
 
-  //------------------------------------------------  
+  //------------------------------------------------
   // handle browser resize
   this.resize = function(){
     self.eventManager.fireResizeCallback();
     self.responsiveCalculator.reflowHeights();
   };
   this.debouncedResize = _.debounce(self.resize, 2000); // 2 seconds
-  //------------------------------------------------  
+  //------------------------------------------------
 };
-//------------------------------------------------  
+//------------------------------------------------

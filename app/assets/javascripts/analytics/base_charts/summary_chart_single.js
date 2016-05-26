@@ -1,6 +1,6 @@
 /*------------------------------------------------
-	Summary chart single
-	------------------------------------------------*/
+  Summary chart single
+  ------------------------------------------------*/
 
 var ZIGVU = ZIGVU || {};
 ZIGVU.Analytics = ZIGVU.Analytics || {};
@@ -13,10 +13,10 @@ ZIGVU.Analytics.BaseCharts.SummaryChartSingle = function(chartDim){
   // div for chart
   var pc_div, divWidth, divHeight;
   function setDimensions(){
-    pc_div = pcChartDim['div'];
+    pc_div = pcChartDim.div;
     divWidth = $(pc_div).parent().width();
-    divHeight = Math.min(pcChartDim['height'], divWidth);
-  };
+    divHeight = Math.min(pcChartDim.height, divWidth);
+  }
   setDimensions();
   //------------------------------------------------
 
@@ -41,7 +41,7 @@ ZIGVU.Analytics.BaseCharts.SummaryChartSingle = function(chartDim){
     textCenterY = pcCenterY;
     unitCenterY = textCenterY + parseInt(pcCenterY/2);
     labelCenterY = chartWH + parseInt(chartWH * 0.2);
-  };
+  }
   setGeometry();
   //------------------------------------------------
 
@@ -67,7 +67,7 @@ ZIGVU.Analytics.BaseCharts.SummaryChartSingle = function(chartDim){
     .append("g")
       .attr("class", "pie-chart")
       .attr("transform", "translate(" + pcCenterX + "," + pcCenterY + ")");
-  
+
   var pcTextsSVG = svg.append("g").attr("class", "pie-chart-texts");
 
   function resizeSVG(){
@@ -75,23 +75,23 @@ ZIGVU.Analytics.BaseCharts.SummaryChartSingle = function(chartDim){
 
     svg.attr("width", divWidth).attr("height", divHeight);
     pcSVG.attr("transform", "translate(" + pcCenterX + "," + pcCenterY + ")");
-  };
+  }
   //------------------------------------------------
 
 
   //------------------------------------------------
   // repainting
   this.repaint = function(summaryData){
-    var pcText = summaryData['text'];
-    var pcUnit = summaryData['unit'];
-    var pcLabel = summaryData['label'];
-    var pcData = summaryData['pc_data'];
+    var pcText = summaryData.text;
+    var pcUnit = summaryData.unit;
+    var pcLabel = summaryData.label;
+    var pcData = summaryData.pc_data;
 
     var arcs = pcSVG.selectAll(".arc").data(pie(pcData));
 
     // enter
     var arcsSVG = arcs.enter().append("g").attr("class", "arc");
-    
+
     arcsSVG.append("path");
     arcsSVG.append("svg:title");
 

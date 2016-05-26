@@ -1,6 +1,6 @@
 /*------------------------------------------------
-	Stacked bar chart
-	------------------------------------------------*/
+  Stacked bar chart
+  ------------------------------------------------*/
 
 var ZIGVU = ZIGVU || {};
 ZIGVU.Analytics = ZIGVU.Analytics || {};
@@ -16,13 +16,13 @@ ZIGVU.Analytics.BaseCharts.StackedColumnChart = function(chartImpl){
 
   function getChartDim(){ return chartImpl.getChartDim(); }
   function getChartData(){ return chartImpl.getChartData(); }
-  function getGroupIds(){ return chartImpl.getGroupIds();}
-  function getItemIds(){ return chartImpl.getItemIds();}
+  function getGroupIds(){ return chartImpl.getGroupIds(); }
+  function getItemIds(){ return chartImpl.getItemIds(); }
   function getGroupName(groupId){ return chartImpl.getGroupName(groupId); }
   function getItemName(itemId){ return chartImpl.getItemName(itemId); }
   function getItemColor(itemId){ return chartImpl.getItemColor(itemId); }
 
-  function handleClickOnItem(groupId, itemId){ chartImpl.handleClickOnItem(groupId, itemId); };
+  function handleClickOnItem(groupId, itemId){ chartImpl.handleClickOnItem(groupId, itemId); }
   chartImpl.addRepaintCallback(repaint);
   chartImpl.addResizeCallback(resize);
   chartImpl.addTimelineChartSelectionCallback(decorateItemRect);
@@ -45,7 +45,7 @@ ZIGVU.Analytics.BaseCharts.StackedColumnChart = function(chartImpl){
 
     // structure:
     // allData[groupId][itemId] = {value_x0, value_x1, percent}
-    var allData = {}
+    var allData = {};
     var groupData, itemData, newItemData, totalValueX, value_x0;
     _.each(groupIds, function(groupId){
       groupData = _.findWhere(data, {groupId: groupId});
@@ -54,14 +54,14 @@ ZIGVU.Analytics.BaseCharts.StackedColumnChart = function(chartImpl){
       value_x0 = 0;
       _.each(itemIds, function(itemId){
         itemData = _.findWhere(groupData.items, {itemId: itemId});
-        newItemData = { 
+        newItemData = {
           value_x0: value_x0/totalValueX,
           value_x1: (value_x0 + itemData.value)/totalValueX,
           percent: itemData.value/totalValueX,
           groupId: groupId
         };
 
-        allData[groupId] = allData[groupId] || {}
+        allData[groupId] = allData[groupId] || {};
         allData[groupId][itemId] = _.extend(newItemData, itemData);
         value_x0 += itemData.value;
       });
@@ -78,17 +78,17 @@ ZIGVU.Analytics.BaseCharts.StackedColumnChart = function(chartImpl){
       });
       columnChartData.push({ groupId: groupId, items: items });
     });
-  };
+  }
   //------------------------------------------------
 
   // div for chart
   var chartDim, chartDiv, divWidth, divHeight;
   function setDimensions(){
     chartDim = getChartDim();
-    chartDiv = chartDim['div'];
+    chartDiv = chartDim.div;
     divWidth = $(chartDiv).parent().width();
-    divHeight = chartDim['height'];
-  };
+    divHeight = chartDim.height;
+  }
   setDimensions();
   //------------------------------------------------
 
@@ -101,7 +101,7 @@ ZIGVU.Analytics.BaseCharts.StackedColumnChart = function(chartImpl){
   function setGeometry(){
     width = divWidth - margin.left - margin.right;
     height = divHeight - margin.top - margin.bottom;
-  };
+  }
   setGeometry();
 
   var xAxisLabelAnchorX = 0; // margin left of x-axis for label
@@ -118,7 +118,7 @@ ZIGVU.Analytics.BaseCharts.StackedColumnChart = function(chartImpl){
   function setRange(){
     x.range([0, width]);
     y.rangeRoundBands([height, 0], gapBetweenGroups);
-  };
+  }
 
   var xAxis = d3.svg.axis().scale(x)
         .tickFormat(function(d) {return d3.format(',%')(d); })
@@ -132,7 +132,7 @@ ZIGVU.Analytics.BaseCharts.StackedColumnChart = function(chartImpl){
   var svg = d3.select(chartDiv).append("svg")
       .attr("width", divWidth)
       .attr("height", divHeight);
-  
+
   var bcSVG = svg.append("g")
       .attr("class", "stacked-column-chart")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -171,7 +171,7 @@ ZIGVU.Analytics.BaseCharts.StackedColumnChart = function(chartImpl){
   function setDomains(){
     x.domain([0, 1]);
     y.domain(groupIds);
-  };
+  }
   //------------------------------------------------
 
 
@@ -210,7 +210,7 @@ ZIGVU.Analytics.BaseCharts.StackedColumnChart = function(chartImpl){
         .attr("transform", "translate(" + (width/2 + xAxisLabelAnchorX) +
           "," + (height + xAxisLabelAnchorY)+ ")"
         );
-  };
+  }
   //------------------------------------------------
 
 
@@ -222,10 +222,10 @@ ZIGVU.Analytics.BaseCharts.StackedColumnChart = function(chartImpl){
     // initialize all data for charting
     initializeData(getChartData());
     setDomains();
-    
+
     // enter
     var groupSVG = allGroupSVG.selectAll(".group-svg").data(columnChartData);
-    
+
     groupSVG.enter().append("g").attr("class", "group-svg");
 
     var itemSVG = groupSVG.selectAll(".item-svg")
@@ -238,7 +238,7 @@ ZIGVU.Analytics.BaseCharts.StackedColumnChart = function(chartImpl){
     itemRect.append("rect")
         .attr("class", "rect")
         .style("fill", function(d) { return getItemColor(d.itemId); });
-        
+
     itemRect.append("svg:title");
 
     // update + enter
@@ -254,7 +254,7 @@ ZIGVU.Analytics.BaseCharts.StackedColumnChart = function(chartImpl){
         .attr("height", y.rangeBand() * hieghtOfItemsInGroup);
 
     groupSVG.selectAll(".item-svg").select("title")
-        .text(function (d) { 
+        .text(function (d) {
           return getItemName(d.itemId) + ": " + d3.format(',%')(d.percent);
         });
 
@@ -268,7 +268,7 @@ ZIGVU.Analytics.BaseCharts.StackedColumnChart = function(chartImpl){
         .selectAll(".tick text")
         .text(function(t){ return getGroupName(t); })
         .call(wrapText, margin.left);
-  };
+  }
 
   function wrapText(svgText, width){
     chartCommon.wrapText(svgText, width);
@@ -277,11 +277,11 @@ ZIGVU.Analytics.BaseCharts.StackedColumnChart = function(chartImpl){
   function decorateItemRect(groupIdArg, itemIdsArg){
     allGroupSVG.selectAll(".group-svg").selectAll(".item-svg").select("rect")
         .attr("mask", function(d) {
-          if(d.groupId == groupIdArg && d.itemId == itemIdsArg[0]){ 
+          if(d.groupId == groupIdArg && d.itemId == itemIdsArg[0]){
             return 'url(#mask)';
           } else { return null; }
         });
-  };
+  }
 
   function resize(){
     setDimensions();
@@ -290,6 +290,6 @@ ZIGVU.Analytics.BaseCharts.StackedColumnChart = function(chartImpl){
     resizeSVG();
 
     repaint();
-  };
+  }
   //------------------------------------------------
 };

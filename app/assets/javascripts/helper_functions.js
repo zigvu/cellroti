@@ -83,7 +83,7 @@ function timeLogEnd(logId, message){
 //------------------------------------------------
 /* Debugging print tool for filters */
 function print_filter(filter){
-  var f=eval(filter);
+  var f = eval(filter);
   if (typeof(f.length) != "undefined") {} else {}
     if (typeof(f.top) != "undefined") {
       f = f.top(Infinity);

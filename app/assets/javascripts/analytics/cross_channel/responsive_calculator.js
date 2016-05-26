@@ -40,4 +40,4 @@ ZIGVU.Analytics.CrossChannel.ResponsiveCalculator = function(){
   this.getTVSpotChartDims = function(){ return self.responsive.getDims('tv_spot_chart'); };
   this.getViewDurationChartDims = function(){ return self.responsive.getDims('view_duration_chart'); };
 };
-//------------------------------------------------  
+//------------------------------------------------

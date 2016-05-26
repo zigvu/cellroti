@@ -1,6 +1,6 @@
 /*------------------------------------------------
-	Calculator for responsive widths
-	------------------------------------------------*/
+  Calculator for responsive widths
+  ------------------------------------------------*/
 
 var ZIGVU = ZIGVU || {};
 ZIGVU.Analytics = ZIGVU.Analytics || {};
@@ -54,9 +54,9 @@ ZIGVU.Analytics.BaseCharts.ResponsiveReflows = function(divs, heights){
   };
 
   function getHeight(heightHash){
-    if(self.isSmall()){ return heightHash['small']; }
-    if(self.isMedium()){ return heightHash['medium']; }
-    if(self.isLarge()){ return heightHash['large']; }
-  };
+    if(self.isSmall()){ return heightHash.small; }
+    if(self.isMedium()){ return heightHash.medium; }
+    if(self.isLarge()){ return heightHash.large; }
+  }
   //------------------------------------------------
 };

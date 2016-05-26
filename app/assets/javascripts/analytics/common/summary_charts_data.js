@@ -1,6 +1,6 @@
 /*------------------------------------------------
-	Summary chart data
-	------------------------------------------------*/
+  Summary chart data
+  ------------------------------------------------*/
 
 var ZIGVU = ZIGVU || {};
 ZIGVU.Analytics = ZIGVU.Analytics || {};
@@ -82,7 +82,7 @@ ZIGVU.Analytics.Common.SummaryChartData = function(){
         nonZeroCount += 1;
       }
     });
-    if(nonZeroCount == 0){ totalDuration = 0; }
+    if(nonZeroCount === 0){ totalDuration = 0; }
     else { totalDuration = totalDuration / nonZeroCount; }
     var readableTime = self.chartHelpers.getReadableTime(totalDuration);
 
@@ -101,10 +101,10 @@ ZIGVU.Analytics.Common.SummaryChartData = function(){
       d.color = self.dataManager.getBrandGroupColor(d.id);
     });
     return pcData;
-  };
+  }
 
   function pcDataCalculatePercent(pcData){
-    var total = _.reduce(pcData, function(s, d){ return s + d.sum; }, 0)
+    var total = _.reduce(pcData, function(s, d){ return s + d.sum; }, 0);
     // prevent divide by zero
     if(total > 0){
       _.each(pcData, function(d){ d.percent = parseInt(d.sum/total * 100)/100; });
@@ -112,7 +112,7 @@ ZIGVU.Analytics.Common.SummaryChartData = function(){
       _.each(pcData, function(d){ d.percent = parseInt(1.0/pcData.length); });
     }
     return pcData;
-  };
+  }
   //------------------------------------------------
 
   //------------------------------------------------

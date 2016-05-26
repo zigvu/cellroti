@@ -33,19 +33,19 @@ ZIGVU.Analytics.CrossChannel.Charts.SummaryCharts = function(){
   this.getChartDimsData = function(){
     // format: [{id: , dims:, data:}, ]
     var chartsDimsData = [
-      { 
+      {
         id: 1,
         dims: self.responsiveCalculator.getSummaryChartDims_1(),
         data: self.summaryChartData.requestDataMediaLength()
-      }, { 
+      }, {
         id: 2,
         dims: self.responsiveCalculator.getSummaryChartDims_2(),
         data: self.summaryChartData.requestDataTvEquivalent()
-      }, { 
+      }, {
         id: 3,
         dims: self.responsiveCalculator.getSummaryChartDims_3(),
         data: self.summaryChartData.requestDataViewDuration()
-      }, { 
+      }, {
         id: 4,
         dims: self.responsiveCalculator.getSummaryChartDims_4(),
         data: self.summaryChartData.requestDataViewPersistence()

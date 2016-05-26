@@ -9,7 +9,7 @@ ZIGVU.Analytics.Common = ZIGVU.Analytics.Common || {};
 ZIGVU.Analytics.Common.EventManager = function(){
   var self = this;
 
-  //------------------------------------------------  
+  //------------------------------------------------
   // let jquery manage call backs to update all charts
   var repaintCallbacks = $.Callbacks("unique");
   this.addRepaintCallback = function(callback){ repaintCallbacks.add(callback); };
@@ -24,6 +24,6 @@ ZIGVU.Analytics.Common.EventManager = function(){
   this.fireTimelineChartSelectionCallback = function(groupId, itemIds){
     timelineChartSelectionCallback.fire(groupId, itemIds);
   };
-  //------------------------------------------------  
+  //------------------------------------------------
 };
-//------------------------------------------------  
+//------------------------------------------------

@@ -1,6 +1,6 @@
 /*------------------------------------------------
-	Summary chart multiple
-	------------------------------------------------*/
+  Summary chart multiple
+  ------------------------------------------------*/
 
 var ZIGVU = ZIGVU || {};
 ZIGVU.Analytics = ZIGVU.Analytics || {};
@@ -18,7 +18,7 @@ ZIGVU.Analytics.BaseCharts.SummaryChartMultiple = function(chartImpl){
   chartImpl.addResizeCallback(resize);
 
   // format: {id: chart}
-  this.summaryCharts = {}
+  this.summaryCharts = {};
 
   // format: [{id: , dims:, data:}, ]
   var chartsDimsData = getChartDimsData();
@@ -33,7 +33,7 @@ ZIGVU.Analytics.BaseCharts.SummaryChartMultiple = function(chartImpl){
     _.each(chartsDimsData, function(cdd){
       self.summaryCharts[cdd.id].repaint(cdd.data);
     });
-  };
+  }
 
   function resize(){
     var chartsDimsData = getChartDimsData();
@@ -42,6 +42,6 @@ ZIGVU.Analytics.BaseCharts.SummaryChartMultiple = function(chartImpl){
     });
 
     repaint();
-  };
+  }
   //------------------------------------------------
 };

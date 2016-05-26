@@ -1,6 +1,6 @@
 /*------------------------------------------------
-	Multi bar chart
-	------------------------------------------------*/
+  Multi bar chart
+  ------------------------------------------------*/
 
 var ZIGVU = ZIGVU || {};
 ZIGVU.Analytics = ZIGVU.Analytics || {};
@@ -19,7 +19,7 @@ ZIGVU.Analytics.BaseCharts.MultiBarChart = function(chartImpl){
   function getItemName(itemId){ return chartImpl.getItemName(itemId); }
   function getItemColor(itemId){ return chartImpl.getItemColor(itemId); }
 
-  function handleClickOnItem(groupId, itemId){ chartImpl.handleClickOnItem(groupId, itemId); };
+  function handleClickOnItem(groupId, itemId){ chartImpl.handleClickOnItem(groupId, itemId); }
   chartImpl.addRepaintCallback(repaint);
   chartImpl.addResizeCallback(resize);
   chartImpl.addTimelineChartSelectionCallback(decorateItemRect);
@@ -41,10 +41,10 @@ ZIGVU.Analytics.BaseCharts.MultiBarChart = function(chartImpl){
   var chartDim, chartDiv, divWidth, divHeight;
   function setDimensions(){
     chartDim = getChartDim();
-    chartDiv = chartDim['div'];
+    chartDiv = chartDim.div;
     divWidth = $(chartDiv).parent().width();
-    divHeight = chartDim['height'];
-  };
+    divHeight = chartDim.height;
+  }
   setDimensions();
 
   var chartData, itemIds;
@@ -58,7 +58,7 @@ ZIGVU.Analytics.BaseCharts.MultiBarChart = function(chartImpl){
   function setGeometry(){
     width = divWidth - margin.left - margin.right;
     height = divHeight - margin.top - margin.bottom;
-  };
+  }
   setGeometry();
 
   var yAxisLabelAnchorX = -35; // margin left of y-axis for label
@@ -75,7 +75,7 @@ ZIGVU.Analytics.BaseCharts.MultiBarChart = function(chartImpl){
   function setRange(){
     x0.rangeRoundBands([0, width], gapBetweenGroups);
     y.range([height, 0]);
-  };
+  }
 
   var xAxis = d3.svg.axis().scale(x0).orient("bottom"),
       yAxis = d3.svg.axis()
@@ -90,7 +90,7 @@ ZIGVU.Analytics.BaseCharts.MultiBarChart = function(chartImpl){
   var svg = d3.select(chartDiv).append("svg")
       .attr("width", divWidth)
       .attr("height", divHeight);
-  
+
   var bcSVG = svg.append("g")
       .attr("class", "multi-bar-chart")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -130,7 +130,7 @@ ZIGVU.Analytics.BaseCharts.MultiBarChart = function(chartImpl){
     x0.domain(chartData.map(function(d) { return d.groupId; }));
     x1.domain(itemIds).rangeRoundBands([0, x0.rangeBand()]);
     y.domain([0, d3.max(chartData, function(d) { return d3.max(d.items, function(d) { return d.value; }); })]);
-  };
+  }
   //------------------------------------------------
 
 
@@ -165,7 +165,7 @@ ZIGVU.Analytics.BaseCharts.MultiBarChart = function(chartImpl){
 
     xAxisSVG.attr("transform", "translate(0," + height + ")");
     yAxisLabelSVG.attr("transform", "translate("+ (yAxisLabelAnchorX) +","+(height/2)+")rotate(-90)");
-  };
+  }
   //------------------------------------------------
 
 
@@ -177,7 +177,7 @@ ZIGVU.Analytics.BaseCharts.MultiBarChart = function(chartImpl){
     chartData = getChartData();
     itemIds = getItemIds();
     setDomains();
-    
+
     // enter
     var groupSVG = allGroupSVG.selectAll(".group-svg").data(chartData);
 
@@ -193,7 +193,7 @@ ZIGVU.Analytics.BaseCharts.MultiBarChart = function(chartImpl){
     itemRect.append("rect")
         .attr("class", "rect")
         .style("fill", function(d) { return getItemColor(d.itemId); });
-        
+
     itemRect.append("svg:title");
 
     // update + enter
@@ -209,8 +209,8 @@ ZIGVU.Analytics.BaseCharts.MultiBarChart = function(chartImpl){
         .attr("height", function(d) { return height - y(d.value); });
 
     groupSVG.selectAll(".item-svg").select("title")
-        .text(function (d) { 
-          return getItemName(d.itemId) + ": " + d3.format(',%')(d.value); 
+        .text(function (d) {
+          return getItemName(d.itemId) + ": " + d3.format(',%')(d.value);
         });
 
     // exit
@@ -225,7 +225,7 @@ ZIGVU.Analytics.BaseCharts.MultiBarChart = function(chartImpl){
         .call(wrapText, x0.rangeBand());
 
     bcSVG.select(".y.axis").transition().duration(750).call(yAxis);
-  };
+  }
 
   function wrapText(svgText, width){
     chartCommon.wrapText(svgText, width);
@@ -234,11 +234,11 @@ ZIGVU.Analytics.BaseCharts.MultiBarChart = function(chartImpl){
   function decorateItemRect(groupIdArg, itemIdsArg){
     allGroupSVG.selectAll(".group-svg").selectAll(".item-svg").select("rect")
         .attr("mask", function(d) {
-          if(d.groupId == groupIdArg && d.itemId == itemIdsArg[0]){ 
+          if(d.groupId == groupIdArg && d.itemId == itemIdsArg[0]){
             return 'url(#mask)';
           } else { return null; }
         });
-  };
+  }
 
   function resize(){
     setDimensions();
@@ -247,6 +247,6 @@ ZIGVU.Analytics.BaseCharts.MultiBarChart = function(chartImpl){
     resizeSVG();
 
     repaint();
-  };
+  }
   //------------------------------------------------
 };
