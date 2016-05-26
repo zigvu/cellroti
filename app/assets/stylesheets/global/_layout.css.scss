@@ -8,20 +8,20 @@
 }
 
 td {
-	vertical-align: text-top;
+  vertical-align: text-top;
 }
 
 .valign-middle {
-	display: table;
+  display: table;
 
-	> .columns {
-		display: table-cell;
-		vertical-align: middle;
-	}
+  > .columns {
+    display: table-cell;
+    vertical-align: middle;
+  }
 
-	> .columns, > [class*="column"] + [class*="column"]:last-child {
-		float: none;
-	}
+  > .columns, > [class*="column"] + [class*="column"]:last-child {
+    float: none;
+  }
 }
 
 // ------------------------------------
@@ -55,14 +55,14 @@ nav {
       #z-stylized-1:hover {
         fill:#ffffff;
       }
-      
+
       #z-stylized-2 {
         fill:#d45500;
       }
       #z-stylized-2:hover {
         fill:#ffffff;
       }
-      
+
       #z-stylized-3 {
         fill:#008080;
       }
@@ -92,34 +92,34 @@ nav {
 }
 
 footer {
-	background: none repeat scroll 0 0 $zigvu-footer-background-color;
-	padding: 1.5rem 0 2.5rem;
+  background: none repeat scroll 0 0 $zigvu-footer-background-color;
+  padding: 1.5rem 0 2.5rem;
 
-	li {
-		color: $zigvu-footer-link-color;
-		display: block;
-		float: left;
-		font-size: 0.8rem;
-		font-weight: 700;
-		margin-left: .7rem;
-		text-transform: uppercase;
-		a {
-			color: $zigvu-footer-link-color;
-			&:link, &:visited {
-				color: $zigvu-footer-link-color;
-			}
-			
-			&:hover, &:active {
-				color: $zigvu-footer-link-hover-color;
-			}
-		}
-	}
+  li {
+    color: $zigvu-footer-link-color;
+    display: block;
+    float: left;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-left: .7rem;
+    text-transform: uppercase;
+    a {
+      color: $zigvu-footer-link-color;
+      &:link, &:visited {
+        color: $zigvu-footer-link-color;
+      }
 
-	.footer-copyright {
-		margin-left: 1.875rem;
-		font-size: rem-calc(12);
-		color: $zigvu-footer-link-color;
-	}
+      &:hover, &:active {
+        color: $zigvu-footer-link-hover-color;
+      }
+    }
+  }
+
+  .footer-copyright {
+    margin-left: 1.875rem;
+    font-size: rem-calc(12);
+    color: $zigvu-footer-link-color;
+  }
 }
 
 // Spinners
