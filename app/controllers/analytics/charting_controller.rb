@@ -1,11 +1,16 @@
 module Analytics
   class ChartingController < ApplicationController
     authorize_actions_for ::Season
+    authority_actions :discover => :read
     authority_actions :dashboard => :read
     authority_actions :analysis => :read
 
     before_filter :ensure_html_format
     before_action :set_client
+
+    # GET /discover
+    def discover
+    end
 
     # GET /dashboard
     def dashboard
