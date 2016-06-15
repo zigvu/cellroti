@@ -167,4 +167,52 @@
       }
     }
   }
+
+  //---------------------------------------------------
+  // calendar chart
+  .calendar-chart {
+    cursor: pointer;
+
+    .cal-rects {
+      rect{
+        fill: white;
+
+        stroke: $chart-text-primary-color;
+        stroke-width: 1px;
+        stroke-opacity: 1.0;
+        shape-rendering: crispedges;
+      }
+
+      text {
+        font-size: rem-calc(12);
+        fill: $chart-text-primary-color;
+        opacity: 0.9;
+        stroke: none;
+        pointer-events: none;
+      }
+      text.disabled {
+        fill: scale-color($chart-text-primary-color, $lightness: 25%);
+      }
+    }
+
+    .cal-rects:hover {
+      rect {
+        fill: $panel-border-color;
+      }
+    }
+
+    .cal-rects.current {
+      rect {
+        fill: scale-color($primary-color, $lightness: 85%);
+      }
+
+      text {
+        font-weight: bold;
+        opacity: 1.0;
+      }
+      text.disabled {
+        fill: scale-color($chart-text-primary-color, $lightness: 25%);
+      }
+    }
+  }
 }

@@ -46,3 +46,9 @@ $(".analytics_charting_discover").ready(function() {
     clipsPlayerContainer.startPlay();
   }).catch(function (errorReason) { console.log(errorReason); });
 });
+
+$(".high_voltage_pages_show").ready(function() {
+  calendarChart = new ZIGVU.Analytics.Discover.Charts.Calendar();
+  calendarChart.setChartHelpers(new ChartHelpers());
+  calendarChart.draw();
+});
