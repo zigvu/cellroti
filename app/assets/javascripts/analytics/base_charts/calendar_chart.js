@@ -9,7 +9,6 @@ ZIGVU.Analytics.BaseCharts = ZIGVU.Analytics.BaseCharts || {};
 ZIGVU.Analytics.BaseCharts.CalendarChart = function(chartImpl){
   //------------------------------------------------
   // set up
-  var chartCommon = new ZIGVU.Analytics.BaseCharts.ChartCommon();
   var chartHelpers = chartImpl.chartHelpers;
 
   function getChartDim(){ return chartImpl.getChartDim(); }
@@ -147,7 +146,6 @@ ZIGVU.Analytics.BaseCharts.CalendarChart = function(chartImpl){
     // exit
     calBars.exit().remove();
   }
-  this.tempRepaint = function(){ repaint(); };
 
   function getWidthOfLabel(label){
     if (pxSpaceForOneChar === undefined){

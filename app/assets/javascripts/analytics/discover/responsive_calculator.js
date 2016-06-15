@@ -11,15 +11,18 @@ ZIGVU.Analytics.Discover.ResponsiveCalculator = function(){
 
   var divs = {
     'clips_player_container': '#clips-player-container',
+    'calendar_chart': '#calendar-bar',
   };
 
   var heights = {
     'clips_player_container': {'small': 180, 'medium': 180, 'large': 180},
+    'calendar_chart': {'small': 40, 'medium': 40, 'large': 40},
   };
 
   this.responsive = new ZIGVU.Analytics.BaseCharts.ResponsiveReflows(divs, heights);
   this.reflowHeights = function(){ self.responsive.reflowHeights(); };
 
   this.getClipsPlayerContainer = function(){ return self.responsive.getDims('clips_player_container'); };
+  this.getCalendarChartDims = function(){ return self.responsive.getDims('calendar_chart'); };
 };
 //------------------------------------------------

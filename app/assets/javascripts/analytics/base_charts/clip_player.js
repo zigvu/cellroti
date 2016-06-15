@@ -40,11 +40,11 @@ ZIGVU.Analytics.BaseCharts.ClipPlayer = function(videoId){
 
     self.video.addEventListener('timeupdate', function() {
       var progressWidth = Math.floor((self.video.currentTime / self.video.duration) * 100) + '%';
-      self.eventManager.fireProgressBarCallbacks(progressWidth);
+      self.eventManager.fireClipProgressBarCallbacks(progressWidth);
     });
 
     self.video.addEventListener('ended', function() {
-      self.eventManager.fireEndedCallbacks(videoId);
+      self.eventManager.fireClipEndedCallbacks(videoId);
     });
 
     console.log("Loading video: " + url);

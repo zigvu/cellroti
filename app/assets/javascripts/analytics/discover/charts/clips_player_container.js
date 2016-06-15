@@ -5,8 +5,9 @@
 var ZIGVU = ZIGVU || {};
 ZIGVU.Analytics = ZIGVU.Analytics || {};
 ZIGVU.Analytics.Discover = ZIGVU.Analytics.Discover || {};
+ZIGVU.Analytics.Discover.Charts = ZIGVU.Analytics.Discover.Charts || {};
 
-ZIGVU.Analytics.Discover.ClipsPlayerContainer = function(){
+ZIGVU.Analytics.Discover.Charts.ClipsPlayerContainer = function(){
   var self = this;
   // format:
   // [{nav_id:, player_id:, clip_player:}, ]
@@ -15,7 +16,7 @@ ZIGVU.Analytics.Discover.ClipsPlayerContainer = function(){
   this.clipSetData = undefined;
   var isMuted = true;
   var isFullScreen = false;
-  this.clipsEventManager = new ZIGVU.Analytics.Discover.ClipsEventManager();
+  this.eventManager = new ZIGVU.Analytics.Discover.Event.EventManager();
 
   //------------------------------------------------
   // create clip players
@@ -42,7 +43,7 @@ ZIGVU.Analytics.Discover.ClipsPlayerContainer = function(){
     _.each(ids, function(id){
       var playerId = "#clip-player-video-" + id;
       var clipPlayer = new ZIGVU.Analytics.BaseCharts.ClipPlayer(playerId);
-      clipPlayer.setEventManager(self.clipsEventManager);
+      clipPlayer.setEventManager(self.eventManager);
       self.clipPlayers.push({
         nav_id: "#clip-player-nav-" + id,
         player_id: playerId,
@@ -61,8 +62,8 @@ ZIGVU.Analytics.Discover.ClipsPlayerContainer = function(){
       });
     });
     // associate callbacks
-    self.clipsEventManager.addProgressBarCallbacks(progressBarCallback);
-    self.clipsEventManager.addEndedCallbacks(endedCallback);
+    self.eventManager.addClipProgressBarCallbacks(progressBarCallback);
+    self.eventManager.addClipEndedCallbacks(endedCallback);
     // add actions on control buttons
     $("#description-control #volume").click(function(){ self.toggleMute(); });
     $("#description-control #fullscreen").click(function(){
@@ -157,7 +158,7 @@ ZIGVU.Analytics.Discover.ClipsPlayerContainer = function(){
   //------------------------------------------------
   // shorthand for error printing
   this.err = function(errorReason){
-    console.log('ZIGVU.Analytics.Discover.ClipsPlayerContainer -> ' + errorReason);
+    console.log('ZIGVU.Analytics.Discover.Charts.ClipsPlayerContainer -> ' + errorReason);
   };
 };
 //------------------------------------------------

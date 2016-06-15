@@ -1,12 +1,12 @@
 /*------------------------------------------------
-  Average brand effectiveness multi bar chart
+  Date navigation for calendar
   ------------------------------------------------*/
 
 var ZIGVU = ZIGVU || {};
 ZIGVU.Analytics = ZIGVU.Analytics || {};
-ZIGVU.Analytics.Discover = ZIGVU.Analytics.Discover || {};
+ZIGVU.Analytics.Discover.Data = ZIGVU.Analytics.Discover.Data || {};
 
-ZIGVU.Analytics.Discover.DateNavigator = function(){
+ZIGVU.Analytics.Discover.Data.DateNavigator = function(){
   var self = this;
   this.curData = undefined;
   this.curBeginDate = Date();
@@ -18,7 +18,7 @@ ZIGVU.Analytics.Discover.DateNavigator = function(){
     "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
   ];
 
-  this.setAllDatesRange = function(beginDate, endDate){
+  this.setMinMaxDatesRange = function(beginDate, endDate){
     self.minBeginDate = beginDate;
     self.maxEndDate = endDate;
   };
@@ -50,6 +50,10 @@ ZIGVU.Analytics.Discover.DateNavigator = function(){
   this.setDatesOnIdx = function(idx){
     var selDate = self.curData[idx];
     return self.setDates(selDate.begin_date, selDate.end_date);
+  };
+
+  this.getCurDates = function(){
+    return { begin_date: self.curBeginDate, end_date: self.curEndDate };
   };
 
   this.getData = function(){
