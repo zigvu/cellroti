@@ -4,9 +4,10 @@
 
 var ZIGVU = ZIGVU || {};
 ZIGVU.Analytics = ZIGVU.Analytics || {};
-ZIGVU.Analytics.Common = ZIGVU.Analytics.Common || {};
+ZIGVU.Analytics.CrossChannel = ZIGVU.Analytics.CrossChannel || {};
+ZIGVU.Analytics.CrossChannel.Event = ZIGVU.Analytics.CrossChannel.Event || {};
 
-ZIGVU.Analytics.Common.EventManager = function(){
+ZIGVU.Analytics.CrossChannel.Event.EventManager = function(){
   var self = this;
 
   //------------------------------------------------

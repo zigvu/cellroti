@@ -21,7 +21,7 @@ ZIGVU.Analytics.CrossChannel.Charts.SummaryCharts = function(){
   this.summaryChartMultiple = undefined;
 
   this.draw = function(){
-    self.summaryChartData = new ZIGVU.Analytics.Common.SummaryChartData();
+    self.summaryChartData = new ZIGVU.Analytics.CrossChannel.Data.SummaryChartData();
     self.summaryChartData
         .setDataManager(self.dataManager)
         .setChartHelpers(self.chartHelpers);

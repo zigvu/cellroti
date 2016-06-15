@@ -5,8 +5,9 @@
 var ZIGVU = ZIGVU || {};
 ZIGVU.Analytics = ZIGVU.Analytics || {};
 ZIGVU.Analytics.CrossChannel = ZIGVU.Analytics.CrossChannel || {};
+ZIGVU.Analytics.CrossChannel.Data = ZIGVU.Analytics.CrossChannel.Data || {};
 
-ZIGVU.Analytics.CrossChannel.DataManager = function(){
+ZIGVU.Analytics.CrossChannel.Data.DataManager = function(){
   var self = this;
 
   //------------------------------------------------

@@ -10,7 +10,6 @@ ZIGVU.Analytics.CrossChannel.Controller = function(){
   var self = this;
 
   var CrossChannel = ZIGVU.Analytics.CrossChannel;
-  var Common = ZIGVU.Analytics.Common;
 
   this.chartHelpers = undefined;
   this.responsiveCalculator = undefined;
@@ -28,8 +27,8 @@ ZIGVU.Analytics.CrossChannel.Controller = function(){
   this.setup = function(){
     self.chartHelpers = new ChartHelpers(); // TODO - replace with namespaced
     self.responsiveCalculator = new CrossChannel.ResponsiveCalculator();
-    self.eventManager = new Common.EventManager();
-    self.dataManager = new CrossChannel.DataManager();
+    self.eventManager = new CrossChannel.Event.EventManager();
+    self.dataManager = new CrossChannel.Data.DataManager();
     self.dataManager
         .setChartHelpers(self.chartHelpers);
     self.responsiveCalculator = new CrossChannel.ResponsiveCalculator();
