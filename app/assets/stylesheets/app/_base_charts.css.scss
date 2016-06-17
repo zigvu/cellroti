@@ -60,6 +60,40 @@
   }
 
   //---------------------------------------------------
+  // brush chart
+  .brush-chart {
+    rect.bg-rect {
+      fill: white;
+    }
+    rect.fg-rect {
+      fill: none;
+      stroke: $chart-text-primary-color;
+      stroke-width: 1px;
+      shape-rendering: crispedges;
+    }
+
+    path {
+      stroke-width: 1px;
+      pointer-events: none;
+    }
+
+    .mask {
+      rect {
+        fill: white;
+        fill-opacity: 0.5;
+        stroke: none;
+      }
+    }
+
+    .brush .extent {
+      fill-opacity: 0.1;
+      stroke: $chart-text-primary-color;
+      stroke-width: 1px;
+      shape-rendering: crispedges;
+    }
+  }
+
+  //---------------------------------------------------
   // stacked bar chart
   .stacked-bar-chart {
     .axis.x {

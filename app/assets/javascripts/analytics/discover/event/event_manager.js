@@ -19,6 +19,9 @@ ZIGVU.Analytics.Discover.Event.EventManager = function(){
   this.addResizeCallback = function(callback){ resizeCallbacks.add(callback); };
   this.fireResizeCallback = function(){ resizeCallbacks.fire(); };
 
+  var resetBrushCallbacks = $.Callbacks("unique");
+  this.addResetBrushCallback = function(callback){ resetBrushCallbacks.add(callback); };
+  this.fireResetBrushCallback = function(){ resetBrushCallbacks.fire(); };
 
   //------------------------------------------------
   // clip player

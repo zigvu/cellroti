@@ -7,7 +7,7 @@ ZIGVU.Analytics = ZIGVU.Analytics || {};
 ZIGVU.Analytics.Discover = ZIGVU.Analytics.Discover || {};
 ZIGVU.Analytics.Discover.Charts = ZIGVU.Analytics.Discover.Charts || {};
 
-ZIGVU.Analytics.Discover.Charts.Calendar = function(){
+ZIGVU.Analytics.Discover.Charts.Brush = function(){
   var self = this;
 
   //------------------------------------------------
@@ -16,27 +16,33 @@ ZIGVU.Analytics.Discover.Charts.Calendar = function(){
   this.eventManager = undefined;
   this.responsiveCalculator = undefined;
   this.chartHelpers = undefined;
-  this.calendarChart = undefined;
+  this.brushChart = undefined;
 
   this.draw = function(){
-    self.calendarChart = new ZIGVU.Analytics.BaseCharts.CalendarChart(self);
+    self.brushChart = new ZIGVU.Analytics.BaseCharts.BrushChart(self);
+    self.eventManager.addResetBrushCallback(resetBrush);
   };
+
+  // set brush
+  this.brushSet = function(beginDate, endDate){
+    return self.brushChart.brushSet(beginDate, endDate);
+  };
+  this.handleBrushSelection = function(dates){
+    if(self.dataManager.setCalendarDates(dates.begin_date, dates.end_date)){
+      self.eventManager.fireRepaintCallback();
+    }
+    console.log("Brush: Begin: " + dates.begin_date + ", End: " + dates.end_date);
+  };
+  function resetBrush(){ self.brushChart.brushReset(); }
 
   // data for chart
-  this.getChartDim = function(){ return self.responsiveCalculator.getCalendarChartDims(); };
-  this.getChartData = function(){ return self.dataManager.getCalendarChartData(); };
+  this.getChartDim = function(){ return self.responsiveCalculator.getBrushChartDims(); };
+  this.getChartData = function(){ return self.dataManager.getTimelineData(); };
+  this.getItemIds = function(){ return self.dataManager.getBrandGroupIds(); };
+  this.getItemName = function(bgId){ return self.dataManager.getBrandGroupName(bgId); };
+  this.getItemColor = function(bgId){ return self.dataManager.getBrandGroupColor(bgId); };
 
   // events for chart
-  this.handleClickOnBar = function(idx){
-    if(self.dataManager.setCalendarDatesByIdx(idx)){
-      self.dataManager.requestNewDataPromise()
-        .then(function(){
-          self.eventManager.fireRepaintCallback();
-          self.eventManager.fireResetBrushCallback();
-        }).catch(function(errorReason){ err(errorReason); });
-    }
-  };
-
   this.addRepaintCallback = function(func){ self.eventManager.addRepaintCallback(func); };
   this.addResizeCallback = function(func){ self.eventManager.addResizeCallback(func); };
 

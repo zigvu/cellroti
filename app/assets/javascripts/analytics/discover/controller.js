@@ -17,6 +17,7 @@ ZIGVU.Analytics.Discover.Controller = function(){
   this.dataManager = undefined;
 
   this.calendarChart = undefined;
+  this.brushChart = undefined;
 
   //------------------------------------------------
   // Initialize and update of charts
@@ -25,12 +26,16 @@ ZIGVU.Analytics.Discover.Controller = function(){
     self.responsiveCalculator = new Discover.ResponsiveCalculator();
     self.eventManager = new Discover.Event.EventManager();
     self.dataManager = new Discover.Data.DataManager();
-    self.dataManager
-        .setChartHelpers(self.chartHelpers);
-    self.responsiveCalculator = new Discover.ResponsiveCalculator();
 
     self.calendarChart = new Discover.Charts.Calendar();
     self.calendarChart
+        .setDataManager(self.dataManager)
+        .setEventManager(self.eventManager)
+        .setResponsiveCalculator(self.responsiveCalculator)
+        .setChartHelpers(self.chartHelpers);
+
+    self.brushChart = new Discover.Charts.Brush();
+    self.brushChart
         .setDataManager(self.dataManager)
         .setEventManager(self.eventManager)
         .setResponsiveCalculator(self.responsiveCalculator)
@@ -40,10 +45,14 @@ ZIGVU.Analytics.Discover.Controller = function(){
   };
 
   this.draw = function(){
-    self.calendarChart.draw();
+    self.dataManager.setupPromise()
+      .then(function(){
+        self.calendarChart.draw();
+        self.brushChart.draw();
 
-    self.eventManager.fireRepaintCallback();
-    self.responsiveCalculator.reflowHeights();
+        self.eventManager.fireRepaintCallback();
+        self.responsiveCalculator.reflowHeights();
+      }).catch(function (errorReason) { err(errorReason); });
   };
 
   //------------------------------------------------
@@ -54,5 +63,11 @@ ZIGVU.Analytics.Discover.Controller = function(){
   };
   this.debouncedResize = _.debounce(self.resize, 2000); // 2 seconds
   //------------------------------------------------
+
+  //------------------------------------------------
+  // shorthand for error printing
+  this.err = function(errorReason){
+    console.log('ZIGVU.Analytics.Discover.Controller -> ' + errorReason);
+  };
 };
 //------------------------------------------------

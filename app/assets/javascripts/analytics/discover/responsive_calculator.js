@@ -12,11 +12,13 @@ ZIGVU.Analytics.Discover.ResponsiveCalculator = function(){
   var divs = {
     'clips_player_container': '#clips-player-container',
     'calendar_chart': '#calendar-bar',
+    'brush_chart': '#brush-bar',
   };
 
   var heights = {
     'clips_player_container': {'small': 180, 'medium': 180, 'large': 180},
-    'calendar_chart': {'small': 40, 'medium': 40, 'large': 40},
+    'calendar_chart': {'small': 30, 'medium': 30, 'large': 30},
+    'brush_chart': {'small': 30, 'medium': 30, 'large': 30},
   };
 
   this.responsive = new ZIGVU.Analytics.BaseCharts.ResponsiveReflows(divs, heights);
@@ -24,5 +26,6 @@ ZIGVU.Analytics.Discover.ResponsiveCalculator = function(){
 
   this.getClipsPlayerContainer = function(){ return self.responsive.getDims('clips_player_container'); };
   this.getCalendarChartDims = function(){ return self.responsive.getDims('calendar_chart'); };
+  this.getBrushChartDims = function(){ return self.responsive.getDims('brush_chart'); };
 };
 //------------------------------------------------

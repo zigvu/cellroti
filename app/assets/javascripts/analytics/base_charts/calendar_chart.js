@@ -41,7 +41,7 @@ ZIGVU.Analytics.BaseCharts.CalendarChart = function(chartImpl){
 
   //------------------------------------------------
   // set up gemoetry
-  var margin = {top: 8, right: 2, bottom: 8, left: 50};
+  var margin = {top: 2, right: 2, bottom: 2, left: 50};
   var width, height;
   function setGeometry(){
     width = divWidth - margin.left - margin.right;
@@ -84,7 +84,6 @@ ZIGVU.Analytics.BaseCharts.CalendarChart = function(chartImpl){
     x.domain([0, 1]);
     y.domain([0, 1]);
   }
-  setDomains();
   //------------------------------------------------
 
 
