@@ -16,8 +16,14 @@ ZIGVU.Analytics.Discover.Data.Filter = function(){
     minBeginDate: undefined, maxEndDate: undefined
   };
 
+  // format:
+  // {bg_id: :name, }
   this.brandGroupMap = undefined;
+  // format:
+  // {channel_id: :name, }
   this.channelMap = undefined;
-
+  // format:
+  // {event_id: :name}
+  this.eventMap = undefined;
 };
 //------------------------------------------------

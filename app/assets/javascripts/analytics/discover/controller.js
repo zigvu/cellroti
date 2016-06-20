@@ -18,6 +18,7 @@ ZIGVU.Analytics.Discover.Controller = function(){
 
   this.calendarChart = undefined;
   this.brushChart = undefined;
+  this.timelineChart = undefined;
 
   //------------------------------------------------
   // Initialize and update of charts
@@ -41,6 +42,13 @@ ZIGVU.Analytics.Discover.Controller = function(){
         .setResponsiveCalculator(self.responsiveCalculator)
         .setChartHelpers(self.chartHelpers);
 
+    self.timelineChart = new Discover.Charts.Timeline();
+    self.timelineChart
+        .setDataManager(self.dataManager)
+        .setEventManager(self.eventManager)
+        .setResponsiveCalculator(self.responsiveCalculator)
+        .setChartHelpers(self.chartHelpers);
+
     $(window).resize(function() { self.debouncedResize(); });
   };
 
@@ -49,6 +57,7 @@ ZIGVU.Analytics.Discover.Controller = function(){
       .then(function(){
         self.calendarChart.draw();
         self.brushChart.draw();
+        self.timelineChart.draw();
 
         self.eventManager.fireRepaintCallback();
         self.responsiveCalculator.reflowHeights();

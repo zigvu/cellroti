@@ -36,12 +36,24 @@ ZIGVU.Analytics.Discover.Data.ChartDataPackager = function(){
   this.getChannelName = function(channelId){ return channelMap[channelId]; };
 
   //------------------------------------------------
+  // events
+  var eventMap, eventSorter, eventIds;
+  this.setEventMap = function(){
+    eventMap = self.dataFilter.eventMap;
+    eventSorter = _.chain(eventMap).pairs().sortBy(function(k){return k[1];}).value();
+    eventIds = _.map(eventSorter, function(k){ return k[0];});
+  };
+  this.getEventIds = function(){ return eventIds; };
+  this.getEventName = function(eventId){ return eventMap[eventId]; };
+
+  //------------------------------------------------
   // dummy data
-  var dummyData, oldBeginDate, oldEndDate;
-  this.getDummyData = function(){
-    if(oldBeginDate == self.dataFilter.dates.timelineBeginDate &&
-      oldEndDate == self.dataFilter.dates.timelineEndDate){
-      return dummyData;
+  var dummyTimelineData, oldBeginDate, oldEndDate;
+  this.getDummyTimelineData = function(){
+    if(oldBeginDate && oldEndDate &&
+      oldBeginDate.getTime() === self.dataFilter.dates.timelineBeginDate.getTime() &&
+      oldEndDate.getTime() === self.dataFilter.dates.timelineEndDate.getTime()){
+      return dummyTimelineData;
     }
     oldBeginDate = self.dataFilter.dates.timelineBeginDate;
     oldEndDate = self.dataFilter.dates.timelineEndDate;
@@ -50,23 +62,55 @@ ZIGVU.Analytics.Discover.Data.ChartDataPackager = function(){
 
     // format:
     // {bg_id: [{date:, value:}, ], }
-    dummyData = [];
+    dummyTimelineData = [];
     _.each(self.getBrandGroupIds(), function(bgId){
       var values = [];
-      _.each(_.range(numItems), function(i){
+      _.each(_.range(numItems + 1), function(i){
         var be = rand(0.0, 1.0);
         values.push({
           date: new Date(oldBeginDate.getTime() + msPerItem * i),
           value: be,
         });
       });
-      dummyData.push({
+      dummyTimelineData.push({
         itemId: bgId,
         values: values,
       });
     });
-    return dummyData;
+    return dummyTimelineData;
   };
+
+  var dummyEventData;
+  this.getDummyEventData = function(){
+    var numItems = 4;
+    var msPerItem = (oldEndDate.getTime() - oldBeginDate.getTime())/numItems;
+
+    // format:
+    // {date:, event_id:}
+    dummyEventData = [];
+    var eIds = self.getEventIds();
+    _.each(_.range(1, numItems), function(i){
+      dummyEventData.push({
+        date: new Date(oldBeginDate.getTime() + msPerItem * i),
+        event_id: eIds[Math.floor(Math.random() * eIds.length)]
+      });
+    });
+    return dummyEventData;
+  };
+
+  var segmentData, segmentColors;
+  this.getSegmentDummyData = function(){
+    var dur = oldEndDate.getTime() - oldBeginDate.getTime();
+    dur = new Date(oldBeginDate.getTime() + Math.round(Math.random() * dur));
+    segmentData = [
+      { idx: 1, begin_date: oldBeginDate, end_date: dur, label: 'Happy Hallows' },
+      { idx: 2, begin_date: dur, end_date: oldEndDate, label: 'Somber Shallows' },
+    ];
+    segmentColors = d3.scale.category10().domain([1,2]);
+    return segmentData;
+  };
+  this.getSegmentColor = function(idx){ return segmentColors(idx); };
+
 
   function rand(min, max){ return Math.random() * (max - min) + min; }
   function randSign(){ return Math.random() > 0.5 ? -1 : 1; }
@@ -77,6 +121,7 @@ ZIGVU.Analytics.Discover.Data.ChartDataPackager = function(){
     self.dataFilter = ddd;
     self.setBrandGroupMap();
     self.setChannelMap();
+    self.setEventMap();
     return self;
   };
 };

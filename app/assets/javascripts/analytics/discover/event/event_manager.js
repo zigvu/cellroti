@@ -23,6 +23,9 @@ ZIGVU.Analytics.Discover.Event.EventManager = function(){
   this.addResetBrushCallback = function(callback){ resetBrushCallbacks.add(callback); };
   this.fireResetBrushCallback = function(){ resetBrushCallbacks.fire(); };
 
+  var brushChangeCallbacks = $.Callbacks("unique");
+  this.addBrushChangeCallback = function(callback){ brushChangeCallbacks.add(callback); };
+  this.fireBrushChangeCallback = function(args){ brushChangeCallbacks.fire(args); };
   //------------------------------------------------
   // clip player
   var clipProgressBarCallbacks = $.Callbacks("unique");

@@ -1,5 +1,5 @@
 /*------------------------------------------------
-  Brush chart
+  Timeline chart
   ------------------------------------------------*/
 
 var ZIGVU = ZIGVU || {};
@@ -7,7 +7,7 @@ ZIGVU.Analytics = ZIGVU.Analytics || {};
 ZIGVU.Analytics.Discover = ZIGVU.Analytics.Discover || {};
 ZIGVU.Analytics.Discover.Charts = ZIGVU.Analytics.Discover.Charts || {};
 
-ZIGVU.Analytics.Discover.Charts.Brush = function(){
+ZIGVU.Analytics.Discover.Charts.Timeline = function(){
   var self = this;
 
   //------------------------------------------------
@@ -16,31 +16,26 @@ ZIGVU.Analytics.Discover.Charts.Brush = function(){
   this.eventManager = undefined;
   this.responsiveCalculator = undefined;
   this.chartHelpers = undefined;
-  this.brushChart = undefined;
+  this.multiLineChart = undefined;
 
   this.draw = function(){
-    self.brushChart = new ZIGVU.Analytics.BaseCharts.BrushChart(self);
-    self.eventManager.addResetBrushCallback(resetBrush);
+    self.multiLineChart = new ZIGVU.Analytics.BaseCharts.MultiLineChart(self);
+    self.eventManager.addBrushChangeCallback(changeExtent);
   };
 
-  // set brush
-  this.brushSet = function(beginDate, endDate){
-    return self.brushChart.brushSet(beginDate, endDate);
-  };
-  this.handleBrushSelection = function(dates){
-    if(self.dataManager.setCalendarDates(dates.begin_date, dates.end_date)){
-      self.eventManager.fireBrushChangeCallback(dates);
-    }
-    console.log("Brush: Begin: " + dates.begin_date + ", End: " + dates.end_date);
-  };
-  function resetBrush(){ self.brushChart.brushReset(); }
+  function changeExtent(dates){ self.multiLineChart.setNewExtent(dates); }
 
   // data for chart
-  this.getChartDim = function(){ return self.responsiveCalculator.getBrushChartDims(); };
-  this.getChartData = function(){ return self.dataManager.getTimelineData(); };
+  this.getChartDim = function(){ return self.responsiveCalculator.getTimelineChartDims(); };
+  this.getTimelineData = function(){ return self.dataManager.getTimelineData(); };
   this.getItemIds = function(){ return self.dataManager.getBrandGroupIds(); };
   this.getItemName = function(bgId){ return self.dataManager.getBrandGroupName(bgId); };
   this.getItemColor = function(bgId){ return self.dataManager.getBrandGroupColor(bgId); };
+  this.getEventData = function(){ return self.dataManager.getEventData(); };
+  this.getEventName = function(eventId){ return self.dataManager.getEventName(eventId); };
+  this.getSegmentData = function(){ return self.dataManager.getSegmentData(); };
+  this.getSegmentColor = function(idx){ return self.dataManager.getSegmentColor(idx); };
+  this.getYAxisLabel = function(idx){ return self.dataManager.getTimelineYAxisLabel(); };
 
   // events for chart
   this.addRepaintCallback = function(func){ self.eventManager.addRepaintCallback(func); };

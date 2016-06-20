@@ -28,6 +28,7 @@ ZIGVU.Analytics.Discover.Data.DataManager = function(){
     var maxEndDate = new Date(2016, 0, 5);
     var brandGroupMap = {1: "Other Sports Drink", 2: "Powerade", 3: "Gatorade"};
     var channelMap = {1: "ESPN", 2: "Fox Sports 1", 3: "MLB.com", 4: "Youtube Sport 1K"};
+    var eventMap = {1: "Goal", 2: "Penalty", 3: "Red Card", 4: "Yellow Card"};
 
     self.dataFilter = new ZIGVU.Analytics.Discover.Data.Filter();
     self.dataFilter.dates.calBeginDate = beginDate;
@@ -38,6 +39,7 @@ ZIGVU.Analytics.Discover.Data.DataManager = function(){
     self.dataFilter.dates.maxEndDate = maxEndDate;
     self.dataFilter.brandGroupMap = brandGroupMap;
     self.dataFilter.channelMap = channelMap;
+    self.dataFilter.eventMap = eventMap;
 
     self.dateNavigator = new ZIGVU.Analytics.Discover.Data.DateNavigator();
     self.dateNavigator.setDataFilter(self.dataFilter);
@@ -63,7 +65,7 @@ ZIGVU.Analytics.Discover.Data.DataManager = function(){
   //------------------------------------------------
   // timeline
   this.getTimelineData = function(){
-    return self.chartDataPackager.getDummyData();
+    return self.chartDataPackager.getDummyTimelineData();
   };
   this.getBrandGroupIds = function(){
     return self.chartDataPackager.getBrandGroupIds();
@@ -73,6 +75,21 @@ ZIGVU.Analytics.Discover.Data.DataManager = function(){
   };
   this.getBrandGroupColor = function(bgId){
     return self.chartDataPackager.getBrandGroupColor(bgId);
+  };
+  this.getEventData = function(){
+    return self.chartDataPackager.getDummyEventData();
+  };
+  this.getEventName = function(eventId){
+    return self.chartDataPackager.getEventName(eventId);
+  };
+  this.getSegmentData = function(){
+    return self.chartDataPackager.getSegmentDummyData();
+  };
+  this.getSegmentColor = function(idx){
+    return self.chartDataPackager.getSegmentColor(idx);
+  };
+  this.getTimelineYAxisLabel = function(){
+    return "Brand Effectiveness";
   };
 
   //------------------------------------------------

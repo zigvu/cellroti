@@ -145,6 +145,7 @@ ZIGVU.Analytics.BaseCharts.CalendarChart = function(chartImpl){
     // exit
     calBars.exit().remove();
   }
+  this.redraw = function(){ repaint(); };
 
   function getWidthOfLabel(label){
     if (pxSpaceForOneChar === undefined){

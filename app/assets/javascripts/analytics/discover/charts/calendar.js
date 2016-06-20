@@ -20,7 +20,10 @@ ZIGVU.Analytics.Discover.Charts.Calendar = function(){
 
   this.draw = function(){
     self.calendarChart = new ZIGVU.Analytics.BaseCharts.CalendarChart(self);
+    self.eventManager.addBrushChangeCallback(changeDates);
   };
+
+  function changeDates(dates){ self.calendarChart.redraw(); }
 
   // data for chart
   this.getChartDim = function(){ return self.responsiveCalculator.getCalendarChartDims(); };

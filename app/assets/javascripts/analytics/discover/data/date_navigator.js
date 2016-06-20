@@ -10,7 +10,8 @@ ZIGVU.Analytics.Discover.Data.DateNavigator = function(){
   var self = this;
   this.dataFilter = undefined;
   this.dates = undefined; // populate with self.dataFilter.dates;
-
+  this.minZoomNumSecs = 10 * 60 * 1000; // 10 minutes
+  this.minDataNumSecs = 3 * 60 * 1000; // 3 minutes
   this.curData = undefined; // gets populated when new data is requested
   var months = [
     "Jan", "Feb", "Mar", "Apr", "May", "Jun",
@@ -32,10 +33,9 @@ ZIGVU.Analytics.Discover.Data.DateNavigator = function(){
     if(endDate > self.dates.maxEndDate){ ed = self.dates.maxEndDate; }
 
     // if dates are within a second, don't change
-    if(
-      (Math.abs(bd.getTime() - self.dates.calBeginDate.getTime()) < 1000) &&
-      (Math.abs(ed.getTime() - self.dates.calEndDate.getTime()) < 1000)
-    ){ return false; }
+    if(isSameDate(bd, self.dates.calBeginDate) && isSameDate(ed, self.dates.calEndDate)){
+      return false;
+    }
 
     self.dates.calBeginDate = bd;
     self.dates.calEndDate = ed;
@@ -46,10 +46,8 @@ ZIGVU.Analytics.Discover.Data.DateNavigator = function(){
   this.setDatesOnIdx = function(idx){
     var selDate = self.curData[idx];
     // if being set from calendar, set timeline dates as well
-    if((self.setDates(selDate.begin_date, selDate.end_date)) ||
-      (selDate.resolution == 'hour' &&
-        (selDate.end_date.getTime() - selDate.begin_date.getTime()) > 10 * 60 * 1000
-      )
+    if(self.setDates(selDate.begin_date, selDate.end_date) ||
+      (selDate.resolution == 'hour' && selDate.current)
     ){
       self.dates.timelineBeginDate = self.dates.calBeginDate;
       self.dates.timelineEndDate = self.dates.calEndDate;
@@ -85,12 +83,20 @@ ZIGVU.Analytics.Discover.Data.DateNavigator = function(){
       self.curData = undefined;
       return self.curData;
     }
-    // enforce boundaries
     _.each(self.curData, function(cd){
+      // enforce boundaries
       if(cd.begin_date < self.dates.maxEndDate && cd.end_date > self.dates.minBeginDate){
         cd.enabled = true;
       } else {
         cd.enabled = false;
+      }
+      // hour level zoom
+      var tbd = self.dates.timelineBeginDate, ted = self.dates.timelineEndDate;
+      if(cd.resolution == 'hour'){
+        if((isSameDate(cd.begin_date, tbd) && isSameDate(cd.end_date, ted)) ||
+          (Math.abs(ted.getTime() - tbd.getTime()) < self.minZoomNumSecs) ||
+          (Math.abs(cd.end_date.getTime() - cd.begin_date.getTime()) < self.minDataNumSecs)
+        ){ cd.current = false; }
       }
     });
     return self.curData;
@@ -345,6 +351,11 @@ ZIGVU.Analytics.Discover.Data.DateNavigator = function(){
       new Date(d.getFullYear(), d.getMonth(), d.getDate()),
       new Date((new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1)).getTime() - 1)
     ];
+  }
+
+  // return true if same date within a second
+  function isSameDate(d1, d2){
+    return (Math.abs(d1.getTime() - d2.getTime()) < 1000);
   }
 
   //------------------------------------------------
