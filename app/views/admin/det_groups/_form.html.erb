@@ -6,35 +6,35 @@
     <%= f.input :pretty_name %>
   </div>
   <i class="notice">
-		To change the detectables, please create a new brand group, create metrics, transfer the clients to the new brand group and delete this brand group instead.
-	</i>
+    To change the detectables, please create a new brand group, create metrics, transfer the clients to the new brand group and delete this brand group instead.
+  </i>
 
-	<table>
-		<thead>
-			<tr>
-				<th>Brand Owner</th>
-				<th>Industry</th>
-				<th>Brand</th>
-			</tr>
-		</thead>
-		<tbody>
-			<% @det_group.det_group_detectables.sort_by{|cd| cd.detectable.organization.name}.group_by {|cd| cd.detectable.organization }.each do |org, detectables_group| %>
-				<tr>
-					<td><%= org.name %></td>
-					<td><%= org.industry %></td>
-					<td>
-						<%= f.fields_for :det_group_detectables, detectables_group.sort_by{|dg| dg.detectable.name} do |ff| %>
-							<div>
-								<%= ff.check_box :_destroy, {:checked => ff.object.persisted?}, '0', '1' %>
-								<%= ff.label :_destroy, ff.object.detectable.pretty_name %>
-								<%= ff.hidden_field :detectable_id %>
-							</div>
-						<% end %>
-					</td>
-				</tr>
-			<% end %>
-		</tbody>
-	</table>
+  <table>
+    <thead>
+      <tr>
+        <th>Brand Owner</th>
+        <th>Industry</th>
+        <th>Brand</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @det_group.det_group_detectables.sort_by{|cd| cd.detectable.organization.name}.group_by {|cd| cd.detectable.organization }.each do |org, detectables_group| %>
+        <tr>
+          <td><%= org.name %></td>
+          <td><%= org.industry %></td>
+          <td>
+            <%= f.fields_for :det_group_detectables, detectables_group.sort_by{|dg| dg.detectable.name} do |ff| %>
+              <div>
+                <%= ff.check_box :_destroy, {:checked => ff.object.persisted?}, '0', '1' %>
+                <%= ff.label :_destroy, ff.object.detectable.pretty_name %>
+                <%= ff.hidden_field :detectable_id %>
+              </div>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 
   <div class="form-actions">
     <%= f.button :submit, "Submit Brand Group" %>

@@ -1,59 +1,59 @@
 require 'json'
 
 module SeedHelpers
-	class VideoDataWriter
-		def initialize(caffeDataReferenceFile, seededRandom)
-			@rawData = JSON.parse(File.read(caffeDataReferenceFile))
+  class VideoDataWriter
+    def initialize(caffeDataReferenceFile, seededRandom)
+      @rawData = JSON.parse(File.read(caffeDataReferenceFile))
 
-			@tempFolder = '/mnt/tmp'
-			@rnd = seededRandom || Random.new(1234567890)
-		end
+      @tempFolder = '/mnt/tmp'
+      @rnd = seededRandom || Random.new(1234567890)
+    end
 
-		def generateAndSave(videoId, lengthMS, structureType)
-			videoAttributes, videoData, extractedFrames = generate(lengthMS, structureType)
+    def generateAndSave(videoId, lengthMS, structureType)
+      videoAttributes, videoData, extractedFrames = generate(lengthMS, structureType)
 
-			saveData = {
-				video_id: videoId,
-				video_attributes: videoAttributes,
-				detections: videoData,
-				extracted_frames: extractedFrames
-			}
-			
-			video = Video.find(videoId)
-			tempFile = "#{@tempFolder}/videoTempJSON_#{video.id}.json"
-			File.open(tempFile, "w") do |f|
-				f.write(JSON.pretty_generate(saveData))
-			end
+      saveData = {
+        video_id: videoId,
+        video_attributes: videoAttributes,
+        detections: videoData,
+        extracted_frames: extractedFrames
+      }
 
-			# populate data
-			mvdi = Metrics::VideoDataImport.new()
-			mvdi.populate(video, tempFile)
-			File.delete(tempFile) if File.exist?(tempFile)
+      video = Video.find(videoId)
+      tempFile = "#{@tempFolder}/videoTempJSON_#{video.id}.json"
+      File.open(tempFile, "w") do |f|
+        f.write(JSON.pretty_generate(saveData))
+      end
 
-			clearCaches()
-		end
+      # populate data
+      mvdi = Metrics::VideoDataImport.new()
+      mvdi.populate(video, tempFile)
+      File.delete(tempFile) if File.exist?(tempFile)
 
-		def clearCaches
-			Rails.cache.clear
-			SerializedCacheStore.all.each do |scs|
-				scs.destroy
-			end
-		end
+      clearCaches()
+    end
+
+    def clearCaches
+      Rails.cache.clear
+      SerializedCacheStore.all.each do |scs|
+        scs.destroy
+      end
+    end
 
 
-		def generate(lengthMS, structureType)
-			videoAttributes = @rawData["video_attributes"]
-			frameStep = videoAttributes["detection_frame_rate"]
-			avgFrameRate = videoAttributes["playback_frame_rate"]
-			videoAttributes["length"] = lengthMS
-			
-			numOfFrames = (((lengthMS/1000) * avgFrameRate).to_i / frameStep).to_i
+    def generate(lengthMS, structureType)
+      videoAttributes = @rawData["video_attributes"]
+      frameStep = videoAttributes["detection_frame_rate"]
+      avgFrameRate = videoAttributes["playback_frame_rate"]
+      videoAttributes["length"] = lengthMS
 
-			sdg = SeedHelpers::StructuredDataGenerator.new(structureType, numOfFrames, frameStep, @rnd)
-			videoData = sdg.generate()
-			extractedFrames = sdg.getExtractedFrames()
+      numOfFrames = (((lengthMS/1000) * avgFrameRate).to_i / frameStep).to_i
 
-			return videoAttributes, videoData, extractedFrames
-		end
-	end
+      sdg = SeedHelpers::StructuredDataGenerator.new(structureType, numOfFrames, frameStep, @rnd)
+      videoData = sdg.generate()
+      extractedFrames = sdg.getExtractedFrames()
+
+      return videoAttributes, videoData, extractedFrames
+    end
+  end
 end

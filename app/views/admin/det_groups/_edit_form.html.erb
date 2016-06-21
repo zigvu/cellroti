@@ -6,33 +6,33 @@
     <%= f.input :pretty_name %>
   </div>
   <i class="notice">
-		To change the brands, please create a new brand group, create metrics, transfer the clients to the new brand group and delete this brand group instead.
-	</i>
+    To change the brands, please create a new brand group, create metrics, transfer the clients to the new brand group and delete this brand group instead.
+  </i>
 
-	<table>
-		<thead>
-			<tr>
-				<th>Brand Owner</th>
-				<th>Industry</th>
-				<th>Brand</th>
-			</tr>
-		</thead>
-		<tbody>
-			<% @det_group.det_group_detectables.sort_by{|cd| cd.detectable.organization.name}.group_by {|cd| cd.detectable.organization }.each do |org, detectables_group| %>
-				<tr>
-					<td><%= org.name %></td>
-					<td><%= org.industry %></td>
-					<td>
-						<ul>
-	            <% detectables_group.sort_by{|dg| dg.detectable.name}.each do |dgd| %>
-	              <li><%= dgd.detectable.pretty_name %></li>
-	            <% end %>
-	          </ul>
-					</td>
-				</tr>
-			<% end %>
-		</tbody>
-	</table>
+  <table>
+    <thead>
+      <tr>
+        <th>Brand Owner</th>
+        <th>Industry</th>
+        <th>Brand</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @det_group.det_group_detectables.sort_by{|cd| cd.detectable.organization.name}.group_by {|cd| cd.detectable.organization }.each do |org, detectables_group| %>
+        <tr>
+          <td><%= org.name %></td>
+          <td><%= org.industry %></td>
+          <td>
+            <ul>
+              <% detectables_group.sort_by{|dg| dg.detectable.name}.each do |dgd| %>
+                <li><%= dgd.detectable.pretty_name %></li>
+              <% end %>
+            </ul>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 
   <div class="form-actions">
     <%= f.button :submit, "Submit Brand Group" %>

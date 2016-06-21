@@ -1,7 +1,7 @@
 module Admin
   class OrganizationsController < ApplicationController
     authorize_actions_for ::Organization
-    
+
     before_filter :ensure_html_format
     before_action :set_organization, only: [:edit, :update, :destroy]
 
@@ -54,7 +54,7 @@ module Admin
 
       # Never trust parameters from the scary internet, only allow the white list through.
       def organization_params
-        params.require(:organization).permit(:name, :industry, 
+        params.require(:organization).permit(:name, :industry,
           detectables_attributes: [:id, :name, :pretty_name, :description, :_destroy])
       end
   end

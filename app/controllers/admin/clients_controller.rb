@@ -85,7 +85,7 @@ module Admin
       if @client.id == ::Client.zigvu_client.id
         message = 'Unable to delete zigvu client'
       else
-        message = "Deleted client #{@client.name}" 
+        message = "Deleted client #{@client.name}"
         @client.destroy
       end
       redirect_to admin_clients_url, notice: message
@@ -99,8 +99,8 @@ module Admin
 
       # Never trust parameters from the scary internet, only allow the white list through.
       def client_params
-        params.require(:client).permit(:name, :pretty_name, 
-          :description, :organization_id, 
+        params.require(:client).permit(:name, :pretty_name,
+          :description, :organization_id,
           client_detectables_attributes: [:id, :detectable_id, :_destroy],
           det_group_clients_attributes: [:id, :det_group_id, :_destroy])
       end

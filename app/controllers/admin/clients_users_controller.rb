@@ -32,11 +32,10 @@ module Admin
       else
         usrP = user_params.merge({client_id: @client.id})
         newUser = User.invite!(usrP, current_user)
-        newUserCount = @client.users.count
 
         newRole = ::Role.find(role_params[:role_id])
         newUser.update_role(newRole)
-        
+
         redirect_to admin_client_users_path(@client), notice: "Invitation was successfully sent."
       end
     end
@@ -58,7 +57,7 @@ module Admin
     # DELETE /clients/1/users/1
     def destroy
       @user.destroy
-      redirect_to admin_client_users_path(@client), notice: 'User was successfully deleted.'      
+      redirect_to admin_client_users_path(@client), notice: 'User was successfully deleted.'
     end
 
     private

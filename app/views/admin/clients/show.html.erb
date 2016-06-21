@@ -1,128 +1,128 @@
 <% breadcrumb :client, @client %>
 
 <p>
-	<strong>Name:</strong>
-	<%= @client.name %>
+  <strong>Name:</strong>
+  <%= @client.name %>
 </p>
 
 <p>
-	<strong>Pretty name:</strong>
-	<%= @client.pretty_name %>
+  <strong>Pretty name:</strong>
+  <%= @client.pretty_name %>
 </p>
 
 <p>
-	<strong>Description:</strong>
-	<%= @client.description %>
+  <strong>Description:</strong>
+  <%= @client.description %>
 </p>
 
 <p>
-	<strong>Organization:</strong>
-	<%= @client.organization.name %>
+  <strong>Organization:</strong>
+  <%= @client.organization.name %>
 </p>
 
 
 <p>
-	<strong>Users:</strong>
-	<%= link_to 'Edit', admin_client_users_path(@client) %>
-	<table>
-		<thead>
-			<tr>
-				<th>Id</th>
-				<th>Email</th>
-				<th>Name</th>
-				<th>Role</th>
-				<th>Last Accessed</th>
-			</tr>
-		</thead>
-		<tbody>
-			<% @client.users.each do |user| %>
-				<tr>
-					<td><%= user.id %></td>
-					<td><%= user.email %></td>
-					<td><%= "#{user.first_name} #{user.last_name}" %></td>
-					<td><%= user.roles.first.name %></td>
-					<td><%= user.last_sign_in_at %></td>
-				</tr>
-			<% end %>
-		</tbody>
-	</table>
+  <strong>Users:</strong>
+  <%= link_to 'Edit', admin_client_users_path(@client) %>
+  <table>
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Email</th>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Last Accessed</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @client.users.each do |user| %>
+        <tr>
+          <td><%= user.id %></td>
+          <td><%= user.email %></td>
+          <td><%= "#{user.first_name} #{user.last_name}" %></td>
+          <td><%= user.roles.first.name %></td>
+          <td><%= user.last_sign_in_at %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 </p>
 
 <p>
-	<strong>Detectables:</strong>
-	<%= link_to 'Edit', detectables_admin_client_path(@client) %>
-	<table>
-		<thead>
-			<tr>
-				<th>Org. Name</th>
-				<th>Org. Industry</th>
-				<th>Detectables</th>
-			</tr>
-		</thead>
-		<tbody>
-			<% @client.detectables.sort_by{|d| d.organization.name}.group_by{|d| d.organization}.each do |org, detectables_group| %>
-				<tr>
-					<td><%= org.name %></td>
-					<td><%= org.industry %></td>
-					<td>
-						<ul>
-							<% detectables_group.each do |dg| %>
-								<li> <%= dg.pretty_name %> </li>
-							<% end %>
-						</ul>
-					</td>
-				</tr>
-			<% end %>
-		</tbody>
-	</table>
+  <strong>Detectables:</strong>
+  <%= link_to 'Edit', detectables_admin_client_path(@client) %>
+  <table>
+    <thead>
+      <tr>
+        <th>Org. Name</th>
+        <th>Org. Industry</th>
+        <th>Detectables</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @client.detectables.sort_by{|d| d.organization.name}.group_by{|d| d.organization}.each do |org, detectables_group| %>
+        <tr>
+          <td><%= org.name %></td>
+          <td><%= org.industry %></td>
+          <td>
+            <ul>
+              <% detectables_group.each do |dg| %>
+                <li> <%= dg.pretty_name %> </li>
+              <% end %>
+            </ul>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 </p>
 
 <p>
-	<strong>Brand Groups:</strong>
-	<%= link_to 'Edit', groups_admin_client_path(@client) %>
-	<table>
-		<thead>
-			<tr>
-				<th>Id</th>
-				<th>Name</th>
-				<th>Pretty Name</th>
-			</tr>
-		</thead>
-		<tbody>
-			<% @client.det_groups.each do |dg| %>
-				<tr>
-					<td><%= dg.id %></td>
-					<td><%= dg.name %></td>
-					<td><%= dg.pretty_name %></td>
-				</tr>
-			<% end %>
-		</tbody>
-	</table>
+  <strong>Brand Groups:</strong>
+  <%= link_to 'Edit', groups_admin_client_path(@client) %>
+  <table>
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Pretty Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @client.det_groups.each do |dg| %>
+        <tr>
+          <td><%= dg.id %></td>
+          <td><%= dg.name %></td>
+          <td><%= dg.pretty_name %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 </p>
 
 <p>
-	<strong>Seasons:</strong>
-	<%= link_to 'Edit', seasons_admin_client_path(@client) %>
-	<table>
-		<thead>
-			<tr>
-				<th>Id</th>
-				<th>Name</th>
-				<th>Description</th>
-				<th>League</th>
-			</tr>
-		</thead>
-		<tbody>
-			<% @seasons.each do |season| %>
-				<tr>
-					<td><%= season.id %></td>
-					<td><%= season.name %></td>
-					<td><%= season.description %></td>
-					<td><%= season.league.name %></td>
-				</tr>
-			<% end %>
-		</tbody>
-	</table>
+  <strong>Seasons:</strong>
+  <%= link_to 'Edit', seasons_admin_client_path(@client) %>
+  <table>
+    <thead>
+      <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>League</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @seasons.each do |season| %>
+        <tr>
+          <td><%= season.id %></td>
+          <td><%= season.name %></td>
+          <td><%= season.description %></td>
+          <td><%= season.league.name %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 </p>
 
 <%= link_to 'Cancel', admin_clients_path, class: "button alert" %>

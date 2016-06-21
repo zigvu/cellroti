@@ -126,7 +126,7 @@ module Admin
 
       # Only allow a trusted parameter "white list" through.
       def det_group_params
-        params.require(:det_group).permit(:name, :pretty_name, 
+        params.require(:det_group).permit(:name, :pretty_name,
           det_group_detectables_attributes: [:id, :detectable_id, :_destroy])
       end
   end

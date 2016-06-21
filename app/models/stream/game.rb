@@ -1,6 +1,6 @@
 class Game < ActiveRecord::Base
-	# For authority
-	include Authority::Abilities
+  # For authority
+  include Authority::Abilities
 
   belongs_to :sub_season, touch: true
   has_many :videos, dependent: :destroy

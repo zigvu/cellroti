@@ -14,8 +14,8 @@ class Api::Stream::FrameDataController < ApplicationController
     videos = ::Video.where(id: videoIds)
     videos.each do |video|
       frameNumbers << {
-        video_id: video.id, 
-        frame_numbers: video.video_detections.first.extracted_frames 
+        video_id: video.id,
+        frame_numbers: video.video_detections.first.extracted_frames
       }
     end
     render json: frameNumbers.to_json

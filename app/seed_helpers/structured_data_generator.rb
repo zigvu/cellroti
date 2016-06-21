@@ -1,160 +1,160 @@
 
 module SeedHelpers
-	class StructuredDataGenerator
-		# structure types:
-		def self.structureTypes
-			[:random, :constant, :sine, :brokenSine]
-		end
+  class StructuredDataGenerator
+    # structure types:
+    def self.structureTypes
+      [:random, :constant, :sine, :brokenSine]
+    end
 
-		def initialize(structureType, numOfFrames, frameStep, seededRandom)
-			@structureType = structureType
+    def initialize(structureType, numOfFrames, frameStep, seededRandom)
+      @structureType = structureType
 
-			@numOfFrames = numOfFrames
-			@frameStep = frameStep
+      @numOfFrames = numOfFrames
+      @frameStep = frameStep
 
-			setDetectableIds([2,3,5,6])
-			# setDetectableIds([2])
-			@rnd = seededRandom || Random.new(1234567890)
+      setDetectableIds([2,3,5,6])
+      # setDetectableIds([2])
+      @rnd = seededRandom || Random.new(1234567890)
 
-			@width = 1280
-			@height = 720
-		end
+      @width = 1280
+      @height = 720
+    end
 
-		def setDetectableIds(detectableIds)
-			@detectableIds = detectableIds
-		end
+    def setDetectableIds(detectableIds)
+      @detectableIds = detectableIds
+    end
 
-		def generate
-			if @structureType == :random
-				return generateRandom()
-			elsif @structureType == :sine
-				return generateSine()
-			elsif @structureType == :brokenSine
-				return generateBrokenSine()
-			end
-		end
+    def generate
+      if @structureType == :random
+        return generateRandom()
+      elsif @structureType == :sine
+        return generateSine()
+      elsif @structureType == :brokenSine
+        return generateBrokenSine()
+      end
+    end
 
-		# -----------------------------------------------------
-		# BEGIN: broken-sine
-		def generateBrokenSine
-			@detectableScoreGenerators = {}
-			@detectableIds.each_with_index do |dId, idx|
-				@detectableScoreGenerators[dId] = SeedHelpers::DetectableScoreGenerator.new(\
-					nil, nil, nil, nil, nil)
+    # -----------------------------------------------------
+    # BEGIN: broken-sine
+    def generateBrokenSine
+      @detectableScoreGenerators = {}
+      @detectableIds.each_with_index do |dId, idx|
+        @detectableScoreGenerators[dId] = SeedHelpers::DetectableScoreGenerator.new(\
+          nil, nil, nil, nil, nil)
 
-				# start data generation off-phase
-				for i in 0..idx
-					@detectableScoreGenerators[dId].updateBrokenSine()
-				end
-			end
+        # start data generation off-phase
+        for i in 0..idx
+          @detectableScoreGenerators[dId].updateBrokenSine()
+        end
+      end
 
-			vd = {}
-			counter = 1
-			for i in 0..@numOfFrames
-				vd.merge!({ counter =>  nextBrokenSineData() })
+      vd = {}
+      counter = 1
+      for i in 0..@numOfFrames
+        vd.merge!({ counter =>  nextBrokenSineData() })
 
-				counter += @frameStep
-			end
-			return vd
-		end
+        counter += @frameStep
+      end
+      return vd
+    end
 
-		def nextBrokenSineData
-			data = {}
-			@detectableScoreGenerators.each do |dId, sg|
-				# if return value is positive, then we write
-				if(sg.updateBrokenSine())
-					bboxes = [{
-							score: sg.score,
-							bbox: { x: sg.x, y: sg.y, width: sg.w, height: sg.h }
-						}]
-					data.merge!({dId => bboxes})
-				end
-			end
-			return data
-		end
+    def nextBrokenSineData
+      data = {}
+      @detectableScoreGenerators.each do |dId, sg|
+        # if return value is positive, then we write
+        if(sg.updateBrokenSine())
+          bboxes = [{
+              score: sg.score,
+              bbox: { x: sg.x, y: sg.y, width: sg.w, height: sg.h }
+            }]
+          data.merge!({dId => bboxes})
+        end
+      end
+      return data
+    end
 
-		# END: broken-sine
-		# -----------------------------------------------------
+    # END: broken-sine
+    # -----------------------------------------------------
 
-		# -----------------------------------------------------
-		# BEGIN: sine
-		def generateSine
-			@detectableScoreGenerators = {}
-			@detectableIds.each_with_index do |dId, idx|
-				@detectableScoreGenerators[dId] = SeedHelpers::DetectableScoreGenerator.new(\
-					nil, nil, nil, nil, nil)
+    # -----------------------------------------------------
+    # BEGIN: sine
+    def generateSine
+      @detectableScoreGenerators = {}
+      @detectableIds.each_with_index do |dId, idx|
+        @detectableScoreGenerators[dId] = SeedHelpers::DetectableScoreGenerator.new(\
+          nil, nil, nil, nil, nil)
 
-				# start data generation off-phase
-				for i in 0..idx
-					@detectableScoreGenerators[dId].updateSine()
-				end
-			end
+        # start data generation off-phase
+        for i in 0..idx
+          @detectableScoreGenerators[dId].updateSine()
+        end
+      end
 
-			vd = {}
-			counter = 1
-			for i in 0..@numOfFrames
-				vd.merge!({ counter =>  nextSineData() })
+      vd = {}
+      counter = 1
+      for i in 0..@numOfFrames
+        vd.merge!({ counter =>  nextSineData() })
 
-				counter += @frameStep
-			end
-			return vd
-		end
+        counter += @frameStep
+      end
+      return vd
+    end
 
-		def nextSineData
-			data = {}
-			@detectableScoreGenerators.each do |dId, sg|
-				sg.updateSine()
-				bboxes = [{
-						score: sg.score,
-						bbox: { x: sg.x, y: sg.y, width: sg.w, height: sg.h }
-					}]
-				data.merge!({dId => bboxes})
-			end
-			return data
-		end
+    def nextSineData
+      data = {}
+      @detectableScoreGenerators.each do |dId, sg|
+        sg.updateSine()
+        bboxes = [{
+            score: sg.score,
+            bbox: { x: sg.x, y: sg.y, width: sg.w, height: sg.h }
+          }]
+        data.merge!({dId => bboxes})
+      end
+      return data
+    end
 
-		# END: sine
-		# -----------------------------------------------------
+    # END: sine
+    # -----------------------------------------------------
 
 
-		# -----------------------------------------------------
-		# BEGIN: random
-		def generateRandom
-			@detectableScoreGenerators = {}
-			@detectableIds.each do |dId|
-				@detectableScoreGenerators[dId] = SeedHelpers::DetectableScoreGenerator.new(\
-					nil, nil, nil, nil, nil)
-			end
+    # -----------------------------------------------------
+    # BEGIN: random
+    def generateRandom
+      @detectableScoreGenerators = {}
+      @detectableIds.each do |dId|
+        @detectableScoreGenerators[dId] = SeedHelpers::DetectableScoreGenerator.new(\
+          nil, nil, nil, nil, nil)
+      end
 
-			vd = {}
-			counter = 1
-			for i in 0..@numOfFrames
-				vd.merge!({ counter =>  nextRandomData() })
+      vd = {}
+      counter = 1
+      for i in 0..@numOfFrames
+        vd.merge!({ counter =>  nextRandomData() })
 
-				counter += @frameStep
-			end
-			return vd
-		end
+        counter += @frameStep
+      end
+      return vd
+    end
 
-		def nextRandomData
-			data = {}
-			@detectableScoreGenerators.each do |dId, sg|
-				# skip for this dId
-				next if @rnd.rand > 0.3
-				bboxes = []
-				for i in 0..(@rnd.rand(5))
-					sg.updateRandom(@rnd)
-					bboxes << {
-						score: sg.score,
-						bbox: { x: sg.x, y: sg.y, width: sg.w, height: sg.h }
-					}
-				end
-				data.merge!({dId => bboxes})
-			end
-			return data
-		end
-		# END: random
-		# -----------------------------------------------------
+    def nextRandomData
+      data = {}
+      @detectableScoreGenerators.each do |dId, sg|
+        # skip for this dId
+        next if @rnd.rand > 0.3
+        bboxes = []
+        for i in 0..(@rnd.rand(5))
+          sg.updateRandom(@rnd)
+          bboxes << {
+            score: sg.score,
+            bbox: { x: sg.x, y: sg.y, width: sg.w, height: sg.h }
+          }
+        end
+        data.merge!({dId => bboxes})
+      end
+      return data
+    end
+    # END: random
+    # -----------------------------------------------------
 
-	end
+  end
 end

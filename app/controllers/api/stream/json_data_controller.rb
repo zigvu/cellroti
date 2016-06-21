@@ -48,7 +48,7 @@ class Api::Stream::JsonDataController < ApplicationController
   private
     # Never trust parameters from the scary internet, only allow the white list through.
     def json_data_params
-      params.permit(:kheer_video_id, :game_id, :channel_id, 
+      params.permit(:kheer_video_id, :game_id, :channel_id,
         :video_meta_data, :detectable_ids, :events, :localizations)
     end
 end

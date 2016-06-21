@@ -1,7 +1,7 @@
 class User < ActiveRecord::Base
-	# For rolify
+  # For rolify
   rolify
-	# For authority
+  # For authority
   include Authority::UserAbilities
 
   # Devise token authentication for API

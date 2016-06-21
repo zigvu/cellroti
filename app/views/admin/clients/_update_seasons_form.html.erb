@@ -1,31 +1,31 @@
 <%= simple_form_for([:admin, @client], url: updateSeasons_admin_client_path, :method => :post) do |f| %>
-	<%= f.error_notification %>
-	<table>
-		<thead>
-			<tr>
-				<th>Name</th>
-				<th>Description</th>
-				<th>League</th>
-				<th>Select ID</th>
-			</tr>
-		</thead>
-		<tbody>
-			<% @seasons.each do |season| %>
-				<tr>
-					<td><%= season.name %></td>
-					<td><%= season.description %></td>
-					<td><%= season.league.name %></td>
-					<% if @allowedSeasonIds.include?(season.id) %>
-						<td><%= f.input :"#{season.id}", :as => :boolean, :input_html => { :checked => true } %></td>
-					<% else %>
-						<td><%= f.input :"#{season.id}", :as => :boolean, :input_html => { :checked => false } %></td>
-					<% end %>
-				</tr>
-			<% end %>
-		</tbody>
-	</table>
+  <%= f.error_notification %>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>League</th>
+        <th>Select ID</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @seasons.each do |season| %>
+        <tr>
+          <td><%= season.name %></td>
+          <td><%= season.description %></td>
+          <td><%= season.league.name %></td>
+          <% if @allowedSeasonIds.include?(season.id) %>
+            <td><%= f.input :"#{season.id}", :as => :boolean, :input_html => { :checked => true } %></td>
+          <% else %>
+            <td><%= f.input :"#{season.id}", :as => :boolean, :input_html => { :checked => false } %></td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 
-	<div class="form-actions">
-		<%= f.button :submit %>
-	</div>
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
 <% end %>

@@ -1,28 +1,28 @@
 <% breadcrumb :client, @client %>
 
 <p>
-	<strong>Name:</strong>
-	<%= @client.name %>
+  <strong>Name:</strong>
+  <%= @client.name %>
 </p>
 
 <p>
-	<strong>Pretty name:</strong>
-	<%= @client.pretty_name %>
+  <strong>Pretty name:</strong>
+  <%= @client.pretty_name %>
 </p>
 
 <p>
-	<strong>Description:</strong>
-	<%= @client.description %>
+  <strong>Description:</strong>
+  <%= @client.description %>
 </p>
 
 <p>
-	<strong>Organization:</strong>
-	<%= @client.organization.name %>
+  <strong>Organization:</strong>
+  <%= @client.organization.name %>
 </p>
 
 <p>
-	<strong>Detectables:</strong>
-	<%= render 'update_det_groups_form' %>
+  <strong>Detectables:</strong>
+  <%= render 'update_det_groups_form' %>
 </p>
 
 <%= link_to 'Cancel', admin_clients_path, class: "button alert" %>
