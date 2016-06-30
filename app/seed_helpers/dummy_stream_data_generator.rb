@@ -38,30 +38,20 @@ module SeedHelpers
       ].sample(random: @rnd)
       neededDuration = endDate.to_f - beginDate.to_f
       while neededDuration >= (streamClipTime / 1000.0) do
+        clipFrameTime = createClip(kheerCaptureId, lastKheerClipId, lengthMs)
         allClipsArr << {
           kheer_capture_id: kheerCaptureId,
           kheer_clip_id: lastKheerClipId,
           stream_clip_time: streamClipTime,
-          clip_length: lengthMs
+          clip_length: clipFrameTime
         }
         # iterate
-        streamClipTime += lengthMs
+        streamClipTime += clipFrameTime
         lengthMs = [
           @avgLengthOfClip + @rnd.rand((0.1 * @avgLengthOfClip).to_i),
           @avgLengthOfClip - @rnd.rand((0.1 * @avgLengthOfClip).to_i)
         ].sample(random: @rnd)
         lastKheerClipId += 1
-      end
-
-      # run in prallel
-      # numOfProcessors = `cat /proc/cpuinfo | grep processor | wc -l`.to_i
-      # Parallel.each(allClipsArr) do |cd|
-      # 	ActiveRecord::Base.connection.reconnect!
-      # 	createClip(cd[:kheer_capture_id], cd[:kheer_clip_id], cd[:clip_length])
-      # end
-
-      allClipsArr.each do |cd|
-        createClip(cd[:kheer_capture_id], cd[:kheer_clip_id], cd[:clip_length])
       end
 
       streamMetaDataFile = "#{@locsFolder}/stream_meta_data.json"
@@ -110,7 +100,9 @@ module SeedHelpers
       localizationFile = "#{clipFolder}/localizations.json"
 
       createEvents(eventsFile, kheerClipId, lengthMs)
-      createLocalizationData(localizationFile, lengthMs)
+
+      numOfFrames = ((lengthMs/1000.0) * @avgFrameRate/@frameStep).floor
+      createLocalizationData(localizationFile, numOfFrames)
     end
 
     # modified from kheer:
@@ -141,7 +133,7 @@ module SeedHelpers
 
     # modified from kheer:
     # app/data_exporters/save_data_for_cellroti_export.rb
-    def createLocalizationData(outputFile, lengthMs)
+    def createLocalizationData(outputFile, numOfFrames)
       FileUtils::rm_rf(outputFile)
 
       # Note: Cellroti ingests this line-by-line assuming each line is valid JSON
@@ -150,8 +142,6 @@ module SeedHelpers
       # { localizations: [
       # 	{clip_frame_time: {cellroti_det_id: [{bbox: {x, y, width, height}, score: float}, ], }, },
       # ]}
-
-      numOfFrames = ((lengthMs/1000.0) * @avgFrameRate/@frameStep).floor
 
       structureType = @structureTypes[@structureTypesIdx % @structureTypes.count]
       sdg = SeedHelpers::StructuredDataGenerator.new(
@@ -177,7 +167,7 @@ module SeedHelpers
         end
         f.puts "\n]}"
       end
-      outputFile
+      clipFrameTime
     end
 
   end

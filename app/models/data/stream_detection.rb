@@ -11,6 +11,9 @@ class StreamDetection
   field :h, as: :height, type: Integer
   field :dis, as: :detectable_ids, type: Array
 
+  # index needed because of sorting
+  index({ begin_date: 1 }, { background: true })
+
   has_many :event_detections, dependent: :destroy, autosave: true, :order => :stream_frame_time.asc
   has_many :frame_detections, dependent: :destroy, autosave: true, :order => :stream_frame_time.asc
   has_many :summary_metrics, dependent: :destroy, autosave: true, :order => :begin_date.asc

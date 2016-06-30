@@ -9,9 +9,12 @@ class SummaryMetric
   field :bd, as: :begin_date, type: DateTime
   field :db, as: :date_bundle, type: Integer
 
-  index({ stream_id: 1, det_group_id: 1, begin_date: 1, date_bundle: 1 }, { background: true })
+  # index for query
+  index({ stream_id: 1, det_group_id: 1, date_bundle: 1, begin_date: 1 }, { background: true })
+  # index needed because of sorting
+  index({ begin_date: 1 }, { background: true })
 
-  has_many :single_summary_metrics, dependent: :destroy, autosave: true, :order => :frame_time.asc
+  has_many :single_summary_metrics, dependent: :destroy, autosave: true, :order => :stream_frame_time.asc
   belongs_to :stream, index: true
   belongs_to :stream_detection, index: true
 end

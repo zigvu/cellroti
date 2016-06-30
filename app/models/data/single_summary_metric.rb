@@ -16,7 +16,8 @@ class SingleSummaryMetric
 
   field :qd, as: :quadrants, type: Hash
 
-  # no index needed since all access through summary_metric
+  # index needed because of sorting
+  index({ stream_frame_time: 1 }, { background: true })
 
   belongs_to :summary_metric, index: true
 end

@@ -11,5 +11,8 @@ class EventDetection
   field :sft, as: :stream_frame_time, type: Integer
   field :cft, as: :clip_frame_time, type: Integer
 
+  # index needed because of sorting
+  index({ stream_frame_time: 1 }, { background: true })
+
   belongs_to :stream_detection, index: true
 end

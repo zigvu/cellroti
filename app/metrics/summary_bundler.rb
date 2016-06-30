@@ -8,7 +8,7 @@ module Metrics
       @detGroupId = detGroupId
 
       @resolution = resolution
-      @dateBundle = States::BundleResolutions.bundle(@resolution)
+      @dateBundle = States::BundleResolutions.resolutionToBundle(@resolution)
 
       @beginDate = beginDate
       @beginDateManipulator = Metrics::DateManipulator.new(@beginDate)

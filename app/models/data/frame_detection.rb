@@ -10,7 +10,8 @@ class FrameDetection
 
   embeds_many :single_detectable_metrics
 
-  # no index needed since all access sequential and through stream_detection
+  # index needed because of sorting
+  index({ stream_frame_time: 1 }, { background: true })
 
   belongs_to :stream_detection, index: true
 end
