@@ -1,9 +1,9 @@
 module Metrics
   class MetricsEventDistance
-    attr_accessor :events, :timeWeight, :eventWeights, :maxTimeSeconds
+    attr_accessor :eventDetections, :timeWeight, :eventWeights, :maxTimeSeconds
 
-    def initialize(events, maxTimeSeconds, timeDecayWeight)
-      @events = events
+    def initialize(eventDetections, maxTimeSeconds, timeDecayWeight)
+      @eventDetections = eventDetections
       # time decay happens at 1 second interval - i.e., 1 FPS
       decayArray = Metrics::MetricsSlidingWindow.constructWindow(
         1, maxTimeSeconds, timeDecayWeight
@@ -21,10 +21,10 @@ module Metrics
       end
 
       @eventWeights = {}
-      @events.each do |event|
+      @eventDetections.each do |event|
         @eventWeights[event.id] = {}
-        @eventWeights[event.id][:weight] = event.event_type.weight
-        @eventWeights[event.id][:time] = event.event_time
+        @eventWeights[event.id][:weight] = event.weight
+        @eventWeights[event.id][:time] = event.stream_frame_time
       end
     end
 
@@ -45,7 +45,7 @@ module Metrics
 
     def time_diff(earlierTimeStamp, laterTimeStamp)
       # subtract time, convert to seconds and return
-      return (laterTimeStamp - earlierTimeStamp).abs / States::ConfigReader.frameTimeStampResolution
+      return (laterTimeStamp - earlierTimeStamp).abs / 1000.0
     end
 
   end

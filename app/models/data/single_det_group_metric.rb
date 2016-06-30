@@ -7,8 +7,10 @@ class SingleDetGroupMetric
   # However, so that there is no confusion about the fields computed,
   # we are using a class rather than a Hash to store intermediate results
 
-  attr_accessor :frame_number
-  attr_accessor :frame_time
+  attr_accessor :kheer_clip_id
+  attr_accessor :stream_frame_time
+  attr_accessor :clip_frame_time
+
   attr_accessor :det_group_id
   attr_accessor :highest_prob_score
 

@@ -15,7 +15,7 @@ module Metrics
 
     def dump
       if @itemArr.count > 0
-        @mongoCollection.no_timeout.collection.insert(@itemArr)
+        @mongoCollection.no_timeout.collection.insert_many(@itemArr)
         @itemArr = []
       end
     end

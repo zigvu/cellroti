@@ -1,13 +1,8 @@
 class SingleSummaryMetric
   include Mongoid::Document
 
-  field :fn, as: :frame_number, type: Integer
-  field :efn, as: :extracted_frame_number, type: Integer
-  field :efs, as: :extracted_frame_score, type: Float
-  field :ft, as: :frame_time, type: Integer
-
+  field :sft, as: :stream_frame_time, type: Integer
   field :re, as: :resolution, type: Integer
-  field :sc, as: :sequence_counter, type: Integer
 
   field :be, as: :brand_effectiveness, type: Float
 
@@ -21,8 +16,7 @@ class SingleSummaryMetric
 
   field :qd, as: :quadrants, type: Hash
 
-  # index for faster traversal during ordering
-  index({ frame_time: 1 }, { background: true })
+  # no index needed since all access through summary_metric
 
   belongs_to :summary_metric, index: true
 end

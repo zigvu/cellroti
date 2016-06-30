@@ -49,7 +49,7 @@ module SeedHelpers
       end
 
       vd = {}
-      counter = 1
+      counter = 0
       for i in 0..@numOfFrames
         vd.merge!({ counter =>  nextBrokenSineData() })
 
@@ -91,7 +91,7 @@ module SeedHelpers
       end
 
       vd = {}
-      counter = 1
+      counter = 0
       for i in 0..@numOfFrames
         vd.merge!({ counter =>  nextSineData() })
 
@@ -127,7 +127,7 @@ module SeedHelpers
       end
 
       vd = {}
-      counter = 1
+      counter = 0
       for i in 0..@numOfFrames
         vd.merge!({ counter =>  nextRandomData() })
 

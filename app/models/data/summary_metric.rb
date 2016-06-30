@@ -1,20 +1,17 @@
 class SummaryMetric
   include Mongoid::Document
 
-  field :video_id, type: Integer
-  field :det_group_id, type: Integer
-  field :resolution_seconds, type: Integer
+  field :dgi, as: :det_group_id, type: Integer
+  # format
+  # {clips: [{kheer_clip_id:, brand_effectiveness:, clip_frame_time:}, ]}
+  field :hc, as: :highest_clips, type: Hash
 
-  index({ video_id: 1, det_group_id: 1, resolution_seconds: 1 }, { background: true })
+  field :bd, as: :begin_date, type: DateTime
+  field :db, as: :date_bundle, type: Integer
 
-  # Mock a belongs_to relationship with sql models
-  def video
-    Video.find(self.video_id)
-  end
-
-  def det_group
-    DetGroup.find(self.det_group_id)
-  end
+  index({ stream_id: 1, det_group_id: 1, begin_date: 1, date_bundle: 1 }, { background: true })
 
   has_many :single_summary_metrics, dependent: :destroy, autosave: true, :order => :frame_time.asc
+  belongs_to :stream, index: true
+  belongs_to :stream_detection, index: true
 end

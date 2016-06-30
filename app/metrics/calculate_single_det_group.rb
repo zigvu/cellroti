@@ -1,8 +1,7 @@
 module Metrics
   class CalculateSingleDetGroup
-    def initialize(configReader, video, detGroupId)
+    def initialize(configReader, detectionFrameRate, detGroupId)
       @configReader = configReader
-      @video = video
       @detGroupId = detGroupId
 
       @detectableIds = DetGroup.find(detGroupId).detectables.pluck(:id)
@@ -13,7 +12,7 @@ module Metrics
       @be_spatialEffectivenessWeight = @configReader.dgm_be_spatialEffectiveness
 
       # view persistence
-      @timeForSingleFrame = States::ConfigReader.frameTimeStampResolution / @video.detection_frame_rate
+      @timeForSingleFrame = 1000.0 / detectionFrameRate
       @vp_numOfDetectedFrames = 0
     end
 

@@ -1,8 +1,11 @@
 module Metrics
   class CalculateAll
 
-    def initialize(video)
-      @video = video
+    def initialize(streamDetection)
+      @streamDetection = streamDetection
+      @beginDate = @streamDetection.begin_date
+
+      @ssmDumper = Metrics::MongoCollectionDumper.new('SingleSummaryMetric')
       @configReader = States::ConfigReader.new
     end
 
@@ -14,21 +17,18 @@ module Metrics
     end
 
     def setup_summary_metrics_calculations
-      # sanity check
-      videoDetection = @video.video_detections.first
-      raise "Video has no detections saved" if videoDetection == nil
-
-      @frameDetections = videoDetection.frame_detections.order_by(frame_number: :asc)
-      raise "Video has no frame detections saved" if @frameDetections.count == 0
-
-      allDetectableIds = videoDetection.detectable_ids.map{|i| i.to_i}
       dgDetectableIds = []
       @detGroupIds.each do |dgId|
         dgDetectableIds += DetGroup.find(dgId).detectables.pluck(:id)
       end
+
+      allDetectableIds = @streamDetection.detectable_ids.map{|i| i.to_i}
       dgDetectableIds.each do |dId|
-        raise "Video is not evaluated against some detectables" if not allDetectableIds.include?(dId)
+        if not allDetectableIds.include?(dId)
+          raise "StreamDetection is not evaluated against detectable id #{dId}"
+        end
       end
+
       return true
     end
 
@@ -38,34 +38,37 @@ module Metrics
       mcss = {}
       @detGroupIds.each do |dgId|
         # hold objects for single det group metrics calculation
-        mcsdg[dgId] = Metrics::CalculateSingleDetGroup.new(@configReader, @video, dgId)
+        mcsdg[dgId] = Metrics::CalculateSingleDetGroup.new(
+          @configReader, @streamDetection.detection_frame_rate, dgId
+        )
         # hold objects for single summary metrics calculation
-        mcss[dgId] = Metrics::CalculateSingleSummary.new(@configReader, @video, dgId)
-        mcss[dgId].setup_data_structures()
+        mcss[dgId] = Metrics::CalculateSingleSummary.new(
+          @streamDetection, dgId, @beginDate, @ssmDumper
+        )
+        mcss[dgId].setup()
       end
 
-      @frameDetections.no_timeout.each do |frameDetection|
-        frameNumber = frameDetection.frame_number
-        frameTime = frameDetection.frame_time
+      @streamDetection.frame_detections.no_timeout.each do |frameDetection|
         singleDetectableMetrics = frameDetection.single_detectable_metrics
 
         @detGroupIds.each do |dgId|
           singleDetGroupMetric = mcsdg[dgId].calculate(singleDetectableMetrics)
-          singleDetGroupMetric.frame_number = frameNumber
-          singleDetGroupMetric.frame_time = frameTime
+          singleDetGroupMetric.kheer_clip_id = frameDetection.kheer_clip_id
+          singleDetGroupMetric.stream_frame_time = frameDetection.stream_frame_time
+          singleDetGroupMetric.clip_frame_time = frameDetection.clip_frame_time
 
-          # note that database write happens inside CalculateSingleSummary class
           mcss[dgId].addFrameData(singleDetGroupMetric)
         end
+
       end
 
       @detGroupIds.each do |dgId|
-        mcss[dgId].finalize_calculations()
+        mcss[dgId].finalize
       end
 
+      @ssmDumper.finalize
       # create indexes if not there yet
       SummaryMetric.no_timeout.create_indexes
-      SingleSummaryMetric.no_timeout.create_indexes
 
       return true
     end
