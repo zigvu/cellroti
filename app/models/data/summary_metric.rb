@@ -6,7 +6,7 @@ class SummaryMetric
   # {clips: [{kheer_clip_id:, brand_effectiveness:, clip_frame_time:}, ]}
   field :hc, as: :highest_clips, type: Hash
 
-  field :bd, as: :begin_date, type: DateTime
+  field :bd, as: :begin_date, type: Time
   field :db, as: :date_bundle, type: Integer
 
   # index for query

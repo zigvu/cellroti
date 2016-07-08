@@ -27,6 +27,8 @@ ZIGVU.Analytics.Discover.Controller = function(){
     self.responsiveCalculator = new Discover.ResponsiveCalculator();
     self.eventManager = new Discover.Event.EventManager();
     self.dataManager = new Discover.Data.DataManager();
+    self.dataManager
+        .setEventManager(self.eventManager);
 
     self.calendarChart = new Discover.Charts.Calendar();
     self.calendarChart

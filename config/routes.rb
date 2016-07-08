@@ -45,6 +45,13 @@ Cellroti::Application.routes.draw do
           get 'filter'
         end
       end
+
+      resources :filters, only: [:show, :update] do
+        member do
+          get 'discover_summary'
+          get 'discover_data'
+        end
+      end
     end
 
     # kheer APIs

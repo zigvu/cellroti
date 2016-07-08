@@ -2,8 +2,8 @@ class StreamDetection
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  field :bd, as: :begin_date, type: DateTime
-  field :ed, as: :end_date, type: DateTime
+  field :bd, as: :begin_date, type: Time
+  field :ed, as: :end_date, type: Time
 
   field :prr, as: :playback_frame_rate, type: Integer
   field :dfr, as: :detection_frame_rate, type: Integer

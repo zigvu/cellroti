@@ -7,7 +7,7 @@ ZIGVU.Analytics = ZIGVU.Analytics || {};
 ZIGVU.Analytics.Discover = ZIGVU.Analytics.Discover || {};
 ZIGVU.Analytics.Discover.Data = ZIGVU.Analytics.Discover.Data || {};
 
-ZIGVU.Analytics.Discover.Data.Filter = function(){
+ZIGVU.Analytics.Discover.Data.FilterStore = function(){
   var self = this;
 
   this.dates = {
@@ -16,14 +16,10 @@ ZIGVU.Analytics.Discover.Data.Filter = function(){
     minBeginDate: undefined, maxEndDate: undefined
   };
 
-  // format:
-  // {bg_id: :name, }
-  this.brandGroupMap = undefined;
-  // format:
-  // {channel_id: :name, }
-  this.channelMap = undefined;
-  // format:
-  // {event_id: :name}
-  this.eventMap = undefined;
+  this.curBrandGroupIds = [];
+  this.curStreamIds = [];
+
+  this.curTimelineSelector = 'brand_effectiveness';
+  this.curTimelineAxisLabel = 'Brand Effectiveness';
 };
 //------------------------------------------------

@@ -99,6 +99,19 @@
     path {
       pointer-events: none;
     }
+    .loading-svg {
+      rect {
+        fill: red;
+        stroke: black;
+        stroke-width: 1px;
+        shape-rendering: crispedges;
+      }
+      text {
+        fill: white;
+        font-weight:bold;
+        pointer-events: none;
+      }
+    }
     .segment-svg {
       rect {
         stroke: black;

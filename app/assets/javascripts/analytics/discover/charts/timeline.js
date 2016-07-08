@@ -40,6 +40,7 @@ ZIGVU.Analytics.Discover.Charts.Timeline = function(){
   // events for chart
   this.addRepaintCallback = function(func){ self.eventManager.addRepaintCallback(func); };
   this.addResizeCallback = function(func){ self.eventManager.addResizeCallback(func); };
+  this.addLoadingDataCallback = function(func){ self.eventManager.addLoadingDataCallback(func); };
 
   //------------------------------------------------
   // set relations

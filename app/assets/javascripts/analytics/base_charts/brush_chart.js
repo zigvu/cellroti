@@ -136,7 +136,14 @@ ZIGVU.Analytics.BaseCharts.BrushChart = function(chartImpl){
   // define domains
   function setDomains(){
     x.domain(d3.extent(chartData[0].values, function(d) { return d.date; }));
-    y.domain([0, 1]);
+    var minY = Infinity, maxY = -Infinity;
+    _.each(chartData, function(cd){
+      _.each(cd.values, function(d){
+        if(minY > d.value){ minY = d.value; }
+        if(maxY < d.value){ maxY = d.value; }
+      });
+    });
+    y.domain([minY, maxY]);
   }
   //------------------------------------------------
 

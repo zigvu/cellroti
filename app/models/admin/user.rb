@@ -12,6 +12,7 @@ class User < ActiveRecord::Base
 
   after_create :assign_default_role
   after_create :auto_create_user_setting
+  after_create :auto_create_filter
 
   def assign_default_role
     add_role(States::Roles.guest_user) if self.roles.empty?
@@ -29,8 +30,16 @@ class User < ActiveRecord::Base
     settings.resetAllSettings
   end
 
+  def auto_create_filter
+    ::Filter.create(user_id: self.id)
+  end
+
   def settings
     Serializers::UserSettingsSerializer.new(user_setting)
+  end
+
+  def filter
+    ::Filter.where(user_id: self.id).last
   end
 
   def name

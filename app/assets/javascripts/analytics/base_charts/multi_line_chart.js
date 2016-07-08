@@ -24,9 +24,9 @@ ZIGVU.Analytics.BaseCharts.MultiLineChart = function(chartImpl){
   function getSegmentColor(idx){ return chartImpl.getSegmentColor(idx); }
   function getYAxisLabel(){ return chartImpl.getYAxisLabel(); }
 
-  // function handleBrushSelection(dates){ chartImpl.handleBrushSelection(dates); }
   chartImpl.addRepaintCallback(repaint);
   chartImpl.addResizeCallback(resize);
+  chartImpl.addLoadingDataCallback(showLoading);
   //------------------------------------------------
 
 
@@ -63,6 +63,10 @@ ZIGVU.Analytics.BaseCharts.MultiLineChart = function(chartImpl){
     height = divHeight - margin.top - margin.bottom;
   }
   setGeometry();
+
+  // size of loading rectangle
+  var loadingRectWidth = 70;
+  var loadingRectHeight = 20;
 
   // how far to the left of y-axis we want our labels to be
   var yAxisLabelAnchorX = -35;
@@ -119,6 +123,23 @@ ZIGVU.Analytics.BaseCharts.MultiLineChart = function(chartImpl){
   var segmentSVG = multiLineSVG.append("g").attr("class", "segment-svg");
   var eventSVG = multiLineSVG.append("g").attr("class", "event-svg");
   var timelineSVG = multiLineSVG.append("g").attr("class", "timeline-svg");
+  var loadingSVG = multiLineSVG.append("g").attr("class", "loading-svg");
+  loadingSVG
+      .attr("transform", "translate(" + (width - loadingRectWidth - 5) + "," + 5 + ")")
+      .style("display", "none");
+  loadingSVG.append('rect')
+      .attr('x', 0)
+      .attr('y', 0)
+      .attr('width', loadingRectWidth)
+      .attr('height', loadingRectHeight);
+  loadingSVG.append('text').text('Loading...')
+      .attr('x', 5)
+      .attr('y', loadingRectHeight - 5);
+
+  function showLoading(bool){
+    if(bool){ loadingSVG.style("display", "inline"); }
+    else { loadingSVG.style("display", "none"); }
+  }
 
   // track mouse movements with dashed lines
   var mouseTrackingSVG = multiLineSVG.append("g")
@@ -149,7 +170,14 @@ ZIGVU.Analytics.BaseCharts.MultiLineChart = function(chartImpl){
   // define domains
   function setDomains(){
     x.domain(d3.extent(timelineData[0].values, function(d) { return d.date; }));
-    y.domain([0, 1]);
+    var minY = Infinity, maxY = -Infinity;
+    _.each(timelineData, function(td){
+      _.each(td.values, function(d){
+        if(minY > d.value){ minY = d.value; }
+        if(maxY < d.value){ maxY = d.value; }
+      });
+    });
+    y.domain([minY, maxY]);
   }
   //------------------------------------------------
 
@@ -178,6 +206,7 @@ ZIGVU.Analytics.BaseCharts.MultiLineChart = function(chartImpl){
   function resizeSVG(){
     svg.attr("width", divWidth).attr("height", divHeight);
     multiLineSVG.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    loadingSVG.attr("transform", "translate(" + (width - loadingRectWidth - 5) + "," + 5 + ")");
     clipRect.attr("width", width).attr("height", height);
     mouseTrackingRect.attr("width", width).attr("height", height);
     mouseTrackingX.attr("y1", 0).attr("y2", height);

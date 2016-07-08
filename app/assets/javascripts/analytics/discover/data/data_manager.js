@@ -12,42 +12,47 @@ ZIGVU.Analytics.Discover.Data.DataManager = function(){
 
   //------------------------------------------------
   // set up
-  this.dateNavigator = undefined;
-  this.chartDataPackager = undefined;
-  this.dataFilter = undefined;
+  this.eventManager = undefined;
+  this.ajaxHandler = new ZIGVU.Analytics.Discover.Data.AjaxHandler();
+  this.filterStore = new ZIGVU.Analytics.Discover.Data.FilterStore();
+  this.dataStore = new ZIGVU.Analytics.Discover.Data.DataStore();
+  self.dateNavigator = new ZIGVU.Analytics.Discover.Data.DateNavigator();
+  self.chartDataPackager = new ZIGVU.Analytics.Discover.Data.ChartDataPackager();
 
   this.setupPromise = function(){
-    var metadataDefer = Q.defer();
+    var requestDefer = Q.defer();
 
-    // TODO: ajax
-    metadataDefer.resolve(true);
+    var ds = self.dataStore;
+    var fs = self.filterStore;
 
-    var beginDate = new Date(2015, 7, 12, 3, 5, 0, 0);
-    var endDate = new Date(2015, 7, 12, 15, 25, 50, 0);
-    var minBeginDate = new Date(2014, 4, 5);
-    var maxEndDate = new Date(2016, 0, 5);
-    var brandGroupMap = {1: "Other Sports Drink", 2: "Powerade", 3: "Gatorade"};
-    var channelMap = {1: "ESPN", 2: "Fox Sports 1", 3: "MLB.com", 4: "Youtube Sport 1K"};
-    var eventMap = {1: "Goal", 2: "Penalty", 3: "Red Card", 4: "Yellow Card"};
+    self.ajaxHandler.getDiscoverSummaryPromise()
+      .then(function(sd){
+        fs.dates.calBeginDate = sd.dates.cal_begin_date;
+        fs.dates.calEndDate = sd.dates.cal_end_date;
+        fs.dates.timelineBeginDate = sd.dates.cal_begin_date;
+        fs.dates.timelineEndDate = sd.dates.cal_end_date;
+        fs.dates.minBeginDate = sd.dates.min_begin_date;
+        fs.dates.maxEndDate = sd.dates.max_end_date;
+        fs.curBrandGroupIds = _.keys(sd.brand_group_map);
+        fs.curStreamIds = _.keys(sd.stream_map);
 
-    self.dataFilter = new ZIGVU.Analytics.Discover.Data.Filter();
-    self.dataFilter.dates.calBeginDate = beginDate;
-    self.dataFilter.dates.calEndDate = endDate;
-    self.dataFilter.dates.timelineBeginDate = beginDate;
-    self.dataFilter.dates.timelineEndDate = endDate;
-    self.dataFilter.dates.minBeginDate = minBeginDate;
-    self.dataFilter.dates.maxEndDate = maxEndDate;
-    self.dataFilter.brandGroupMap = brandGroupMap;
-    self.dataFilter.channelMap = channelMap;
-    self.dataFilter.eventMap = eventMap;
+        ds.brandGroupMap = sd.brand_group_map;
+        ds.streamMap = sd.stream_map;
+        ds.eventMap = sd.event_map;
 
-    self.dateNavigator = new ZIGVU.Analytics.Discover.Data.DateNavigator();
-    self.dateNavigator.setDataFilter(self.dataFilter);
+        self.dateNavigator.setFilterStore(self.filterStore);
 
-    self.chartDataPackager = new ZIGVU.Analytics.Discover.Data.ChartDataPackager();
-    self.chartDataPackager.setDataFilter(self.dataFilter);
+        self.chartDataPackager.setFilterStore(self.filterStore);
+        self.chartDataPackager.setDataStore(self.dataStore);
 
-    return metadataDefer.promise;
+        return self.requestNewDataPromise();
+      }).then(function(){
+        requestDefer.resolve(true);
+      }).catch(function (errorReason) {
+        requestDefer.reject('ZIGVU.Analytics.Discover.Data.DataManager ->' + errorReason);
+      });
+
+    return requestDefer.promise;
   };
 
   //------------------------------------------------
@@ -65,7 +70,8 @@ ZIGVU.Analytics.Discover.Data.DataManager = function(){
   //------------------------------------------------
   // timeline
   this.getTimelineData = function(){
-    return self.chartDataPackager.getDummyTimelineData();
+    // return self.chartDataPackager.getDummyTimelineData();
+    return self.chartDataPackager.getTimelineChartData();
   };
   this.getBrandGroupIds = function(){
     return self.chartDataPackager.getBrandGroupIds();
@@ -89,16 +95,41 @@ ZIGVU.Analytics.Discover.Data.DataManager = function(){
     return self.chartDataPackager.getSegmentColor(idx);
   };
   this.getTimelineYAxisLabel = function(){
-    return "Brand Effectiveness";
+    return self.filterStore.curTimelineAxisLabel;
   };
 
   //------------------------------------------------
   // data functions
   this.requestNewDataPromise = function(){
-    var requestDataDefer = Q.defer();
-    // TODO: ajax, ndx etc.
-    requestDataDefer.resolve(true);
-    return requestDataDefer.promise;
+    var requestDefer = Q.defer();
+    self.ajaxHandler.updateFilterStorePromise(self.filterStore)
+      .then(function(){
+        if(self.chartDataPackager.setRightChartData()){
+          requestDefer.resolve(true);
+        } else {
+          self.eventManager.fireLoadingDataCallback(true);
+          self.ajaxHandler.getDiscoverDataPromise()
+            .then(function(data){
+              self.chartDataPackager.addChartData(data);
+              self.eventManager.fireLoadingDataCallback(false);
+              requestDefer.resolve(true);
+            }).catch(function (errorReason) {
+              requestDefer.reject('ZIGVU.Analytics.Discover.Data.DataManager ->' + errorReason);
+            });
+        }
+      }).catch(function (errorReason) {
+        requestDefer.reject('ZIGVU.Analytics.Discover.Data.DataManager ->' + errorReason);
+      });
+    return requestDefer.promise;
   };
+
+  // shorthand for error printing
+  this.err = function(errorReason){
+    displayJavascriptError('ZIGVU.Analytics.Discover.Data.DataManager -> ' + errorReason);
+  };
+
+  //------------------------------------------------
+  // set relations
+  this.setEventManager = function(ddd){ self.eventManager = ddd; return self; };
 };
 //------------------------------------------------

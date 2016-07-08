@@ -8,9 +8,8 @@ ZIGVU.Analytics.Discover.Data = ZIGVU.Analytics.Discover.Data || {};
 
 ZIGVU.Analytics.Discover.Data.DateNavigator = function(){
   var self = this;
-  this.dataFilter = undefined;
-  this.dates = undefined; // populate with self.dataFilter.dates;
-  this.minZoomNumSecs = 10 * 60 * 1000; // 10 minutes
+  this.filterStore = undefined;
+  this.dates = undefined; // populate with self.filterStore.dates;
   this.minDataNumSecs = 3 * 60 * 1000; // 3 minutes
   this.curData = undefined; // gets populated when new data is requested
   var months = [
@@ -94,7 +93,6 @@ ZIGVU.Analytics.Discover.Data.DateNavigator = function(){
       var tbd = self.dates.timelineBeginDate, ted = self.dates.timelineEndDate;
       if(cd.resolution == 'hour'){
         if((isSameDate(cd.begin_date, tbd) && isSameDate(cd.end_date, ted)) ||
-          (Math.abs(ted.getTime() - tbd.getTime()) < self.minZoomNumSecs) ||
           (Math.abs(cd.end_date.getTime() - cd.begin_date.getTime()) < self.minDataNumSecs)
         ){ cd.current = false; }
       }
@@ -353,16 +351,11 @@ ZIGVU.Analytics.Discover.Data.DateNavigator = function(){
     ];
   }
 
-  // return true if same date within a second
-  function isSameDate(d1, d2){
-    return (Math.abs(d1.getTime() - d2.getTime()) < 1000);
-  }
-
   //------------------------------------------------
   // set relations
-  this.setDataFilter = function(ddd){
-    self.dataFilter = ddd;
-    self.dates = self.dataFilter.dates;
+  this.setFilterStore = function(ddd){
+    self.filterStore = ddd;
+    self.dates = self.filterStore.dates;
     return self;
   };
 };

@@ -1,5 +1,5 @@
 /*------------------------------------------------
-  Data Manager - Mock for now
+  Data Manager
   ------------------------------------------------*/
 
 var ZIGVU = ZIGVU || {};
@@ -9,13 +9,14 @@ ZIGVU.Analytics.Discover.Data = ZIGVU.Analytics.Discover.Data || {};
 
 ZIGVU.Analytics.Discover.Data.ChartDataPackager = function(){
   var self = this;
-  this.dataFilter = undefined;
+  this.filterStore = undefined;
+  this.dataStore = undefined;
 
   //------------------------------------------------
   // brand group
   var brandGroupMap, brandGroupSorter, brandGroupIds, brandGroupColors;
   this.setBrandGroupMap = function(){
-    brandGroupMap = self.dataFilter.brandGroupMap;
+    brandGroupMap = self.dataStore.brandGroupMap;
     brandGroupSorter = _.chain(brandGroupMap).pairs().sortBy(function(k){return k[1];}).value();
     brandGroupIds = _.map(brandGroupSorter, function(k){ return k[0];});
     brandGroupColors = d3.scale.category10().domain(brandGroupIds);
@@ -25,21 +26,21 @@ ZIGVU.Analytics.Discover.Data.ChartDataPackager = function(){
   this.getBrandGroupColor = function(bgId){ return brandGroupColors(bgId); };
 
   //------------------------------------------------
-  // channels
-  var channelMap, channelSorter, channelIds;
-  this.setChannelMap = function(){
-    channelMap = self.dataFilter.channelMap;
-    channelSorter = _.chain(channelMap).pairs().sortBy(function(k){return k[1];}).value();
-    channelIds = _.map(channelSorter, function(k){ return k[0];});
+  // streams
+  var streamMap, streamSorter, streamIds;
+  this.setStreamMap = function(){
+    streamMap = self.dataStore.streamMap;
+    streamSorter = _.chain(streamMap).pairs().sortBy(function(k){return k[1];}).value();
+    streamIds = _.map(streamSorter, function(k){ return k[0];});
   };
-  this.getChannelIds = function(){ return channelIds; };
-  this.getChannelName = function(channelId){ return channelMap[channelId]; };
+  this.getStreamIds = function(){ return streamIds; };
+  this.getStreamName = function(streamId){ return streamMap[streamId]; };
 
   //------------------------------------------------
   // events
   var eventMap, eventSorter, eventIds;
   this.setEventMap = function(){
-    eventMap = self.dataFilter.eventMap;
+    eventMap = self.dataStore.eventMap;
     eventSorter = _.chain(eventMap).pairs().sortBy(function(k){return k[1];}).value();
     eventIds = _.map(eventSorter, function(k){ return k[0];});
   };
@@ -47,16 +48,82 @@ ZIGVU.Analytics.Discover.Data.ChartDataPackager = function(){
   this.getEventName = function(eventId){ return eventMap[eventId]; };
 
   //------------------------------------------------
+  // Chart Data
+  this.addChartData = function(data){
+    var ds = self.dataStore;
+    var fs = self.filterStore;
+    var calBeginDate = fs.dates.calBeginDate;
+    var calEndDate = fs.dates.calEndDate;
+
+    if(ds.chartDataArr.length >= ds.maxNumChartDataArrElem){
+      lastCd = _.min(ds.chartDataArr, function(cd){ return cd.dataAddDate; });
+      ds.chartDataArr = _.without(ds.chartDataArr, lastCd);
+    }
+    var chartData = new ZIGVU.Analytics.Discover.Data.ChartData(calBeginDate, calEndDate);
+    chartData.addChartData(data);
+    ds.chartDataArr.push(chartData);
+    ds.curChartDataArrIdx = ds.chartDataArr.length - 1;
+    console.log("Add chart data. curChartDataArrIdx: " + ds.curChartDataArrIdx);
+  };
+
+  this.setRightChartData = function(){
+    var ds = self.dataStore;
+    var fs = self.filterStore;
+    var calBeginDate = fs.dates.calBeginDate;
+    var calEndDate = fs.dates.calEndDate;
+
+    var canSetChartData = false;
+    var rightCd = _.find(ds.chartDataArr, function(cd){
+      return (isSameDate(cd.calBeginDate, calBeginDate) && isSameDate(cd.calEndDate, calEndDate));
+    });
+    if(rightCd){
+      ds.curChartDataArrIdx = _.findIndex(ds.chartDataArr, rightCd);
+      canSetChartData = true;
+      rightCd.setToCalDates();
+      console.log("Use existing data. curChartDataArrIdx: " + ds.curChartDataArrIdx);
+    }
+    return canSetChartData;
+  };
+
+  //------------------------------------------------
+  // data for charts
+  this.setDates = function(){
+    var ds = self.dataStore;
+    var fs = self.filterStore;
+    var timelineBeginDate = fs.dates.timelineBeginDate;
+    var timelineEndDate = fs.dates.timelineEndDate;
+    var chartData = ds.chartDataArr[ds.curChartDataArrIdx];
+
+    if(isSameDate(chartData.timelineBeginDate, timelineBeginDate) &&
+      isSameDate(chartData.timelineEndDate, timelineEndDate)){
+      return;
+    }
+    chartData.setDates(timelineBeginDate, timelineEndDate);
+  };
+
+  var oldBeginDate, oldEndDate;
+  this.getTimelineChartData = function(){
+    var ds = self.dataStore;
+    var fs = self.filterStore;
+
+    oldBeginDate = self.filterStore.dates.timelineBeginDate;
+    oldEndDate = self.filterStore.dates.timelineEndDate;
+
+    var chartData = ds.chartDataArr[ds.curChartDataArrIdx];
+    return chartData.getTimelineChartData(fs.curBrandGroupIds, fs.curTimelineSelector);
+  };
+
+  //------------------------------------------------
   // dummy data
-  var dummyTimelineData, oldBeginDate, oldEndDate;
+  var dummyTimelineData;
   this.getDummyTimelineData = function(){
     if(oldBeginDate && oldEndDate &&
-      oldBeginDate.getTime() === self.dataFilter.dates.timelineBeginDate.getTime() &&
-      oldEndDate.getTime() === self.dataFilter.dates.timelineEndDate.getTime()){
+      oldBeginDate.getTime() === self.filterStore.dates.timelineBeginDate.getTime() &&
+      oldEndDate.getTime() === self.filterStore.dates.timelineEndDate.getTime()){
       return dummyTimelineData;
     }
-    oldBeginDate = self.dataFilter.dates.timelineBeginDate;
-    oldEndDate = self.dataFilter.dates.timelineEndDate;
+    oldBeginDate = self.filterStore.dates.timelineBeginDate;
+    oldEndDate = self.filterStore.dates.timelineEndDate;
     var numItems = 300;
     var msPerItem = (oldEndDate.getTime() - oldBeginDate.getTime())/numItems;
 
@@ -117,10 +184,11 @@ ZIGVU.Analytics.Discover.Data.ChartDataPackager = function(){
 
   //------------------------------------------------
   // set relations
-  this.setDataFilter = function(ddd){
-    self.dataFilter = ddd;
+  this.setFilterStore = function(ddd){ self.filterStore = ddd; return self; };
+  this.setDataStore = function(ddd){
+    self.dataStore = ddd;
     self.setBrandGroupMap();
-    self.setChannelMap();
+    self.setStreamMap();
     self.setEventMap();
     return self;
   };
