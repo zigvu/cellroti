@@ -55,6 +55,21 @@ function decorateNavigationList(){
 //------------------------------------------------
 
 //------------------------------------------------
+/* Attach data reveal actions */
+function attachDataRevealActions(){
+  var thumbnailChartReveals_div = '#thumbnail-chart-reveals';
+  d3.select(thumbnailChartReveals_div).selectAll(".reveal-modal")
+      .each(function (d,i){
+        console.log();
+        var thumbId = d3.select(this).attr("id");
+        $(document).on('open.fndtn.reveal', '#' + thumbId + '[data-reveal]', function(){
+          console.log(thumbId);
+        });
+      });
+}
+//------------------------------------------------
+
+//------------------------------------------------
 /* Sort objects with IDs */
 function sortById(a, b){
   var aId = a.id;

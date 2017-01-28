@@ -23,7 +23,7 @@
 //= require_tree ./chart
 //= require_tree .
 
-$(function(){ 
-	$(document).foundation(); 
-	$(document).ready(decorateNavigationList);
+$(function(){
+  $(document).foundation();
+  $(document).ready(decorateNavigationList);
 });

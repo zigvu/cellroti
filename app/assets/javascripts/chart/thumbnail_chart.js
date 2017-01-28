@@ -13,6 +13,17 @@ function ThumbnailChart(chartManager){
   var thumbnailChartRefresh_div = '#thumbnail-chart-refresh';
   $(thumbnailChartRefresh_div).click(redrawThumbnails);
 
+  // capture on-click of modal
+  function captureOnClick(){
+    d3.select(thumbnailChartReveals_div).selectAll(".reveal-modal").each(function (d,i){
+      var thumbId = d3.select(this).attr("id");
+      $(document).on('open.fndtn.reveal', '#' + thumbId + '[data-reveal]', function(){
+        console.log(thumbId);
+      });
+    });
+  }
+  captureOnClick();
+
   // draw for the first time
   var thumbnailData = chartManager.getThumbnailData();
   redrawThumbnails();
@@ -31,7 +42,7 @@ function ThumbnailChart(chartManager){
       $(thumbnailChartRefresh_div).css("display", "flex");
       thumbnailData = newThumbnailData;
     }
-  };
+  }
 
   function redrawThumbnails(){
     d3.select(thumbnailChart_ul).selectAll("li")
@@ -57,7 +68,7 @@ function ThumbnailChart(chartManager){
         });
 
     $(thumbnailChartRefresh_div).css("display", "none");
-  };
+  }
   //------------------------------------------------
 
 
@@ -69,14 +80,14 @@ function ThumbnailChart(chartManager){
     } else {
       return "/uploads/refresh_to_load.jpg";
     }
-  };
+  }
   function getFrameURL(d){
     if (d.video_id > 0){
       return "/uploads/" + d.video_id + "/frames/" + d.extracted_frame_number + ".jpg";
     } else {
       return "/uploads/refresh_to_load.jpg";
     }
-  };
+  }
 
   function getGameName(d){
     if(d.video_id > 0){
