@@ -9,6 +9,7 @@ class ShortClip
   field :vi, as: :video_id, type: Integer
   field :fn, as: :frame_number, type: Integer
   field :ft, as: :frame_time, type: Integer
+  field :cr, as: :is_created, type: Boolean, default: false
 
   def auto_destroy_old_short_clips
     configReader = States::ConfigReader.new

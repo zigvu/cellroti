@@ -4,7 +4,7 @@ mongo_batch_insert_size:                  500
 video_localization_path:                  '/sftp/sftpuser/uploads'
 localization_image_folder:                'images'
 localization_thumbnail_folder:            'thumbnails'
-video_file_path:                          '/sftp/sftpuser/uploads/videos'
-short_clip_path:                          '/sftp/sftpuser/uploads/clips'
+video_folder:                             'videos'
+short_clip_folder:                        'clips'
 max_short_clips:                          100
 num_short_clips_to_destroy:               25

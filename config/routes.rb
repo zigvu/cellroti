@@ -36,12 +36,13 @@ Cellroti::Application.routes.draw do
     namespace :v1 do
       # det_groups resource is NOT currently used - future API endpoints
       resources :det_groups, :path => 'brands/groups', only: [:index, :show]
-            
+
       resources :seasons, :path => 'analytics/seasons', only: [:index, :show] do
         member do
           get 'summary'
           get 'game/:game_id' => 'seasons#game', :as => :game
           get 'filter'
+          get 'clip_id'
         end
       end
     end
@@ -81,13 +82,13 @@ Cellroti::Application.routes.draw do
   authenticated :user, -> user { States::Roles.zigvu_user_and_above(user) } do
     match '/delayed_job' => DelayedJobWeb, :anchor => false, via: [:get, :post]
   end
-  
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
   # You can have the root of your site routed with "root"
   # root 'welcome#index'
-  
+
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 
@@ -122,7 +123,7 @@ Cellroti::Application.routes.draw do
   #       get 'recent', on: :collection
   #     end
   #   end
-  
+
   # Example resource route with concerns:
   #   concern :toggleable do
   #     post 'toggle'

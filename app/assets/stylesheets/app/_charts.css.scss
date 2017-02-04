@@ -20,385 +20,385 @@ $summary-pc-label-color: $steel;
 
 .d3-chart {
 
-	//---------------------------------------------------
-	// general
-	svg {
-		display: block;
-	}
+  //---------------------------------------------------
+  // general
+  svg {
+    display: block;
+  }
 
-	@media #{$small-only} {
-		font-size: rem-calc(10);
-	}
-	@media #{$medium-up} {
-		font-size: rem-calc(12);
-	}
+  @media #{$small-only} {
+    font-size: rem-calc(10);
+  }
+  @media #{$medium-up} {
+    font-size: rem-calc(12);
+  }
 
-	// common elements
-	.axis-label {
-		line-height: 80%;
-		text-transform: uppercase;
+  // common elements
+  .axis-label {
+    line-height: 80%;
+    text-transform: uppercase;
 
-		@media #{$small-only} {
-			font-size: rem-calc(10);
-		}
-		@media #{$medium-up} {
-			font-size: rem-calc(12);
-		}
-	}
+    @media #{$small-only} {
+      font-size: rem-calc(10);
+    }
+    @media #{$medium-up} {
+      font-size: rem-calc(12);
+    }
+  }
 
-	.x-axis-time-label, .y-axis-time-label {
-		line-height: 80%;
-	}
+  .x-axis-time-label, .y-axis-time-label {
+    line-height: 80%;
+  }
 
-	.axis {
-		-moz-user-select: none;
-		pointer-events: none;
-		font-size: rem-calc(10);
-		fill: black;
+  .axis {
+    -moz-user-select: none;
+    pointer-events: none;
+    font-size: rem-calc(10);
+    fill: black;
 
-		path, line {
-			fill: none;
-			stroke: black;
-			stroke-width: 1px;
-			shape-rendering: crispedges;
-		}
-	}
+    path, line {
+      fill: none;
+      stroke: black;
+      stroke-width: 1px;
+      shape-rendering: crispedges;
+    }
+  }
 
-	path {
-		fill:none;
-		stroke-width: 1.5px;
-	}
+  path {
+    fill:none;
+    stroke-width: 1.5px;
+  }
 
-	// pattern for selected
-	#pattern line {
-		fill: white;
-		stroke: white;
-		stroke-linecap: square;
-		stroke-linejoin: miter;
-		stroke-width: 13px;
-	}
-	#pattern-mask line {
-		fill: white;
-		stroke: white;
-		stroke-linecap: square;
-		stroke-linejoin: miter;
-		stroke-width: 2px;
-	}
+  // pattern for selected
+  #pattern line {
+    fill: white;
+    stroke: white;
+    stroke-linecap: square;
+    stroke-linejoin: miter;
+    stroke-width: 13px;
+  }
+  #pattern-mask line {
+    fill: white;
+    stroke: white;
+    stroke-linecap: square;
+    stroke-linejoin: miter;
+    stroke-width: 2px;
+  }
 
-	//---------------------------------------------------
-	// multi-series chart
-	.multi-line-chart {
-		path {
-			pointer-events: none;
-		}
-		.game-bg-rect {
-			rect {
-				stroke: black;
-				stroke-width: 1px;
-				stroke-opacity: $line-chart-game-bkgrnd-stroke-opacity;
-				shape-rendering: crispedges;
-				opacity: $line-chart-game-bkgrnd-bar-opacity;
-			}
-			text {
-				fill: black;
-				opacity: 0.9;
-				pointer-events: none;
-			}
-		}
-		.mouse-tracking-svg {
-			line {
-				stroke: blue;
-				stroke-width: 1px;
-				stroke-opacity: 0.5;
-				stroke-dasharray: 3, 3;
-				shape-rendering: crispedges;
-			}
-		}
-		.game-event-svg {
-			line {
-				shape-rendering: crispedges;
-			}
-			
-			line.gameEventLineLong {
-				stroke: $chart-text-primary-color;
-				stroke-width: 1px;
-				stroke-opacity: 0.8;
-				stroke-dasharray: 10, 5;
-			}
-			
-			line.gameEventLineShort {
-				stroke: red;
-				stroke-width: 3px;
-			}
+  //---------------------------------------------------
+  // multi-series chart
+  .multi-line-chart {
+    path {
+      pointer-events: none;
+    }
+    .game-bg-rect {
+      rect {
+        stroke: black;
+        stroke-width: 1px;
+        stroke-opacity: $line-chart-game-bkgrnd-stroke-opacity;
+        shape-rendering: crispedges;
+        opacity: $line-chart-game-bkgrnd-bar-opacity;
+      }
+      text {
+        fill: black;
+        opacity: 0.9;
+        pointer-events: none;
+      }
+    }
+    .mouse-tracking-svg {
+      line {
+        stroke: blue;
+        stroke-width: 1px;
+        stroke-opacity: 0.5;
+        stroke-dasharray: 3, 3;
+        shape-rendering: crispedges;
+      }
+    }
+    .game-event-svg {
+      line {
+        shape-rendering: crispedges;
+      }
 
-			text {
-				font-size: rem-calc(12);
-				fill: $chart-text-primary-color;
-				opacity: 0.9;
-				pointer-events: none;
-			}
-		}
-	}
+      line.gameEventLineLong {
+        stroke: $chart-text-primary-color;
+        stroke-width: 1px;
+        stroke-opacity: 0.8;
+        stroke-dasharray: 10, 5;
+      }
 
-	//---------------------------------------------------
-	// brush chart
-	.brush-chart {
-		rect.bg-rect {
-			fill: scale-color($brush-chart-bkgrnd-bar-color, $lightness: 80%);
-			stroke: $brush-chart-bkgrnd-stroke-color;
-			stroke-width: 1px;
-		}
+      line.gameEventLineShort {
+        stroke: red;
+        stroke-width: 3px;
+      }
 
-		path {
-			stroke-width: 1px;
-			pointer-events: none;
-		}
+      text {
+        font-size: rem-calc(12);
+        fill: $chart-text-primary-color;
+        opacity: 0.9;
+        pointer-events: none;
+      }
+    }
+  }
 
-		.brush .extent {
-			fill-opacity: $brush-chart-bkgrnd-bar-opacity;
-			stroke: $brush-chart-bkgrnd-bar-color;
-			stroke-width: 1px;
-			shape-rendering: crispedges;
-		}
-	}
+  //---------------------------------------------------
+  // brush chart
+  .brush-chart {
+    rect.bg-rect {
+      fill: scale-color($brush-chart-bkgrnd-bar-color, $lightness: 80%);
+      stroke: $brush-chart-bkgrnd-stroke-color;
+      stroke-width: 1px;
+    }
 
-	//---------------------------------------------------
-	// subseason chart
-	.game-selection-chart {
-		cursor: pointer;
+    path {
+      stroke-width: 1px;
+      pointer-events: none;
+    }
 
-		text {
-			font-size: rem-calc(12);
-			fill: black;
-			opacity: 0.9;
-			pointer-events: none;
-		}
+    .brush .extent {
+      fill-opacity: $brush-chart-bkgrnd-bar-opacity;
+      stroke: $brush-chart-bkgrnd-bar-color;
+      stroke-width: 1px;
+      shape-rendering: crispedges;
+    }
+  }
 
-		text.selected{
-			font-size: rem-calc(14);
-			font-weight: bold;
-			opacity: 1.0;
-		}
+  //---------------------------------------------------
+  // subseason chart
+  .game-selection-chart {
+    cursor: pointer;
 
-		.sub-season-border, .background-rect {
-			fill: none;
+    text {
+      font-size: rem-calc(12);
+      fill: black;
+      opacity: 0.9;
+      pointer-events: none;
+    }
 
-			stroke: black;
-			stroke-width: 1px;
-			stroke-opacity: 1.0;
-			shape-rendering: crispedges;
-		}
+    text.selected{
+      font-size: rem-calc(14);
+      font-weight: bold;
+      opacity: 1.0;
+    }
 
-		.sub-season-rect {
-			fill: white;
-			opacity: 0;
-		}
+    .sub-season-border, .background-rect {
+      fill: none;
 
-		.game-rect {
-			opacity: $game-selection-chart-bar-opacity;
+      stroke: black;
+      stroke-width: 1px;
+      stroke-opacity: 1.0;
+      shape-rendering: crispedges;
+    }
 
-			stroke: black;
-			stroke-width: 1px;
-			shape-rendering: crispedges;
-		}
-		.game-rect:hover {
-			opacity: $game-selection-chart-bar-opacity-hover;
-		}
+    .sub-season-rect {
+      fill: white;
+      opacity: 0;
+    }
 
-		.game-overlay {
-			fill: blue;
-			opacity: 0.05;
-		}
-		.game-overlay:hover {
-			opacity: 0.2;
-		}
-	}
+    .game-rect {
+      opacity: $game-selection-chart-bar-opacity;
 
-	//---------------------------------------------------
-	// multi bar chart and be bar chart
-	.bar-chart-svg {
-		.component-rects {
-			stroke: white;
-			stroke-width: 1px;
-			shape-rendering: crispedges;
+      stroke: black;
+      stroke-width: 1px;
+      shape-rendering: crispedges;
+    }
+    .game-rect:hover {
+      opacity: $game-selection-chart-bar-opacity-hover;
+    }
 
-			-moz-transition: all 0.3s;
-			-o-transition: all 0.3s;
-			-webkit-transition: all 0.3s;
-			transition: all 0.3s;
-		}
+    .game-overlay {
+      fill: blue;
+      opacity: 0.05;
+    }
+    .game-overlay:hover {
+      opacity: 0.2;
+    }
+  }
 
-		.component-rects:hover {
-			stroke: black;
-		}
-	}
+  //---------------------------------------------------
+  // multi bar chart and be bar chart
+  .bar-chart-svg {
+    .component-rects {
+      stroke: white;
+      stroke-width: 1px;
+      shape-rendering: crispedges;
 
-	//---------------------------------------------------
-	// summary pie chart
-	.pie-chart-texts{
-		.pc-text {
-			font-weight: bold;
-			fill: $summary-pc-text-color;
-			@media #{$small-only} and (orientation: portrait) { font-size: rem-calc(20); }
-			@media #{$small-only} and (orientation: landscape) { font-size: rem-calc(25); }
-			@media #{$medium-only} { font-size: rem-calc(20); }
-			@media #{$large-up} { font-size: rem-calc(25); }
-		}
-		.pc-unit {
-			fill: $summary-pc-unit-color;
-			@media #{$small-only} and (orientation: portrait) { font-size: rem-calc(10); }
-			@media #{$small-only} and (orientation: landscape) { font-size: rem-calc(14); }
-			@media #{$medium-only} { font-size: rem-calc(12); }
-			@media #{$large-up} { font-size: rem-calc(14); }
-		}
-		.pc-label {
-			font-weight: bold;
-			text-transform: uppercase;
-			fill: $summary-pc-label-color;
-			@media #{$small-only} and (orientation: portrait) { font-size: rem-calc(10); }
-			@media #{$small-only} and (orientation: landscape) { font-size: rem-calc(14); }
-			@media #{$medium-only} { font-size: rem-calc(11); }
-			@media #{$large-up} { font-size: rem-calc(14); }
-		}
-	}
+      -moz-transition: all 0.3s;
+      -o-transition: all 0.3s;
+      -webkit-transition: all 0.3s;
+      transition: all 0.3s;
+    }
 
+    .component-rects:hover {
+      stroke: black;
+    }
+  }
 
-	//---------------------------------------------------
-	// heatmap chart
-	.heatmap-chart{
-		rect {
-			opacity: 0.9;
-		}
-
-		.quadrant-svg{
-			rect {
-				stroke: white;
-				stroke-width: 1px;
-
-				-moz-transition: all 0.3s;
-				-o-transition: all 0.3s;
-				-webkit-transition: all 0.3s;
-				transition: all 0.3s;
-			}
-			rect:hover {
-				stroke: black;
-			}
-		}
-
-		text.legend {
-			font-size: rem-calc(9);
-			fill: $chart-text-primary-color;
-		}		
-	}
+  //---------------------------------------------------
+  // summary pie chart
+  .pie-chart-texts{
+    .pc-text {
+      font-weight: bold;
+      fill: $summary-pc-text-color;
+      @media #{$small-only} and (orientation: portrait) { font-size: rem-calc(20); }
+      @media #{$small-only} and (orientation: landscape) { font-size: rem-calc(25); }
+      @media #{$medium-only} { font-size: rem-calc(20); }
+      @media #{$large-up} { font-size: rem-calc(25); }
+    }
+    .pc-unit {
+      fill: $summary-pc-unit-color;
+      @media #{$small-only} and (orientation: portrait) { font-size: rem-calc(10); }
+      @media #{$small-only} and (orientation: landscape) { font-size: rem-calc(14); }
+      @media #{$medium-only} { font-size: rem-calc(12); }
+      @media #{$large-up} { font-size: rem-calc(14); }
+    }
+    .pc-label {
+      font-weight: bold;
+      text-transform: uppercase;
+      fill: $summary-pc-label-color;
+      @media #{$small-only} and (orientation: portrait) { font-size: rem-calc(10); }
+      @media #{$small-only} and (orientation: landscape) { font-size: rem-calc(14); }
+      @media #{$medium-only} { font-size: rem-calc(11); }
+      @media #{$large-up} { font-size: rem-calc(14); }
+    }
+  }
 
 
-	//---------------------------------------------------
-	// thumbnail chart
-	#thumbnail-chart {
-		.thumbnail-description {
-			margin-left: 2px;
-			margin-top: 10px;
+  //---------------------------------------------------
+  // heatmap chart
+  .heatmap-chart{
+    rect {
+      opacity: 0.9;
+    }
 
-			font-size: rem-calc(12);
-			color: $chart-text-primary-color;
+    .quadrant-svg{
+      rect {
+        stroke: white;
+        stroke-width: 1px;
 
-			b {
-				float: left;
-				margin-right: 5px;
-			}
-		}
+        -moz-transition: all 0.3s;
+        -o-transition: all 0.3s;
+        -webkit-transition: all 0.3s;
+        transition: all 0.3s;
+      }
+      rect:hover {
+        stroke: black;
+      }
+    }
 
-		// overlay a gray-out box
-		#thumbnail-chart-refresh {
-			position: absolute;
-			cursor: pointer;
-			z-index: 1;
+    text.legend {
+      font-size: rem-calc(9);
+      fill: $chart-text-primary-color;
+    }
+  }
 
-			top: 0px;
-			left: 0px;
-			width: 100%;
-			height: 100%;
 
-			color: black;
-			font-size: rem-calc(32);
-			font-weight: bold;
+  //---------------------------------------------------
+  // thumbnail chart
+  #thumbnail-chart {
+    .thumbnail-description {
+      margin-left: 2px;
+      margin-top: 10px;
 
-			display: flex;
-			justify-content: center;
-			align-items: center;
+      font-size: rem-calc(12);
+      color: $chart-text-primary-color;
 
-			background-color: white;
-			opacity: 0.8;
-			background-repeat: no-repeat;
-			background-position: center;
-		}
-	}
+      b {
+        float: left;
+        margin-right: 5px;
+      }
+    }
 
-	//---------------------------------------------------
-	// legend
-	#brand-legend {
-		border: 1px solid $card-title-border-color;
-		-webkit-border-radius: $global-radius;
-		-moz-border-radius: $global-radius;
-		border-radius: $global-radius;
+    // overlay a gray-out box
+    #thumbnail-chart-refresh {
+      position: absolute;
+      cursor: pointer;
+      z-index: 1;
 
-		background: none repeat scroll 0 0 $legend-bkgrnd-color;
-		padding: 0.25rem;
-		margin-top: 0.5rem;
-		height: 100%;
-		z-index: 9999;
+      top: 0px;
+      left: 0px;
+      width: 100%;
+      height: 100%;
 
-		.brand-label-titles {
-			font-size: rem-calc(14);
-			font-weight: bold;
-			color: $chart-text-primary-color;
-			padding: 0 0.5rem 0 0.5rem;
-			margin-bottom: 0.15rem;
-			border-bottom: 2px solid $chart-text-primary-color;
-		}
+      color: black;
+      font-size: rem-calc(32);
+      font-weight: bold;
 
-		.settings-button {
-			margin: 0;
-			padding: 0 10px 0 10px;
-			cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
 
-			color: #2daebf;
-			font-size: 1.5rem;
-			text-shadow: 1px 4px 6px #fff, 0 0 0 #000, 1px 4px 6px #fff;
-		}
-		.settings-button:hover, .settings-button:focus {
-			color: #e33100;
+      background-color: white;
+      opacity: 0.8;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+  }
 
-			-moz-transition: all 0.3s;
-			-o-transition: all 0.3s;
-			-webkit-transition: all 0.3s;
-			transition: all 0.3s;
-		}
+  //---------------------------------------------------
+  // legend
+  #brand-legend {
+    border: 1px solid $card-title-border-color;
+    -webkit-border-radius: $global-radius;
+    -moz-border-radius: $global-radius;
+    border-radius: $global-radius;
 
-		#brand-legend-content {
-			padding: 0px 10px 0px 10px;
+    background: none repeat scroll 0 0 $legend-bkgrnd-color;
+    padding: 0.25rem;
+    margin-top: 0.5rem;
+    height: 100%;
+    z-index: 9999;
 
-			li {
-				list-style-type: none;
-				padding-bottom: 0px;
-				line-height: 1.2;
+    .brand-label-titles {
+      font-size: rem-calc(14);
+      font-weight: bold;
+      color: $chart-text-primary-color;
+      padding: 0 0.5rem 0 0.5rem;
+      margin-bottom: 0.15rem;
+      border-bottom: 2px solid $chart-text-primary-color;
+    }
 
-				.square {
-					display: inline-block;
-					width: rem-calc(14);
-					height: rem-calc(14);
-					margin: 0 5px 0 -5px;
-					vertical-align: middle;
-				}
-				.text {
-					font-size: rem-calc(12);
-					color: $chart-text-primary-color;
-					display: inline-block;
-					vertical-align: middle;
-				}
-			}
-		}
-	}
+    .settings-button {
+      margin: 0;
+      padding: 0 10px 0 10px;
+      cursor: pointer;
+
+      color: #2daebf;
+      font-size: 1.5rem;
+      text-shadow: 1px 4px 6px #fff, 0 0 0 #000, 1px 4px 6px #fff;
+    }
+    .settings-button:hover, .settings-button:focus {
+      color: #e33100;
+
+      -moz-transition: all 0.3s;
+      -o-transition: all 0.3s;
+      -webkit-transition: all 0.3s;
+      transition: all 0.3s;
+    }
+
+    #brand-legend-content {
+      padding: 0px 10px 0px 10px;
+
+      li {
+        list-style-type: none;
+        padding-bottom: 0px;
+        line-height: 1.2;
+
+        .square {
+          display: inline-block;
+          width: rem-calc(14);
+          height: rem-calc(14);
+          margin: 0 5px 0 -5px;
+          vertical-align: middle;
+        }
+        .text {
+          font-size: rem-calc(12);
+          color: $chart-text-primary-color;
+          display: inline-block;
+          vertical-align: middle;
+        }
+      }
+    }
+  }
 }
 // end: .d3-chart
 
@@ -407,86 +407,93 @@ $summary-pc-label-color: $steel;
 
 // pop-up to display large version of thumbnail content
 .thumbnail-container{
-	font-size: rem-calc(12);
-	color: $chart-text-primary-color;
-	line-height: 120%;
-	padding: 10px;
+  font-size: rem-calc(12);
+  color: $chart-text-primary-color;
+  line-height: 120%;
+  padding: 10px;
 
-	b {
-		float: left;
-		margin-right: 5px;
-	}
-	.thumbnail-image-reveal {
-		padding-bottom: 5px;
-	}
+  b {
+    float: left;
+    margin-right: 5px;
+  }
+  .thumbnail-image-reveal {
+    padding-bottom: 5px;
+  }
+
+  .flex-video video {
+    height: auto;
+  }
+  .flex-video {
+    padding-top: 0;
+  }
 }
 
 // pop up to load new brand groups
 #brand-group-update {
-	ul {
-		margin-bottom: 0;
-	}
-	td {
-		padding-top: 2px;
-		padding-bottom: 2px;
-	}
-	.button {
-		margin-bottom: 0;
-	}
+  ul {
+    margin-bottom: 0;
+  }
+  td {
+    padding-top: 2px;
+    padding-bottom: 2px;
+  }
+  .button {
+    margin-bottom: 0;
+  }
 
-	.alert-brand-group-max {
-		color: red;
-	}
+  .alert-brand-group-max {
+    color: red;
+  }
 }
 
 //---------------------------------------------------
 // decoration for panel to hold charts
 .card {
-	background: $white;
-	border: 0px none;
-	box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
-	margin-bottom: $column-gutter;
-	min-height: 200px;
+  background: $white;
+  border: 0px none;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
+  margin-bottom: $column-gutter;
+  min-height: 200px;
 
-	.title {
-		border-bottom: 4px solid $card-title-border-color;
+  .title {
+    border-bottom: 4px solid $card-title-border-color;
 
-		.text {
-			font-size: 1rem;
-			font-weight: 600;
-			font-variant: small-caps;
-			padding: 0.25rem;
-		}
+    .text {
+      font-size: 1rem;
+      font-weight: 600;
+      font-variant: small-caps;
+      padding: 0.25rem;
+    }
 
-		.title-button {
-			font-size: 1.5rem;
-			font-weight: 600;
-			margin: 0;
-			padding: 0.1rem 1rem;
-			background: $white;
-		}
-		.title-button:hover, .title-button:focus {
-			-moz-transition: all 0.3s;
-			-o-transition: all 0.3s;
-			-webkit-transition: all 0.3s;
-			transition: all 0.3s;
-			background: $card-title-border-color;
-		}
-		.title-button-unselected {
-			color: $card-title-border-color;
-		}
-		.title-button-unselected:hover, .title-button-unselected:focus {
-			color: $black;
-		}
-		.title-button-selected {
-			color: #2daebf;
-		}
-		.title-button-selected:hover, .title-button-selected:focus {
-			color: #e33100;
-		}
-	}
+    .title-button {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0;
+      padding: 0.1rem 1rem;
+      background: $white;
+    }
+    .title-button:hover, .title-button:focus {
+      -moz-transition: all 0.3s;
+      -o-transition: all 0.3s;
+      -webkit-transition: all 0.3s;
+      transition: all 0.3s;
+      background: $card-title-border-color;
+    }
+    .title-button-unselected {
+      color: $card-title-border-color;
+    }
+    .title-button-unselected:hover, .title-button-unselected:focus {
+      color: $black;
+    }
+    .title-button-selected {
+      color: #2daebf;
+    }
+    .title-button-selected:hover, .title-button-selected:focus {
+      color: #e33100;
+    }
+  }
 
-	.content {
-		padding: 1rem;
-	}
+  .content {
+    padding: 1rem;
+  }
 }

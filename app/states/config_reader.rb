@@ -14,7 +14,7 @@ module States
     attr_accessor :g_mongoBatchInsertSize
     attr_accessor :g_videoImportLocalizationPath
     attr_accessor :g_videoImportLocalizationImages, :g_videoImportLocalizationThumbnails
-    attr_accessor :g_videoFilePath, :g_shortClipPath
+    attr_accessor :g_videoFolder, :g_shortClipFolder
     attr_accessor :g_maxShortClips, :g_numShortClipsToDestroy
 
     def init_general_config
@@ -29,8 +29,8 @@ module States
       # end: not currently used:
 
       # for short clips
-      @g_videoFilePath = @general["video_file_path"]
-      @g_shortClipPath = @general["short_clip_path"]
+      @g_videoFolder = @general["video_folder"]
+      @g_shortClipFolder = @general["short_clip_folder"]
       @g_maxShortClips = @general["max_short_clips"]
       @g_numShortClipsToDestroy = @general["num_short_clips_to_destroy"]
     end

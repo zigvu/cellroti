@@ -3,6 +3,7 @@
   window.seasonShowPath = "/api/v1/analytics/seasons/" + <%= @season.id %> + "/summary";
   window.gameShowPath = "/api/v1/analytics/seasons/" + <%= @season.id %> + "/game/";
   window.filterPath = "/api/v1/analytics/seasons/" + <%= @season.id %> + "/filter";
+  window.clipIdPath = "/api/v1/analytics/seasons/" + <%= @season.id %> + "/clip_id";
   <% if @gameId != nil %>
     window.selectedGameId = <%= @gameId %>;
   <% end %>
@@ -224,7 +225,10 @@
   <% (0..3).each do |i| %>
     <div id=<%= "thumbnail_li_#{i}_reveal" %> class="reveal-modal large" data-reveal>
       <div class="thumbnail-container">
-        <img class="thumbnail-image-reveal" src="/uploads/refresh_to_load.jpg">
+        <div class="flex-video widescreen">
+          <video controls preload="none" poster="/uploads/refresh_to_load.jpg" class="thumbnail-image-reveal">
+          </video>
+        </div>
         <div class="row">
           <div class="medium-6 large-4 columns"><b>Game:</b><div class="game"></div></div>
           <div class="medium-6 large-2 columns"><b>Time:</b><div class="time"></div></div>

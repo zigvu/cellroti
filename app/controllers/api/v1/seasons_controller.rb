@@ -3,6 +3,7 @@ class Api::V1::SeasonsController < ApplicationController
   authority_actions :summary => :read
   authority_actions :game => :read
   authority_actions :filter => :read
+  authority_actions :clip_id => :read
 
   before_filter :ensure_json_format
   before_action :set_season, only: [:show, :summary, :game]
@@ -59,6 +60,25 @@ class Api::V1::SeasonsController < ApplicationController
     head :no_content
   end
 
+  def clip_id
+    videoId = season_params[:video_id].to_i
+    efn = season_params[:extracted_frame_number].to_i
+    ft = VideoDetection.where(video_id: videoId).first
+          .frame_detections.where(frame_number: efn).first
+          .frame_time
+
+    shortClip = ::ShortClip.find_or_create_by(
+      video_id: videoId, frame_number: efn, frame_time: ft
+    )
+    maxTries = 0
+    while not shortClip.is_created do
+      sleep 1
+      maxTries += 1
+      break if maxTries > 5
+    end
+    render json: {clip_id: shortClip.id.to_s}.to_json
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_season
@@ -73,6 +93,6 @@ class Api::V1::SeasonsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def season_params
-      params.permit(:id, :format, :game_id, :filters => [:season_id, :game_id])
+      params.permit(:id, :format, :game_id, :video_id, :extracted_frame_number, :filters => [:season_id, :game_id])
     end
 end

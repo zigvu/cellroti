@@ -15,12 +15,15 @@ function ThumbnailChart(chartManager){
 
   // capture on-click of modal
   function captureOnClick(){
-    d3.select(thumbnailChartReveals_div).selectAll(".reveal-modal").each(function (d,i){
-      var thumbId = d3.select(this).attr("id");
-      $(document).on('open.fndtn.reveal', '#' + thumbId + '[data-reveal]', function(){
-        console.log(thumbId);
+    d3.select(thumbnailChartReveals_div).selectAll(".reveal-modal")
+      .each(function (d,i){
+        var tId = d3.select(this).attr("id");
+        $(document).on('open.fndtn.reveal', '#' + tId + '[data-reveal]', function(){
+          var thisD = thumbnailData[tId];
+          var videoElem = d3.select(this).select(".thumbnail-container").select("video");
+          sendClipCreateRequest(thisD, videoElem);
+        });
       });
-    });
   }
   captureOnClick();
 
@@ -59,8 +62,8 @@ function ThumbnailChart(chartManager){
     d3.select(thumbnailChartReveals_div).selectAll(".reveal-modal")
         .each(function (d,i){
           var thisD = thumbnailData[d3.select(this).attr("id")];
-
-          d3.select(this).select(".thumbnail-container").select("img").attr("src", getFrameURL(thisD));
+          d3.select(this).select(".thumbnail-container").select("video")
+            .attr("poster", getFrameURL(thisD));
           d3.select(this).select(".game").text(getGameName(thisD));
           d3.select(this).select(".time").text(getGameTime(thisD));
           d3.select(this).select(".bg").text(getBrandGroupName(thisD));
@@ -115,6 +118,26 @@ function ThumbnailChart(chartManager){
     }
     else { return "0%"; }
   }
+  function sendClipCreateRequest(d, videoElem){
+    if (d.video_id > 0){
+      $.ajax({
+        url: window.clipIdPath,
+        async: false,
+        type: "get",
+        data: {
+          video_id: d.video_id,
+          extracted_frame_number: d.extracted_frame_number
+        },
+        success: function(retData){
+          var videoSrc = "/uploads/" + d.video_id + "/clips/" + retData.clip_id + ".mp4";
+          videoElem.attr("src", videoSrc);
+        },
+        error: function(xhr, statusText) {
+          console.log("Error: " + statusText);
+        }
+      });
+    }
+  }
   //------------------------------------------------
 
 
@@ -122,4 +145,4 @@ function ThumbnailChart(chartManager){
   // finally, add call back to repaint charts
   chartManager.addRepaintCallback(repaint);
   //------------------------------------------------
-};
+}
