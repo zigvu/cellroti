@@ -11,7 +11,25 @@ function ThumbnailChart(chartManager){
   var thumbnailChart_ul = '#thumbnail-chart';
   var thumbnailChartReveals_div = '#thumbnail-chart-reveals';
   var thumbnailChartRefresh_div = '#thumbnail-chart-refresh';
-  $(thumbnailChartRefresh_div).click(redrawThumbnails);
+  var videoCollectionShow_but = '#video-collection-show-button';
+  var videoCollectionReveals_div = '#video-collection-reveals';
+  var videoReveal_div = '#video-reveal';
+  var wasChartRefreshed = false;
+
+  function resetButton(butId){
+    $(butId).addClass('title-button-unselected');
+    $(butId).removeClass('title-button-selected');
+  }
+  function setButton(butId){
+    $(butId).removeClass('title-button-unselected');
+    $(butId).addClass('title-button-selected');
+  }
+
+  $(thumbnailChartRefresh_div).click(function(){
+    wasChartRefreshed = true;
+    setButton(videoCollectionShow_but);
+    redrawThumbnails();
+  });
 
   // capture on-click of modal
   function captureOnClick(){
@@ -21,9 +39,31 @@ function ThumbnailChart(chartManager){
         $(document).on('open.fndtn.reveal', '#' + tId + '[data-reveal]', function(){
           var thisD = thumbnailData[tId];
           var videoElem = d3.select(this).select(".thumbnail-container").select("video");
-          sendClipCreateRequest(thisD, videoElem);
+          videoFrameList = [{
+            video_id: thisD.video_id,
+            extracted_frame_number: thisD.extracted_frame_number
+          }];
+          sendClipCreateRequest(videoFrameList, videoElem);
         });
       });
+    // summary video
+    $(videoCollectionShow_but).click(function(){
+      videoFrameList = [];
+      _.each(thumbnailData, function(d){
+        if (d.video_id > 0 && d.brand_effectiveness > 0.01){
+          videoFrameList.push({
+            video_id: d.video_id,
+            extracted_frame_number: d.extracted_frame_number
+          });
+        }
+      });
+      if(videoFrameList.length > 0 && wasChartRefreshed){
+        var videoElem = d3.select('#video-collection-reveals')
+          .select(".thumbnail-container").select("video");
+        sendClipCreateRequest(videoFrameList, videoElem);
+        $(videoReveal_div).foundation('reveal','open');
+      }
+    });
   }
   captureOnClick();
 
@@ -43,6 +83,8 @@ function ThumbnailChart(chartManager){
     var newFrameIds = _.chain(newThumbnailData).values().pluck('extracted_frame_number').value();
     if (!(_.isEqual(oldFrameIds, newFrameIds))){
       $(thumbnailChartRefresh_div).css("display", "flex");
+      wasChartRefreshed = false;
+      resetButton(videoCollectionShow_but);
       thumbnailData = newThumbnailData;
     }
   }
@@ -59,9 +101,11 @@ function ThumbnailChart(chartManager){
           d3.select(this).select(".be").text(getBrandEffectiveness(thisD));
         });
 
+    var firstD;
     d3.select(thumbnailChartReveals_div).selectAll(".reveal-modal")
         .each(function (d,i){
           var thisD = thumbnailData[d3.select(this).attr("id")];
+          if (firstD === undefined){ firstD = thisD; }
           d3.select(this).select(".thumbnail-container").select("video")
             .attr("poster", getFrameURL(thisD));
           d3.select(this).select(".game").text(getGameName(thisD));
@@ -69,6 +113,13 @@ function ThumbnailChart(chartManager){
           d3.select(this).select(".bg").text(getBrandGroupName(thisD));
           d3.select(this).select(".be").text(getBrandEffectiveness(thisD));
         });
+
+    // update the video reveal as well
+    d3.select(videoCollectionReveals_div).selectAll(".reveal-modal")
+      .each(function (d,i){
+        d3.select(this).select(".thumbnail-container").select("video")
+          .attr("poster", getFrameURL(firstD));
+      });
 
     $(thumbnailChartRefresh_div).css("display", "none");
   }
@@ -118,18 +169,18 @@ function ThumbnailChart(chartManager){
     }
     else { return "0%"; }
   }
-  function sendClipCreateRequest(d, videoElem){
-    if (d.video_id > 0){
+  function sendClipCreateRequest(videoFrameList, videoElem){
+    var videoId = videoFrameList[0].video_id;
+    if (videoId > 0){
       $.ajax({
         url: window.clipIdPath,
         async: false,
         type: "get",
         data: {
-          video_id: d.video_id,
-          extracted_frame_number: d.extracted_frame_number
+          video_frame_list: videoFrameList
         },
         success: function(retData){
-          var videoSrc = "/uploads/" + d.video_id + "/clips/" + retData.clip_id + ".mp4";
+          var videoSrc = "/uploads/" + videoId + "/clips/" + retData.clip_id + ".mp4";
           videoElem.attr("src", videoSrc);
         },
         error: function(xhr, statusText) {

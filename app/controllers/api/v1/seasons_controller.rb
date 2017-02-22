@@ -61,21 +61,23 @@ class Api::V1::SeasonsController < ApplicationController
   end
 
   def clip_id
-    videoId = season_params[:video_id].to_i
-    efn = season_params[:extracted_frame_number].to_i
-    ft = VideoDetection.where(video_id: videoId).first
-          .frame_detections.where(frame_number: efn).first
-          .frame_time
-
-    shortClip = ::ShortClip.find_or_create_by(
-      video_id: videoId, frame_number: efn, frame_time: ft
-    )
-    maxTries = 0
-    while not shortClip.is_created do
-      sleep 1
-      maxTries += 1
-      break if maxTries > 5
+    videoFrameList = []
+    season_params[:video_frame_list].each do |k, v|
+      vId = v[:video_id].to_i
+      efn = v[:extracted_frame_number].to_i
+      ft = VideoDetection.where(video_id: vId).first
+            .frame_detections.where(frame_number: efn).first
+            .frame_time
+      videoFrameList << [vId, efn, ft]
     end
+    isMulti = videoFrameList.count != 1
+    shortClip = ::ShortClip.find_or_create_by(
+      video_id: videoFrameList[0][0],
+      frame_number: videoFrameList[0][1],
+      frame_time: videoFrameList[0][2],
+      is_multi_clip: isMulti
+    )
+    Managers::MShortClip.new(shortClip).create_file_if_needed(videoFrameList)
     render json: {clip_id: shortClip.id.to_s}.to_json
   end
 
@@ -93,6 +95,6 @@ class Api::V1::SeasonsController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def season_params
-      params.permit(:id, :format, :game_id, :video_id, :extracted_frame_number, :filters => [:season_id, :game_id])
+      params.permit(:id, :format, :game_id, :video_frame_list => [:video_id, :extracted_frame_number], :filters => [:season_id, :game_id])
     end
 end

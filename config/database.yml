@@ -16,6 +16,7 @@ development:
   username: root
   password: <%= YAML.load_file("#{Rails.root}/config/passwords.yml")[Rails.env]["sql_password"] %>
   socket: /var/run/mysqld/mysqld.sock
+  reconnect: true
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -28,6 +29,7 @@ test:
   username: root
   password: <%= YAML.load_file("#{Rails.root}/config/passwords.yml")[Rails.env]["sql_password"] %>
   socket: /var/run/mysqld/mysqld.sock
+  reconnect: true
 
 production:
   adapter: mysql2
@@ -37,3 +39,4 @@ production:
   username: root
   password: <%= YAML.load_file("#{Rails.root}/config/passwords.yml")[Rails.env]["sql_password"] %>
   socket: /var/run/mysqld/mysqld.sock
+  reconnect: true

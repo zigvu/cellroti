@@ -178,6 +178,11 @@
   <div class="card">
     <div class="title clearfix">
       <div class="text left">Highest Brand Effectiveness Frames</div>
+      <div class="right">
+        <span id="video-collection-show-button" class="button radius title-button title-button-unselected" title="Video Summary">
+          <i class="fi-video"></i>
+        </span>
+      </div>
     </div>
     <div class="content">
       <div class="row">
@@ -240,6 +245,23 @@
     </div>
   <% end %>
 
+</div>
+<!-- END: Thumbnail pop-ups -->
+
+<!-- BEGIN: Video collection pop-ups -->
+<div id="video-collection-reveals">
+  <div id="video-reveal" class="reveal-modal large" data-reveal>
+    <div class="thumbnail-container">
+      <div class="flex-video widescreen">
+        <video controls preload="none" poster="/uploads/refresh_to_load.jpg" class="thumbnail-image-reveal">
+        </video>
+      </div>
+      <div class="row">
+        <div class="medium-6 large-4 columns"><b>Multiple Games</b><div class="game"></div></div>
+      </div>
+    </div>
+    <a class="close-reveal-modal">&#215;</a>
+  </div>
 </div>
 <!-- END: Thumbnail pop-ups -->
 
